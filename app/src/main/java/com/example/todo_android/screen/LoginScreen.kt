@@ -9,10 +9,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.todo_android.R
 import com.example.todo_android.task.Action.LoginService
 import com.example.todo_android.task.Login
 import retrofit2.Call
@@ -101,22 +103,14 @@ fun LoginScreen() {
             colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
             onClick = { sendLogin(email, password) }
         ) {
-            Text(text = "로그인", color = Color.Black)
+            Text(text = stringResource(id = R.string.login), color = Color.Black)
         }
-        //        LoginButton()
     }
-}
-
-
-@ExperimentalMaterial3Api
-@Composable
-fun LoginScreenContent() {
-    LoginScreen()
 }
 
 @ExperimentalMaterial3Api
 @Composable
 @Preview
 fun LoginScreenPreivew() {
-    LoginScreenContent()
+    LoginScreen()
 }

@@ -14,13 +14,7 @@ fun MainScreen() {
 
 @ExperimentalMaterial3Api
 @Composable
-fun MainScreenContent() {
-    MainScreen()
-}
-
-@ExperimentalMaterial3Api
-@Composable
 @Preview
 fun MainScreenPreview() {
-    MainScreenContent()
+    MainScreen()
 }

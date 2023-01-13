@@ -8,8 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.todo_android.R
 
 @Composable
 fun RegisterButton() {
@@ -20,7 +22,7 @@ fun RegisterButton() {
         colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
         onClick = { /*TODO*/ }
     ) {
-        Text(text = "회원가입", color = Color.Black)
+        Text(text = stringResource(id = R.string.register), color = Color.Black)
 
     }
 }

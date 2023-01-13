@@ -9,8 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.todo_android.R
 
 @ExperimentalMaterial3Api
 @Composable
@@ -22,19 +24,13 @@ fun LoginButton() {
         colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
         onClick = { /* */ }
     ) {
-        Text(text = "로그인", color = Color.Black)
+        Text(text = stringResource(id = R.string.login), color = Color.Black)
     }
 }
-@ExperimentalMaterial3Api
-@Composable
-fun LoginButtonContent() {
-    LoginButton()
-}
 
 @ExperimentalMaterial3Api
-
 @Composable
 @Preview
 fun LoginButtonPreview() {
-    LoginButtonContent()
+    LoginButton()
 }
