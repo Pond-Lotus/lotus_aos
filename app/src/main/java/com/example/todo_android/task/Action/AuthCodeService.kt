@@ -1,16 +1,16 @@
 package com.example.todo_android.task.Action
 
-import com.example.todo_android.task.Login
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
-interface LoginService {
+
+interface AuthCodeService {
     @FormUrlEncoded
-    @POST("/account/login/")
-    fun requestLogin(
+    @POST("/account/emailcode/")
+    fun requestCode(
         @Field("email") email: String,
-        @Field("password") password: String
-    ) : Call<Login>
+        @Field("code") code: String
+    ) : Call<AuthCode>
 }
