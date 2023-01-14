@@ -12,7 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.todo_android.task.Action.AuthCode
+import com.example.todo_android.Models.AuthCodeModel
+import com.example.todo_android.task.Action.AuthCodeResponse
 import com.example.todo_android.task.Action.AuthCodeService
 import retrofit2.Call
 import retrofit2.Callback
@@ -24,7 +25,7 @@ fun authCode(email: String, code: String) {
 
     Log.d("authCode", "email: $email / code: $code")
 
-    var authCode: AuthCode? = null
+    var authCodeResponse: AuthCodeResponse? = null
 
 
     var retrofit = Retrofit.Builder()
@@ -34,17 +35,17 @@ fun authCode(email: String, code: String) {
 
     var authCodeService: AuthCodeService = retrofit.create(AuthCodeService::class.java)
 
-    authCodeService.requestCode(email, code).enqueue(object : Callback<AuthCode> {
+    authCodeService.requestCode(AuthCodeModel(email, code)).enqueue(object : Callback<AuthCodeResponse> {
 
         //실패할 경우
-        override fun onFailure(call: Call<AuthCode>, t: Throwable) {
+        override fun onFailure(call: Call<AuthCodeResponse>, t: Throwable) {
             Log.e("authCode", t.message.toString())
         }
 
         //성공할 경우
-        override fun onResponse(call: Call<AuthCode>, response: Response<AuthCode>) {
-            authCode = response.body()
-            Log.d("authCode", "resultCode : " + authCode?.resultCode)
+        override fun onResponse(call: Call<AuthCodeResponse>, response: Response<AuthCodeResponse>) {
+            authCodeResponse = response.body()
+            Log.d("authCode", "resultCode : " + authCodeResponse?.resultCode)
         }
     })
 }
@@ -58,7 +59,7 @@ fun AuthCodeScreen() {
         verticalArrangement = Arrangement.Center
     ) {
 
-        var email by remember { mutableStateOf("knu2023@test.com") }
+        var email by remember { mutableStateOf("test001@test.com") }
         var code by remember { mutableStateOf("") }
 
         TextField(
