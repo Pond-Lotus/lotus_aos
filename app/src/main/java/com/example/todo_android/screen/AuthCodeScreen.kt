@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.todo_android.Models.AuthCodeModel
+import com.example.todo_android.Data.AuthCode
 import com.example.todo_android.task.Action.AuthCodeResponse
 import com.example.todo_android.task.Action.AuthCodeService
 import retrofit2.Call
@@ -35,7 +35,7 @@ fun authCode(email: String, code: String) {
 
     var authCodeService: AuthCodeService = retrofit.create(AuthCodeService::class.java)
 
-    authCodeService.requestCode(AuthCodeModel(email, code)).enqueue(object : Callback<AuthCodeResponse> {
+    authCodeService.requestCode(AuthCode(email, code)).enqueue(object : Callback<AuthCodeResponse> {
 
         //실패할 경우
         override fun onFailure(call: Call<AuthCodeResponse>, t: Throwable) {

@@ -1,6 +1,6 @@
 package com.example.todo_android.task.Action
 
-import com.example.todo_android.Models.AuthCodeModel
+import com.example.todo_android.Data.AuthCode
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -10,7 +10,7 @@ interface AuthCodeService {
 //    @FormUrlEncoded
     @POST("/account/emailcode/")
     fun requestCode(
-        @Body authCodeRequest: AuthCodeModel
+        @Body authCodeRequest: AuthCode
     ) : Call<AuthCodeResponse>
 
 
