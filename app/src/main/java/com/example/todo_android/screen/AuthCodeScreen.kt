@@ -20,7 +20,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun authCode(code: String, email: String) {
+fun authCode(email: String, code: String) {
 
     Log.d("authCode", "email: $email / code: $code")
 
@@ -57,7 +57,8 @@ fun AuthCodeScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        var email : String = "test002@test.com"
+
+        var email by remember { mutableStateOf("knu2023@test.com") }
         var code by remember { mutableStateOf("") }
 
         TextField(
@@ -70,7 +71,7 @@ fun AuthCodeScreen() {
                 unfocusedIndicatorColor = Color.Transparent
             ),
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             shape = RoundedCornerShape(20.dp),
             onValueChange = {
                 code = it
