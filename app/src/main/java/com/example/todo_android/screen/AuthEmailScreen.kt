@@ -12,8 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.todo_android.task.Action.AuthEmailResponse
-import com.example.todo_android.task.Action.AuthEmailRequest
+import com.example.todo_android.Response.AuthEmailResponse
+import com.example.todo_android.Request.AuthEmailRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

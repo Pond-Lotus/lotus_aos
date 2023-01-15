@@ -1,10 +1,8 @@
-package com.example.todo_android.task
+package com.example.todo_android.Response
 
 import com.google.gson.annotations.SerializedName
 
-data class LoginResponse(
+data class RegisterReponse(
     @SerializedName("resultCode")
     val resultCode: String,
-    @SerializedName("token")
-    val token: String
 )

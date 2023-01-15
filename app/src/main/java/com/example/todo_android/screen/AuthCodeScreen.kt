@@ -13,8 +13,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Data.AuthCode
-import com.example.todo_android.task.Action.AuthCodeResponse
-import com.example.todo_android.task.Action.AuthCodeRequest
+import com.example.todo_android.Request.AuthCodeRequest
+import com.example.todo_android.Response.AuthCodeResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

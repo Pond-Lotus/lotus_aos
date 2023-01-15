@@ -1,4 +1,4 @@
-package com.example.todo_android.task.Action
+package com.example.todo_android.Response
 
 import com.google.gson.annotations.SerializedName
 
