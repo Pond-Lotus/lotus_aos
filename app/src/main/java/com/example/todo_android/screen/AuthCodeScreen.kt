@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Data.AuthCode
 import com.example.todo_android.task.Action.AuthCodeResponse
-import com.example.todo_android.task.Action.AuthCodeService
+import com.example.todo_android.task.Action.AuthCodeRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,9 +33,9 @@ fun authCode(email: String, code: String) {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    var authCodeService: AuthCodeService = retrofit.create(AuthCodeService::class.java)
+    var authCodeRequest: AuthCodeRequest = retrofit.create(AuthCodeRequest::class.java)
 
-    authCodeService.requestCode(AuthCode(email, code)).enqueue(object : Callback<AuthCodeResponse> {
+    authCodeRequest.requestCode(AuthCode(email, code)).enqueue(object : Callback<AuthCodeResponse> {
 
         //실패할 경우
         override fun onFailure(call: Call<AuthCodeResponse>, t: Throwable) {

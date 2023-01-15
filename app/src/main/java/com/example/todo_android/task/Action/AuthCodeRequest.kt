@@ -6,7 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 
-interface AuthCodeService {
+interface AuthCodeRequest {
 //    @FormUrlEncoded
     @POST("/account/emailcode/")
     fun requestCode(

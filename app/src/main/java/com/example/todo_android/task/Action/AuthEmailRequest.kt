@@ -4,11 +4,11 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface AuthEmailService {
+interface AuthEmailRequest {
 //    @FormUrlEncoded
     @GET("/account/emailcode/")
     fun requestEmail(
         @Query("email") email: String,
-    ) : Call<AuthEmail>
+    ) : Call<AuthEmailResponse>
 }
 

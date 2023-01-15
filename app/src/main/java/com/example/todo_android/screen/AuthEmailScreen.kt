@@ -12,8 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.todo_android.task.Action.AuthEmail
-import com.example.todo_android.task.Action.AuthEmailService
+import com.example.todo_android.task.Action.AuthEmailResponse
+import com.example.todo_android.task.Action.AuthEmailRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,24 +22,24 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 fun authEmail(email: String) {
 
-    var authEmail: AuthEmail? = null
+    var authEmailResponse: AuthEmailResponse? = null
 
     var retrofit = Retrofit.Builder()
         .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    var authEmailService: AuthEmailService = retrofit.create(AuthEmailService :: class.java)
+    var authEmailRequest: AuthEmailRequest = retrofit.create(AuthEmailRequest :: class.java)
 
-    authEmailService.requestEmail(email).enqueue(object : Callback<AuthEmail> {
+    authEmailRequest.requestEmail(email).enqueue(object : Callback<AuthEmailResponse> {
 
         //실패할 경우
-        override fun onFailure(call: Call<AuthEmail>, t: Throwable) {
+        override fun onFailure(call: Call<AuthEmailResponse>, t: Throwable) {
             Log.e("authEmail", t.message.toString())
         }
 
         //성공할 경우
-        override fun onResponse(call: Call<AuthEmail>, response: Response<AuthEmail>) {
+        override fun onResponse(call: Call<AuthEmailResponse>, response: Response<AuthEmailResponse>) {
 //            when(response.code()) {
 //                200 -> {
 //                    Log.d("authEmail", "authEmail : " + authEmail?.resultCode)
@@ -48,8 +48,8 @@ fun authEmail(email: String) {
 //                    Log.d("authEmail", "authEmail : " + authEmail?.resultCode)
 //                }
 //            }
-            authEmail = response.body()
-            Log.d("authEmail", "authEmail : " + authEmail?.resultCode)
+            authEmailResponse = response.body()
+            Log.d("authEmail", "authEmail : " + authEmailResponse?.resultCode)
         }
     })
 }

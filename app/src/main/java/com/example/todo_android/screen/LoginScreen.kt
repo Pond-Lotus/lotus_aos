@@ -15,8 +15,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.R
-import com.example.todo_android.task.Action.LoginService
-import com.example.todo_android.task.Login
+import com.example.todo_android.task.Action.LoginRequest
+import com.example.todo_android.task.LoginResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -25,27 +25,27 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 fun sendLogin(email: String, password: String) {
 
-    var login: Login? = null
+    var loginResponse: LoginResponse? = null
 
     var retrofit = Retrofit.Builder()
         .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    var loginService: LoginService = retrofit.create(LoginService::class.java)
+    var loginRequest: LoginRequest = retrofit.create(LoginRequest::class.java)
 
-    loginService.requestLogin(email, password).enqueue(object : Callback<Login> {
+    loginRequest.requestLogin(email, password).enqueue(object : Callback<LoginResponse> {
 
         //실패할 경우
-        override fun onFailure(call: Call<Login>, t: Throwable) {
+        override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
             Log.e("Login", t.message.toString())
         }
 
         //성공할 경우
-        override fun onResponse(call: Call<Login>, response: Response<Login>) {
-            login = response.body()
-            Log.d("LOGIN", "resultCode : " + login?.resultCode)
-            Log.d("LOGIN", "token : " + login?.token)
+        override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+            loginResponse = response.body()
+            Log.d("LOGIN", "resultCode : " + loginResponse?.resultCode)
+            Log.d("LOGIN", "token : " + loginResponse?.token)
         }
     })
 }
