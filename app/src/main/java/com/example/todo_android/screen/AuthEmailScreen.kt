@@ -14,13 +14,18 @@ import androidx.compose.ui.unit.dp
 import com.example.todo_android.Request.AuthEmailRequest
 import com.example.todo_android.Response.AuthEmailResponse
 import com.example.todo_android.navigation.Action.RouteAction
+import com.example.todo_android.navigation.NAV_ROUTE
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun authEmail(email: String) {
+fun goAuthCode(route: NAV_ROUTE, routeAction: RouteAction) {
+    routeAction.navTo(route)
+}
+
+fun authEmail(email: String, routeAction: RouteAction) {
 
     var authEmailResponse: AuthEmailResponse? = null
 
@@ -29,7 +34,7 @@ fun authEmail(email: String) {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    var authEmailRequest: AuthEmailRequest = retrofit.create(AuthEmailRequest :: class.java)
+    var authEmailRequest: AuthEmailRequest = retrofit.create(AuthEmailRequest::class.java)
 
     authEmailRequest.requestEmail(email).enqueue(object : Callback<AuthEmailResponse> {
 
@@ -39,21 +44,25 @@ fun authEmail(email: String) {
         }
 
         //성공할 경우
-        override fun onResponse(call: Call<AuthEmailResponse>, response: Response<AuthEmailResponse>) {
-//            when(response.code()) {
-//                200 -> {
-//                    Log.d("authEmail", "authEmail : " + authEmail?.resultCode)
-//                }
-//                500 -> {
-//                    Log.d("authEmail", "authEmail : " + authEmail?.resultCode)
-//                }
-//            }
+        override fun onResponse(
+            call: Call<AuthEmailResponse>,
+            response: Response<AuthEmailResponse>,
+        ) {
             authEmailResponse = response.body()
-            Log.d("authEmail", "authEmail : " + authEmailResponse?.resultCode)
+
+            when (authEmailResponse?.resultCode) {
+                "200" -> {
+                    Log.d("authCode", "resultCode : " + authEmailResponse?.resultCode)
+                    Log.d("authCode", "이메일 인증 코드 입력 화면으로 갑니다.")
+                    goAuthCode(NAV_ROUTE.AUTHCODE, routeAction)
+                }
+                "500" -> {
+                    Log.d("LOGIN", "resultCode : " + authEmailResponse?.resultCode)
+                }
+            }
         }
     })
 }
-
 
 
 @ExperimentalMaterial3Api
@@ -89,7 +98,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                     .width(90.dp)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-                onClick = { /* */ }
+                onClick = { routeAction.goBack() }
             ) {
                 Text(
                     text = "< 이전",
@@ -101,7 +110,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                     .width(90.dp)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-                onClick = { authEmail(email) }
+                onClick = { authEmail(email, routeAction) }
             ) {
                 Text(
                     text = "다음 >",
@@ -110,10 +119,3 @@ fun AuthEmailScreen(routeAction: RouteAction) {
         }
     }
 }
-//
-//@ExperimentalMaterial3Api
-//@Composable
-//@Preview
-//fun AuthEmailScreenPreview() {
-//    AuthEmailScreen()
-//}

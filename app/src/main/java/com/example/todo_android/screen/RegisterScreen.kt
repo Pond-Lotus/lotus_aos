@@ -11,10 +11,44 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.todo_android.Request.RegisterRequest
+import com.example.todo_android.Response.RegisterResponse
 import com.example.todo_android.navigation.Action.RouteAction
+import com.example.todo_android.navigation.NAV_ROUTE
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
-fun Register(email: String, nickname: String, password1: String, password2: String) {
+fun Register(email: String, nickname: String, password1: String, password2: String, routeAction: RouteAction) {
 
+    var registerResponse: RegisterResponse? = null
+
+    var retrofit = Retrofit.Builder()
+        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    var registerRequest: RegisterRequest = retrofit.create(RegisterRequest::class.java)
+
+    registerRequest.requestRegister(com.example.todo_android.Data.Register(email, nickname, password1, password2)).enqueue(object : Callback<RegisterResponse> {
+        override fun onResponse(
+            call: Call<RegisterResponse>,
+            response: Response<RegisterResponse>,
+        ) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
+            TODO("Not yet implemented")
+        }
+
+    })
+}
+
+fun goMain2(route: NAV_ROUTE, routeAction: RouteAction) {
+    routeAction.navTo(route)
 }
 
 
@@ -114,7 +148,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                     .width(90.dp)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-                onClick = { /* */ }
+                onClick = { routeAction.goBack() }
             ) {
                 Text(
                     text = "< 이전",
@@ -126,7 +160,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                     .width(90.dp)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-                onClick = { Register(email, nickname, password1, password2) }
+                onClick = { Register(email, nickname, password1, password2, routeAction) }
             ) {
                 Text(
                     text = "다음 >",
@@ -135,10 +169,3 @@ fun RegisterScreen(routeAction: RouteAction) {
         }
     }
 }
-
-//@ExperimentalMaterial3Api
-//@Composable
-//@Preview
-//fun RegisterScreenPreview() {
-//    RegisterScreen()
-//}

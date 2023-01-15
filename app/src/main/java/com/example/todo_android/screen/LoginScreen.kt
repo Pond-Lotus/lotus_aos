@@ -26,10 +26,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-fun goMain(route: NAV_ROUTE, routeAction: RouteAction) {
+fun goMain1(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
+@ExperimentalMaterial3Api
 fun sendLogin(email: String, password: String, routeAction: RouteAction) {
 
     var loginResponse: LoginResponse? = null
@@ -51,11 +52,17 @@ fun sendLogin(email: String, password: String, routeAction: RouteAction) {
         //성공할 경우
         override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
             loginResponse = response.body()
-            Log.d("LOGIN", "resultCode : " + loginResponse?.resultCode)
-            Log.d("LOGIN", "token : " + loginResponse?.token)
 
-            if(loginResponse?.resultCode == "200"){
-                goMain(NAV_ROUTE.MAIN, routeAction)
+            when (loginResponse?.resultCode) {
+                "200" -> {
+                    goMain1(NAV_ROUTE.MAIN, routeAction)
+                    Log.d("LOGIN", "resultCode : " + loginResponse?.resultCode)
+                    Log.d("LOGIN", "token : " + loginResponse?.token)
+                    Log.d("LOGIN", "메인 화면으로 갑니다.")
+                }
+                "500" -> {
+                    Log.d("LOGIN", "non_field_errors:[Check Your Email or Password]")
+                }
             }
         }
     })
@@ -118,10 +125,3 @@ fun LoginScreen(routeAction: RouteAction) {
         }
     }
 }
-
-//@ExperimentalMaterial3Api
-//@Composable
-//@Preview
-//fun LoginScreenPreivew() {
-//    LoginScreen()
-//}

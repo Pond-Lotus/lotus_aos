@@ -1,6 +1,7 @@
 package com.example.todo_android.screen
 
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -18,10 +19,12 @@ import com.example.todo_android.navigation.NAV_ROUTE
 
 
 fun goLogin(route: NAV_ROUTE, routeAction: RouteAction) {
+    Log.d("MAIN", "로그인 화면으로 갑니다.")
     routeAction.navTo(route)
 }
 
 fun goRegister(route: NAV_ROUTE, routeAction: RouteAction) {
+    Log.d("MAIN", "이메일 인증 화면으로 갑니다.")
     routeAction.navTo(route)
 }
 
@@ -52,22 +55,9 @@ fun MainScreen(routeAction: RouteAction) {
                 .width(300.dp)
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-            onClick = { goRegister(NAV_ROUTE.REGISTER, routeAction) }
+            onClick = { goRegister(NAV_ROUTE.AUTHEMAIL, routeAction) }
         ) {
             Text(text = stringResource(id = R.string.register), color = Color.Black)
         }
     }
 }
-
-//@ExperimentalMaterial3Api
-//@Composable
-//@Preview
-//fun MainScreenPreview() {
-//    MainScreen()
-//}
-
-
-//    LoginScreen()
-//    AuthEmailScreen()
-//    AuthCodeScreen()
-//    RegisterScreen()

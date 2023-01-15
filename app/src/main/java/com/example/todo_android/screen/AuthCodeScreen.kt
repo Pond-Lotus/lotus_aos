@@ -15,13 +15,19 @@ import com.example.todo_android.Data.AuthCode
 import com.example.todo_android.Request.AuthCodeRequest
 import com.example.todo_android.Response.AuthCodeResponse
 import com.example.todo_android.navigation.Action.RouteAction
+import com.example.todo_android.navigation.NAV_ROUTE
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun authCode(email: String, code: String) {
+
+fun goProfile(route: NAV_ROUTE, routeAction: RouteAction) {
+    routeAction.navTo(route)
+}
+
+fun authCode(email: String, code: String, routeAction: RouteAction) {
 
     var authCodeResponse: AuthCodeResponse? = null
 
@@ -43,7 +49,17 @@ fun authCode(email: String, code: String) {
         //성공할 경우
         override fun onResponse(call: Call<AuthCodeResponse>, response: Response<AuthCodeResponse>) {
             authCodeResponse = response.body()
-            Log.d("authCode", "resultCode : " + authCodeResponse?.resultCode)
+
+            when (authCodeResponse?.resultCode) {
+                "200" -> {
+                    Log.d("authCode", "resultCode : " + authCodeResponse?.resultCode)
+                    Log.d("authCode", "프로필 작성 화면으로 갑니다.")
+                    goProfile(NAV_ROUTE.REGISTER, routeAction)
+                }
+                "500" -> {
+                    Log.d("LOGIN", "resultCode : " + authCodeResponse?.resultCode)
+                }
+            }
         }
     })
 }
@@ -83,7 +99,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                     .width(90.dp)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-                onClick = { /* */ }
+                onClick = { routeAction.goBack() }
             ) {
                 Text(
                     text = "< 이전",
@@ -95,7 +111,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                     .width(90.dp)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-                onClick = { authCode(email, code) }
+                onClick = { authCode(email, code, routeAction) }
             ) {
                 Text(
                     text = "다음 >",
@@ -104,11 +120,3 @@ fun AuthCodeScreen(routeAction: RouteAction) {
         }
     }
 }
-//
-//
-//@ExperimentalMaterial3Api
-//@Composable
-//@Preview
-//fun AuthCodeScreenPreview() {
-//    AuthCodeScreen()
-//}
