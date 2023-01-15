@@ -23,8 +23,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 fun authCode(email: String, code: String) {
 
-    Log.d("authCode", "email: $email / code: $code")
-
     var authCodeResponse: AuthCodeResponse? = null
 
 

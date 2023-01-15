@@ -11,8 +11,8 @@ import androidx.compose.ui.tooling.preview.Preview
 fun MainScreen() {
 //    LoginScreen()
 //    AuthEmailScreen()
-//    AuthCodeScreen()
-    RegisterScreen()
+    AuthCodeScreen()
+//    RegisterScreen()
 }
 
 @ExperimentalMaterial3Api
