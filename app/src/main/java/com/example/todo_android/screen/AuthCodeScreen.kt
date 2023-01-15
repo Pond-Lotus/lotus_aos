@@ -10,11 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Data.AuthCode
 import com.example.todo_android.Request.AuthCodeRequest
 import com.example.todo_android.Response.AuthCodeResponse
+import com.example.todo_android.navigation.Action.RouteAction
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -50,7 +50,7 @@ fun authCode(email: String, code: String) {
 
 @ExperimentalMaterial3Api
 @Composable
-fun AuthCodeScreen() {
+fun AuthCodeScreen(routeAction: RouteAction) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -104,11 +104,11 @@ fun AuthCodeScreen() {
         }
     }
 }
-
-
-@ExperimentalMaterial3Api
-@Composable
-@Preview
-fun AuthCodeScreenPreview() {
-    AuthCodeScreen()
-}
+//
+//
+//@ExperimentalMaterial3Api
+//@Composable
+//@Preview
+//fun AuthCodeScreenPreview() {
+//    AuthCodeScreen()
+//}

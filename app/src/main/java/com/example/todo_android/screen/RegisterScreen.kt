@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.todo_android.navigation.Action.RouteAction
 
 fun Register(email: String, nickname: String, password1: String, password2: String) {
 
@@ -20,7 +20,7 @@ fun Register(email: String, nickname: String, password1: String, password2: Stri
 
 @ExperimentalMaterial3Api
 @Composable
-fun RegisterScreen() {
+fun RegisterScreen(routeAction: RouteAction) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -136,9 +136,9 @@ fun RegisterScreen() {
     }
 }
 
-@ExperimentalMaterial3Api
-@Composable
-@Preview
-fun RegisterScreenPreview() {
-    RegisterScreen()
-}
+//@ExperimentalMaterial3Api
+//@Composable
+//@Preview
+//fun RegisterScreenPreview() {
+//    RegisterScreen()
+//}

@@ -12,19 +12,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Data.Login
 import com.example.todo_android.R
 import com.example.todo_android.Request.LoginRequest
 import com.example.todo_android.Response.LoginResponse
+import com.example.todo_android.navigation.Action.RouteAction
+import com.example.todo_android.navigation.NAV_ROUTE
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun sendLogin(email: String, password: String) {
+
+fun goMain(route: NAV_ROUTE, routeAction: RouteAction) {
+    routeAction.navTo(route)
+}
+
+fun sendLogin(email: String, password: String, routeAction: RouteAction) {
 
     var loginResponse: LoginResponse? = null
 
@@ -47,13 +53,17 @@ fun sendLogin(email: String, password: String) {
             loginResponse = response.body()
             Log.d("LOGIN", "resultCode : " + loginResponse?.resultCode)
             Log.d("LOGIN", "token : " + loginResponse?.token)
+
+            if(loginResponse?.resultCode == "200"){
+                goMain(NAV_ROUTE.MAIN, routeAction)
+            }
         }
     })
 }
 
 @ExperimentalMaterial3Api
 @Composable
-fun LoginScreen() {
+fun LoginScreen(routeAction: RouteAction) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -102,16 +112,16 @@ fun LoginScreen() {
                 .width(300.dp)
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-            onClick = { sendLogin(email, password) }
+            onClick = { sendLogin(email, password, routeAction) }
         ) {
             Text(text = stringResource(id = R.string.login), color = Color.Black)
         }
     }
 }
 
-@ExperimentalMaterial3Api
-@Composable
-@Preview
-fun LoginScreenPreivew() {
-    LoginScreen()
-}
+//@ExperimentalMaterial3Api
+//@Composable
+//@Preview
+//fun LoginScreenPreivew() {
+//    LoginScreen()
+//}

@@ -65,4 +65,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
 
+    //Navigation
+    def nav_version = "2.5.3"
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+
 }
