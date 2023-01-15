@@ -1,17 +1,14 @@
 package com.example.todo_android.Request
 
+import com.example.todo_android.Data.Register
 import com.example.todo_android.Response.RegisterReponse
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
+import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface RegisterRequest {
-    @FormUrlEncoded
     @POST("/account/register/")
     fun requestRegister(
-        @Field("email") userid: String,
-        @Field("nickname") username: String,
-        @Field("password") userpw: String
+        @Body registerRequest: Register
     ) : Call<RegisterReponse>
 }

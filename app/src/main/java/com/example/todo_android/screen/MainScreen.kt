@@ -9,9 +9,10 @@ import androidx.compose.ui.tooling.preview.Preview
 @ExperimentalMaterial3Api
 @Composable
 fun MainScreen() {
-    LoginScreen()
+//    LoginScreen()
 //    AuthEmailScreen()
 //    AuthCodeScreen()
+    RegisterScreen()
 }
 
 @ExperimentalMaterial3Api
