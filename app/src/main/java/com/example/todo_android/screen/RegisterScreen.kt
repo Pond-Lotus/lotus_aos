@@ -1,5 +1,6 @@
 package com.example.todo_android.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,36 +22,64 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun Register(email: String, nickname: String, password1: String, password2: String, routeAction: RouteAction) {
-
-    var registerResponse: RegisterResponse? = null
-
-    var retrofit = Retrofit.Builder()
-        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    var registerRequest: RegisterRequest = retrofit.create(RegisterRequest::class.java)
-
-    registerRequest.requestRegister(com.example.todo_android.Data.Register(email, nickname, password1, password2)).enqueue(object : Callback<RegisterResponse> {
-        override fun onResponse(
-            call: Call<RegisterResponse>,
-            response: Response<RegisterResponse>,
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
-            TODO("Not yet implemented")
-        }
-
-    })
-}
-
 fun goMain2(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
+fun Register(
+    email: String, nickname: String, password1: String, password2: String, routeAction: RouteAction,
+){
+
+    if (!(password1.length >= 8 && password2.length >= 8)) {
+        Log.d("FAIL", "비밀번호 8자리 이상이 아닙니다.")
+    }
+
+    if (!(password1.equals(password2))) {
+        Log.d("FAIL", "비밀번호가 일치하지 않습니다")
+    }
+    else {
+
+        var registerResponse: RegisterResponse? = null
+
+        var retrofit = Retrofit.Builder()
+            .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        var registerRequest: RegisterRequest = retrofit.create(RegisterRequest::class.java)
+
+        registerRequest.requestRegister(
+            com.example.todo_android.Data.Register(
+                email, nickname, password2))
+            .enqueue(object : Callback<RegisterResponse> {
+
+                // 실패 했을때
+                override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
+                    Log.e("REGISTER", t.message.toString())
+                }
+
+                // 성공 했을때
+                override fun onResponse(
+                    call: Call<RegisterResponse>,
+                    response: Response<RegisterResponse>,
+                ) {
+
+                    registerResponse = response.body()
+
+                    when (registerResponse?.resultCode) {
+                        "200" -> {
+                            goMain2(NAV_ROUTE.MAIN, routeAction)
+                            Log.d("REGISTER", "메인 화면으로 갑니다.")
+                            Log.d("REGISTER", "resultCode : " + registerResponse?.resultCode)
+                        }
+                        "500" -> {
+                            Log.d("REGISTER", "resultCode : " + registerResponse?.resultCode)
+                        }
+                    }
+                }
+            })
+    }
+}
 
 @ExperimentalMaterial3Api
 @Composable
@@ -94,8 +123,8 @@ fun RegisterScreen(routeAction: RouteAction) {
                 unfocusedIndicatorColor = Color.Transparent
             ),
             singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+//            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             shape = RoundedCornerShape(20.dp),
             onValueChange = {
                 nickname = it
