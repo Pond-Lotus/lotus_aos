@@ -69,4 +69,7 @@ dependencies {
     def nav_version = "2.5.3"
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
+    //sharedPreference
+    implementation 'androidx.preference:preference-ktx:1.1.1'
+
 }
