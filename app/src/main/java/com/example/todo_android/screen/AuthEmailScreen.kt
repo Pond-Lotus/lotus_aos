@@ -57,7 +57,8 @@ fun authEmail(email: String, routeAction: RouteAction) {
                     goAuthCode(NAV_ROUTE.AUTHCODE, routeAction)
                 }
                 "500" -> {
-                    Log.d("LOGIN", "resultCode : " + authEmailResponse?.resultCode)
+                    Log.d("authCode", "resultCode : " + authEmailResponse?.resultCode)
+                    Log.d("authCode", "중복된 이메일입니다.")
                 }
             }
         }

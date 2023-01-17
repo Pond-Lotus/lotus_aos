@@ -57,7 +57,7 @@ fun authCode(email: String, code: String, routeAction: RouteAction) {
                     goProfile(NAV_ROUTE.REGISTER, routeAction)
                 }
                 "500" -> {
-                    Log.d("LOGIN", "resultCode : " + authCodeResponse?.resultCode)
+                    Log.d("authCode", "resultCode : " + authCodeResponse?.resultCode)
                 }
             }
         }
