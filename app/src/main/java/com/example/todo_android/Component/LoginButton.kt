@@ -1,4 +1,4 @@
-package com.example.todo_android.component
+package com.example.todo_android.Component
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width

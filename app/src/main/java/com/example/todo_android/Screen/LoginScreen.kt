@@ -1,4 +1,4 @@
-package com.example.todo_android.screen
+package com.example.todo_android.Screen
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
@@ -14,11 +14,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Data.Login
+import com.example.todo_android.Navigation.Action.RouteAction
+import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.LoginRequest
 import com.example.todo_android.Response.LoginResponse
-import com.example.todo_android.navigation.Action.RouteAction
-import com.example.todo_android.navigation.NAV_ROUTE
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

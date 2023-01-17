@@ -1,4 +1,4 @@
-package com.example.todo_android.screen
+package com.example.todo_android.Screen
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
@@ -12,10 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.todo_android.Navigation.Action.RouteAction
+import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.Request.RegisterRequest
 import com.example.todo_android.Response.RegisterResponse
-import com.example.todo_android.navigation.Action.RouteAction
-import com.example.todo_android.navigation.NAV_ROUTE
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -55,7 +55,7 @@ fun Register(
 
                 // 실패 했을때
                 override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
-                    Log.e("REGISTER", t.message.toString())
+                    Log.e("", t.message.toString())
                 }
 
                 // 성공 했을때

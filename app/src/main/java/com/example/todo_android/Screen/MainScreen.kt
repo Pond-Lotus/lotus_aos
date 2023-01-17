@@ -1,4 +1,4 @@
-package com.example.todo_android.screen
+package com.example.todo_android.Screen
 
 
 import android.util.Log
@@ -13,9 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.todo_android.Navigation.Action.RouteAction
+import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
-import com.example.todo_android.navigation.Action.RouteAction
-import com.example.todo_android.navigation.NAV_ROUTE
 
 
 fun goLogin(route: NAV_ROUTE, routeAction: RouteAction) {

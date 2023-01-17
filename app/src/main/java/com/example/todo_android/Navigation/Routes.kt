@@ -1,4 +1,4 @@
-package com.example.todo_android.navigation
+package com.example.todo_android.Navigation
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -6,8 +6,8 @@ import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.todo_android.navigation.Action.RouteAction
-import com.example.todo_android.screen.*
+import com.example.todo_android.Navigation.Action.RouteAction
+import com.example.todo_android.Screen.*
 
 // 컴포즈 네비게이션 이넘(값을 가지는 이넘)
 enum class NAV_ROUTE(val routeName: String, val description: String) {
@@ -50,7 +50,7 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.MAIN) {
         //회원가입
         composable(NAV_ROUTE.REGISTER.routeName) {
             // 화면이 들어가는 부분 = 값
-            RegisterScreen(routeAction)
+            RegisterScreen(routeAction, )
         }
 
         //라우트 이름 = 화면의 키
