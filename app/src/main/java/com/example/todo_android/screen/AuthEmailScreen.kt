@@ -52,13 +52,12 @@ fun authEmail(email: String, routeAction: RouteAction) {
 
             when (authEmailResponse?.resultCode) {
                 "200" -> {
-                    Log.d("authCode", "resultCode : " + authEmailResponse?.resultCode)
-                    Log.d("authCode", "이메일 인증 코드 입력 화면으로 갑니다.")
+                    Log.d("AUTHEMAIL", "resultCode : " + authEmailResponse?.resultCode)
+                    Log.d("AUTHEMAIL", "이메일 인증 코드 입력 화면으로 갑니다.")
                     goAuthCode(NAV_ROUTE.AUTHCODE, routeAction)
                 }
                 "500" -> {
-                    Log.d("authCode", "resultCode : " + authEmailResponse?.resultCode)
-                    Log.d("authCode", "중복된 이메일입니다.")
+                    Log.d("AUTHEMAIL", "resultCode : " + authEmailResponse?.resultCode)
                 }
             }
         }

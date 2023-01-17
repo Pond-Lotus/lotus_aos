@@ -52,12 +52,12 @@ fun authCode(email: String, code: String, routeAction: RouteAction) {
 
             when (authCodeResponse?.resultCode) {
                 "200" -> {
-                    Log.d("authCode", "resultCode : " + authCodeResponse?.resultCode)
-                    Log.d("authCode", "프로필 작성 화면으로 갑니다.")
+                    Log.d("AUTHCODE", "resultCode : " + authCodeResponse?.resultCode)
+                    Log.d("AUTHCODE", "프로필 작성 화면으로 갑니다.")
                     goProfile(NAV_ROUTE.REGISTER, routeAction)
                 }
                 "500" -> {
-                    Log.d("authCode", "resultCode : " + authCodeResponse?.resultCode)
+                    Log.d("AUTHCODE", "resultCode : " + authCodeResponse?.resultCode)
                 }
             }
         }
