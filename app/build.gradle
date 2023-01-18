@@ -60,16 +60,22 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
 
-    //레트로핏 네트워크
+    // 레트로핏 네트워크
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
 
-    //Navigation
+    // Navigation
     def nav_version = "2.5.3"
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
-    //sharedPreference
+    // sharedPreference
     implementation 'androidx.preference:preference-ktx:1.1.1'
+
+    // Kalendar
+    implementation("com.himanshoe:kalendar:1.2.0")
+
+    // Kalendar Endlos
+    implementation("com.himanshoe:kalendar-endlos:1.0.2")
 
 }
