@@ -11,11 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.todo_android.Data.AuthCode
+import com.example.todo_android.Data.Profile.AuthCode
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
-import com.example.todo_android.Request.AuthCodeRequest
-import com.example.todo_android.Response.AuthCodeResponse
+import com.example.todo_android.Request.ProfileRequest.AuthCodeRequest
+import com.example.todo_android.Response.ProfileResponse.AuthCodeResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

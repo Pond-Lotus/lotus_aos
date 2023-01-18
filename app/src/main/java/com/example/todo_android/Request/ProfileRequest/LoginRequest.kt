@@ -1,7 +1,7 @@
-package com.example.todo_android.Request
+package com.example.todo_android.Request.ProfileRequest
 
-import com.example.todo_android.Data.Login
-import com.example.todo_android.Response.LoginResponse
+import com.example.todo_android.Data.Profile.Login
+import com.example.todo_android.Response.ProfileResponse.LoginResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -9,6 +9,7 @@ import retrofit2.http.POST
 interface LoginRequest {
     @POST("/account/login/")
     fun requestLogin(
+//        @Header("Authorization")
         @Body loginRequest: Login
     ) : Call<LoginResponse>
 }

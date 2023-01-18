@@ -1,7 +1,7 @@
-package com.example.todo_android.Request
+package com.example.todo_android.Request.ProfileRequest
 
-import com.example.todo_android.Data.AuthCode
-import com.example.todo_android.Response.AuthCodeResponse
+import com.example.todo_android.Data.Profile.AuthCode
+import com.example.todo_android.Response.ProfileResponse.AuthCodeResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST

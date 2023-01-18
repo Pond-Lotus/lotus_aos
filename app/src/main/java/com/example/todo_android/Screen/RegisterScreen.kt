@@ -14,8 +14,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
-import com.example.todo_android.Request.RegisterRequest
-import com.example.todo_android.Response.RegisterResponse
+import com.example.todo_android.Request.ProfileRequest.RegisterRequest
+import com.example.todo_android.Response.ProfileResponse.RegisterResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -49,7 +49,7 @@ fun Register(
         var registerRequest: RegisterRequest = retrofit.create(RegisterRequest::class.java)
 
         registerRequest.requestRegister(
-            com.example.todo_android.Data.Register(
+            com.example.todo_android.Data.Profile.Register(
                 email, nickname, password2))
             .enqueue(object : Callback<RegisterResponse> {
 

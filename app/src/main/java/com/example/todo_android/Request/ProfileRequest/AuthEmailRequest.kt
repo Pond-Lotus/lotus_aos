@@ -1,6 +1,6 @@
-package com.example.todo_android.Request
+package com.example.todo_android.Request.ProfileRequest
 
-import com.example.todo_android.Response.AuthEmailResponse
+import com.example.todo_android.Response.ProfileResponse.AuthEmailResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

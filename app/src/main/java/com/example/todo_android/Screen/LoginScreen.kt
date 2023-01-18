@@ -13,12 +13,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.example.todo_android.Data.Login
+import com.example.todo_android.Data.Profile.Login
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
-import com.example.todo_android.Request.LoginRequest
-import com.example.todo_android.Response.LoginResponse
+import com.example.todo_android.Request.ProfileRequest.LoginRequest
+import com.example.todo_android.Response.ProfileResponse.LoginResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,7 +26,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-fun goMain1(route: NAV_ROUTE, routeAction: RouteAction) {
+fun goCalendar(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
@@ -55,7 +55,7 @@ fun sendLogin(email: String, password: String, routeAction: RouteAction) {
 
             when (loginResponse?.resultCode) {
                 "200" -> {
-                    goMain1(NAV_ROUTE.MAIN, routeAction)
+                    goCalendar(NAV_ROUTE.CALENDAR, routeAction)
                     Log.d("LOGIN", "resultCode : " + loginResponse?.resultCode)
                     Log.d("LOGIN", "token : " + loginResponse?.token)
                     Log.d("LOGIN", "메인 화면으로 갑니다.")

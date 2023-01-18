@@ -1,4 +1,4 @@
-package com.example.todo_android.Data
+package com.example.todo_android.Data.Profile
 
 data class Login(
     val email: String,

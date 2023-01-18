@@ -13,8 +13,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
-import com.example.todo_android.Request.AuthEmailRequest
-import com.example.todo_android.Response.AuthEmailResponse
+import com.example.todo_android.Request.ProfileRequest.AuthEmailRequest
+import com.example.todo_android.Response.ProfileResponse.AuthEmailResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
