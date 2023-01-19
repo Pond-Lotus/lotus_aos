@@ -48,9 +48,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                         text = text,
                         color =
                         if (text == selectedOption) {
-                            Color.Magenta
-                        } else {
                             Color.Black
+                        } else {
+                            Color.Gray
                         },
                         modifier = Modifier
                             .clip(shape = RoundedCornerShape(24.dp))
@@ -58,12 +58,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 onSelectionChange(text)
                             }
                             .background(
-//                                Color.LightGray
-                                if (text == selectedOption) {
-                                    Color.Green
-                                } else {
-                                    Color.LightGray
-                                }
+                                Color.LightGray
+//                                if (text == selectedOption) {
+//                                    Color.Green
+//                                } else {
+//                                    Color.LightGray
+//                                }
                             )
                             .padding(
                                 vertical = 12.dp,
