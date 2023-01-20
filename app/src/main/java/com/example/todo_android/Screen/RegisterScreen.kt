@@ -1,6 +1,7 @@
 package com.example.todo_android.Screen
 
 import android.util.Log
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,6 +17,7 @@ import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.Request.ProfileRequest.RegisterRequest
 import com.example.todo_android.Response.ProfileResponse.RegisterResponse
+import com.example.todo_android.Util.MyApplication
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -96,8 +98,8 @@ fun RegisterScreen(routeAction: RouteAction) {
         var password2 by remember { mutableStateOf("") }
 
         TextField(
-            modifier = Modifier.width(300.dp),
-            value = email,
+            modifier = Modifier.width(300.dp).focusable(false),
+            value = MyApplication.prefs.getData("email", email),
             colors = TextFieldDefaults.textFieldColors(
                 Color(0xff9E9E9E),
                 disabledLabelColor = Color(0xff9E9E9E),
@@ -109,7 +111,8 @@ fun RegisterScreen(routeAction: RouteAction) {
             shape = RoundedCornerShape(20.dp),
             onValueChange = {
                 email = it
-            })
+            }
+        )
 
         Spacer(modifier = Modifier.height(30.dp))
 
