@@ -19,6 +19,7 @@ import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.LoginRequest
 import com.example.todo_android.Response.ProfileResponse.LoginResponse
+import com.example.todo_android.Util.MyApplication
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -55,12 +56,11 @@ fun sendLogin(email: String, password: String, routeAction: RouteAction) {
             when (loginResponse?.resultCode) {
                 "200" -> {
                     goCalendar(NAV_ROUTE.CALENDAR, routeAction)
+                    MyApplication.prefs.setData("token", loginResponse?.token.toString())
 
                     Log.d("LOGIN", "resultCode : " + loginResponse?.resultCode)
                     Log.d("LOGIN", "token : " + loginResponse?.token)
                     Log.d("LOGIN", "메인 화면으로 갑니다.")
-
-//                    MainActivity().saveData(loginResponse?.token)
                 }
                 "500" -> {
                     Log.d("LOGIN", "non_field_errors:[Check Your Email or Password]")

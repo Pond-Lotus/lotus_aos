@@ -15,6 +15,7 @@ import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.Request.ProfileRequest.AuthEmailRequest
 import com.example.todo_android.Response.ProfileResponse.AuthEmailResponse
+import com.example.todo_android.Util.MyApplication
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -54,6 +55,7 @@ fun authEmail(email: String, routeAction: RouteAction) {
                 "200" -> {
                     Log.d("AUTHEMAIL", "resultCode : " + authEmailResponse?.resultCode)
                     Log.d("AUTHEMAIL", "이메일 인증 코드 입력 화면으로 갑니다.")
+                    MyApplication.prefs.setData("email", email)
                     goAuthCode(NAV_ROUTE.AUTHCODE, routeAction)
                 }
                 "500" -> {
