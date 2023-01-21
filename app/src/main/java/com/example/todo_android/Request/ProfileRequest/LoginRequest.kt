@@ -9,7 +9,6 @@ import retrofit2.http.POST
 interface LoginRequest {
     @POST("/account/login/")
     fun requestLogin(
-//        @Header("Authorization") token: String,
         @Body loginRequest: Login
     ) : Call<LoginResponse>
 }
