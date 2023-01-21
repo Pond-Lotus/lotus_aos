@@ -20,7 +20,11 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun getData(token: String, year: String, month: String, day: String) {
+fun createTodo(token: String, year: String, month: String, day: String, title: String) {
+
+}
+
+fun readTodo(token: String, year: String, month: String, day: String) {
 
     var readTodoResponse: ReadTodoResponse? = null
 
@@ -48,10 +52,32 @@ fun getData(token: String, year: String, month: String, day: String) {
 
                 Log.d("CALENDAR1", "resultCode : " + readTodoResponse?.resultCode)
                 Log.d("CALENDAR1", "data : " + readTodoResponse?.data)
-//                Log.d("CALENDAR1", "data : " + readTodoResponse?.data)
             }
         })
 }
+
+fun updateTodo(
+    token: String,
+    year: String,
+    month: String,
+    day: String,
+    title: String,
+    done: Boolean,
+) {
+
+}
+
+fun deleteTodo(
+    token: String,
+    year: String,
+    month: String,
+    day: String,
+    title: String,
+    done: Boolean,
+) {
+
+}
+
 
 @Composable
 fun CalendarScreen(routeAction: RouteAction) {
@@ -68,6 +94,8 @@ fun CalendarScreen(routeAction: RouteAction) {
     val month = "1"
     val day = "5"
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
+    val title = "테스트 일정"
+    val done = false
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -80,9 +108,45 @@ fun CalendarScreen(routeAction: RouteAction) {
                 .width(300.dp)
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-            onClick = { getData(token, year, month, day) }
+            onClick = { readTodo(token, year, month, day) }
         ) {
-            Text(text = "투두리스트 값 가져오기", color = Color.Black)
+            Text(text = "TODO 조회", color = Color.Black)
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Button(
+            modifier = Modifier
+                .width(300.dp)
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
+            onClick = { createTodo(token, year, month, day, title) }
+        ) {
+            Text(text = "TODO 작성", color = Color.Black)
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Button(
+            modifier = Modifier
+                .width(300.dp)
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
+            onClick = { updateTodo(token, year, month, day, title, done) }
+        ) {
+            Text(text = "TODO 수정", color = Color.Black)
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Button(
+            modifier = Modifier
+                .width(300.dp)
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
+            onClick = { deleteTodo(token, year, month, day, title, done) }
+        ) {
+            Text(text = "TODO 삭제", color = Color.Black)
         }
 
 
