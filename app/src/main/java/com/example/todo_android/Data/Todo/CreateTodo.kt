@@ -5,5 +5,4 @@ data class CreateTodo(
     val month: String,
     val day: String,
     val title: String,
-    val detailContent: String,
 )

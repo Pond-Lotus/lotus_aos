@@ -51,9 +51,7 @@ fun Register(
         var registerRequest: RegisterRequest = retrofit.create(RegisterRequest::class.java)
 
         registerRequest.requestRegister(
-            com.example.todo_android.Data.Profile.Register(
-                email, nickname, password2))
-            .enqueue(object : Callback<RegisterResponse> {
+            com.example.todo_android.Data.Profile.Register(email, nickname, password2)).enqueue(object : Callback<RegisterResponse> {
 
                 // 실패 했을때
                 override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
