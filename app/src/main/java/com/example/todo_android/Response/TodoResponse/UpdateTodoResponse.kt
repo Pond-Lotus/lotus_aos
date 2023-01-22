@@ -1,5 +1,19 @@
 package com.example.todo_android.Response.TodoResponse
 
+import com.google.gson.annotations.SerializedName
+
 data class UpdateTodoResponse(
-    val resultCode: String
+    @SerializedName("resultCode")
+    val resultCode: String,
+    @SerializedName("data")
+    val data: UTodoResponse
+)
+
+// 응답값으로 data의 디테일한 값들
+data class UTodoResponse(
+    val title: String,
+    val year: Int,
+    val month: Int,
+    val day: Int,
+    val writer: String,
 )

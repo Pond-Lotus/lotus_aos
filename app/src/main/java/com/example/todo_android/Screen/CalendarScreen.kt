@@ -40,7 +40,7 @@ fun createTodo(token: String, year: String, month: String, day: String, title: S
 
             // 실패 했을때
             override fun onFailure(call: Call<CreateTodoResponse>, t: Throwable) {
-                Log.e("error", t.toString())
+                Log.e("error", t.message.toString())
             }
 
             // 성공 했을때
