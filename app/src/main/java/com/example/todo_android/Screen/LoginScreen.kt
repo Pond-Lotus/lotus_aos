@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -88,16 +87,15 @@ fun LoginScreen(routeAction: RouteAction) {
     {
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+        var checked by remember { mutableStateOf(false) }
 
         var passwordVisible by remember { mutableStateOf(false) }
-
 
         val icon = if (passwordVisible) {
             painterResource(id = R.drawable.openeye)
         } else {
             painterResource(id = R.drawable.closeeye)
         }
-
 
 
 
@@ -116,8 +114,7 @@ fun LoginScreen(routeAction: RouteAction) {
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
                 lineHeight = 31.sp,
-
-                )
+            )
         }
         Box() {
             Text(
@@ -215,22 +212,62 @@ fun LoginScreen(routeAction: RouteAction) {
             }
         )
 
-        Spacer(modifier = Modifier.height(60.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Box() {
+            Checkbox(
+                checked = checked,
+                onCheckedChange = {
+                    checked = it
+                }
+            )
+
+        }
+
+        Spacer(modifier = Modifier.width(4.42.dp))
+
+        Box() {
+            Text(
+                text = "자동 로그인",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+
+
 
         Button(
             modifier = Modifier
                 .width(300.dp)
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-            onClick = { sendLogin(email, password, routeAction) }
+            onClick =
+            {
+                sendLogin(email, password, routeAction)
+            }
         ) {
             Text(
-                text =
-                stringResource
-                    (
-                    id = R.string.login
-                ),
-                color = Color.Black
+                text = "로그인",
+                color = Color.Black,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
+        }
+
+        Box() {
+            Text(
+                text = "이메일 / 비밀번호 찾기",
+                fontSize = 14.sp,
+                color = Color(0xFF999999)
+
+            )
+        }
+        Box() {
+            Text(
+                text = "회원 가입",
+                color = Color.Black,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
             )
         }
     }
