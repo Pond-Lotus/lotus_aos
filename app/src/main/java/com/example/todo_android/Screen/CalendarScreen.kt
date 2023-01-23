@@ -15,9 +15,11 @@ import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Request.TodoRequest.CreateTodoRequest
+import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
 import com.example.todo_android.Request.TodoRequest.ReadTodoRequest
 import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
 import com.example.todo_android.Response.TodoResponse.CreateTodoResponse
+import com.example.todo_android.Response.TodoResponse.DeleteTodoResponse
 import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.Response.TodoResponse.UpdateTodoResponse
 import com.example.todo_android.Util.MyApplication
@@ -142,13 +144,36 @@ fun updateTodo(
 
 fun deleteTodo(
     token: String,
-    year: String,
-    month: String,
-    day: String,
-    title: String,
-    done: String,
 ) {
+    var deleteTodoResponse: DeleteTodoResponse? = null
 
+    var retrofit = Retrofit.Builder()
+        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    var deleteTodoRequest: DeleteTodoRequest = retrofit.create(DeleteTodoRequest::class.java)
+
+    deleteTodoRequest.requestDeleteTodo(token)
+        .enqueue(object : Callback<DeleteTodoResponse> {
+
+            // 실패 했을때
+            override fun onFailure(call: Call<DeleteTodoResponse>, t: Throwable) {
+                Log.e("updateTodo", t.message.toString())
+            }
+
+            // 성공 했을때
+            override fun onResponse(
+                call: Call<DeleteTodoResponse>,
+                response: Response<DeleteTodoResponse>,
+            ) {
+                deleteTodoResponse = response.body()
+
+                Log.d("deleteTodo", "token : " + MyApplication.prefs.getData("token", ""))
+                Log.d("deleteTodo", "resultCode : " + deleteTodoResponse?.resultCode)
+                Log.d("deleteTodo", "data : " + deleteTodoResponse?.data)
+            }
+        })
 }
 
 
@@ -165,10 +190,10 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     val year = "2023"
     val month = "2"
-    val day = "1"
+    val day = "5"
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
-    val title = "123123123 -> 지금 수정했어요"
-    val done = "true"
+    val title = "테스트 7시47분->48분에수정이요"
+    val done = "false"
 
     Column(
         modifier = Modifier
@@ -268,7 +293,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 .width(300.dp)
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-            onClick = { /* deleteTodo(token, year, month, day, title, done) */ }
+            onClick = { deleteTodo(token) }
         ) {
             Text(text = "TODO 삭제", color = Color.Black)
         }
