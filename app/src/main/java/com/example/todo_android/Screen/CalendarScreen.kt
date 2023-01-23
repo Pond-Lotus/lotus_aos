@@ -125,12 +125,17 @@ fun updateTodo(
                 call: Call<UpdateTodoResponse>,
                 response: Response<UpdateTodoResponse>,
             ) {
-                updateTodoResponse = response.body()
 
-                Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
-                Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
-                Log.d("updateTodo", "data : " + updateTodoResponse?.data)
+                if (response.isSuccessful) {
+                    updateTodoResponse = response.body()
 
+                    Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
+                    Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
+                    Log.d("updateTodo", "data : " + updateTodoResponse?.data)
+                } else {
+                    Log.e("updateTodo", "resultCode : " + response.body())
+                    Log.e("updateTodo", "code : " + response.code())
+                }
             }
         })
 }
@@ -159,10 +164,10 @@ fun CalendarScreen(routeAction: RouteAction) {
     val onSelectionChange = { text: String -> selectedOption = text }
 
     val year = "2023"
-    val month = "1"
-    val day = "30"
+    val month = "2"
+    val day = "1"
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
-    val title = "id가 11번인 리스트 수정했어요."
+    val title = "123123123 -> 지금 수정했어요"
     val done = "true"
 
     Column(

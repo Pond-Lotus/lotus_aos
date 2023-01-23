@@ -8,13 +8,10 @@ import retrofit2.http.Header
 import retrofit2.http.PUT
 
 interface UpdateTodoRequest {
-    @PUT("/todo/todo/{11}/")
+    @PUT("/todo/todo/50/")
     fun requestUpdateTodo(
         @Header("Authorization") token: String,
-        @Body createUpdateRequest : UpdateTodo
-    ) : Call<UpdateTodoResponse>
-
-
-
-
+//        @Path("id") id: String,
+        @Body createUpdateRequest: UpdateTodo,
+    ): Call<UpdateTodoResponse>
 }
