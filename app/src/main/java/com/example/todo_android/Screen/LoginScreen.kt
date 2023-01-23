@@ -244,7 +244,8 @@ fun LoginScreen(routeAction: RouteAction) {
             onClick =
             {
                 sendLogin(email, password, routeAction)
-            }
+            },
+            shape = RoundedCornerShape(18.dp)
         ) {
             Text(
                 text = "로그인",
