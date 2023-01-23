@@ -4,15 +4,22 @@ import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.todo_android.Data.Profile.Login
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -82,40 +89,134 @@ fun LoginScreen(routeAction: RouteAction) {
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
 
+        var passwordVisible by remember { mutableStateOf(false) }
+
+
+        val icon = if (passwordVisible) {
+            painterResource(id = R.drawable.openeye)
+        } else {
+            painterResource(id = R.drawable.closeeye)
+        }
+
+
+
+
+        Box() {
+            Text(
+                text = "Todo",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.SansSerif,
+            )
+        }
+        Box() {
+            Text(
+                text = "토도토도리",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.SansSerif,
+                lineHeight = 31.sp,
+
+                )
+        }
+        Box() {
+            Text(
+                text = "어쩌구 저쩌구 어플 카피라이팅",
+                fontWeight = FontWeight.Light,
+                fontFamily = FontFamily.SansSerif,
+                lineHeight = 19.sp,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(72.dp))
 
         TextField(
-            modifier = Modifier.width(300.dp),
+            modifier = Modifier
+                .width(308.dp)
+                .height(54.dp),
             value = email,
             colors = TextFieldDefaults.textFieldColors(
-                Color(0xff9E9E9E),
-                disabledLabelColor = Color(0xff9E9E9E),
+                containerColor = Color(0xffF2F2F2),
+                disabledLabelColor = Color(0xffF2F2F2),
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(18.dp),
             onValueChange = {
                 email = it
-            })
-        Spacer(modifier = Modifier.height(30.dp))
+            },
+            placeholder = {
+                Text(
+                    text = "이메일 입력",
+                    fontSize = 16.sp,
+                    color = Color(0xffA9A9A9)
+                )
+            },
+            trailingIcon =
+            {
+                IconButton(onClick = {
+                    email = ""
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = "ClearIcon"
+                    )
+                }
+            },
+        )
+
+        Spacer(modifier = Modifier.height(5.dp))
+
         TextField(
-            modifier = Modifier.width(300.dp),
+            modifier = Modifier
+                .width(308.dp)
+                .height(54.dp),
             value = password,
             colors = TextFieldDefaults.textFieldColors(
-                Color(0xff9E9E9E),
-                disabledLabelColor = Color(0xffE9E9E9),
+                containerColor = Color(0xffF2F2F2),
+                disabledLabelColor = Color(0xffF2F2F2),
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
             singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (passwordVisible) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation()
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(18.dp),
             onValueChange = {
                 password = it
-            })
+            },
+            placeholder = {
+                Text(
+                    text = "비밀번호 입력",
+                    fontSize = 16.sp,
+                    color = Color(0xffA9A9A9)
+                )
+            },
+            trailingIcon = {
+
+                val description = if (passwordVisible) "Hide password" else "Show password"
+
+                IconButton(onClick =
+                {
+                    passwordVisible = !passwordVisible
+                })
+                {
+                    Icon(
+                        painter = icon,
+                        contentDescription = "EyeIcon"
+                    )
+                }
+            }
+        )
+
         Spacer(modifier = Modifier.height(60.dp))
+
         Button(
             modifier = Modifier
                 .width(300.dp)
@@ -123,7 +224,14 @@ fun LoginScreen(routeAction: RouteAction) {
             colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
             onClick = { sendLogin(email, password, routeAction) }
         ) {
-            Text(text = stringResource(id = R.string.login), color = Color.Black)
+            Text(
+                text =
+                stringResource
+                    (
+                    id = R.string.login
+                ),
+                color = Color.Black
+            )
         }
     }
 }
