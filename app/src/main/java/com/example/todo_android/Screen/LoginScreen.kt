@@ -79,12 +79,14 @@ fun sendLogin(email: String, password: String, routeAction: RouteAction) {
 @ExperimentalMaterial3Api
 @Composable
 fun LoginScreen(routeAction: RouteAction) {
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     )
     {
+
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var checked by remember { mutableStateOf(false) }
@@ -98,16 +100,17 @@ fun LoginScreen(routeAction: RouteAction) {
         }
 
 
-
-        Box() {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(start = 30.dp),
+//            horizontalAlignment = Alignment.Start,
+//            verticalArrangement = Arrangement.Center
+        ) {
             Text(
-                text = "Todo",
+                text = "ToDo",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
             )
-        }
-        Box() {
             Text(
                 text = "토도토도리",
                 fontSize = 28.sp,
@@ -115,8 +118,6 @@ fun LoginScreen(routeAction: RouteAction) {
                 fontFamily = FontFamily.SansSerif,
                 lineHeight = 31.sp,
             )
-        }
-        Box() {
             Text(
                 text = "어쩌구 저쩌구 어플 카피라이팅",
                 fontWeight = FontWeight.Light,
@@ -214,32 +215,35 @@ fun LoginScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Box() {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+
+        ) {
             Checkbox(
                 checked = checked,
                 onCheckedChange = {
                     checked = it
-                }
+                },
+                modifier = Modifier.padding(start = 3.dp)
             )
 
-        }
+//            Spacer(modifier = Modifier.width(4.dp))
 
-        Spacer(modifier = Modifier.width(4.42.dp))
-
-        Box() {
             Text(
                 text = "자동 로그인",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 3.dp)
             )
         }
 
-
+        Spacer(modifier = Modifier.height(38.dp))
 
         Button(
             modifier = Modifier
-                .width(300.dp)
-                .height(50.dp),
+                .width(308.dp)
+                .height(54.dp),
             colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
             onClick =
             {
@@ -255,20 +259,24 @@ fun LoginScreen(routeAction: RouteAction) {
             )
         }
 
-        Box() {
+        Spacer(modifier = Modifier.height(14.dp))
+
+        Row() {
             Text(
                 text = "이메일 / 비밀번호 찾기",
                 fontSize = 14.sp,
-                color = Color(0xFF999999)
-
+                color = Color(0xFF999999),
+                modifier = Modifier.padding(end = 10.dp)
             )
-        }
-        Box() {
+
+            Spacer(modifier = Modifier.width(122.dp))
+
             Text(
                 text = "회원 가입",
                 color = Color.Black,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 7.dp)
             )
         }
     }
