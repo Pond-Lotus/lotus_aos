@@ -190,10 +190,10 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     val year = "2023"
     val month = "2"
-    val day = "5"
+    val day = "6"
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
-    val title = "테스트 7시47분->48분에수정이요"
-    val done = "false"
+    val title = "qkrwhdwns"
+    val done = "true"
 
     Column(
         modifier = Modifier

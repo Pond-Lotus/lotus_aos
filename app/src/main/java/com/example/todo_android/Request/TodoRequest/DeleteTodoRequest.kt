@@ -6,7 +6,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.Header
 
 interface DeleteTodoRequest {
-    @DELETE("/todo/todo/50/")
+    @DELETE("/todo/todo/93/")
     fun requestDeleteTodo(
         @Header("Authorization") token: String
     ): Call<DeleteTodoResponse>
