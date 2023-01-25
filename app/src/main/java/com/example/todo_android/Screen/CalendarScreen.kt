@@ -1,15 +1,19 @@
 package com.example.todo_android.Screen
 
 import android.util.Log
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
@@ -23,6 +27,8 @@ import com.example.todo_android.Response.TodoResponse.DeleteTodoResponse
 import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.Response.TodoResponse.UpdateTodoResponse
 import com.example.todo_android.Util.MyApplication
+import com.himanshoe.kalendar.Kalendar
+import com.himanshoe.kalendar.model.KalendarType
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -195,55 +201,70 @@ fun CalendarScreen(routeAction: RouteAction) {
     val title = "qkrwhdwns"
     val done = "true"
 
+    var isVisible by remember { mutableStateOf(true) }
+
+    val density = LocalDensity.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
 
-//        Spacer(modifier = Modifier.height(52.dp))
-//
-//        Row(
-//            modifier = Modifier
-//                .clip(shape = RoundedCornerShape(24.dp))
-//                .background(Color(0xffe9e9ed))
-//        )
-//        {
-//            states.forEach { text ->
-//                Text(
-//                    text = text,
-//                    color =
-//                    if (text == selectedOption) {
-//                        Color.Black
-//                    } else {
-//                        Color.Gray
-//                    },
-//                    modifier = Modifier
-//                        .clip(shape = RoundedCornerShape(24.dp))
-//                        .clickable {
-//                            onSelectionChange(text)
-//                        }
-//                        .background(
-//                            Color.LightGray
-//                        )
-//                        .padding(
-//                            vertical = 12.dp,
-//                            horizontal = 16.dp,
-//                        ),
-//                )
-//            }
-//        }
-//
-//        Spacer(modifier = Modifier.height(73.dp))
-//
-//
-//        // 가로 스크롤 커스텀 캘린더
-//        Kalendar(kalendarType = KalendarType.Oceanic())
-//        // 기본 커스텀 캘린더
-//        Kalendar(kalendarType = KalendarType.Firey)
+        Spacer(modifier = Modifier.height(52.dp))
 
+        Row(
+            modifier = Modifier
+                .clip(shape = RoundedCornerShape(24.dp))
+                .background(Color(0xffe9e9ed))
+                .padding(4.dp)
+        )
+        {
+            states.forEach { text ->
+                Text(
+                    text = text,
+                    color =
+                    if (text == selectedOption) {
+                        Color.Black
+                    } else {
+                        Color.Gray
+                    },
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(24.dp))
+                        .clickable {
+                            onSelectionChange(text)
+                            isVisible = !isVisible
+                        }
+                        .background(
+                            if (text == selectedOption) {
+                                Color.White
+                            } else {
+                                Color(0xffe9e9ed)
+                            }
+                        )
+                        .padding(
+                            vertical = 5.dp,
+                            horizontal = 16.dp,
+                        )
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(29.dp))
+
+        AnimatedVisibility(isVisible)
+        {
+            Kalendar(
+                kalendarType = KalendarType.Oceanic()
+            )
+        }
+
+        AnimatedVisibility(!isVisible) {
+            Kalendar(kalendarType = KalendarType.Firey)
+        }
 
 //        Surface(
 //            shape = RoundedCornerShape(24.dp),
@@ -252,50 +273,50 @@ fun CalendarScreen(routeAction: RouteAction) {
 //        ) {}
 
 
-        Button(
-            modifier = Modifier
-                .width(300.dp)
-                .height(50.dp),
-            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-            onClick = { readTodo(token, year, month, day) }
-        ) {
-            Text(text = "TODO 조회", color = Color.Black)
-        }
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        Button(
-            modifier = Modifier
-                .width(300.dp)
-                .height(50.dp),
-            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-            onClick = { createTodo(token, year, month, day, title) }
-        ) {
-            Text(text = "TODO 작성", color = Color.Black)
-        }
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        Button(
-            modifier = Modifier
-                .width(300.dp)
-                .height(50.dp),
-            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-            onClick = { updateTodo(token, year, month, day, title, done) }
-        ) {
-            Text(text = "TODO 수정", color = Color.Black)
-        }
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        Button(
-            modifier = Modifier
-                .width(300.dp)
-                .height(50.dp),
-            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-            onClick = { deleteTodo(token) }
-        ) {
-            Text(text = "TODO 삭제", color = Color.Black)
-        }
+//        Button(
+//            modifier = Modifier
+//                .width(300.dp)
+//                .height(50.dp),
+//            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
+//            onClick = { readTodo(token, year, month, day) }
+//        ) {
+//            Text(text = "TODO 조회", color = Color.Black)
+//        }
+//
+//        Spacer(modifier = Modifier.height(30.dp))
+//
+//        Button(
+//            modifier = Modifier
+//                .width(300.dp)
+//                .height(50.dp),
+//            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
+//            onClick = { createTodo(token, year, month, day, title) }
+//        ) {
+//            Text(text = "TODO 작성", color = Color.Black)
+//        }
+//
+//        Spacer(modifier = Modifier.height(30.dp))
+//
+//        Button(
+//            modifier = Modifier
+//                .width(300.dp)
+//                .height(50.dp),
+//            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
+//            onClick = { updateTodo(token, year, month, day, title, done) }
+//        ) {
+//            Text(text = "TODO 수정", color = Color.Black)
+//        }
+//
+//        Spacer(modifier = Modifier.height(30.dp))
+//
+//        Button(
+//            modifier = Modifier
+//                .width(300.dp)
+//                .height(50.dp),
+//            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
+//            onClick = { deleteTodo(token) }
+//        ) {
+//            Text(text = "TODO 삭제", color = Color.Black)
+//        }
     }
 }
