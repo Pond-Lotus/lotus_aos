@@ -21,7 +21,7 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
 
 @ExperimentalMaterial3Api
 @Composable
-fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.MAIN) {
+fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.LOGIN) {
 
     // 네비게이션 컨트롤러 가져오기
     val navController = rememberNavController()
@@ -33,12 +33,12 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.MAIN) {
     // 네비게이션 연결할 스크린들을 설정한다.
     NavHost(navController, startRoute.routeName) {
 
-        //라우트 이름 = 화면의 키
-        //메인
-        composable(NAV_ROUTE.MAIN.routeName) {
-            // 화면이 들어가는 부분 = 값
-            MainScreen(routeAction)
-        }
+//        //라우트 이름 = 화면의 키
+//        //메인
+//        composable(NAV_ROUTE.MAIN.routeName) {
+//            // 화면이 들어가는 부분 = 값
+//            MainScreen(routeAction)
+//        }
 
         //라우트 이름 = 화면의 키
         //로그인
