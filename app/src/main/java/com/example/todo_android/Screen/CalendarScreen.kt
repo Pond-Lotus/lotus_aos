@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.node.modifierElementOf
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,6 +29,7 @@ import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.Response.TodoResponse.UpdateTodoResponse
 import com.example.todo_android.Util.MyApplication
 import com.himanshoe.kalendar.Kalendar
+import com.himanshoe.kalendar.color.KalendarThemeColor
 import com.himanshoe.kalendar.model.KalendarType
 import retrofit2.Call
 import retrofit2.Callback
@@ -203,7 +205,6 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     var isVisible by remember { mutableStateOf(true) }
 
-    val density = LocalDensity.current
 
     Column(
         modifier = Modifier
@@ -213,7 +214,7 @@ fun CalendarScreen(routeAction: RouteAction) {
         verticalArrangement = Arrangement.Top
     ) {
 
-        Spacer(modifier = Modifier.height(52.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
         Row(
             modifier = Modifier
