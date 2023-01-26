@@ -6,16 +6,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.node.modifierElementOf
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Observer
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
@@ -30,12 +29,16 @@ import com.example.todo_android.Response.TodoResponse.UpdateTodoResponse
 import com.example.todo_android.Util.MyApplication
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.color.KalendarThemeColor
+import com.himanshoe.kalendar.component.day.config.KalendarDayDefaultColors
+import com.himanshoe.kalendar.model.KalendarDay
+import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Date
 
 fun createTodo(token: String, year: String, month: String, day: String, title: String) {
 
@@ -185,6 +188,7 @@ fun deleteTodo(
 }
 
 
+@ExperimentalMaterial3Api
 @Composable
 fun CalendarScreen(routeAction: RouteAction) {
 
@@ -196,15 +200,21 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     val onSelectionChange = { text: String -> selectedOption = text }
 
-    val year = "2023"
-    val month = "2"
-    val day = "6"
-    val token = "Token ${MyApplication.prefs.getData("token", "")}"
-    val title = "qkrwhdwns"
-    val done = "true"
-
     var isVisible by remember { mutableStateOf(true) }
 
+//    val year = "2023"
+//    val month = "2"
+//    val day = "6"
+//    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+//    val title = "qkrwhdwns"
+//    val done = "true"
+
+    val year = remember { mutableStateOf("") }
+    val month = remember { mutableStateOf("") }
+    val day = remember { mutableStateOf("") }
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+    val title = remember { mutableStateOf("") }
+    val done = remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -259,13 +269,33 @@ fun CalendarScreen(routeAction: RouteAction) {
         AnimatedVisibility(isVisible)
         {
             Kalendar(
-                kalendarType = KalendarType.Oceanic()
-            )
+                kalendarType = KalendarType.Oceanic(),
+                kalendarDayColors = KalendarDayDefaultColors.defaultColors(Color.White),
+                onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
+                    Log.d("Kalendar",
+                        "year: ${kalendarDay.localDate.year}, month : ${kalendarDay.localDate.month}, day: ${kalendarDay.localDate.dayOfMonth}")
+                })
         }
 
         AnimatedVisibility(!isVisible) {
-            Kalendar(kalendarType = KalendarType.Firey)
+            Kalendar(
+                kalendarType = KalendarType.Firey,
+                onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
+                    Log.d("Kalendar",
+                        "year: ${kalendarDay.localDate.year}, month : ${kalendarDay.localDate.month}, day: ${kalendarDay.localDate.dayOfMonth}")
+                })
         }
+
+
+//        Scaffold(floatingActionButton = {
+//            FloatingActionButton(onClick = { /*TODO*/ }) {
+//                Icon(imageVector = Icons.Default.Add, contentDescription = "todolist 추가")
+//            }
+//        }) {
+//            LazyColumn {
+//                TodoItem()
+//            }
+//        }
 
 //        Surface(
 //            shape = RoundedCornerShape(24.dp),
