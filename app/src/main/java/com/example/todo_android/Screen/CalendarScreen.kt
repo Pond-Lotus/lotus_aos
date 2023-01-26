@@ -270,7 +270,7 @@ fun CalendarScreen(routeAction: RouteAction) {
         {
             Kalendar(
                 kalendarType = KalendarType.Oceanic(),
-                kalendarDayColors = KalendarDayDefaultColors.defaultColors(Color.White),
+
                 onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
                     Log.d("Kalendar",
                         "year: ${kalendarDay.localDate.year}, month : ${kalendarDay.localDate.month}, day: ${kalendarDay.localDate.dayOfMonth}")
