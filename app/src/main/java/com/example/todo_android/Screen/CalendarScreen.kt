@@ -77,7 +77,7 @@ fun createTodo(token: String, year: String, month: String, day: String, title: S
         })
 }
 
-fun readTodo(token: String, year: String, month: String, day: String) {
+fun readTodo(token: String, year: Int, month: Int, day: Int) {
 
     var readTodoResponse: ReadTodoResponse? = null
 
@@ -214,9 +214,9 @@ fun CalendarScreen(routeAction: RouteAction) {
 //    val title = "qkrwhdwns"
 //    val done = "true"
 
-    var year by remember { mutableStateOf("") }
-    var month by remember { mutableStateOf("") }
-    var day by remember { mutableStateOf("") }
+    var year by remember { mutableStateOf(0) }
+    var month by remember { mutableStateOf(0) }
+    var day by remember { mutableStateOf(0) }
 
     val title = remember { mutableStateOf("") }
     val done = remember { mutableStateOf("") }
@@ -282,9 +282,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                     headerTextColor = Color.Black),
                 onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
-                    year = kalendarDay.localDate.year.toString()
-                    month = kalendarDay.localDate.month.toString()
-                    day = kalendarDay.localDate.dayOfMonth.toString()
+                    year = kalendarDay.localDate.year
+                    month = kalendarDay.localDate.monthNumber
+                    day = kalendarDay.localDate.dayOfMonth
 
                     Log.d("Kalendar",
                         "year: ${kalendarDay.localDate.year}, month : ${kalendarDay.localDate.month}, day: ${kalendarDay.localDate.dayOfMonth}")
@@ -304,9 +304,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                     headerTextColor = Color.Black),
                 onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
-                    year = kalendarDay.localDate.year.toString()
-                    month = kalendarDay.localDate.month.toString()
-                    day = kalendarDay.localDate.dayOfMonth.toString()
+                    year = kalendarDay.localDate.year
+                    month = kalendarDay.localDate.monthNumber
+                    day = kalendarDay.localDate.dayOfMonth
 
                     Log.d("Kalendar",
                         "year: ${kalendarDay.localDate.year}, month : ${kalendarDay.localDate.month}, day: ${kalendarDay.localDate.dayOfMonth}")
@@ -318,7 +318,7 @@ fun CalendarScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(29.dp))
 
-        Text(text = day)
+        Text(text = day.toString())
 
         LazyColumn() {
             items(10) {
