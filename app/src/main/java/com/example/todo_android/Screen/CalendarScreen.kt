@@ -5,6 +5,7 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
+import com.example.todo_android.Component.TodoItem
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
@@ -203,6 +205,8 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     var isVisible by remember { mutableStateOf(true) }
 
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
 //    val year = "2023"
 //    val month = "2"
 //    val day = "6"
@@ -210,10 +214,10 @@ fun CalendarScreen(routeAction: RouteAction) {
 //    val title = "qkrwhdwns"
 //    val done = "true"
 
-    val year = remember { mutableStateOf("") }
-    val month = remember { mutableStateOf("") }
-    val day = remember { mutableStateOf("") }
-    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+    var year by remember { mutableStateOf("") }
+    var month by remember { mutableStateOf("") }
+    var day by remember { mutableStateOf("") }
+
     val title = remember { mutableStateOf("") }
     val done = remember { mutableStateOf("") }
 
@@ -277,8 +281,16 @@ fun CalendarScreen(routeAction: RouteAction) {
                     dayBackgroundColor = Color(0xffFBE3C7),
                     headerTextColor = Color.Black),
                 onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
+
+                    year = kalendarDay.localDate.year.toString()
+                    month = kalendarDay.localDate.month.toString()
+                    day = kalendarDay.localDate.dayOfMonth.toString()
+
                     Log.d("Kalendar",
                         "year: ${kalendarDay.localDate.year}, month : ${kalendarDay.localDate.month}, day: ${kalendarDay.localDate.dayOfMonth}")
+
+
+                    readTodo(token, year, month, day)
                 })
         }
 
@@ -291,9 +303,27 @@ fun CalendarScreen(routeAction: RouteAction) {
                     dayBackgroundColor = Color(0xffFBE3C7),
                     headerTextColor = Color.Black),
                 onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
+
+                    year = kalendarDay.localDate.year.toString()
+                    month = kalendarDay.localDate.month.toString()
+                    day = kalendarDay.localDate.dayOfMonth.toString()
+
                     Log.d("Kalendar",
                         "year: ${kalendarDay.localDate.year}, month : ${kalendarDay.localDate.month}, day: ${kalendarDay.localDate.dayOfMonth}")
+
+
+                    readTodo(token, year, month, day)
                 })
+        }
+
+        Spacer(modifier = Modifier.height(29.dp))
+
+        Text(text = day)
+
+        LazyColumn() {
+            items(10) {
+                TodoItem(number = it)
+            }
         }
 
 
