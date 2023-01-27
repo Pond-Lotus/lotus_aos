@@ -29,6 +29,7 @@ import com.example.todo_android.Response.TodoResponse.UpdateTodoResponse
 import com.example.todo_android.Util.MyApplication
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.color.KalendarThemeColor
+import com.himanshoe.kalendar.component.day.config.KalendarDayColors
 import com.himanshoe.kalendar.component.day.config.KalendarDayDefaultColors
 import com.himanshoe.kalendar.model.KalendarDay
 import com.himanshoe.kalendar.model.KalendarEvent
@@ -270,7 +271,11 @@ fun CalendarScreen(routeAction: RouteAction) {
         {
             Kalendar(
                 kalendarType = KalendarType.Oceanic(),
-
+                kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
+                kalendarThemeColor = KalendarThemeColor(
+                    backgroundColor = Color.White,
+                    dayBackgroundColor = Color(0xffFBE3C7),
+                    headerTextColor = Color.Black),
                 onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
                     Log.d("Kalendar",
                         "year: ${kalendarDay.localDate.year}, month : ${kalendarDay.localDate.month}, day: ${kalendarDay.localDate.dayOfMonth}")
@@ -280,6 +285,11 @@ fun CalendarScreen(routeAction: RouteAction) {
         AnimatedVisibility(!isVisible) {
             Kalendar(
                 kalendarType = KalendarType.Firey,
+                kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
+                kalendarThemeColor = KalendarThemeColor(
+                    backgroundColor = Color.White,
+                    dayBackgroundColor = Color(0xffFBE3C7),
+                    headerTextColor = Color.Black),
                 onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
                     Log.d("Kalendar",
                         "year: ${kalendarDay.localDate.year}, month : ${kalendarDay.localDate.month}, day: ${kalendarDay.localDate.dayOfMonth}")
