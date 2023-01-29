@@ -1,6 +1,7 @@
 package com.example.todo_android.Screen
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,6 +34,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 fun goCalendar(route: NAV_ROUTE, routeAction: RouteAction) {
+    routeAction.navTo(route)
+}
+
+fun goAuthEmail(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
@@ -276,7 +281,9 @@ fun LoginScreen(routeAction: RouteAction) {
                 color = Color.Black,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 7.dp)
+                modifier = Modifier.padding(start = 7.dp).clickable {
+                    goAuthEmail(NAV_ROUTE.AUTHEMAIL, routeAction)
+                }
             )
         }
     }
