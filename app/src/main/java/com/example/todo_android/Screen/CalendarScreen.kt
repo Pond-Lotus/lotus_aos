@@ -5,7 +5,6 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,8 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Observer
-import com.example.todo_android.Component.TodoItem
+import com.example.todo_android.Component.TodoItemList
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
@@ -32,7 +30,6 @@ import com.example.todo_android.Util.MyApplication
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.color.KalendarThemeColor
 import com.himanshoe.kalendar.component.day.config.KalendarDayColors
-import com.himanshoe.kalendar.component.day.config.KalendarDayDefaultColors
 import com.himanshoe.kalendar.model.KalendarDay
 import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
@@ -41,7 +38,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.Date
 
 fun createTodo(token: String, year: String, month: String, day: String, title: String) {
 
@@ -218,6 +214,10 @@ fun CalendarScreen(routeAction: RouteAction) {
     var month by remember { mutableStateOf(0) }
     var day by remember { mutableStateOf(0) }
 
+    var todoList = remember {
+        mutableStateListOf<ReadTodoResponse>()
+    }
+
     val title = remember { mutableStateOf("") }
     val done = remember { mutableStateOf("") }
 
@@ -286,9 +286,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                     month = kalendarDay.localDate.monthNumber
                     day = kalendarDay.localDate.dayOfMonth
 
-                    Log.d("Kalendar",
-                        "year: ${kalendarDay.localDate.year}, month : ${kalendarDay.localDate.month}, day: ${kalendarDay.localDate.dayOfMonth}")
 
+                    todoList.clear()
 
                     readTodo(token, year, month, day)
                 })
@@ -308,9 +307,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     month = kalendarDay.localDate.monthNumber
                     day = kalendarDay.localDate.dayOfMonth
 
-                    Log.d("Kalendar",
-                        "year: ${kalendarDay.localDate.year}, month : ${kalendarDay.localDate.month}, day: ${kalendarDay.localDate.dayOfMonth}")
-
+                    todoList.clear()
 
                     readTodo(token, year, month, day)
                 })
@@ -319,12 +316,6 @@ fun CalendarScreen(routeAction: RouteAction) {
         Spacer(modifier = Modifier.height(29.dp))
 
         Text(text = day.toString())
-
-        LazyColumn() {
-            items(10) {
-                TodoItem(number = it)
-            }
-        }
 
 
 //        Scaffold(floatingActionButton = {

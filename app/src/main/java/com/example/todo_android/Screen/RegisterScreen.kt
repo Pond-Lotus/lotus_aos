@@ -68,7 +68,7 @@ fun Register(
 
                     when (registerResponse?.resultCode) {
                         "200" -> {
-                            goMain2(NAV_ROUTE.MAIN, routeAction)
+                            goMain2(NAV_ROUTE.LOGIN, routeAction)
                             Log.d("REGISTER", "메인 화면으로 갑니다.")
                             Log.d("REGISTER", "resultCode : " + registerResponse?.resultCode)
                         }
