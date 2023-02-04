@@ -72,6 +72,16 @@ fun ProfileScreen(routeAction: RouteAction) {
                 }) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
                 }
+            },
+            actions = {
+//                IconButton(onClick = {
+//                    goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
+//                }) {
+//
+//                }
+                Text(text = "완료", modifier = Modifier.padding(30.dp).clickable {
+                    /**/
+                })
             }
         )
 

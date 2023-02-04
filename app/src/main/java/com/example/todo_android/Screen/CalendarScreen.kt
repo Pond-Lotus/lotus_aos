@@ -246,13 +246,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }) {
                     Icon(imageVector = Icons.Filled.Menu, contentDescription = "profile")
                 }
-            },
-            navigationIcon = {
-                IconButton(onClick = {
-                    goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
-                }) {
-                    Text(text = "완료")
-                }
             }
         )
         
