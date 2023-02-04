@@ -29,7 +29,7 @@ fun goMain2(route: NAV_ROUTE, routeAction: RouteAction) {
 }
 
 fun Register(
-    email: String, nickname: String, password1: String, password2: String, routeAction: RouteAction
+    authEmail: String, nickname: String, password1: String, password2: String, routeAction: RouteAction
 ){
 
     if (!(password1.length >= 8 && password2.length >= 8)) {
@@ -51,7 +51,7 @@ fun Register(
         var registerRequest: RegisterRequest = retrofit.create(RegisterRequest::class.java)
 
         registerRequest.requestRegister(
-            com.example.todo_android.Data.Profile.Register(email, nickname, password2)).enqueue(object : Callback<RegisterResponse> {
+            com.example.todo_android.Data.Profile.Register(authEmail, nickname, password2)).enqueue(object : Callback<RegisterResponse> {
 
                 // 실패 했을때
                 override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
@@ -91,10 +91,13 @@ fun RegisterScreen(routeAction: RouteAction) {
         verticalArrangement = Arrangement.Center
     )
     {
-        var email by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("")}
         var nickname by remember { mutableStateOf("") }
         var password1 by remember { mutableStateOf("") }
         var password2 by remember { mutableStateOf("") }
+
+        var authEmail: String = MyApplication.prefs.getData("email", email)
+
 
         TextField(
             modifier = Modifier.width(300.dp).focusable(false),
@@ -191,7 +194,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                     .width(90.dp)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-                onClick = { Register(email, nickname, password1, password2, routeAction) }
+                onClick = { Register(authEmail, nickname, password1, password2, routeAction) }
             ) {
                 Text(
                     text = "다음 >",
