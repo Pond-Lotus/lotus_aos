@@ -29,7 +29,7 @@ fun goMain2(route: NAV_ROUTE, routeAction: RouteAction) {
 }
 
 fun Register(
-    email: String, nickname: String, password1: String, password2: String, routeAction: RouteAction,
+    email: String, nickname: String, password1: String, password2: String, routeAction: RouteAction
 ){
 
     if (!(password1.length >= 8 && password2.length >= 8)) {
@@ -55,7 +55,7 @@ fun Register(
 
                 // 실패 했을때
                 override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
-                    Log.e("", t.message.toString())
+                    Log.e("REGISTER", t.message.toString())
                 }
 
                 // 성공 했을때
@@ -67,6 +67,7 @@ fun Register(
                     registerResponse = response.body()
 
                     when (registerResponse?.resultCode) {
+
                         "200" -> {
                             goMain2(NAV_ROUTE.LOGIN, routeAction)
                             Log.d("REGISTER", "메인 화면으로 갑니다.")

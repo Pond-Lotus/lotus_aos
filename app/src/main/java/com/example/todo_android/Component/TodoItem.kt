@@ -31,7 +31,7 @@ fun TodoItem(Todo: ReadTodoResponse) {
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = Todo.data.toString(),
+                text = Todo.data[0].title
             )
         }
     }

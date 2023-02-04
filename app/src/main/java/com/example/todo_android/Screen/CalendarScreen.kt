@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +20,7 @@ import com.example.todo_android.Component.TodoItemList
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
+import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.Request.TodoRequest.CreateTodoRequest
 import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
 import com.example.todo_android.Request.TodoRequest.ReadTodoRequest
@@ -38,6 +41,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
+fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
+    routeAction.navTo(route)
+}
+
+
 
 fun createTodo(token: String, year: String, month: String, day: String, title: String) {
 
@@ -229,6 +238,18 @@ fun CalendarScreen(routeAction: RouteAction) {
         verticalArrangement = Arrangement.Top
     ) {
 
+        TopAppBar(
+            title = { Text(text = "")},
+            actions = {
+                IconButton(onClick = {
+                    goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
+                }) {
+                    Icon(imageVector = Icons.Filled.Menu, contentDescription = "profile")
+                }
+            }
+        )
+        
+
         Spacer(modifier = Modifier.height(15.dp))
 
         Row(
@@ -316,6 +337,8 @@ fun CalendarScreen(routeAction: RouteAction) {
         Spacer(modifier = Modifier.height(29.dp))
 
         Text(text = day.toString())
+        
+        TodoItemList(Todo = todoList)
 
 
 //        Scaffold(floatingActionButton = {

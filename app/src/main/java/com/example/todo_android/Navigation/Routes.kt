@@ -16,7 +16,8 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
     REGISTER("REGISTER", "회원가입 화면"),
     AUTHCODE("AUTHCODE", "이메일 인증코드 화면"),
     AUTHEMAIL("AUTHEMAIL", "이메일 인증 화면"),
-    CALENDAR("CALENDAR", "캘린더 화면")
+    CALENDAR("CALENDAR", "캘린더 화면"),
+    PROFILE("PROFILE", "프로파일 화면")
 }
 
 @ExperimentalMaterial3Api
@@ -73,6 +74,13 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.LOGIN) {
         composable(NAV_ROUTE.CALENDAR.routeName) {
             // 화면이 들어가는 부분 = 값
             CalendarScreen(routeAction)
+        }
+
+        //라우트 이름 = 화면의 키
+        //캘린더
+        composable(NAV_ROUTE.PROFILE.routeName) {
+            // 화면이 들어가는 부분 = 값
+            ProfileScreen(routeAction)
         }
 
     }
