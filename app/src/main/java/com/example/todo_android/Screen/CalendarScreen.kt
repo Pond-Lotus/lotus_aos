@@ -110,7 +110,7 @@ fun readTodo(token: String, year: Int, month: Int, day: Int) {
 
                 Log.d("readTodo", "token : " + MyApplication.prefs.getData("token", ""))
                 Log.d("readTodo", "resultCode : " + readTodoResponse?.resultCode)
-                Log.d("readTodo", "data : " + readTodoResponse?.data)
+                Log.d("readTodo", "data : " + readTodoResponse?.data!![0].title)
             }
         })
 }
@@ -245,6 +245,13 @@ fun CalendarScreen(routeAction: RouteAction) {
                     goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
                 }) {
                     Icon(imageVector = Icons.Filled.Menu, contentDescription = "profile")
+                }
+            },
+            navigationIcon = {
+                IconButton(onClick = {
+                    goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
+                }) {
+                    Text(text = "완료")
                 }
             }
         )
