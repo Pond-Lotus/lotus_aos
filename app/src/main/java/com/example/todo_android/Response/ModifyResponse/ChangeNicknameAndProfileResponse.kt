@@ -1,9 +1,8 @@
 package com.example.todo_android.Response.ModifyResponse
 
-import com.example.todo_android.Response.TodoResponse.CTodoResponse
 import com.google.gson.annotations.SerializedName
 
-data class ChangeNicknameandProfileResponse(
+data class ChangeNicknameAndProfileResponse(
     @SerializedName("resultCode")
     val resultCode: String,
     @SerializedName("data")

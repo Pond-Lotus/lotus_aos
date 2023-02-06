@@ -5,15 +5,19 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Component.TodoItemList
@@ -45,7 +49,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
-
 
 
 fun createTodo(token: String, year: String, month: String, day: String, title: String) {
@@ -110,7 +113,7 @@ fun readTodo(token: String, year: Int, month: Int, day: Int) {
 
                 Log.d("readTodo", "token : " + MyApplication.prefs.getData("token", ""))
                 Log.d("readTodo", "resultCode : " + readTodoResponse?.resultCode)
-                Log.d("readTodo", "data : " + readTodoResponse?.data!![0].title)
+                Log.d("readTodo", "data : " + readTodoResponse?.data)
             }
         })
 }
@@ -222,13 +225,13 @@ fun CalendarScreen(routeAction: RouteAction) {
     var year by remember { mutableStateOf(0) }
     var month by remember { mutableStateOf(0) }
     var day by remember { mutableStateOf(0) }
+    val title = remember { mutableStateOf("") }
+    val done = remember { mutableStateOf("") }
 
     var todoList = remember {
         mutableStateListOf<ReadTodoResponse>()
     }
 
-    val title = remember { mutableStateOf("") }
-    val done = remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -239,7 +242,7 @@ fun CalendarScreen(routeAction: RouteAction) {
     ) {
 
         TopAppBar(
-            title = { Text(text = "")},
+            title = { Text(text = "") },
             actions = {
                 IconButton(onClick = {
                     goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
@@ -248,7 +251,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }
             }
         )
-        
+
 
         Spacer(modifier = Modifier.height(15.dp))
 
@@ -307,9 +310,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                     month = kalendarDay.localDate.monthNumber
                     day = kalendarDay.localDate.dayOfMonth
 
-
-                    todoList.clear()
-
                     readTodo(token, year, month, day)
                 })
         }
@@ -328,8 +328,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                     month = kalendarDay.localDate.monthNumber
                     day = kalendarDay.localDate.dayOfMonth
 
-                    todoList.clear()
-
                     readTodo(token, year, month, day)
                 })
         }
@@ -337,19 +335,16 @@ fun CalendarScreen(routeAction: RouteAction) {
         Spacer(modifier = Modifier.height(29.dp))
 
         Text(text = day.toString())
-        
+
         TodoItemList(Todo = todoList)
 
-
-//        Scaffold(floatingActionButton = {
-//            FloatingActionButton(onClick = { /*TODO*/ }) {
-//                Icon(imageVector = Icons.Default.Add, contentDescription = "todolist 추가")
-//            }
-//        }) {
-//            LazyColumn {
-//                TodoItem()
-//            }
-//        }
+        FloatingActionButton(
+            onClick = { /*TODO*/ },
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "todolist 추가", )
+        }
 
 //        Surface(
 //            shape = RoundedCornerShape(24.dp),

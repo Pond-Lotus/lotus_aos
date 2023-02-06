@@ -35,7 +35,99 @@ import androidx.compose.ui.unit.sp
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
+import com.example.todo_android.Request.ModifyRequest.ChangePasswordRequest
+import com.example.todo_android.Request.ModifyRequest.DeleteProfileImageRequest
+import com.example.todo_android.Request.ProfileRequest.RegisterRequest
+import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
+import com.example.todo_android.Response.ModifyResponse.ChangePasswordResponse
+import com.example.todo_android.Response.ModifyResponse.DeleteProfileImageResponse
+import com.example.todo_android.Response.ProfileResponse.RegisterResponse
+import com.example.todo_android.Response.TodoResponse.DeleteTodoResponse
 import com.example.todo_android.Util.MyApplication
+import retrofit2.*
+import retrofit2.converter.gson.GsonConverterFactory
+
+fun changeNicknameAndProfile() {
+
+}
+
+fun changePassword(token: String, password1: String, password2: String) {
+
+    if (!(password1.length >= 8 && password2.length >= 8)) {
+        Log.d("FAIL", "비밀번호 8자리 이상이 아닙니다.")
+    }
+
+    if (!(password1.equals(password2))) {
+        Log.d("FAIL", "비밀번호가 일치하지 않습니다")
+    } else {
+
+        var changePasswordResponse: ChangePasswordResponse? = null
+
+        var retrofit = Retrofit.Builder()
+            .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        var changePasswordRequest: ChangePasswordRequest =
+            retrofit.create(ChangePasswordRequest::class.java)
+
+
+        changePasswordRequest.requestChangePassword(token, password1)
+            .enqueue(object : Callback<ChangePasswordResponse> {
+                override fun onResponse(
+                    call: Call<ChangePasswordResponse>,
+                    response: Response<ChangePasswordResponse>,
+                ) {
+                    changePasswordResponse = response.body()
+
+                    MyApplication.prefs.setData("password1", password1)
+                    MyApplication.prefs.setData("password2", password2)
+
+                    Log.d("REGISTER", "resultCode : " + changePasswordResponse?.resultCode)
+
+
+                }
+
+                override fun onFailure(call: Call<ChangePasswordResponse>, t: Throwable) {
+                    Log.e("changePassword", t.message.toString())
+                }
+
+            })
+    }
+}
+
+fun deleteProfileImage(token: String) {
+
+    var deleteProfileImageResponse: DeleteProfileImageResponse? = null
+
+    var retrofit = Retrofit.Builder()
+        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    var deleteProfileImageRequest: DeleteProfileImageRequest =
+        retrofit.create(DeleteProfileImageRequest::class.java)
+
+    deleteProfileImageRequest.requestDeleteProfileImage(token)
+        .enqueue(object : Callback<DeleteProfileImageResponse> {
+
+            // 성공 했을때
+            override fun onResponse(
+                call: Call<DeleteProfileImageResponse>,
+                response: Response<DeleteProfileImageResponse>,
+            ) {
+                deleteProfileImageResponse = response.body()
+
+                Log.d("deleteProfileImage",
+                    "resultCode : " + deleteProfileImageResponse?.resultCode)
+            }
+
+            // 실패 했을때
+            override fun onFailure(call: Call<DeleteProfileImageResponse>, t: Throwable) {
+                Log.e("deleteProfileImage", t.message.toString())
+            }
+        })
+}
 
 @ExperimentalMaterial3Api
 @Composable
@@ -74,14 +166,11 @@ fun ProfileScreen(routeAction: RouteAction) {
                 }
             },
             actions = {
-//                IconButton(onClick = {
-//                    goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
-//                }) {
-//
-//                }
-                Text(text = "완료", modifier = Modifier.padding(30.dp).clickable {
-                    /**/
-                })
+                Text(text = "완료", modifier = Modifier
+                    .padding(30.dp)
+                    .clickable {
+                        /* TODO */
+                    })
             }
         )
 
@@ -102,7 +191,7 @@ fun ProfileScreen(routeAction: RouteAction) {
                     bitmap = btm.asImageBitmap(),
                     contentDescription = "profileImage",
                     modifier = Modifier
-                        .size(400.dp)
+                        .size(250.dp)
                         .padding(20.dp)
                         .clickable {
                             launcher.launch("image/*")
@@ -111,13 +200,13 @@ fun ProfileScreen(routeAction: RouteAction) {
             }
         }
 
-//        Spacer(modifier = Modifier.height(30.dp))
-//
-//        Button(
-//            onClick = { launcher.launch("image/*")}
-//        ) {
-//            Text(text = "버튼")
-//        }
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Button(
+            onClick = { launcher.launch("image/*") }
+        ) {
+            Text(text = "버튼")
+        }
 
         Spacer(modifier = Modifier.height(150.dp))
 
