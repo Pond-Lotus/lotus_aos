@@ -360,10 +360,11 @@ fun CalendarScreen(routeAction: RouteAction) {
         ) {
             FloatingActionButton(
                 modifier = Modifier.align(alignment = Alignment.BottomEnd),
+                shape = CircleShape,
                 onClick = { /*TODO*/ }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Add,
+                    imageVector = Icons.Filled.Add,
                     contentDescription = "todolist 추가"
                 )
             }
