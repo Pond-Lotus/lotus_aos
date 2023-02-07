@@ -29,10 +29,7 @@ import com.example.todo_android.Request.TodoRequest.CreateTodoRequest
 import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
 import com.example.todo_android.Request.TodoRequest.ReadTodoRequest
 import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
-import com.example.todo_android.Response.TodoResponse.CreateTodoResponse
-import com.example.todo_android.Response.TodoResponse.DeleteTodoResponse
-import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
-import com.example.todo_android.Response.TodoResponse.UpdateTodoResponse
+import com.example.todo_android.Response.TodoResponse.*
 import com.example.todo_android.Util.MyApplication
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.color.KalendarThemeColor
@@ -85,7 +82,13 @@ fun createTodo(token: String, year: String, month: String, day: String, title: S
         })
 }
 
-fun readTodo(token: String, year: Int, month: Int, day: Int) {
+fun readTodo(
+    token: String,
+    year: Int,
+    month: Int,
+    day: Int,
+    response: (ReadTodoResponse?) -> Unit,
+) {
 
     var readTodoResponse: ReadTodoResponse? = null
 
@@ -110,6 +113,8 @@ fun readTodo(token: String, year: Int, month: Int, day: Int) {
                 response: Response<ReadTodoResponse>,
             ) {
                 readTodoResponse = response.body()
+
+                response(readTodoResponse)
 
                 Log.d("readTodo", "token : " + MyApplication.prefs.getData("token", ""))
                 Log.d("readTodo", "resultCode : " + readTodoResponse?.resultCode)
@@ -229,7 +234,7 @@ fun CalendarScreen(routeAction: RouteAction) {
     val done = remember { mutableStateOf("") }
 
     var todoList = remember {
-        mutableStateListOf<ReadTodoResponse>()
+        mutableStateListOf<RToDoResponse>()
     }
 
 
@@ -310,7 +315,25 @@ fun CalendarScreen(routeAction: RouteAction) {
                     month = kalendarDay.localDate.monthNumber
                     day = kalendarDay.localDate.dayOfMonth
 
-                    readTodo(token, year, month, day)
+                    readTodo(token, year, month, day, response = {
+
+                        for(i in it!!.data) {
+                            todoList[i] = it!!.data[i]
+                            Log.v("TAG", "TAG: $i")
+                        }
+
+//                        it!!.data.forEachIndexed { index, value ->
+//                            todoList[index] = it!!.data[index]
+//                        }
+
+//                        it!!.data.forEachIndexed { index, value ->
+//                            todoList[index] = value
+//                        }
+
+//                        for (index in it!!.data.indices) {
+//                            todoList[index] = it!!.data[index]
+//                        }
+                    })
                 })
         }
 
@@ -328,7 +351,25 @@ fun CalendarScreen(routeAction: RouteAction) {
                     month = kalendarDay.localDate.monthNumber
                     day = kalendarDay.localDate.dayOfMonth
 
-                    readTodo(token, year, month, day)
+                    readTodo(token, year, month, day, response = {
+
+                        for(i in it!!.data) {
+                            todoList[i] = it!!.data[i]
+                            Log.v("TAG", "TAG: $i")
+                        }
+
+//                        it!!.data.forEachIndexed { index, value ->
+//                            todoList[index] = it!!.data[index]
+//                        }
+
+//                        it!!.data.forEachIndexed { index, value ->
+//                            todoList[index] = value
+//                        }
+
+//                        for (index in it!!.data.indices) {
+//                            todoList[index] = it!!.data[index]
+//                        }
+                    })
                 })
         }
 
@@ -343,7 +384,8 @@ fun CalendarScreen(routeAction: RouteAction) {
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "todolist 추가", )
+                contentDescription = "todolist 추가",
+            )
         }
 
 //        Surface(

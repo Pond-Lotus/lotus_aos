@@ -11,12 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
+import com.example.todo_android.Response.TodoResponse.RToDoResponse
 import java.time.MonthDay
 import java.time.Year
 
 @Composable
-fun TodoItem(Todo: ReadTodoResponse) {
+fun TodoItem(Todo: RToDoResponse) {
     Card(
         modifier = Modifier
             .padding(12.dp)
@@ -31,14 +31,14 @@ fun TodoItem(Todo: ReadTodoResponse) {
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = Todo.data[0].title
+                text = Todo.title
             )
         }
     }
 }
 
 @Composable
-fun TodoItemList(Todo: List<ReadTodoResponse>) {
+fun TodoItemList(Todo: List<RToDoResponse>) {
     LazyColumn {
         itemsIndexed(items = Todo) {
             index, item -> TodoItem(Todo = item) 
