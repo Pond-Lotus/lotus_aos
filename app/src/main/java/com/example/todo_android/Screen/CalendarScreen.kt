@@ -317,22 +317,10 @@ fun CalendarScreen(routeAction: RouteAction) {
 
                     readTodo(token, year, month, day, response = {
 
+                        todoList.clear()
                         for(i in it!!.data) {
-                            todoList[i] = it!!.data[i]
-                            Log.v("TAG", "TAG: $i")
+                            todoList.add(i)
                         }
-
-//                        it!!.data.forEachIndexed { index, value ->
-//                            todoList[index] = it!!.data[index]
-//                        }
-
-//                        it!!.data.forEachIndexed { index, value ->
-//                            todoList[index] = value
-//                        }
-
-//                        for (index in it!!.data.indices) {
-//                            todoList[index] = it!!.data[index]
-//                        }
                     })
                 })
         }
@@ -353,22 +341,10 @@ fun CalendarScreen(routeAction: RouteAction) {
 
                     readTodo(token, year, month, day, response = {
 
+                        todoList.clear()
                         for(i in it!!.data) {
-                            todoList[i] = it!!.data[i]
-                            Log.v("TAG", "TAG: $i")
+                            todoList.add(i)
                         }
-
-//                        it!!.data.forEachIndexed { index, value ->
-//                            todoList[index] = it!!.data[index]
-//                        }
-
-//                        it!!.data.forEachIndexed { index, value ->
-//                            todoList[index] = value
-//                        }
-
-//                        for (index in it!!.data.indices) {
-//                            todoList[index] = it!!.data[index]
-//                        }
                     })
                 })
         }
@@ -380,11 +356,11 @@ fun CalendarScreen(routeAction: RouteAction) {
         TodoItemList(Todo = todoList)
 
         FloatingActionButton(
-            onClick = { /*TODO*/ },
+            onClick = { /*TODO*/ }
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "todolist 추가",
+                contentDescription = "todolist 추가"
             )
         }
 
