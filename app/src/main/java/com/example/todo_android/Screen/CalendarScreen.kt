@@ -318,7 +318,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     readTodo(token, year, month, day, response = {
 
                         todoList.clear()
-                        for(i in it!!.data) {
+                        for (i in it!!.data) {
                             todoList.add(i)
                         }
                     })
@@ -342,7 +342,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     readTodo(token, year, month, day, response = {
 
                         todoList.clear()
-                        for(i in it!!.data) {
+                        for (i in it!!.data) {
                             todoList.add(i)
                         }
                     })
@@ -355,13 +355,18 @@ fun CalendarScreen(routeAction: RouteAction) {
 
         TodoItemList(Todo = todoList)
 
-        FloatingActionButton(
-            onClick = { /*TODO*/ }
+        Box(
+            modifier = Modifier.fillMaxSize().padding(all = 25.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "todolist 추가"
-            )
+            FloatingActionButton(
+                modifier = Modifier.align(alignment = Alignment.BottomEnd),
+                onClick = { /*TODO*/ }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "todolist 추가"
+                )
+            }
         }
 
 //        Surface(
