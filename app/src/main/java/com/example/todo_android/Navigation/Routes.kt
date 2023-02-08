@@ -77,11 +77,10 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.LOGIN) {
         }
 
         //라우트 이름 = 화면의 키
-        //캘린더
+        //프로필
         composable(NAV_ROUTE.PROFILE.routeName) {
             // 화면이 들어가는 부분 = 값
             ProfileScreen(routeAction)
         }
-
     }
 }

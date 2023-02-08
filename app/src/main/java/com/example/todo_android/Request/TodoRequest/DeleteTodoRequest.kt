@@ -4,10 +4,12 @@ import com.example.todo_android.Response.TodoResponse.DeleteTodoResponse
 import retrofit2.Call
 import retrofit2.http.DELETE
 import retrofit2.http.Header
+import retrofit2.http.Path
 
 interface DeleteTodoRequest {
-    @DELETE("/todo/todo/93/")
+    @DELETE("/todo/todo/{id}/")
     fun requestDeleteTodo(
-        @Header("Authorization") token: String
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
     ): Call<DeleteTodoResponse>
 }

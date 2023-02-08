@@ -6,7 +6,7 @@ data class CreateTodoResponse(
     @SerializedName("resultCode")
     val resultCode: String,
     @SerializedName("data")
-    val data: CTodoResponse
+    val data: CTodoResponse,
 )
 
 
@@ -17,4 +17,9 @@ data class CTodoResponse(
     val month: Int,
     val day: Int,
     val writer: String,
+    val done: Boolean,
+    val color: Int,
+    val time: String,
+    val description: String,
+    val id: String
 )

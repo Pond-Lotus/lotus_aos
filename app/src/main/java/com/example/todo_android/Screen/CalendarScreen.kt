@@ -15,9 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Component.TodoItemList
@@ -47,8 +45,7 @@ fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
-
-fun createTodo(token: String, year: String, month: String, day: String, title: String) {
+fun createTodo(token: String, year: Int, month: Int, day: Int, title: String, time: String) {
 
     var createTodoResponse: CreateTodoResponse? = null
 
@@ -59,7 +56,7 @@ fun createTodo(token: String, year: String, month: String, day: String, title: S
 
     var createTodoRequest: CreateTodoRequest = retrofit.create(CreateTodoRequest::class.java)
 
-    createTodoRequest.requestCreateTodo(token, CreateTodo(year, month, day, title))
+    createTodoRequest.requestCreateTodo(token, CreateTodo(year, month, day, title, time))
         .enqueue(object : Callback<CreateTodoResponse> {
 
             // 실패 했을때
@@ -169,40 +166,6 @@ fun updateTodo(
         })
 }
 
-fun deleteTodo(
-    token: String,
-) {
-    var deleteTodoResponse: DeleteTodoResponse? = null
-
-    var retrofit = Retrofit.Builder()
-        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    var deleteTodoRequest: DeleteTodoRequest = retrofit.create(DeleteTodoRequest::class.java)
-
-    deleteTodoRequest.requestDeleteTodo(token)
-        .enqueue(object : Callback<DeleteTodoResponse> {
-
-            // 실패 했을때
-            override fun onFailure(call: Call<DeleteTodoResponse>, t: Throwable) {
-                Log.e("updateTodo", t.message.toString())
-            }
-
-            // 성공 했을때
-            override fun onResponse(
-                call: Call<DeleteTodoResponse>,
-                response: Response<DeleteTodoResponse>,
-            ) {
-                deleteTodoResponse = response.body()
-
-                Log.d("deleteTodo", "token : " + MyApplication.prefs.getData("token", ""))
-                Log.d("deleteTodo", "resultCode : " + deleteTodoResponse?.resultCode)
-                Log.d("deleteTodo", "data : " + deleteTodoResponse?.data)
-            }
-        })
-}
-
 
 @ExperimentalMaterial3Api
 @Composable
@@ -216,21 +179,16 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     val onSelectionChange = { text: String -> selectedOption = text }
 
-    var isVisible by remember { mutableStateOf(true) }
+    var isVisible by remember { mutableStateOf(false) }
+    var isVisiblily by remember { mutableStateOf(false) }
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
-
-//    val year = "2023"
-//    val month = "2"
-//    val day = "6"
-//    val token = "Token ${MyApplication.prefs.getData("token", "")}"
-//    val title = "qkrwhdwns"
-//    val done = "true"
 
     var year by remember { mutableStateOf(0) }
     var month by remember { mutableStateOf(0) }
     var day by remember { mutableStateOf(0) }
-    val title = remember { mutableStateOf("") }
+    var title = remember { mutableStateOf("") }
+    var time = "0900"
     val done = remember { mutableStateOf("") }
 
     var todoList = remember {
@@ -355,13 +313,45 @@ fun CalendarScreen(routeAction: RouteAction) {
 
         TodoItemList(Todo = todoList)
 
+        AnimatedVisibility(isVisiblily) {
+            Row(
+                modifier = Modifier.padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                TextField(
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .width(250.dp)
+                        .height(50.dp),
+
+                    value = title.value,
+                    onValueChange = {
+                        title.value = it
+                    })
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Button(
+                    onClick = { createTodo(token, year, month, day, title.value, time) }
+                ) {
+                    Text(text = "Todo 작성")
+                }
+            }
+        }
+
+
         Box(
-            modifier = Modifier.fillMaxSize().padding(all = 25.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(all = 25.dp)
         ) {
             FloatingActionButton(
                 modifier = Modifier.align(alignment = Alignment.BottomEnd),
                 shape = CircleShape,
-                onClick = { /*TODO*/ }
+                onClick = {
+                    isVisiblily = !isVisiblily
+                }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
@@ -370,25 +360,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }
 
-//        Surface(
-//            shape = RoundedCornerShape(24.dp),
-//            modifier = Modifier
-//                .wrapContentSize()
-//        ) {}
 
-
-//        Button(
-//            modifier = Modifier
-//                .width(300.dp)
-//                .height(50.dp),
-//            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-//            onClick = { readTodo(token, year, month, day) }
-//        ) {
-//            Text(text = "TODO 조회", color = Color.Black)
-//        }
-//
-//        Spacer(modifier = Modifier.height(30.dp))
-//
 //        Button(
 //            modifier = Modifier
 //                .width(300.dp)
