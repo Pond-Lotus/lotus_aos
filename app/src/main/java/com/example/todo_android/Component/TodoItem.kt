@@ -2,22 +2,16 @@ package com.example.todo_android.Component
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
@@ -29,12 +23,13 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.time.MonthDay
-import java.time.Year
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 
 fun deleteTodo(
     token: String,
-    id: Int
+    id: Int,
 ) {
     var deleteTodoResponse: DeleteTodoResponse? = null
 
@@ -108,11 +103,59 @@ fun TodoItem(Todo: RToDoResponse) {
     }
 }
 
-
+@ExperimentalMaterial3Api
 @Composable
 fun TodoItemList(Todo: List<RToDoResponse>) {
+
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
+//    var asdf = remember { mutableStateListOf(Todo) }
+
+
     LazyColumn {
+
+
+
         itemsIndexed(items = Todo) { index, item ->
+
+//            val dismissState = rememberDismissState(
+//                confirmValueChange = {
+//                    if (it == DismissValue.DismissedToStart) {
+//                        deleteTodo(token, Todo[0].id)
+////                        Todo.remove(item)
+//                        asdf.removeAt(index)
+//                        asdf.clear()
+//                    }
+//                    true
+//                }
+//            )
+
+//            SwipeToDismiss(
+//                state = dismissState,
+//                background = {
+//                    val color = when (dismissState.dismissDirection) {
+//                        DismissDirection.StartToEnd -> Color.Transparent
+//                        DismissDirection.EndToStart -> Color.Red
+//                        null -> Color.Transparent
+//                    }
+//
+//                    Box(modifier = Modifier
+//                        .fillMaxSize()
+//                        .background(color)
+//                        .padding(8.dp)) {
+//                        Text(
+//                            text = "삭제",
+//                            modifier = Modifier.align(Alignment.CenterEnd)
+//                        )
+//                    }
+//                },
+//                dismissContent = {
+//                    TodoItem(Todo = item)
+//                }
+//            )
+//
+//            Divider()
+
             TodoItem(Todo = item)
         }
     }

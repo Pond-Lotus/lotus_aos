@@ -17,7 +17,8 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
     AUTHCODE("AUTHCODE", "이메일 인증코드 화면"),
     AUTHEMAIL("AUTHEMAIL", "이메일 인증 화면"),
     CALENDAR("CALENDAR", "캘린더 화면"),
-    PROFILE("PROFILE", "프로파일 화면")
+    PROFILE("PROFILE", "프로파일 화면"),
+    CHANGEPASSWORD("CHANGEPASSWORD", "비밀번호 변경 화면")
 }
 
 @ExperimentalMaterial3Api
@@ -79,6 +80,13 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.LOGIN) {
         //라우트 이름 = 화면의 키
         //프로필
         composable(NAV_ROUTE.PROFILE.routeName) {
+            // 화면이 들어가는 부분 = 값
+            ProfileScreen(routeAction)
+        }
+
+        //라우트 이름 = 화면의 키
+        //비밀번호 변경
+        composable(NAV_ROUTE.CHANGEPASSWORD.routeName) {
             // 화면이 들어가는 부분 = 값
             ProfileScreen(routeAction)
         }

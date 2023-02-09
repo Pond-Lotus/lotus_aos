@@ -47,6 +47,12 @@ import com.example.todo_android.Util.MyApplication
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
+fun goChangePassword(route: NAV_ROUTE, routeAction: RouteAction) {
+    routeAction.navTo(route)
+}
+
+
+
 fun changeNicknameAndProfile() {
 
 }
@@ -135,8 +141,6 @@ fun ProfileScreen(routeAction: RouteAction) {
 
     var email by remember { mutableStateOf("") }
     var nickname by remember { mutableStateOf("") }
-    var password1 by remember { mutableStateOf("") }
-    var password2 by remember { mutableStateOf("") }
 
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -210,6 +214,36 @@ fun ProfileScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(150.dp))
 
+        Text(text = "닉네임")
+
+        TextField(
+            modifier = Modifier
+                .width(308.dp)
+                .height(54.dp),
+            value = MyApplication.prefs.getData("nickname", nickname),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color(0xffF2F2F2),
+                disabledLabelColor = Color(0xffF2F2F2),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            shape = RoundedCornerShape(18.dp),
+            onValueChange = {
+                nickname = it
+            },
+            placeholder = {
+                Text(
+                    text = "닉네임",
+                    fontSize = 16.sp,
+                    color = Color(0xffA9A9A9)
+                )
+            }
+        )
+
+        Spacer(modifier = Modifier.height(5.dp))
+
 
         Text(text = "이메일")
 
@@ -241,94 +275,10 @@ fun ProfileScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(5.dp))
 
-        Text(text = "닉네임")
-
-        TextField(
-            modifier = Modifier
-                .width(308.dp)
-                .height(54.dp),
-            value = MyApplication.prefs.getData("nickname", nickname),
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color(0xffF2F2F2),
-                disabledLabelColor = Color(0xffF2F2F2),
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            shape = RoundedCornerShape(18.dp),
-            onValueChange = {
-                nickname = it
-            },
-            placeholder = {
-                Text(
-                    text = "닉네임",
-                    fontSize = 16.sp,
-                    color = Color(0xffA9A9A9)
-                )
-            }
-        )
-
-        Spacer(modifier = Modifier.height(5.dp))
-
-        Text(text = "비밀번호")
-
-        TextField(
-            modifier = Modifier
-                .width(308.dp)
-                .height(54.dp),
-            value = MyApplication.prefs.getData("password1", password1),
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color(0xffF2F2F2),
-                disabledLabelColor = Color(0xffF2F2F2),
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            shape = RoundedCornerShape(18.dp),
-            onValueChange = {
-                password1 = it
-            },
-            placeholder = {
-                Text(
-                    text = "비밀번호",
-                    fontSize = 16.sp,
-                    color = Color(0xffA9A9A9)
-                )
-            }
-        )
-
-        Spacer(modifier = Modifier.height(5.dp))
-
-        Text(text = "비밀번호 확인")
-
-        TextField(
-            modifier = Modifier
-                .width(308.dp)
-                .height(54.dp),
-            value = MyApplication.prefs.getData("password2", password2),
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color(0xffF2F2F2),
-                disabledLabelColor = Color(0xffF2F2F2),
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            shape = RoundedCornerShape(18.dp),
-            onValueChange = {
-                password2 = it
-            },
-            placeholder = {
-                Text(
-                    text = "비밀번호 확인",
-                    fontSize = 16.sp,
-                    color = Color(0xffA9A9A9)
-                )
-            }
-        )
-
-        Spacer(modifier = Modifier.height(5.dp))
+        Button(
+            onClick = {  }
+        ) {
+            Text(text = "비밀번호 변경")
+        }
     }
 }

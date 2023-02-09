@@ -75,4 +75,8 @@ dependencies {
     // Kalendar & Kalendar Endlos
     implementation("com.himanshoe:kalendar:1.2.0")
     //implementation("com.himanshoe:kalendar-endlos:1.0.2")
+
+    //Modal
+    implementation "androidx.compose.ui:ui:1.2.0-beta02"
+    implementation "androidx.compose.material:material:1.2.0-beta02"
 }

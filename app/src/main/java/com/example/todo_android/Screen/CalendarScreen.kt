@@ -189,7 +189,6 @@ fun CalendarScreen(routeAction: RouteAction) {
     var day by remember { mutableStateOf(0) }
     var title = remember { mutableStateOf("") }
     var time = "0900"
-    val done = remember { mutableStateOf("") }
 
     var todoList = remember {
         mutableStateListOf<RToDoResponse>()
@@ -309,7 +308,24 @@ fun CalendarScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(29.dp))
 
-        Text(text = day.toString())
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Text(
+                text = day.toString(),
+                modifier = Modifier.padding(12.dp)
+            )
+
+            Spacer(modifier = Modifier.width(5.dp))
+
+            Divider(modifier = Modifier.padding(5.dp), color = Color.LightGray)
+
+        }
+
+
 
         TodoItemList(Todo = todoList)
 
@@ -360,16 +376,6 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }
 
-
-//        Button(
-//            modifier = Modifier
-//                .width(300.dp)
-//                .height(50.dp),
-//            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-//            onClick = { createTodo(token, year, month, day, title) }
-//        ) {
-//            Text(text = "TODO 작성", color = Color.Black)
-//        }
 //
 //        Spacer(modifier = Modifier.height(30.dp))
 //
@@ -382,17 +388,6 @@ fun CalendarScreen(routeAction: RouteAction) {
 //        ) {
 //            Text(text = "TODO 수정", color = Color.Black)
 //        }
-//
-//        Spacer(modifier = Modifier.height(30.dp))
-//
-//        Button(
-//            modifier = Modifier
-//                .width(300.dp)
-//                .height(50.dp),
-//            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-//            onClick = { deleteTodo(token) }
-//        ) {
-//            Text(text = "TODO 삭제", color = Color.Black)
-//        }
+
     }
 }
