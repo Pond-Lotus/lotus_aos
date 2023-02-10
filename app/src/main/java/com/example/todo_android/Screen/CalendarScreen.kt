@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Component.TodoItemList
+import com.example.todo_android.Component.UpdateTodoSheet
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
@@ -120,53 +122,8 @@ fun readTodo(
         })
 }
 
-fun updateTodo(
-    token: String,
-    year: String,
-    month: String,
-    day: String,
-    title: String,
-    done: String,
-) {
 
-    var updateTodoResponse: UpdateTodoResponse? = null
-
-    var retrofit = Retrofit.Builder()
-        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
-
-    updateTodoRequest.requestUpdateTodo(token, UpdateTodo(year, month, day, title, done))
-        .enqueue(object : Callback<UpdateTodoResponse> {
-
-            // 실패 했을때
-            override fun onFailure(call: Call<UpdateTodoResponse>, t: Throwable) {
-                Log.e("updateTodo", t.message.toString())
-            }
-
-            // 성공 했을때
-            override fun onResponse(
-                call: Call<UpdateTodoResponse>,
-                response: Response<UpdateTodoResponse>,
-            ) {
-
-                if (response.isSuccessful) {
-                    updateTodoResponse = response.body()
-
-                    Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
-                    Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
-                    Log.d("updateTodo", "data : " + updateTodoResponse?.data)
-                } else {
-                    Log.e("updateTodo", "resultCode : " + response.body())
-                    Log.e("updateTodo", "code : " + response.code())
-                }
-            }
-        })
-}
-
-
+@ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
 fun CalendarScreen(routeAction: RouteAction) {
@@ -187,8 +144,10 @@ fun CalendarScreen(routeAction: RouteAction) {
     var year by remember { mutableStateOf(0) }
     var month by remember { mutableStateOf(0) }
     var day by remember { mutableStateOf(0) }
-    var title = remember { mutableStateOf("") }
+    var title by remember { mutableStateOf("") }
     var time = "0900"
+    var done = 1
+    var color = 0
 
     var todoList = remember {
         mutableStateListOf<RToDoResponse>()
@@ -325,9 +284,19 @@ fun CalendarScreen(routeAction: RouteAction) {
 
         }
 
-
-
         TodoItemList(Todo = todoList)
+
+
+        UpdateTodoSheet(
+            year = year,
+            month = month,
+            day = day,
+            done = done,
+            color = color,
+            id = todoList[0].id,
+            title = title,
+            time = time
+            )
 
         AnimatedVisibility(isVisiblily) {
             Row(
@@ -341,15 +310,15 @@ fun CalendarScreen(routeAction: RouteAction) {
                         .width(250.dp)
                         .height(50.dp),
 
-                    value = title.value,
+                    value = title,
                     onValueChange = {
-                        title.value = it
+                        title = it
                     })
 
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Button(
-                    onClick = { createTodo(token, year, month, day, title.value, time) }
+                    onClick = { createTodo(token, year, month, day, title, time) }
                 ) {
                     Text(text = "Todo 작성")
                 }
@@ -375,6 +344,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 )
             }
         }
+
 
 //
 //        Spacer(modifier = Modifier.height(30.dp))

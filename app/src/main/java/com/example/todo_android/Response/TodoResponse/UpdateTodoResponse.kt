@@ -1,5 +1,6 @@
 package com.example.todo_android.Response.TodoResponse
 
+import android.util.EventLogTags.Description
 import com.google.gson.annotations.SerializedName
 
 data class UpdateTodoResponse(
@@ -15,5 +16,9 @@ data class UTodoResponse(
     val year: Int,
     val month: Int,
     val day: Int,
-    val writer: String,
+    val color: Int,
+    val description: String,
+    val time: String,
+    val id: Int,
+    val done: Boolean,
 )

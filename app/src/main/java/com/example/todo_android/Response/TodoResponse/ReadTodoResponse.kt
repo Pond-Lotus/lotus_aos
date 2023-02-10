@@ -13,10 +13,12 @@ data class ReadTodoResponse(
 // 응답값으로 data의 디테일한 값들
 data class RToDoResponse(
     val id: Int,
-    val title: String,
+    val writer: String,
     val year: Int,
     val month: Int,
     val day: Int,
+    val title: String,
     val done: Boolean,
-    val writer: String
+    val time: String,
+    val color: Int
 )

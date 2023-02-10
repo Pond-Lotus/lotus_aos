@@ -21,5 +21,5 @@ data class CTodoResponse(
     val color: Int,
     val time: String,
     val description: String,
-    val id: String
+    val id: Int
 )

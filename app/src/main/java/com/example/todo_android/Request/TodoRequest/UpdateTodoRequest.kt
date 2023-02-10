@@ -6,12 +6,13 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.PUT
+import retrofit2.http.Path
 
 interface UpdateTodoRequest {
-    @PUT("/todo/todo/93/")
+    @PUT("/todo/todo/{id}/")
     fun requestUpdateTodo(
         @Header("Authorization") token: String,
-//        @Path("id") id: String,
+        @Path("id") id: Int,
         @Body createUpdateRequest: UpdateTodo,
     ): Call<UpdateTodoResponse>
 }

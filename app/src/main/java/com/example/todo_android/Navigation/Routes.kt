@@ -1,5 +1,6 @@
 package com.example.todo_android.Navigation
 
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
     CHANGEPASSWORD("CHANGEPASSWORD", "비밀번호 변경 화면")
 }
 
+@ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
 fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.LOGIN) {
