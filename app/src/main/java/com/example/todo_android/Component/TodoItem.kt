@@ -38,10 +38,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
+import com.example.todo_android.Data.Todo.UpdateTodo
+import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
+import com.example.todo_android.Response.TodoResponse.UpdateTodoResponse
 import kotlinx.coroutines.launch
 
 fun deleteTodo(
@@ -79,12 +81,81 @@ fun deleteTodo(
         })
 }
 
+fun updateTodo(
+    token: String,
+    year: Int,
+    month: Int,
+    day: Int,
+    title: String,
+    done: Boolean,
+    description: String,
+    color: Int,
+    time: String,
+    id: Int,
+) {
 
+    var updateTodoResponse: UpdateTodoResponse? = null
+
+    var retrofit = Retrofit.Builder()
+        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
+
+    updateTodoRequest.requestUpdateTodo(token, id, UpdateTodo(year, month, day, title, done, description, color, time))
+        .enqueue(object : Callback<UpdateTodoResponse> {
+
+            // 실패 했을때
+            override fun onFailure(call: Call<UpdateTodoResponse>, t: Throwable) {
+                Log.e("updateTodo", t.message.toString())
+            }
+
+            // 성공 했을때
+            override fun onResponse(
+                call: Call<UpdateTodoResponse>,
+                response: Response<UpdateTodoResponse>,
+            ) {
+
+                if (response.isSuccessful) {
+                    updateTodoResponse = response.body()
+
+                    Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
+                    Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
+                    Log.d("updateTodo", "data : " + updateTodoResponse?.data)
+                } else {
+                    Log.e("updateTodo", "resultCode : " + response.body())
+                    Log.e("updateTodo", "code : " + response.code())
+                }
+            }
+        })
+}
+
+
+@ExperimentalMaterial3Api
+@ExperimentalMaterialApi
 @Composable
 fun TodoItem(Todo: RToDoResponse) {
 
     var checked by remember { mutableStateOf(false) }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
+    var time = "0900"
+    var done = true
+    var color = 0
+
+    val coroutineScope = rememberCoroutineScope()
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
+
+    val onclickCard = UpdateTodoSheet(
+        year = Todo.year,
+        month = Todo.month,
+        day = Todo.day,
+        done = Todo.done,
+        color = Todo.color,
+        id = Todo.id,
+        title = Todo.title,
+        time = Todo.time
+    )
 
     Card(
         modifier = Modifier
@@ -92,6 +163,11 @@ fun TodoItem(Todo: RToDoResponse) {
             .width(334.dp)
             .height(60.dp)
             .clickable {
+
+                coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
+
+                onclickCard
+
 
             }
             .pointerInput(Unit) {
@@ -123,6 +199,7 @@ fun TodoItem(Todo: RToDoResponse) {
     }
 }
 
+@ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
 fun TodoItemList(Todo: List<RToDoResponse>) {
@@ -189,7 +266,7 @@ fun UpdateTodoSheet(
     year: Int,
     month: Int,
     day: Int,
-    done: Int,
+    done: Boolean,
     color: Int,
     id: Int,
     title: String,
@@ -204,6 +281,7 @@ fun UpdateTodoSheet(
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
 
     val coroutineScope = rememberCoroutineScope()
+
     BottomSheetScaffold(
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = {
@@ -236,7 +314,12 @@ fun UpdateTodoSheet(
                         actions = {
 
                             Button(
-                                onClick = { updateTodo(token, year, month, day, title, done, description, color, time, id) },
+                                onClick = {
+                                    updateTodo(token, year, month, day, title, done, description, color, time, id)
+                                    coroutineScope.launch {
+                                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                                    }
+                                          },
                                 shape = RoundedCornerShape(20.dp),
                                 modifier = Modifier
                                     .width(45.dp)
@@ -285,27 +368,27 @@ fun UpdateTodoSheet(
             }
         }, sheetPeekHeight = 0.dp
     ) {
-
-        Column(
-            Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            Button(onClick = {
-
-                coroutineScope.launch {
-
-                    if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
-                        bottomSheetScaffoldState.bottomSheetState.expand()
-                    } else {
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                    }
-                }
-
-            }) {
-                Text(text = "Click Me", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            }
-        }
+//
+//        Column(
+//            Modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//
+//            Button(onClick = {
+//
+//                coroutineScope.launch {
+//
+//                    if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
+//                        bottomSheetScaffoldState.bottomSheetState.expand()
+//                    } else {
+//                        bottomSheetScaffoldState.bottomSheetState.collapse()
+//                    }
+//                }
+//
+//            }) {
+//                Text(text = "Click Me", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+//            }
+//        }
     }
 }

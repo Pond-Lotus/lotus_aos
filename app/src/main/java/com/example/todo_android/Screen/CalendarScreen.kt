@@ -146,8 +146,6 @@ fun CalendarScreen(routeAction: RouteAction) {
     var day by remember { mutableStateOf(0) }
     var title by remember { mutableStateOf("") }
     var time = "0900"
-    var done = 1
-    var color = 0
 
     var todoList = remember {
         mutableStateListOf<RToDoResponse>()
@@ -287,16 +285,16 @@ fun CalendarScreen(routeAction: RouteAction) {
         TodoItemList(Todo = todoList)
 
 
-        UpdateTodoSheet(
-            year = year,
-            month = month,
-            day = day,
-            done = done,
-            color = color,
-            id = todoList[0].id,
-            title = title,
-            time = time
-            )
+//        UpdateTodoSheet(
+//            year = year,
+//            month = month,
+//            day = day,
+//            done = done,
+//            color = color,
+//            id = todoList[0].id,
+//            title = title,
+//            time = time
+//            )
 
         AnimatedVisibility(isVisiblily) {
             Row(

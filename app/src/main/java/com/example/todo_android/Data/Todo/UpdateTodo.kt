@@ -5,7 +5,7 @@ data class UpdateTodo(
     val month: Int,
     val day: Int,
     val title: String,
-    val done: Int,
+    val done: Boolean,
     val description: String,
     val color: Int,
     val time: String
