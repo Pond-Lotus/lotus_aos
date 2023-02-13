@@ -90,7 +90,7 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.LOGIN) {
         //비밀번호 변경
         composable(NAV_ROUTE.CHANGEPASSWORD.routeName) {
             // 화면이 들어가는 부분 = 값
-            ProfileScreen(routeAction)
+            ChangePasswordScreen(routeAction)
         }
     }
 }

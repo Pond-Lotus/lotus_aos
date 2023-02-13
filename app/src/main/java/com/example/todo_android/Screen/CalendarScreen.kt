@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Component.TodoItemList
-import com.example.todo_android.Component.UpdateTodoSheet
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
@@ -146,6 +145,9 @@ fun CalendarScreen(routeAction: RouteAction) {
     var day by remember { mutableStateOf(0) }
     var title by remember { mutableStateOf("") }
     var time = "0900"
+
+//    var done = true
+//    var color = 0
 
     var todoList = remember {
         mutableStateListOf<RToDoResponse>()
@@ -316,7 +318,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Button(
-                    onClick = { createTodo(token, year, month, day, title, time) }
+                    onClick = {
+                        createTodo(token, year, month, day, title, time)
+                    }
                 ) {
                     Text(text = "Todo 작성")
                 }
@@ -342,20 +346,5 @@ fun CalendarScreen(routeAction: RouteAction) {
                 )
             }
         }
-
-
-//
-//        Spacer(modifier = Modifier.height(30.dp))
-//
-//        Button(
-//            modifier = Modifier
-//                .width(300.dp)
-//                .height(50.dp),
-//            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-//            onClick = { updateTodo(token, year, month, day, title, done) }
-//        ) {
-//            Text(text = "TODO 수정", color = Color.Black)
-//        }
-
     }
 }

@@ -1,6 +1,9 @@
 package com.example.todo_android.Component
 
+import android.content.Context
+import android.graphics.drawable.shapes.Shape
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -38,13 +41,16 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
 import com.example.todo_android.Response.TodoResponse.UpdateTodoResponse
 import kotlinx.coroutines.launch
+import com.example.todo_android.Component.UpdateTodoDialog as UpdateTodoDialog
 
 fun deleteTodo(
     token: String,
@@ -103,7 +109,9 @@ fun updateTodo(
 
     var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
 
-    updateTodoRequest.requestUpdateTodo(token, id, UpdateTodo(year, month, day, title, done, description, color, time))
+    updateTodoRequest.requestUpdateTodo(token,
+        id,
+        UpdateTodo(year, month, day, title, done, description, color, time))
         .enqueue(object : Callback<UpdateTodoResponse> {
 
             // 실패 했을때
@@ -143,42 +151,68 @@ fun TodoItem(Todo: RToDoResponse) {
     var done = true
     var color = 0
 
-    val coroutineScope = rememberCoroutineScope()
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
+//    val coroutineScope = rememberCoroutineScope()
+//    val bottomSheetScaffoldState =
+//        rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
 
-    val onclickCard = UpdateTodoSheet(
-        year = Todo.year,
-        month = Todo.month,
-        day = Todo.day,
-        done = Todo.done,
-        color = Todo.color,
-        id = Todo.id,
-        title = Todo.title,
-        time = Todo.time
-    )
+//    val onclickCard = UpdateTodoSheet(
+//        year = Todo.year,
+//        month = Todo.month,
+//        day = Todo.day,
+//        done = Todo.done,
+//        color = Todo.color,
+//        id = Todo.id,
+//        title = Todo.title,
+//        time = Todo.time
+//    )
+
+    var openDialog by remember { mutableStateOf(false) }
+
+    if (openDialog) {
+        UpdateTodoDialog(
+            year = Todo.year,
+            month = Todo.month,
+            day = Todo.day,
+            done = done,
+            color = color,
+            id = Todo.id,
+            title = Todo.title,
+            time = time
+        )
+    }
 
     Card(
         modifier = Modifier
             .padding(12.dp)
             .width(334.dp)
             .height(60.dp)
-            .clickable {
-
-                coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
-
-                onclickCard
-
-
-            }
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onLongPress = { deleteTodo(token, Todo.id) }
+                    onLongPress = { deleteTodo(token, Todo.id) },
+                    onPress = {
+//                        coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
+//                        UpdateTodoSheet(
+//                            year = Todo.year,
+//                            month = Todo.month,
+//                            day = Todo.day,
+//                            done = done,
+//                            color = color,
+//                            id = Todo.id,
+//                            title = Todo.title,
+//                            time = time
+//                        )
+//                        onclickCard
+
+                        openDialog = !openDialog
+
+                    }
                 )
             },
         shape = RoundedCornerShape(8.dp)
     ) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -209,7 +243,6 @@ fun TodoItemList(Todo: List<RToDoResponse>) {
 
 
     LazyColumn {
-
 
 
         itemsIndexed(items = Todo) { index, item ->
@@ -258,11 +291,151 @@ fun TodoItemList(Todo: List<RToDoResponse>) {
 }
 
 
+//@ExperimentalMaterialApi
+//@ExperimentalMaterial3Api
+//@Composable
+//fun UpdateTodoSheet(
+//    year: Int,
+//    month: Int,
+//    day: Int,
+//    done: Boolean,
+//    color: Int,
+//    id: Int,
+//    title: String,
+//    time: String,
+//) {
+//
+//    var description by remember { mutableStateOf("") }
+//    val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
-@ExperimentalMaterialApi
+
+//    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+//        bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
+//
+//    val coroutineScope = rememberCoroutineScope()
+//
+//    BottomSheetScaffold(
+//        scaffoldState = bottomSheetScaffoldState,
+//        sheetContent = {
+//            Box(
+//                Modifier
+//                    .fillMaxWidth()
+//                    .height(200.dp)
+//                    .background(Color.Transparent)
+//            ) {
+//                Column(
+//                    Modifier.fillMaxSize(),
+//                    verticalArrangement = Arrangement.Center,
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Text(text = "test")
+//                    TopAppBar(
+//                        title = { Text(text = "") },
+//                        navigationIcon = {
+//                            IconButton(onClick = {
+//                                coroutineScope.launch {
+//                                    bottomSheetScaffoldState.bottomSheetState.collapse()
+//                                }
+//                            }) {
+//                                Icon(
+//                                    imageVector = Icons.Filled.Close,
+//                                    contentDescription = "close"
+//                                )
+//                            }
+//                        },
+//                        actions = {
+//                            Button(
+//                                onClick = {
+//                                    updateTodo(token,
+//                                        year,
+//                                        month,
+//                                        day,
+//                                        title,
+//                                        done,
+//                                        description,
+//                                        color,
+//                                        time,
+//                                        id)
+//                                    coroutineScope.launch {
+//                                        bottomSheetScaffoldState.bottomSheetState.collapse()
+//                                    }
+//                                },
+//                                shape = RoundedCornerShape(20.dp),
+//                                modifier = Modifier
+//                                    .width(45.dp)
+//                                    .height(25.dp)
+//                            ) {
+//                                Text(
+//                                    text = "저장",
+//                                    modifier = Modifier.padding(6.dp))
+//                            }
+//                        }
+//                    )
+//
+//
+//                    Text(
+//                        text = "${month} 월 ${day}일",
+//                        fontSize = 18.sp,
+//                        fontWeight = FontWeight.Bold)
+//
+//                    Divider()
+//
+//                    TextField(
+//                        modifier = Modifier
+//                            .width(340.dp)
+//                            .height(65.dp),
+//                        colors = TextFieldDefaults.textFieldColors(
+//                            containerColor = Color(0xffF3F3F3),
+//                            disabledLabelColor = Color(0xffF3F3F3),
+//                            focusedIndicatorColor = Color.Transparent,
+//                            unfocusedIndicatorColor = Color.Transparent
+//                        ),
+//                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+//                        shape = RoundedCornerShape(10.dp),
+//                        placeholder = {
+//                            Text(
+//                                text = "수정할 텍스트 입력",
+//                                fontSize = 16.sp,
+//                                color = Color(0xffA9A9A9)
+//                            )
+//                        },
+//                        value = description,
+//                        onValueChange = {
+//                            description = it
+//                        }
+//                    )
+//                }
+//            }
+//        }, sheetPeekHeight = 49.dp
+//    ) {
+//
+//        Column(
+//            Modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//
+//            Button(onClick = {
+//
+//                coroutineScope.launch {
+//
+//                    if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
+//                        bottomSheetScaffoldState.bottomSheetState.expand()
+//                    } else {
+//                        bottomSheetScaffoldState.bottomSheetState.collapse()
+//                    }
+//                }
+//
+//            }) {
+//                Text(text = "Click Me", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+//            }
+//        }
+//    }
+//}
+
 @ExperimentalMaterial3Api
 @Composable
-fun UpdateTodoSheet(
+fun UpdateTodoDialog(
     year: Int,
     month: Int,
     day: Int,
@@ -275,35 +448,26 @@ fun UpdateTodoSheet(
 
     var description by remember { mutableStateOf("") }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
+    var openDialog by remember { mutableStateOf(true) }
 
+    if (openDialog) {
 
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
+        Dialog(
+            onDismissRequest = {
+                openDialog = false
+            }) {
 
-    val coroutineScope = rememberCoroutineScope()
-
-    BottomSheetScaffold(
-        scaffoldState = bottomSheetScaffoldState,
-        sheetContent = {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(450.dp)
-                    .background(Color.White)
+            androidx.compose.material3.Surface(
+                modifier = Modifier.fillMaxWidth().height(400.dp),
+                shape = RoundedCornerShape(12.dp),
+                color = Color.White
             ) {
-                Column(
-                    Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
+                Column() {
                     TopAppBar(
                         title = { Text(text = "") },
                         navigationIcon = {
                             IconButton(onClick = {
-                                coroutineScope.launch {
-                                    bottomSheetScaffoldState.bottomSheetState.collapse()
-                                }
+                                openDialog = false
                             }) {
                                 Icon(
                                     imageVector = Icons.Filled.Close,
@@ -312,26 +476,24 @@ fun UpdateTodoSheet(
                             }
                         },
                         actions = {
-
                             Button(
                                 onClick = {
-                                    updateTodo(token, year, month, day, title, done, description, color, time, id)
-                                    coroutineScope.launch {
-                                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                                    }
-                                          },
+                                    updateTodo(token, year, month, day,
+                                        title, done, description, color, time, id)
+                                    openDialog = false
+                                },
                                 shape = RoundedCornerShape(20.dp),
                                 modifier = Modifier
                                     .width(45.dp)
-                                    .height(25.dp)
+                                    .height(35.dp)
                             ) {
                                 Text(
                                     text = "저장",
                                     modifier = Modifier.padding(6.dp))
                             }
-                        }
-                    )
+                        })
 
+                    Spacer(modifier = Modifier.height(15.dp))
 
                     Text(
                         text = "${month} 월 ${day}일",
@@ -339,6 +501,8 @@ fun UpdateTodoSheet(
                         fontWeight = FontWeight.Bold)
 
                     Divider()
+
+                    Spacer(modifier = Modifier.height(15.dp))
 
                     TextField(
                         modifier = Modifier
@@ -366,29 +530,6 @@ fun UpdateTodoSheet(
                     )
                 }
             }
-        }, sheetPeekHeight = 0.dp
-    ) {
-//
-//        Column(
-//            Modifier.fillMaxSize(),
-//            verticalArrangement = Arrangement.Center,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//
-//            Button(onClick = {
-//
-//                coroutineScope.launch {
-//
-//                    if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
-//                        bottomSheetScaffoldState.bottomSheetState.expand()
-//                    } else {
-//                        bottomSheetScaffoldState.bottomSheetState.collapse()
-//                    }
-//                }
-//
-//            }) {
-//                Text(text = "Click Me", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-//            }
-//        }
+        }
     }
 }
