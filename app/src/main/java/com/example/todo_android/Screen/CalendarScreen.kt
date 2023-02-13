@@ -286,18 +286,6 @@ fun CalendarScreen(routeAction: RouteAction) {
 
         TodoItemList(Todo = todoList)
 
-
-//        UpdateTodoSheet(
-//            year = year,
-//            month = month,
-//            day = day,
-//            done = done,
-//            color = color,
-//            id = todoList[0].id,
-//            title = title,
-//            time = time
-//            )
-
         AnimatedVisibility(isVisiblily) {
             Row(
                 modifier = Modifier.padding(12.dp),

@@ -447,6 +447,7 @@ fun UpdateTodoDialog(
 ) {
 
     var description by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf("") }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
     var openDialog by remember { mutableStateOf(true) }
 
@@ -501,6 +502,31 @@ fun UpdateTodoDialog(
                         fontWeight = FontWeight.Bold)
 
                     Divider()
+
+                    TextField(
+                        modifier = Modifier
+                            .width(340.dp)
+                            .height(65.dp),
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = Color(0xffF3F3F3),
+                            disabledLabelColor = Color(0xffF3F3F3),
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        shape = RoundedCornerShape(10.dp),
+                        placeholder = {
+                            Text(
+                                text = "수정할 텍스트 입력",
+                                fontSize = 16.sp,
+                                color = Color(0xffA9A9A9)
+                            )
+                        },
+                        value = title,
+                        onValueChange = {
+                            title = it
+                        }
+                    )
 
                     Spacer(modifier = Modifier.height(15.dp))
 

@@ -71,6 +71,9 @@ fun sendLogin(email: String, password: String, routeAction: RouteAction) {
 
                     Log.d("LOGIN", "resultCode : " + loginResponse?.resultCode)
                     Log.d("LOGIN", "token : " + loginResponse?.token)
+                    Log.d("LOGIN", "nickname : " + loginResponse?.nickname)
+                    Log.d("LOGIN", "email : " + loginResponse?.email)
+                    Log.d("LOGIN", "image : " + loginResponse?.image)
                     Log.d("LOGIN", "메인 화면으로 갑니다.")
                 }
                 "500" -> {
