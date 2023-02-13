@@ -308,6 +308,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Button(
                     onClick = {
                         createTodo(token, year, month, day, title, time)
+                        isVisiblily = !isVisiblily
                     }
                 ) {
                     Text(text = "Todo 작성")

@@ -57,51 +57,6 @@ fun changeNicknameAndProfile() {
 
 }
 
-fun changePassword(token: String, password1: String, password2: String) {
-
-    if (!(password1.length >= 8 && password2.length >= 8)) {
-        Log.d("FAIL", "비밀번호 8자리 이상이 아닙니다.")
-    }
-
-    if (!(password1.equals(password2))) {
-        Log.d("FAIL", "비밀번호가 일치하지 않습니다")
-    } else {
-
-        var changePasswordResponse: ChangePasswordResponse? = null
-
-        var retrofit = Retrofit.Builder()
-            .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        var changePasswordRequest: ChangePasswordRequest =
-            retrofit.create(ChangePasswordRequest::class.java)
-
-
-        changePasswordRequest.requestChangePassword(token, password1)
-            .enqueue(object : Callback<ChangePasswordResponse> {
-                override fun onResponse(
-                    call: Call<ChangePasswordResponse>,
-                    response: Response<ChangePasswordResponse>,
-                ) {
-                    changePasswordResponse = response.body()
-
-                    MyApplication.prefs.setData("password1", password1)
-                    MyApplication.prefs.setData("password2", password2)
-
-                    Log.d("REGISTER", "resultCode : " + changePasswordResponse?.resultCode)
-
-
-                }
-
-                override fun onFailure(call: Call<ChangePasswordResponse>, t: Throwable) {
-                    Log.e("changePassword", t.message.toString())
-                }
-
-            })
-    }
-}
-
 fun deleteProfileImage(token: String) {
 
     var deleteProfileImageResponse: DeleteProfileImageResponse? = null
@@ -161,7 +116,7 @@ fun ProfileScreen(routeAction: RouteAction) {
     ) {
 
         TopAppBar(
-            title = { Text(text = "") },
+            title = { Text(text = "프로필 수정") },
             navigationIcon = {
                 IconButton(onClick = {
                     routeAction.goBack()
@@ -276,7 +231,9 @@ fun ProfileScreen(routeAction: RouteAction) {
         Spacer(modifier = Modifier.height(5.dp))
 
         Button(
-            onClick = {  }
+            onClick = {
+                goChangePassword(NAV_ROUTE.CHANGEPASSWORD, routeAction)
+            }
         ) {
             Text(text = "비밀번호 변경")
         }
