@@ -11,9 +11,9 @@ import retrofit2.http.Part
 interface ChangeNicknameAndProfileRequest {
     @Multipart
     @POST("/account/edit1/")
-    fun requestChangeNicknameandProfile(
+    fun requestChangeNicknameAndProfile(
         @Header("Authorization") token: String,
         @Part ("nickname") nickname: String,
-        @Part Profile : MultipartBody.Part
+        @Part image : MultipartBody.Part
     ) : Call<ChangeNicknameAndProfileResponse>
 }
