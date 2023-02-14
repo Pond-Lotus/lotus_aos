@@ -13,6 +13,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import coil.compose.rememberImagePainter
 import com.example.todo_android.Component.UpdateTodoDialog
 import com.example.todo_android.Component.updateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
@@ -53,15 +55,20 @@ import com.example.todo_android.Response.ModifyResponse.DeleteProfileImageRespon
 import com.example.todo_android.Response.ProfileResponse.RegisterResponse
 import com.example.todo_android.Response.TodoResponse.DeleteTodoResponse
 import com.example.todo_android.Util.MyApplication
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 
 fun goChangePassword(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
 
-fun changeNicknameAndProfile(token: String, nickname: String, image: String) {
+fun changeNicknameAndProfile(token: String, nickname: String, image: MultipartBody.Part) {
 
     var changeNicknameAndProfileResponse: ChangeNicknameAndProfileResponse? = null
 
@@ -114,6 +121,9 @@ fun ProfileScreen(routeAction: RouteAction) {
 
     var email by remember { mutableStateOf("") }
     var nickname by remember { mutableStateOf("") }
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
+    var changeNickname: String = MyApplication.prefs.getData("nickname", nickname)
 
     var openDialog by remember { mutableStateOf(false) }
 
@@ -121,81 +131,74 @@ fun ProfileScreen(routeAction: RouteAction) {
         setImageDialog()
     }
 
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    var context = LocalContext.current
-    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
 
-    val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-            imageUri = uri
+    val imageUri = rememberSaveable { mutableStateOf("") }
+    val painter = rememberImagePainter(
+        if (imageUri.value.isEmpty()) {
+            R.drawable.defaultprofile
+        } else {
+            imageUri.value
         }
+    )
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+    ) { uri: Uri? ->
+        uri?.let {
+            imageUri.value = it.toString()
+            Log.v("image", "image: ${uri}")
+        }
+    }
+//
+//    val file = File("/storage/emulated/0/Pictures/.thumbnails")
+//    val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
+//    val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
 
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.White),
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top) {
 
-        TopAppBar(title = { Text(text = "프로필 수정") }, navigationIcon = {
-            IconButton(onClick = {
-                routeAction.goBack()
-            }) {
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
-            }
-        }, actions = {
-            Text(text = "완료", modifier = Modifier
-                .padding(30.dp)
-                .clickable {
-                    /* TODO */
-                })
-        })
+        TopAppBar(
+            title = {
+                Text(text = "프로필 수정")
+            },
+            navigationIcon = {
+                IconButton(onClick = {
+                    routeAction.goBack()
+                }) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                }
+            },
+            actions = {
+                Text(
+                    text = "완료",
+                    modifier = Modifier
+                        .padding(30.dp)
+                        .clickable {
+//                            changeNicknameAndProfile(token, changeNickname, body)
+                            routeAction.goBack()
+                        })
+            })
 
         Spacer(modifier = Modifier.height(50.dp))
 
-//        imageUri?.let {
-//            if (Build.VERSION.SDK_INT < 28) {
-//                bitmap.value = MediaStore.Images
-//                    .Media.getBitmap(context.contentResolver, it)
-//            } else {
-//                val source = ImageDecoder.createSource(context.contentResolver, it)
-//                bitmap.value = ImageDecoder.decodeBitmap(source)
-//            }
-//
-//
-//            bitmap.value?.let { btm ->
-//                Image(
-//                    bitmap = btm.asImageBitmap(),
-//                    contentDescription = "profileImage",
-//                    modifier = Modifier
-//                        .size(250.dp)
-//                        .padding(20.dp)
-//                        .clickable {
-//                            launcher.launch("image/*")
-//                        }
-//                )
-//            }
-//        }
-//
-//        Spacer(modifier = Modifier.height(30.dp))
-//
-//        Button(
-//            onClick = {
-//                openDialog = !openDialog
-//            }
-//        ) {
-//            Text(text = "버튼")
-//        }
-
 
         Image(
-            painter = painterResource(id = R.drawable.defaultprofile),
+            painter = painter,
             contentDescription = "profileImage",
             modifier = Modifier
-                .size(100.dp)
+                .size(150.dp)
+                .padding(8.dp)
                 .clickable {
-                    openDialog = !openDialog
-                }
+//                    launcher.launch("image/*")
+                        openDialog = !openDialog
+                },
+            contentScale = ContentScale.Crop
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -256,11 +259,22 @@ fun ProfileScreen(routeAction: RouteAction) {
 @Composable
 fun setImageDialog() {
 
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-            imageUri = uri
+    val imageUri = rememberSaveable { mutableStateOf("") }
+    val painter = rememberImagePainter(
+        if (imageUri.value.isEmpty()) {
+            R.drawable.defaultprofile
+        } else {
+            imageUri.value
         }
+    )
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+    ) { uri: Uri? ->
+        uri?.let {
+            imageUri.value = it.toString()
+        }
+    }
 
     var openDialog by remember { mutableStateOf(true) }
 
@@ -280,11 +294,12 @@ fun setImageDialog() {
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
+                ) {
                     Button(
                         onClick = {
                             launcher.launch("image/*")
-                            openDialog = false },
+                            openDialog = false
+                        },
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier
                             .width(250.dp)
@@ -297,7 +312,9 @@ fun setImageDialog() {
                     Spacer(modifier = Modifier.height(15.dp))
 
                     Button(
-                        onClick = { openDialog = false },
+                        onClick = {
+                            openDialog = false
+                        },
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier
                             .width(250.dp)

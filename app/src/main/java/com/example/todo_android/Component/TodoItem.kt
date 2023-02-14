@@ -485,8 +485,8 @@ fun UpdateTodoDialog(
                                 },
                                 shape = RoundedCornerShape(20.dp),
                                 modifier = Modifier
-                                    .width(45.dp)
-                                    .height(35.dp)
+                                    .width(90.dp)
+                                    .height(50.dp)
                             ) {
                                 Text(
                                     text = "저장",
@@ -502,6 +502,13 @@ fun UpdateTodoDialog(
                         fontWeight = FontWeight.Bold)
 
                     Divider()
+
+                    Text(
+                        text = "제목",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold)
+
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     TextField(
                         modifier = Modifier
@@ -529,6 +536,13 @@ fun UpdateTodoDialog(
                     )
 
                     Spacer(modifier = Modifier.height(15.dp))
+
+                    Text(
+                        text = "디테일한 내용",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold)
+
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     TextField(
                         modifier = Modifier

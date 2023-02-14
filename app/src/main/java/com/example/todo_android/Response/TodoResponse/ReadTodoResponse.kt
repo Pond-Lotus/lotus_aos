@@ -18,6 +18,7 @@ data class RToDoResponse(
     val month: Int,
     val day: Int,
     val title: String,
+    val description: String,
     val done: Boolean,
     val time: String,
     val color: Int
