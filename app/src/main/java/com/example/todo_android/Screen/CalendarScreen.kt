@@ -157,7 +157,7 @@ fun CalendarScreen(routeAction: RouteAction) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(Color(0xfff0f0f0)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -219,6 +219,7 @@ fun CalendarScreen(routeAction: RouteAction) {
         AnimatedVisibility(isVisible)
         {
             Kalendar(
+                modifier = Modifier.fillMaxWidth().height(260.dp).padding(30.dp),
                 kalendarType = KalendarType.Oceanic(),
                 kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
                 kalendarThemeColor = KalendarThemeColor(
@@ -243,6 +244,8 @@ fun CalendarScreen(routeAction: RouteAction) {
 
         AnimatedVisibility(!isVisible) {
             Kalendar(
+                modifier = Modifier.fillMaxWidth().height(428.dp).padding(30.dp),
+//                shape = RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp),
                 kalendarType = KalendarType.Firey,
                 kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
                 kalendarThemeColor = KalendarThemeColor(
@@ -280,7 +283,7 @@ fun CalendarScreen(routeAction: RouteAction) {
 
             Spacer(modifier = Modifier.width(5.dp))
 
-            Divider(modifier = Modifier.padding(5.dp), color = Color.LightGray)
+            Divider(modifier = Modifier.padding(5.dp), color = Color(0xffe7e7e7))
 
         }
 

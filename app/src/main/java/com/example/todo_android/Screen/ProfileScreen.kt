@@ -6,6 +6,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -61,10 +62,21 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 fun goChangePassword(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
+}
+
+fun bitmapString(bitmap: Bitmap): String {
+    val byteArrayOutputStream = ByteArrayOutputStream()
+
+    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+
+    val byteArray = byteArrayOutputStream.toByteArray()
+
+    return Base64.encodeToString(byteArray, Base64.DEFAULT)
 }
 
 
@@ -127,10 +139,6 @@ fun ProfileScreen(routeAction: RouteAction) {
 
     var openDialog by remember { mutableStateOf(false) }
 
-    if (openDialog) {
-        setImageDialog()
-    }
-
 
     val imageUri = rememberSaveable { mutableStateOf("") }
     val painter = rememberImagePainter(
@@ -149,11 +157,64 @@ fun ProfileScreen(routeAction: RouteAction) {
             Log.v("image", "image: ${uri}")
         }
     }
+
+    if (openDialog) {
+//        setImageDialog()
+        Dialog(
+            onDismissRequest = {
+                openDialog = false
+            }) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(400.dp),
+                shape = RoundedCornerShape(12.dp),
+                color = Color.White
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Button(
+                        onClick = {
+                            launcher.launch("image/*")
+                            openDialog = false
+                        },
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier
+                            .width(250.dp)
+                            .height(45.dp)
+                            .background(Color.White))
+                    {
+                        Text(text = "앨범에서 선택")
+                    }
+
+                    Spacer(modifier = Modifier.height(15.dp))
+
+                    Button(
+                        onClick = {
+                            openDialog = false
+                        },
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier
+                            .width(250.dp)
+                            .height(45.dp)
+                            .background(Color.White))
+                    {
+                        Text(text = "기본 이미지로 변경")
+                    }
+                }
+            }
+        }
+    }
+
+
+
 //
 //    val file = File("/storage/emulated/0/Pictures/.thumbnails")
 //    val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
 //    val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
-
 
 
     Column(
