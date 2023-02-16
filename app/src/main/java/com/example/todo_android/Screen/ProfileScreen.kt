@@ -1,12 +1,9 @@
 package com.example.todo_android.Screen
 
-import android.app.Activity
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
+import android.content.ContentResolver
 import android.net.Uri
-import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
-import android.util.Base64
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,73 +11,73 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Button
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
-import com.example.todo_android.Component.UpdateTodoDialog
-import com.example.todo_android.Component.updateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ModifyRequest.ChangeNicknameAndProfileRequest
-import com.example.todo_android.Request.ModifyRequest.ChangePasswordRequest
 import com.example.todo_android.Request.ModifyRequest.DeleteProfileImageRequest
-import com.example.todo_android.Request.ProfileRequest.RegisterRequest
-import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
 import com.example.todo_android.Response.ModifyResponse.ChangeNicknameAndProfileResponse
-import com.example.todo_android.Response.ModifyResponse.ChangePasswordResponse
 import com.example.todo_android.Response.ModifyResponse.DeleteProfileImageResponse
-import com.example.todo_android.Response.ProfileResponse.RegisterResponse
-import com.example.todo_android.Response.TodoResponse.DeleteTodoResponse
 import com.example.todo_android.Util.MyApplication
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 
 fun goChangePassword(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
-fun bitmapString(bitmap: Bitmap): String {
-    val byteArrayOutputStream = ByteArrayOutputStream()
+//fun bitmapString(bitmap: Bitmap): String {
+//    val byteArrayOutputStream = ByteArrayOutputStream()
+//
+//    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+//
+//    val byteArray = byteArrayOutputStream.toByteArray()
+//
+//    return Base64.encodeToString(byteArray, Base64.DEFAULT)
+//}
 
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+//private fun getRealPathFromURI(contentResolver: ContentResolver, uri: String): String {
+//    val projection = arrayOf(MediaStore.Images.Media.DATA)
+//    val cursor = contentResolver.query(Uri.parse(uri), projection, null, null, null)
+//    val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+//    cursor?.moveToFirst()
+//    val filePath = cursor?.getString(columnIndex!!)
+//    cursor?.close()
+//    return filePath!!
+//}
 
-    val byteArray = byteArrayOutputStream.toByteArray()
 
-    return Base64.encodeToString(byteArray, Base64.DEFAULT)
-}
-
-
-fun changeNicknameAndProfile(token: String, nickname: String, image: MultipartBody.Part) {
+fun changeNicknameAndProfile(
+    token: String,
+    nickname: String,
+    body: MultipartBody.Part,
+    routeAction: RouteAction,
+) {
 
     var changeNicknameAndProfileResponse: ChangeNicknameAndProfileResponse? = null
 
@@ -91,40 +88,31 @@ fun changeNicknameAndProfile(token: String, nickname: String, image: MultipartBo
     var changeNicknameAndProfileRequest: ChangeNicknameAndProfileRequest =
         retrofit.create(ChangeNicknameAndProfileRequest::class.java)
 
-//    changeNicknameAndProfileRequest.requestChangeNicknameAndProfile(token, nickname, image)
-//        .enqueue(object : Callback<ChangeNicknameAndProfileResponse>)
-
-}
-
-fun deleteProfileImage(token: String) {
-
-    var deleteProfileImageResponse: DeleteProfileImageResponse? = null
-
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
-
-    var deleteProfileImageRequest: DeleteProfileImageRequest =
-        retrofit.create(DeleteProfileImageRequest::class.java)
-
-    deleteProfileImageRequest.requestDeleteProfileImage(token)
-        .enqueue(object : Callback<DeleteProfileImageResponse> {
+    changeNicknameAndProfileRequest.requestChangeNicknameAndProfile(token, nickname, body)
+        .enqueue(object : Callback<ChangeNicknameAndProfileResponse> {
 
             // 성공 했을때
             override fun onResponse(
-                call: Call<DeleteProfileImageResponse>,
-                response: Response<DeleteProfileImageResponse>,
+                call: Call<ChangeNicknameAndProfileResponse>,
+                response: Response<ChangeNicknameAndProfileResponse>,
             ) {
-                deleteProfileImageResponse = response.body()
+                changeNicknameAndProfileResponse = response.body()
+                routeAction.goBack()
+                Log.d("changeNickname&Profile",
+                    "resultCode : " + changeNicknameAndProfileResponse?.resultCode)
+                Log.d("changeNickname&Profile",
+                    "resultCode : " + changeNicknameAndProfileResponse?.data)
 
-                Log.d("deleteProfileImage",
-                    "resultCode : " + deleteProfileImageResponse?.resultCode)
+
             }
 
             // 실패 했을때
-            override fun onFailure(call: Call<DeleteProfileImageResponse>, t: Throwable) {
-                Log.e("deleteProfileImage", t.message.toString())
+            override fun onFailure(call: Call<ChangeNicknameAndProfileResponse>, t: Throwable) {
+                Log.e("changeNickname&Profile", t.message.toString())
             }
+
         })
+
 }
 
 @ExperimentalMaterial3Api
@@ -140,23 +128,42 @@ fun ProfileScreen(routeAction: RouteAction) {
     var openDialog by remember { mutableStateOf(false) }
 
 
-    val imageUri = rememberSaveable { mutableStateOf("") }
+    val imageUri = rememberSaveable {
+        mutableStateOf<Uri?>(null)
+    }
     val painter = rememberImagePainter(
-        if (imageUri.value.isEmpty()) {
-            R.drawable.defaultprofile
-        } else {
-            imageUri.value
+        data = imageUri.value,
+        builder = {
+            if(imageUri.value == null) {
+                placeholder(R.drawable.defaultprofile)
+            }
         }
     )
 
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-    ) { uri: Uri? ->
-        uri?.let {
-            imageUri.value = it.toString()
-            Log.v("image", "image: ${uri}")
-        }
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) {
+        uri: Uri? ->
+            uri?.let {
+                imageUri.value = it
+                Log.v("image", "image: ${uri}")
+            }
     }
+
+    val file = imageUri.value?.let { uri ->
+        val contentResolver = LocalContext.current.contentResolver
+        val inputStream = contentResolver.openInputStream(uri)
+        val tempFile = File.createTempFile("image", null, LocalContext.current.cacheDir)
+        tempFile.outputStream().use { outputStream ->
+            inputStream?.copyTo(outputStream)
+        }
+        tempFile
+    }
+
+    val requestFile = file?.asRequestBody("image/jpeg".toMediaTypeOrNull())
+    val body = requestFile?.let {
+        MultipartBody.Part.createFormData("image", file.name, requestFile)
+    }
+
+    
 
     if (openDialog) {
 //        setImageDialog()
@@ -178,8 +185,8 @@ fun ProfileScreen(routeAction: RouteAction) {
                 ) {
                     Button(
                         onClick = {
-                            launcher.launch("image/*")
                             openDialog = false
+                            launcher.launch("image/*")
                         },
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier
@@ -209,14 +216,6 @@ fun ProfileScreen(routeAction: RouteAction) {
         }
     }
 
-
-
-//
-//    val file = File("/storage/emulated/0/Pictures/.thumbnails")
-//    val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
-//    val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -241,8 +240,9 @@ fun ProfileScreen(routeAction: RouteAction) {
                     modifier = Modifier
                         .padding(30.dp)
                         .clickable {
-//                            changeNicknameAndProfile(token, changeNickname, body)
-                            routeAction.goBack()
+                            if (body != null) {
+                                changeNicknameAndProfile(token, changeNickname, body, routeAction)
+                            }
                         })
             })
 
@@ -257,7 +257,7 @@ fun ProfileScreen(routeAction: RouteAction) {
                 .padding(8.dp)
                 .clickable {
 //                    launcher.launch("image/*")
-                        openDialog = !openDialog
+                    openDialog = !openDialog
                 },
             contentScale = ContentScale.Crop
         )
@@ -269,7 +269,8 @@ fun ProfileScreen(routeAction: RouteAction) {
         TextField(modifier = Modifier
             .width(308.dp)
             .height(54.dp),
-            value = MyApplication.prefs.getData("nickname", nickname),
+//            value = MyApplication.prefs.getData("nickname", nickname),
+            value = nickname,
             colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF2F2F2),
                 disabledLabelColor = Color(0xffF2F2F2),
                 focusedIndicatorColor = Color.Transparent,
@@ -317,75 +318,75 @@ fun ProfileScreen(routeAction: RouteAction) {
     }
 }
 
-@Composable
-fun setImageDialog() {
-
-    val imageUri = rememberSaveable { mutableStateOf("") }
-    val painter = rememberImagePainter(
-        if (imageUri.value.isEmpty()) {
-            R.drawable.defaultprofile
-        } else {
-            imageUri.value
-        }
-    )
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-    ) { uri: Uri? ->
-        uri?.let {
-            imageUri.value = it.toString()
-        }
-    }
-
-    var openDialog by remember { mutableStateOf(true) }
-
-    if (openDialog) {
-        Dialog(
-            onDismissRequest = {
-                openDialog = false
-            }) {
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(400.dp),
-                shape = RoundedCornerShape(12.dp),
-                color = Color.White
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Button(
-                        onClick = {
-                            launcher.launch("image/*")
-                            openDialog = false
-                        },
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier
-                            .width(250.dp)
-                            .height(45.dp)
-                            .background(Color.White))
-                    {
-                        Text(text = "앨범에서 선택")
-                    }
-
-                    Spacer(modifier = Modifier.height(15.dp))
-
-                    Button(
-                        onClick = {
-                            openDialog = false
-                        },
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier
-                            .width(250.dp)
-                            .height(45.dp)
-                            .background(Color.White))
-                    {
-                        Text(text = "기본 이미지로 변경")
-                    }
-                }
-            }
-        }
-    }
-}
+//@Composable
+//fun setImageDialog() {
+//
+//    val imageUri = rememberSaveable { mutableStateOf("") }
+//    val painter = rememberImagePainter(
+//        if (imageUri.value.isEmpty()) {
+//            R.drawable.defaultprofile
+//        } else {
+//            imageUri.value
+//        }
+//    )
+//
+//    val launcher = rememberLauncherForActivityResult(
+//        contract = ActivityResultContracts.GetContent(),
+//    ) { uri: Uri? ->
+//        uri?.let {
+//            imageUri.value = it.toString()
+//        }
+//    }
+//
+//    var openDialog by remember { mutableStateOf(true) }
+//
+//    if (openDialog) {
+//        Dialog(
+//            onDismissRequest = {
+//                openDialog = false
+//            }) {
+//            Surface(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(400.dp),
+//                shape = RoundedCornerShape(12.dp),
+//                color = Color.White
+//            ) {
+//                Column(
+//                    modifier = Modifier.fillMaxSize(),
+//                    verticalArrangement = Arrangement.Center,
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Button(
+//                        onClick = {
+//                            launcher.launch("image/*")
+//                            openDialog = false
+//                        },
+//                        shape = RoundedCornerShape(10.dp),
+//                        modifier = Modifier
+//                            .width(250.dp)
+//                            .height(45.dp)
+//                            .background(Color.White))
+//                    {
+//                        Text(text = "앨범에서 선택")
+//                    }
+//
+//                    Spacer(modifier = Modifier.height(15.dp))
+//
+//                    Button(
+//                        onClick = {
+//                            openDialog = false
+//                        },
+//                        shape = RoundedCornerShape(10.dp),
+//                        modifier = Modifier
+//                            .width(250.dp)
+//                            .height(45.dp)
+//                            .background(Color.White))
+//                    {
+//                        Text(text = "기본 이미지로 변경")
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
