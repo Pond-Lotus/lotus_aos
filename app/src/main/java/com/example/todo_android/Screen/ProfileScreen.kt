@@ -47,29 +47,11 @@ import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 
 fun goChangePassword(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
-
-fun bitmapString(base64: String?): Bitmap {
-    val encodeByte = Base64.decode(base64, Base64.DEFAULT)
-    val result = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.size)
-
-    Log.v("decode", "decode: ${result}")
-    return result
-}
-
-//private fun getRealPathFromURI(contentResolver: ContentResolver, uri: String): String {
-//    val projection = arrayOf(MediaStore.Images.Media.DATA)
-//    val cursor = contentResolver.query(Uri.parse(uri), projection, null, null, null)
-//    val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-//    cursor?.moveToFirst()
-//    val filePath = cursor?.getString(columnIndex!!)
-//    cursor?.close()
-//    return filePath!!
-//}
-
 
 fun changeNicknameAndProfile(
     token: String,
@@ -102,7 +84,8 @@ fun changeNicknameAndProfile(
                     "200" -> {
 
                         MyApplication.prefs.setData("nickname", nickname)
-                        MyApplication.prefs.setData("image", changeNicknameAndProfileResponse!!.data.image)
+                        MyApplication.prefs.setData("image",
+                            changeNicknameAndProfileResponse!!.data.image)
                         response(changeNicknameAndProfileResponse)
 //                        for (i in changeNicknameAndProfileResponse!!.data.image) {
 //                            val base64String = i.toString()
@@ -149,14 +132,13 @@ fun ProfileScreen(routeAction: RouteAction) {
 
     val decodeFile: File? = File.createTempFile("temp", null, LocalContext.current.cacheDir)
     val outputStream = FileOutputStream(decodeFile)
-    decodedImage.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+
+    decodedImage?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
     outputStream.close()
 
-
     val imageUri = rememberSaveable {
-        mutableStateOf<Uri?>(decodeFile!!.toUri())
+        mutableStateOf(decodeFile?.toUri())
     }
-
 
     var painter = rememberImagePainter(
         data = imageUri.value,
