@@ -22,16 +22,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
+import coil.compose.AsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -42,12 +41,13 @@ import com.example.todo_android.Util.MyApplication
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okio.ByteString.Companion.decodeBase64
-import retrofit2.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 
 fun goChangePassword(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
@@ -58,7 +58,6 @@ fun changeNicknameAndProfile(
     nickname: String,
     body: MultipartBody.Part,
     routeAction: RouteAction,
-    response: (ChangeNicknameAndProfileResponse?) -> Unit,
 ) {
 
     var changeNicknameAndProfileResponse: ChangeNicknameAndProfileResponse? = null
@@ -86,13 +85,6 @@ fun changeNicknameAndProfile(
                         MyApplication.prefs.setData("nickname", nickname)
                         MyApplication.prefs.setData("image",
                             changeNicknameAndProfileResponse!!.data.image)
-                        response(changeNicknameAndProfileResponse)
-//                        for (i in changeNicknameAndProfileResponse!!.data.image) {
-//                            val base64String = i.toString()
-//                            val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
-//                            val decodedImageBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-//                            decodedImage.value = decodedImageBitmap
-//                        }
                         routeAction.goBack()
 
                         Log.d("changeNickname&Profile",
@@ -142,7 +134,6 @@ fun ProfileScreen(routeAction: RouteAction) {
 
     var painter = rememberImagePainter(
         data = imageUri.value,
-//        data = decodedImage,
         builder = {
             if (imageUri.value != null) {
                 placeholder(R.drawable.defaultprofile)
@@ -253,13 +244,7 @@ fun ProfileScreen(routeAction: RouteAction) {
                                 changeNicknameAndProfile(token,
                                     nickname,
                                     body!!,
-                                    routeAction,
-                                    response = {
-//                                        for (i in it!!.data.image) {
-//
-//
-//                                        }
-                                    }
+                                    routeAction
                                 )
                             }
                         })

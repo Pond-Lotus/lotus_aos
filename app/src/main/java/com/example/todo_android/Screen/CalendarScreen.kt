@@ -1,7 +1,7 @@
 package com.example.todo_android.Screen
 
 import android.util.Log
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,14 +21,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Component.TodoItemList
 import com.example.todo_android.Data.Todo.CreateTodo
-import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.Request.TodoRequest.CreateTodoRequest
-import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
 import com.example.todo_android.Request.TodoRequest.ReadTodoRequest
-import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
-import com.example.todo_android.Response.TodoResponse.*
+import com.example.todo_android.Response.TodoResponse.CreateTodoResponse
+import com.example.todo_android.Response.TodoResponse.RToDoResponse
+import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.Util.MyApplication
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.color.KalendarThemeColor

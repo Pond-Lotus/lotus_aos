@@ -24,7 +24,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun goMain2(route: NAV_ROUTE, routeAction: RouteAction) {
+fun goLottie(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
@@ -74,7 +74,7 @@ fun Register(
                             MyApplication.prefs.setData("password1", password1)
                             MyApplication.prefs.setData("password2", password2)
 
-                            goMain2(NAV_ROUTE.LOGIN, routeAction)
+                            goLottie(NAV_ROUTE.LOGIN, routeAction)
                             Log.d("REGISTER", "메인 화면으로 갑니다.")
                             Log.d("REGISTER", "resultCode : " + registerResponse?.resultCode)
                         }

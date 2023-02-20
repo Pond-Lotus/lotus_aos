@@ -1,6 +1,5 @@
 package com.example.todo_android.Response.TodoResponse
 
-import android.util.EventLogTags.Description
 import com.google.gson.annotations.SerializedName
 
 data class UpdateTodoResponse(
