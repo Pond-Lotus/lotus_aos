@@ -16,6 +16,7 @@ import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.Request.ProfileRequest.AuthCodeRequest
 import com.example.todo_android.Response.ProfileResponse.AuthCodeResponse
+import com.example.todo_android.Util.MyApplication
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,7 +28,7 @@ fun goProfile(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
-fun authCode(email: String, code: String, routeAction: RouteAction) {
+fun authCode(authEmail: String, code: String, routeAction: RouteAction) {
 
     var authCodeResponse: AuthCodeResponse? = null
 
@@ -39,7 +40,7 @@ fun authCode(email: String, code: String, routeAction: RouteAction) {
 
     var authCodeRequest: AuthCodeRequest = retrofit.create(AuthCodeRequest::class.java)
 
-    authCodeRequest.requestCode(AuthCode(email, code)).enqueue(object : Callback<AuthCodeResponse> {
+    authCodeRequest.requestCode(AuthCode(authEmail, code)).enqueue(object : Callback<AuthCodeResponse> {
 
         //실패할 경우
         override fun onFailure(call: Call<AuthCodeResponse>, t: Throwable) {
@@ -72,8 +73,10 @@ fun AuthCodeScreen(routeAction: RouteAction) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
-        var email by remember { mutableStateOf("test001@test.com") }
+        var email by remember {
+            mutableStateOf("")
+        }
+        var authEmail = MyApplication.prefs.getData("email", email)
         var code by remember { mutableStateOf("") }
 
         TextField(
@@ -111,7 +114,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                     .width(90.dp)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-                onClick = { authCode(email, code, routeAction) }
+                onClick = { authCode(authEmail, code, routeAction) }
             ) {
                 Text(
                     text = "다음 >",

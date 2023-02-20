@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.todo_android.Data.Profile.Login
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -68,6 +69,7 @@ fun sendLogin(email: String, password: String, routeAction: RouteAction) {
                 "200" -> {
                     goCalendar(NAV_ROUTE.CALENDAR, routeAction)
                     MyApplication.prefs.setData("token", loginResponse?.token.toString())
+                    MyApplication.prefs.setData("email", loginResponse?.email.toString())
 
                     Log.d("LOGIN", "resultCode : " + loginResponse?.resultCode)
                     Log.d("LOGIN", "token : " + loginResponse?.token)
@@ -88,26 +90,24 @@ fun sendLogin(email: String, password: String, routeAction: RouteAction) {
 @Composable
 fun LoginScreen(routeAction: RouteAction) {
 
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var checked by remember { mutableStateOf(false) }
+
+    var passwordVisible by remember { mutableStateOf(false) }
+
+    val icon = if (passwordVisible) {
+        painterResource(id = R.drawable.openeye)
+    } else {
+        painterResource(id = R.drawable.closeeye)
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     )
     {
-
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        var checked by remember { mutableStateOf(false) }
-
-        var passwordVisible by remember { mutableStateOf(false) }
-
-        val icon = if (passwordVisible) {
-            painterResource(id = R.drawable.openeye)
-        } else {
-            painterResource(id = R.drawable.closeeye)
-        }
-
-
         Column(
             modifier = Modifier.fillMaxWidth().padding(start = 30.dp),
 //            horizontalAlignment = Alignment.Start,

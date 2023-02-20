@@ -1,15 +1,16 @@
 package com.example.todo_android.Screen
 
-import android.content.ContentResolver
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,27 +22,27 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ModifyRequest.ChangeNicknameAndProfileRequest
-import com.example.todo_android.Request.ModifyRequest.DeleteProfileImageRequest
 import com.example.todo_android.Response.ModifyResponse.ChangeNicknameAndProfileResponse
-import com.example.todo_android.Response.ModifyResponse.DeleteProfileImageResponse
 import com.example.todo_android.Util.MyApplication
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okio.ByteString.Companion.decodeBase64
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -51,15 +52,13 @@ fun goChangePassword(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
-//fun bitmapString(bitmap: Bitmap): String {
-//    val byteArrayOutputStream = ByteArrayOutputStream()
-//
-//    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-//
-//    val byteArray = byteArrayOutputStream.toByteArray()
-//
-//    return Base64.encodeToString(byteArray, Base64.DEFAULT)
-//}
+fun bitmapString(base64: String?): Bitmap {
+    val encodeByte = Base64.decode(base64, Base64.DEFAULT)
+    val result = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.size)
+
+    Log.v("decode", "decode: ${result}")
+    return result
+}
 
 //private fun getRealPathFromURI(contentResolver: ContentResolver, uri: String): String {
 //    val projection = arrayOf(MediaStore.Images.Media.DATA)
@@ -77,6 +76,7 @@ fun changeNicknameAndProfile(
     nickname: String,
     body: MultipartBody.Part,
     routeAction: RouteAction,
+    response: (ChangeNicknameAndProfileResponse?) -> Unit,
 ) {
 
     var changeNicknameAndProfileResponse: ChangeNicknameAndProfileResponse? = null
@@ -97,22 +97,38 @@ fun changeNicknameAndProfile(
                 response: Response<ChangeNicknameAndProfileResponse>,
             ) {
                 changeNicknameAndProfileResponse = response.body()
-                routeAction.goBack()
-                Log.d("changeNickname&Profile",
-                    "resultCode : " + changeNicknameAndProfileResponse?.resultCode)
-                Log.d("changeNickname&Profile",
-                    "resultCode : " + changeNicknameAndProfileResponse?.data)
 
+                when (changeNicknameAndProfileResponse?.resultCode) {
+                    "200" -> {
 
+                        MyApplication.prefs.setData("nickname", nickname)
+                        MyApplication.prefs.setData("image", changeNicknameAndProfileResponse!!.data.image)
+                        response(changeNicknameAndProfileResponse)
+//                        for (i in changeNicknameAndProfileResponse!!.data.image) {
+//                            val base64String = i.toString()
+//                            val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+//                            val decodedImageBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+//                            decodedImage.value = decodedImageBitmap
+//                        }
+                        routeAction.goBack()
+
+                        Log.d("changeNickname&Profile",
+                            "resultCode : " + changeNicknameAndProfileResponse?.resultCode)
+                        Log.d("changeNickname&Profile",
+                            "resultCode : " + changeNicknameAndProfileResponse?.data)
+                    }
+                    "500" -> {
+                        Log.d("changeNickname&Profile",
+                            "resultCode : " + changeNicknameAndProfileResponse?.resultCode)
+                    }
+                }
             }
 
             // 실패 했을때
             override fun onFailure(call: Call<ChangeNicknameAndProfileResponse>, t: Throwable) {
                 Log.e("changeNickname&Profile", t.message.toString())
             }
-
         })
-
 }
 
 @ExperimentalMaterial3Api
@@ -120,33 +136,45 @@ fun changeNicknameAndProfile(
 fun ProfileScreen(routeAction: RouteAction) {
 
     var email by remember { mutableStateOf("") }
-    var nickname by remember { mutableStateOf("") }
-    val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
-    var changeNickname: String = MyApplication.prefs.getData("nickname", nickname)
+    var nickname by remember { mutableStateOf(MyApplication.prefs.getData("nickname", "")) }
+
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
     var openDialog by remember { mutableStateOf(false) }
 
+    val responseImage = MyApplication.prefs.getData("image", "")
+    val decodedBytes = Base64.decode(responseImage, Base64.DEFAULT)
+    val decodedImage = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+
+    val decodeFile: File? = File.createTempFile("temp", null, LocalContext.current.cacheDir)
+    val outputStream = FileOutputStream(decodeFile)
+    decodedImage.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+    outputStream.close()
+
 
     val imageUri = rememberSaveable {
-        mutableStateOf<Uri?>(null)
+        mutableStateOf<Uri?>(decodeFile!!.toUri())
     }
-    val painter = rememberImagePainter(
+
+
+    var painter = rememberImagePainter(
         data = imageUri.value,
+//        data = decodedImage,
         builder = {
-            if(imageUri.value == null) {
+            if (imageUri.value != null) {
                 placeholder(R.drawable.defaultprofile)
             }
         }
     )
 
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) {
-        uri: Uri? ->
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 imageUri.value = it
                 Log.v("image", "image: ${uri}")
             }
-    }
+        }
 
     val file = imageUri.value?.let { uri ->
         val contentResolver = LocalContext.current.contentResolver
@@ -163,10 +191,8 @@ fun ProfileScreen(routeAction: RouteAction) {
         MultipartBody.Part.createFormData("image", file.name, requestFile)
     }
 
-    
 
     if (openDialog) {
-//        setImageDialog()
         Dialog(
             onDismissRequest = {
                 openDialog = false
@@ -240,14 +266,24 @@ fun ProfileScreen(routeAction: RouteAction) {
                     modifier = Modifier
                         .padding(30.dp)
                         .clickable {
-                            if (body != null) {
-                                changeNicknameAndProfile(token, changeNickname, body, routeAction)
+                            val currenNickname = MyApplication.prefs.getData("nickname", nickname)
+                            if ((body != null) || !(nickname.equals(currenNickname))) {
+                                changeNicknameAndProfile(token,
+                                    nickname,
+                                    body!!,
+                                    routeAction,
+                                    response = {
+//                                        for (i in it!!.data.image) {
+//
+//
+//                                        }
+                                    }
+                                )
                             }
                         })
             })
 
         Spacer(modifier = Modifier.height(50.dp))
-
 
         Image(
             painter = painter,
@@ -256,7 +292,6 @@ fun ProfileScreen(routeAction: RouteAction) {
                 .size(150.dp)
                 .padding(8.dp)
                 .clickable {
-//                    launcher.launch("image/*")
                     openDialog = !openDialog
                 },
             contentScale = ContentScale.Crop
@@ -269,20 +304,22 @@ fun ProfileScreen(routeAction: RouteAction) {
         TextField(modifier = Modifier
             .width(308.dp)
             .height(54.dp),
-//            value = MyApplication.prefs.getData("nickname", nickname),
             value = nickname,
             colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF2F2F2),
                 disabledLabelColor = Color(0xffF2F2F2),
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent),
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             shape = RoundedCornerShape(18.dp),
             onValueChange = {
                 nickname = it
             },
             placeholder = {
-                Text(text = "닉네임", fontSize = 16.sp, color = Color(0xffA9A9A9))
+                Text(
+                    text = "닉네임",
+                    fontSize = 16.sp,
+                    color = Color(0xffA9A9A9))
             })
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -292,7 +329,8 @@ fun ProfileScreen(routeAction: RouteAction) {
 
         TextField(modifier = Modifier
             .width(308.dp)
-            .height(54.dp),
+            .height(54.dp)
+            .focusable(false),
             value = MyApplication.prefs.getData("email", email),
             colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF2F2F2),
                 disabledLabelColor = Color(0xffF2F2F2),

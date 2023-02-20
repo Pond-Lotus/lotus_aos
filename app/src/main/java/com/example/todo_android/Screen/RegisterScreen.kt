@@ -133,7 +133,6 @@ fun RegisterScreen(routeAction: RouteAction) {
                 unfocusedIndicatorColor = Color.Transparent
             ),
             singleLine = true,
-//            visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             shape = RoundedCornerShape(20.dp),
             onValueChange = {
