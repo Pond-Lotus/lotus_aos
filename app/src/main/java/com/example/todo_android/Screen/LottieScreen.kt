@@ -67,7 +67,7 @@ fun LottieScreen(routeAction: RouteAction) {
             shape = RoundedCornerShape(18.dp),
             colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
             onClick = {
-                goMain(NAV_ROUTE.LOTTIE, routeAction)
+                goMain(NAV_ROUTE.LOGIN, routeAction)
             }) {
             Text(text = "로그인 하기")
         }

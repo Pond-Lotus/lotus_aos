@@ -22,6 +22,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
 import coil.compose.AsyncImagePainter
+import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -128,6 +131,14 @@ fun ProfileScreen(routeAction: RouteAction) {
     decodedImage?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
     outputStream.close()
 
+    val defaultProfileImageBitmap = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.defaultprofile)
+
+    val decodedDefaultImage = Base64.decode(defaultProfileImageBitmap, Base64.DEFAULT)
+
+    var onChangeProfileImage by remember {
+        mutableStateOf(defaultProfileImageBitmap)
+    }
+
     val imageUri = rememberSaveable {
         mutableStateOf(decodeFile?.toUri())
     }
@@ -135,7 +146,7 @@ fun ProfileScreen(routeAction: RouteAction) {
     var painter = rememberImagePainter(
         data = imageUri.value,
         builder = {
-            if (imageUri.value != null) {
+            if (imageUri.value == null) {
                 placeholder(R.drawable.defaultprofile)
             }
         }
@@ -200,6 +211,7 @@ fun ProfileScreen(routeAction: RouteAction) {
 
                     Button(
                         onClick = {
+                            painter = defaultProfileImageBitmap
                             openDialog = false
                         },
                         shape = RoundedCornerShape(10.dp),
