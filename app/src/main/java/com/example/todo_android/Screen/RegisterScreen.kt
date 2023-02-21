@@ -74,7 +74,7 @@ fun Register(
                             MyApplication.prefs.setData("password1", password1)
                             MyApplication.prefs.setData("password2", password2)
 
-                            goLottie(NAV_ROUTE.LOGIN, routeAction)
+                            goLottie(NAV_ROUTE.LOTTIE, routeAction)
                             Log.d("REGISTER", "메인 화면으로 갑니다.")
                             Log.d("REGISTER", "resultCode : " + registerResponse?.resultCode)
                         }
