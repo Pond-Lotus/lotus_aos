@@ -134,10 +134,21 @@ fun ProfileScreen(routeAction: RouteAction) {
     decodedImage?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
     outputStream.close()
 
+<<<<<<< HEAD
     val defaultProfileImageBitmap =
         BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.defaultprofile)
 
     
+=======
+    val defaultProfileImageBitmap = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.defaultprofile)
+
+    val decodedDefaultImage = Base64.decode(defaultProfileImageBitmap, Base64.DEFAULT)
+
+    var onChangeProfileImage by remember {
+        mutableStateOf(defaultProfileImageBitmap)
+    }
+
+>>>>>>> master
     val imageUri = rememberSaveable {
         mutableStateOf(decodeFile?.toUri())
     }
@@ -211,7 +222,11 @@ fun ProfileScreen(routeAction: RouteAction) {
 
                     Button(
                         onClick = {
+<<<<<<< HEAD
                             painter = onClickToDefaultImage
+=======
+                            painter = defaultProfileImageBitmap
+>>>>>>> master
                             openDialog = false
                         },
                         shape = RoundedCornerShape(10.dp),
