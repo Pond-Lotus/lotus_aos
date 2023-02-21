@@ -150,7 +150,7 @@ fun ProfileScreen(routeAction: RouteAction) {
         }
     )
     val onClickToDefaultImage = rememberImagePainter(data = defaultProfileImageBitmap)
-
+    
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
