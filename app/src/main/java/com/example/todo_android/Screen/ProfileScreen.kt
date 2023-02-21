@@ -1,5 +1,6 @@
 package com.example.todo_android.Screen
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -109,6 +111,7 @@ fun changeNicknameAndProfile(
         })
 }
 
+@SuppressLint("RememberReturnType")
 @ExperimentalMaterial3Api
 @Composable
 fun ProfileScreen(routeAction: RouteAction) {
@@ -131,14 +134,10 @@ fun ProfileScreen(routeAction: RouteAction) {
     decodedImage?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
     outputStream.close()
 
-    val defaultProfileImageBitmap = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.defaultprofile)
+    val defaultProfileImageBitmap =
+        BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.defaultprofile)
 
-    val decodedDefaultImage = Base64.decode(defaultProfileImageBitmap, Base64.DEFAULT)
-
-    var onChangeProfileImage by remember {
-        mutableStateOf(defaultProfileImageBitmap)
-    }
-
+    
     val imageUri = rememberSaveable {
         mutableStateOf(decodeFile?.toUri())
     }
@@ -151,6 +150,7 @@ fun ProfileScreen(routeAction: RouteAction) {
             }
         }
     )
+    val onClickToDefaultImage = rememberImagePainter(data = defaultProfileImageBitmap)
 
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -211,7 +211,7 @@ fun ProfileScreen(routeAction: RouteAction) {
 
                     Button(
                         onClick = {
-                            painter = defaultProfileImageBitmap
+                            painter = onClickToDefaultImage
                             openDialog = false
                         },
                         shape = RoundedCornerShape(10.dp),
