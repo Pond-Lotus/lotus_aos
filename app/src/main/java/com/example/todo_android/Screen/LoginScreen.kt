@@ -262,7 +262,7 @@ fun LoginScreen(routeAction: RouteAction) {
                 text = "로그인",
                 color = Color.Black,
                 fontSize = 16.sp,
-                fontWeight = FontWeight.ExtraBold
+                fontWeight = FontWeight.Normal
             )
         }
 
