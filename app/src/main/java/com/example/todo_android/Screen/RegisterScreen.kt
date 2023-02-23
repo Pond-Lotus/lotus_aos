@@ -1,5 +1,9 @@
 package com.example.todo_android.Screen
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.util.Log
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
@@ -10,11 +14,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
+import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.RegisterRequest
 import com.example.todo_android.Response.ProfileResponse.RegisterResponse
 import com.example.todo_android.Util.MyApplication
@@ -23,13 +30,14 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.ByteArrayOutputStream
 
 fun goLottie(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
 fun Register(
-    authEmail: String, nickname: String, password1: String, password2: String, routeAction: RouteAction
+    authEmail: String, nickname: String, password1: String, password2: String, routeAction: RouteAction, context: Context
 ){
 
     if (!(password1.length >= 8 && password2.length >= 8)) {
@@ -70,9 +78,16 @@ fun Register(
 
                         "200" -> {
 
+                            val defaultProfileImageBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.defaultprofile)
+                            val outputStream = ByteArrayOutputStream()
+                            defaultProfileImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                            val imageBytes = outputStream.toByteArray()
+                            val encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+
                             MyApplication.prefs.setData("nickname", nickname)
                             MyApplication.prefs.setData("password1", password1)
                             MyApplication.prefs.setData("password2", password2)
+                            MyApplication.prefs.setData("defaultProfileImage", encodedImage)
 
                             goLottie(NAV_ROUTE.LOTTIE, routeAction)
                             Log.d("REGISTER", "메인 화면으로 갑니다.")
@@ -100,6 +115,7 @@ fun RegisterScreen(routeAction: RouteAction) {
         var nickname by remember { mutableStateOf("") }
         var password1 by remember { mutableStateOf("") }
         var password2 by remember { mutableStateOf("") }
+        val context = LocalContext.current
 
         var authEmail: String = MyApplication.prefs.getData("email", email)
 
@@ -198,7 +214,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                     .width(90.dp)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-                onClick = { Register(authEmail, nickname, password1, password2, routeAction) }
+                onClick = { Register(authEmail, nickname, password1, password2, routeAction, context) }
             ) {
                 Text(
                     text = "다음 >",

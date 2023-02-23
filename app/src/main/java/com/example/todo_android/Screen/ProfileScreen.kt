@@ -158,7 +158,7 @@ fun ProfileScreen(routeAction: RouteAction) {
     var painter = rememberImagePainter(
         data = imageUri.value,
         builder = {
-            if (imageUri.value == null) {
+            if (imageUri.value != null) {
                 placeholder(R.drawable.defaultprofile)
             }
         }
@@ -225,7 +225,6 @@ fun ProfileScreen(routeAction: RouteAction) {
                         onClick = {
                             openDialog = false
                             imageUri.value = decodeDefaultImageFile?.toUri()
-//                            imageUri.value = null
                         },
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier
