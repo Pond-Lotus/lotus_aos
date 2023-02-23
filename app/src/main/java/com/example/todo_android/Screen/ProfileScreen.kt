@@ -1,6 +1,7 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -30,12 +31,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.KeyboardType.Companion.Uri
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
 import coil.compose.AsyncImagePainter
 import coil.compose.ImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -51,6 +55,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
@@ -124,18 +129,27 @@ fun ProfileScreen(routeAction: RouteAction) {
 
     var openDialog by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+
+
+    val responseDefaultProfileImage = MyApplication.prefs.getData("defaultProfileImage", "")
+    val defaultProfileImageDecodedBytes = Base64.decode(responseDefaultProfileImage, Base64.DEFAULT)
+    val defaultProfileImageBitmap = BitmapFactory.decodeByteArray(defaultProfileImageDecodedBytes,
+        0, defaultProfileImageDecodedBytes.size)
+
+    val decodeDefaultImageFile : File? = File.createTempFile("temp", null, context.cacheDir)
+    val defaultOutPutStream = FileOutputStream(decodeDefaultImageFile)
+    defaultProfileImageBitmap?.compress(Bitmap.CompressFormat.PNG, 100, defaultOutPutStream)
+    defaultOutPutStream.close()
+
     val responseImage = MyApplication.prefs.getData("image", "")
     val decodedBytes = Base64.decode(responseImage, Base64.DEFAULT)
     val decodedImage = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
 
-    val decodeFile: File? = File.createTempFile("temp", null, LocalContext.current.cacheDir)
+    val decodeFile: File? = File.createTempFile("temp", null, context.cacheDir)
     val outputStream = FileOutputStream(decodeFile)
-
     decodedImage?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
     outputStream.close()
-
-
-    val defaultProfileImageBitmap = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.defaultprofile)
 
     val imageUri = rememberSaveable {
         mutableStateOf(decodeFile?.toUri())
@@ -149,8 +163,7 @@ fun ProfileScreen(routeAction: RouteAction) {
             }
         }
     )
-    val onClickToDefaultImage = rememberImagePainter(data = defaultProfileImageBitmap)
-    
+
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
@@ -160,9 +173,9 @@ fun ProfileScreen(routeAction: RouteAction) {
         }
 
     val file = imageUri.value?.let { uri ->
-        val contentResolver = LocalContext.current.contentResolver
+        val contentResolver = context.contentResolver
         val inputStream = contentResolver.openInputStream(uri)
-        val tempFile = File.createTempFile("image", null, LocalContext.current.cacheDir)
+        val tempFile = File.createTempFile("image", null, context.cacheDir)
         tempFile.outputStream().use { outputStream ->
             inputStream?.copyTo(outputStream)
         }
@@ -210,8 +223,9 @@ fun ProfileScreen(routeAction: RouteAction) {
 
                     Button(
                         onClick = {
-                            painter = onClickToDefaultImage
                             openDialog = false
+                            imageUri.value = decodeDefaultImageFile?.toUri()
+//                            imageUri.value = null
                         },
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier
