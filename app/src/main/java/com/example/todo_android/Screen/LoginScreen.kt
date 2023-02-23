@@ -108,7 +108,9 @@ fun LoginScreen(routeAction: RouteAction) {
     )
     {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(start = 30.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 30.dp),
 //            horizontalAlignment = Alignment.Start,
 //            verticalArrangement = Arrangement.Center
         ) {
@@ -159,17 +161,18 @@ fun LoginScreen(routeAction: RouteAction) {
                     color = Color(0xffA9A9A9)
                 )
             },
-            trailingIcon =
-            {
-                IconButton(onClick = {
-                    email = ""
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = "ClearIcon"
-                    )
+            trailingIcon = {
+                if(email.isNotEmpty()) {
+                    IconButton(onClick = {
+                        email = ""
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "ClearIcon"
+                        )
+                    }
                 }
-            },
+            }
         )
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -204,18 +207,17 @@ fun LoginScreen(routeAction: RouteAction) {
                 )
             },
             trailingIcon = {
-
-                val description = if (passwordVisible) "Hide password" else "Show password"
-
-                IconButton(onClick =
-                {
-                    passwordVisible = !passwordVisible
-                })
-                {
-                    Icon(
-                        painter = icon,
-                        contentDescription = "EyeIcon"
-                    )
+                if(password.isNotEmpty()) {
+                    IconButton(onClick =
+                    {
+                        passwordVisible = !passwordVisible
+                    })
+                    {
+                        Icon(
+                            painter = icon,
+                            contentDescription = "EyeIcon"
+                        )
+                    }
                 }
             }
         )
@@ -223,7 +225,9 @@ fun LoginScreen(routeAction: RouteAction) {
         Spacer(modifier = Modifier.height(10.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 10.dp),
             verticalAlignment = Alignment.CenterVertically
 
         ) {
@@ -283,9 +287,11 @@ fun LoginScreen(routeAction: RouteAction) {
                 color = Color.Black,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 7.dp).clickable {
-                    goAuthEmail(NAV_ROUTE.AUTHEMAIL, routeAction)
-                }
+                modifier = Modifier
+                    .padding(start = 7.dp)
+                    .clickable {
+                        goAuthEmail(NAV_ROUTE.AUTHEMAIL, routeAction)
+                    }
             )
         }
     }
