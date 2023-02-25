@@ -1,6 +1,8 @@
 package com.example.todo_android.Screen
 
 import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,7 +14,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -92,7 +96,6 @@ fun LoginScreen(routeAction: RouteAction) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var checked by remember { mutableStateOf(false) }
-
     var passwordVisible by remember { mutableStateOf(false) }
 
     val icon = if (passwordVisible) {
@@ -101,45 +104,42 @@ fun LoginScreen(routeAction: RouteAction) {
         painterResource(id = R.drawable.closeeye)
     }
 
+    val onCheck = if (checked) {
+        painterResource(id = R.drawable.check)
+    } else {
+        painterResource(id = R.drawable.nocheck)
+    }
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(start = 41.dp, end = 41.dp)
+            .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     )
     {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 30.dp),
-//            horizontalAlignment = Alignment.Start,
-//            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "ToDo",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.SansSerif,
-            )
-            Text(
-                text = "토도토도리",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.SansSerif,
-                lineHeight = 31.sp,
-            )
-            Text(
-                text = "어쩌구 저쩌구 어플 카피라이팅",
-                fontWeight = FontWeight.Light,
-                fontFamily = FontFamily.SansSerif,
-                lineHeight = 19.sp,
-            )
-        }
 
-        Spacer(modifier = Modifier.height(72.dp))
+        Image(
+            modifier = Modifier.size(117.dp),
+            painter = painterResource(id = R.drawable.apptitle),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+        Image(
+            modifier = Modifier
+                .width(94.dp)
+                .height(28.dp),
+            painter = painterResource(id = R.drawable.appname),
+            contentDescription = null,
+        )
+
+        Spacer(modifier = Modifier.height(61.dp))
 
         TextField(
             modifier = Modifier
-                .width(308.dp)
+                .fillMaxWidth()
                 .height(54.dp),
             value = email,
             colors = TextFieldDefaults.textFieldColors(
@@ -156,19 +156,19 @@ fun LoginScreen(routeAction: RouteAction) {
             },
             placeholder = {
                 Text(
-                    text = "이메일 입력",
+                    text = stringResource(id = R.string.InpurtEmail),
                     fontSize = 16.sp,
                     color = Color(0xffA9A9A9)
                 )
             },
             trailingIcon = {
-                if(email.isNotEmpty()) {
+                if (email.isNotEmpty()) {
                     IconButton(onClick = {
                         email = ""
                     }) {
                         Icon(
                             imageVector = Icons.Default.Clear,
-                            contentDescription = "ClearIcon"
+                            contentDescription = null
                         )
                     }
                 }
@@ -179,7 +179,7 @@ fun LoginScreen(routeAction: RouteAction) {
 
         TextField(
             modifier = Modifier
-                .width(308.dp)
+                .fillMaxWidth()
                 .height(54.dp),
             value = password,
             colors = TextFieldDefaults.textFieldColors(
@@ -201,13 +201,13 @@ fun LoginScreen(routeAction: RouteAction) {
             },
             placeholder = {
                 Text(
-                    text = "비밀번호 입력",
+                    text = stringResource(id = R.string.InpurtPassword),
                     fontSize = 16.sp,
                     color = Color(0xffA9A9A9)
                 )
             },
             trailingIcon = {
-                if(password.isNotEmpty()) {
+                if (password.isNotEmpty()) {
                     IconButton(onClick =
                     {
                         passwordVisible = !passwordVisible
@@ -215,7 +215,7 @@ fun LoginScreen(routeAction: RouteAction) {
                     {
                         Icon(
                             painter = icon,
-                            contentDescription = "EyeIcon"
+                            contentDescription = null
                         )
                     }
                 }
@@ -225,27 +225,24 @@ fun LoginScreen(routeAction: RouteAction) {
         Spacer(modifier = Modifier.height(10.dp))
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
 
         ) {
-            Checkbox(
-                checked = checked,
-                onCheckedChange = {
-                    checked = it
+            Image(
+                modifier = Modifier.clickable {
+                    checked = !checked
                 },
-                modifier = Modifier.padding(start = 3.dp)
-            )
+                painter = onCheck,
+                contentDescription = null)
 
-//            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(3.dp))
 
             Text(
-                text = "자동 로그인",
+                text = stringResource(id = R.string.AuthLogin),
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 3.dp)
             )
         }
 
@@ -263,7 +260,7 @@ fun LoginScreen(routeAction: RouteAction) {
             shape = RoundedCornerShape(18.dp)
         ) {
             Text(
-                text = "로그인",
+                text = stringResource(id = R.string.Login),
                 color = Color.Black,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal
@@ -272,18 +269,20 @@ fun LoginScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        Row() {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
-                text = "이메일 / 비밀번호 찾기",
+                text = stringResource(id = R.string.Search),
                 fontSize = 14.sp,
                 color = Color(0xFF999999),
                 modifier = Modifier.padding(end = 10.dp)
             )
 
-            Spacer(modifier = Modifier.width(122.dp))
-
             Text(
-                text = "회원 가입",
+                text = stringResource(id = R.string.Register),
                 color = Color.Black,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,

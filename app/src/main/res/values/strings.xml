@@ -1,6 +1,56 @@
 <resources>
     <string name="app_name">todo-android</string>
 
-    <string name="login">로그인</string>
-    <string name="register">회원가입</string>
+    <!-- Button -->
+    <string name="Login">로그인</string>
+    <string name="Register">회원가입</string>
+    <string name="backButton"></string>
+    <string name="nextButton">회원가입</string>
+
+    <!-- TextField placeholder -->
+    <string name="InpurtEmail">이메일 입력</string>
+    <string name="InpurtPassword">비밀번호 입력</string>
+
+    <!-- AuthLogin   -->
+    <string name="AuthLogin">자동 로그인</string>
+
+    <!-- Search   -->
+    <string name="Search">이메일 / 비밀번호 찾기</string>
+
+    <!-- Page Number-->
+    <string name="FirstPageNumber">1/3</string>
+    <string name="SecondPageNumber">2/3</string>
+    <string name="ThirdPageNumber">3/3</string>
+
+    <!-- ShowText on AuthEmailScreen  -->
+    <string name="FirstAuthEmailText">이메일을</string>
+    <string name="SecondAuthEmailText">입력해 주세요</string>
+    <string name="ShowEmailText">이메일</string>
+    <string name="ShowEmailPlaceholder">ex) weto_dolist@naver.com</string>
+
+    <!-- ShowText on AuthCodeScreen  -->
+    <string name="FirstAuthCodeText">전송된 인증코드를</string>
+    <string name="SecondAuthCodeText">입력해 주세요</string>
+    <string name="ShowCodeText">인증코드</string>
+
+    <!-- ShowText on RegisterScreen   -->
+    <string name="FirstRegisterText">프로필을</string>
+    <string name="SecondRegisterText">설정해 주세요</string>
+    <string name="ShowNicknameText">닉네임</string>
+    <string name="ShowNicknamePlaceholder">2~6 글자로 입력해 주세요</string>
+    <string name="ShowPasswordText">비밀번호</string>
+    <string name="ShowPasswordPlaceholder">8자 이상 대문자, 소문자, 특수문자를 포함해 주세요.</string>
+    <string name="CheckPasswordText">비밀번호 확인</string>
+
+    <!-- ShowText on LottieScreen   -->
+    <string name="SucessRegister">회원가입 완료!</string>
+    <string name="goLogin">로그인 하기</string>
+
+
+    <!-- ShowText Error  -->
+    <string name="CantUseEmail">사용할 수 없는 이메일입니다.</string>
+    <string name="CantUseCode">유효하지 않은 인증코드입니다.</string>
+    <string name="UnderPassword">비밀번호가 8자리 미만입니다.</string>
+    <string name="NoMatchPassword">비밀번호가 일치하지 않습니다.</string>
+
 </resources>

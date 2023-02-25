@@ -328,6 +328,7 @@ fun ProfileScreen(routeAction: RouteAction) {
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent),
             singleLine = true,
+            readOnly = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             shape = RoundedCornerShape(18.dp),
             onValueChange = {

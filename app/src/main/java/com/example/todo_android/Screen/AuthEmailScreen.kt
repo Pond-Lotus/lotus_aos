@@ -1,6 +1,7 @@
 package com.example.todo_android.Screen
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -9,15 +10,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
+import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.AuthEmailRequest
 import com.example.todo_android.Response.ProfileResponse.AuthEmailResponse
 import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.ui.theme.backButtonColor
+import com.example.todo_android.ui.theme.nextButtonColor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -73,19 +79,21 @@ fun authEmail(email: String, routeAction: RouteAction) {
 @Composable
 fun AuthEmailScreen(routeAction: RouteAction) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(start = 25.dp, end = 25.dp)
+            .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         var email by remember { mutableStateOf("") }
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 30.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "1/3",
+                text = stringResource(id = R.string.FirstPageNumber),
                 fontSize = 20.sp,
                 lineHeight = 29.sp,
                 fontWeight = FontWeight.Light,
@@ -95,21 +103,20 @@ fun AuthEmailScreen(routeAction: RouteAction) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "이메일을",
+                text = stringResource(id = R.string.FirstAuthEmailText),
                 fontSize = 28.sp,
                 lineHeight = 36.sp,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Bold,
             )
             Text(
-                text = "입력해주세요",
+                text = stringResource(id = R.string.SecondAuthEmailText),
                 fontSize = 28.sp,
                 lineHeight = 36.sp,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Bold,
             )
         }
 
         Spacer(modifier = Modifier.height(38.dp))
-
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -117,9 +124,8 @@ fun AuthEmailScreen(routeAction: RouteAction) {
         ) {
             Text(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 30.dp),
-                text = "이메일",
+                    .fillMaxWidth(),
+                text = stringResource(id = R.string.ShowEmailText),
                 fontSize = 13.sp,
                 lineHeight = 17.sp,
                 fontWeight = FontWeight.Bold,
@@ -129,13 +135,13 @@ fun AuthEmailScreen(routeAction: RouteAction) {
             Spacer(modifier = Modifier.height(10.dp))
 
             TextField(
-                modifier = Modifier.width(300.dp),
+                modifier = Modifier.fillMaxWidth(),
                 value = email,
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.Transparent,
                     disabledLabelColor = Color.Transparent,
-                    focusedIndicatorColor = Color(0xffE9E9E9),
-                    unfocusedIndicatorColor = Color(0xffE9E9E9)
+                    focusedIndicatorColor = Color(0xff4D000000),
+                    unfocusedIndicatorColor = Color(0xff4D000000)
                 ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -145,12 +151,11 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                 },
                 placeholder = {
                     Text(
-//                        modifier = Modifier.padding(end = 90.dp),
-                        text = "ex) weto_dolist@naver.com",
+                        text = stringResource(id = R.string.ShowEmailPlaceholder),
                         fontSize = 16.sp,
                         lineHeight = 23.sp,
                         fontWeight = FontWeight.Light,
-                        color = Color(0xffD3D3D3)
+                        color = Color(0xffD3D3D3),
                     )
                 }
             )
@@ -159,26 +164,28 @@ fun AuthEmailScreen(routeAction: RouteAction) {
 
             Text(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 30.dp),
-                text = "사용할 수 없는 이메일입니다.",
+                    .fillMaxWidth(),
+                text = stringResource(id = R.string.CantUseEmail),
                 fontSize = 13.sp,
                 lineHeight = 19.sp,
                 color = Color(0xffE47979)
             )
         }
 
-        Spacer(modifier = Modifier.height(300.dp))
+        Spacer(modifier = Modifier.height(250.dp))
 
         Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(
                 modifier = Modifier
                     .width(90.dp)
-                    .height(50.dp).padding(start = 5.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffD9D9D9)),
+                    .height(38.dp),
+                colors = ButtonDefaults.buttonColors(backButtonColor),
                 onClick = { routeAction.goBack() },
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(24.dp),
             ) {
                 Text(
                     text = "< 이전",
@@ -189,15 +196,13 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                 )
             }
 
-            Spacer(modifier = Modifier.width(150.dp))
-
             Button(
                 modifier = Modifier
                     .width(90.dp)
-                    .height(50.dp).padding(end = 5.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
+                    .height(38.dp),
+                colors = ButtonDefaults.buttonColors(nextButtonColor),
                 onClick = { authEmail(email, routeAction) },
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(24.dp),
             ) {
                 Text(
                     text = "다음 >",
@@ -208,34 +213,5 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                 )
             }
         }
-
-
-
-//        Row(
-//        ) {
-//            Button(
-//                modifier = Modifier
-//                    .width(90.dp)
-//                    .height(50.dp),
-//                colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-//                onClick = { routeAction.goBack() }
-//            ) {
-//                Text(
-//                    text = "< 이전",
-//                    color = Color.Black)
-//            }
-//            Spacer(modifier = Modifier.width(150.dp))
-//            Button(
-//                modifier = Modifier
-//                    .width(90.dp)
-//                    .height(50.dp),
-//                colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-//                onClick = { authCode(email, code, routeAction) }
-//            ) {
-//                Text(
-//                    text = "다음 >",
-//                    color = Color.Black)
-//            }
-//        }
     }
 }
