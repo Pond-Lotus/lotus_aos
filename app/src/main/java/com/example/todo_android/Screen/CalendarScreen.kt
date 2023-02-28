@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -152,11 +153,11 @@ fun CalendarScreen(routeAction: RouteAction) {
         mutableStateListOf<RToDoResponse>()
     }
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xfff0f0f0)),
+            .background(Color(0xfff0f0f0))
+            .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -172,53 +173,66 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         )
 
-
-        Spacer(modifier = Modifier.height(15.dp))
-
-        Row(
+        Column(
             modifier = Modifier
-                .clip(shape = RoundedCornerShape(24.dp))
-                .background(Color(0xffe9e9ed))
-                .padding(4.dp)
-        )
-        {
-            states.forEach { text ->
-                Text(
-                    text = text,
-                    color =
-                    if (text == selectedOption) {
-                        Color.Black
-                    } else {
-                        Color.Gray
-                    },
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier
-                        .clip(shape = RoundedCornerShape(24.dp))
-                        .clickable {
-                            onSelectionChange(text)
-                            isVisible = !isVisible
-                        }
-                        .background(
-                            if (text == selectedOption) {
-                                Color.White
-                            } else {
-                                Color(0xffe9e9ed)
+                .fillMaxWidth()
+                .background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            Row(
+                modifier = Modifier
+                    .clip(shape = RoundedCornerShape(24.dp))
+                    .background(Color(0xffe9e9ed))
+                    .padding(4.dp)
+            )
+            {
+                states.forEach { text ->
+                    Text(
+                        text = text,
+                        color =
+                        if (text == selectedOption) {
+                            Color.Black
+                        } else {
+                            Color.Gray
+                        },
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier
+                            .clip(shape = RoundedCornerShape(24.dp))
+                            .clickable {
+                                onSelectionChange(text)
+                                isVisible = !isVisible
                             }
-                        )
-                        .padding(
-                            vertical = 5.dp,
-                            horizontal = 16.dp,
-                        )
-                )
+                            .background(
+                                if (text == selectedOption) {
+                                    Color.White
+                                } else {
+                                    Color(0xffe9e9ed)
+                                }
+                            )
+                            .padding(
+                                vertical = 5.dp,
+                                horizontal = 16.dp,
+                            )
+                    )
+                }
             }
         }
-
-        Spacer(modifier = Modifier.height(29.dp))
+//
+//
+//        Spacer(modifier = Modifier.height(15.dp))
+//
+//
+//
+//        Spacer(modifier = Modifier.height(29.dp))
 
         AnimatedVisibility(isVisible)
         {
             Kalendar(
-                modifier = Modifier.fillMaxWidth().height(260.dp).padding(30.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(260.dp),
                 kalendarType = KalendarType.Oceanic(),
                 kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
                 kalendarThemeColor = KalendarThemeColor(
@@ -243,7 +257,10 @@ fun CalendarScreen(routeAction: RouteAction) {
 
         AnimatedVisibility(!isVisible) {
             Kalendar(
-                modifier = Modifier.fillMaxWidth().height(428.dp).padding(30.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(428.dp)
+                    .padding(30.dp),
 //                shape = RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp),
                 kalendarType = KalendarType.Firey,
                 kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),

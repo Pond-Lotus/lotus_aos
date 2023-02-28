@@ -17,20 +17,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.todo_android.Data.Profile.Login
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.LoginRequest
 import com.example.todo_android.Response.ProfileResponse.LoginResponse
+import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.ui.theme.nextButtonColor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -46,7 +48,12 @@ fun goAuthEmail(route: NAV_ROUTE, routeAction: RouteAction) {
 }
 
 @ExperimentalMaterial3Api
-fun sendLogin(email: String, password: String, routeAction: RouteAction) {
+fun sendLogin(
+    email: String,
+    password: String,
+    routeAction: RouteAction,
+    response: (LoginResponse?) -> Unit,
+) {
 
     var loginResponse: LoginResponse? = null
 
@@ -82,6 +89,7 @@ fun sendLogin(email: String, password: String, routeAction: RouteAction) {
                     Log.d("LOGIN", "메인 화면으로 갑니다.")
                 }
                 "500" -> {
+                    response(loginResponse)
                     Log.d("LOGIN", "non_field_errors:[Check Your Email or Password]")
                 }
             }
@@ -97,6 +105,12 @@ fun LoginScreen(routeAction: RouteAction) {
     var password by remember { mutableStateOf("") }
     var checked by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
+
+    var openDialog by remember { mutableStateOf(false) }
+
+    if (openDialog) {
+        FailureLoginDialog()
+    }
 
     val icon = if (passwordVisible) {
         painterResource(id = R.drawable.openeye)
@@ -255,7 +269,16 @@ fun LoginScreen(routeAction: RouteAction) {
             colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
             onClick =
             {
-                sendLogin(email, password, routeAction)
+                sendLogin(email, password, routeAction, response = {
+//                    for (i in it!!.resultCode) {
+//                        when (i.toString()) {
+//                            "500" -> {
+//                                openDialog = !openDialog
+//                            }
+//                        }
+//                    }
+                    openDialog = !openDialog
+                })
             },
             shape = RoundedCornerShape(18.dp)
         ) {
@@ -292,6 +315,73 @@ fun LoginScreen(routeAction: RouteAction) {
                         goAuthEmail(NAV_ROUTE.AUTHEMAIL, routeAction)
                     }
             )
+        }
+    }
+}
+
+@Composable
+fun FailureLoginDialog() {
+
+    var openDialog by remember { mutableStateOf(true) }
+
+    if (openDialog) {
+        Dialog(
+            onDismissRequest = {
+                openDialog = false
+            }) {
+            Surface(
+                shape = RoundedCornerShape(15.dp),
+                color = Color.White
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .padding(start = 19.dp, end = 19.dp, top = 19.dp, bottom = 19.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        text = "로그인 실패",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        text = "이메일 혹은 비밀번호를 다시 확인해 주세요.",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Light
+                    )
+
+                    Spacer(modifier = Modifier.height(35.dp))
+
+                    Button(
+                        onClick = {
+                            openDialog = false
+                        },
+                        shape = RoundedCornerShape(20.dp),
+                        modifier = Modifier
+                            .width(100.dp)
+                            .height(50.dp)
+                            .padding(start = 14.dp, top = 7.dp, end = 14.dp, bottom = 7.dp)
+                            .align(Alignment.End),
+                        colors = ButtonDefaults.buttonColors(nextButtonColor),
+                    ) {
+                        Text(
+                            text = "확인",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color.Black
+                        )
+                    }
+                }
+            }
         }
     }
 }
