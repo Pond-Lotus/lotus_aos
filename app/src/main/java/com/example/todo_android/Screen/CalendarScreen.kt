@@ -193,7 +193,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                                         .clip(shape = RoundedCornerShape(24.dp))
                                         .clickable {
                                             onSelectionChange(text)
-                                            isVisible = !isVisible
+                                            isVisible = (text == states[1])
+//                                            isVisible = !isVisible
                                         }
                                         .background(
                                             if (text == selectedOption) {
@@ -239,31 +240,60 @@ fun CalendarScreen(routeAction: RouteAction) {
                         )
                     )
             ) {
-                Kalendar(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(260.dp),
+                if (isVisible) {
+                    Kalendar(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(260.dp),
 //                        .padding(top = 20.dp, start = 30.dp, end = 30.dp),
-                    kalendarType = KalendarType.Oceanic(),
-                    kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                    kalendarThemeColor = KalendarThemeColor(
-                        backgroundColor = Color.White,
-                        dayBackgroundColor = Color(0xffFBE3C7),
-                        headerTextColor = Color.Black),
-                    onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
+                        kalendarType = KalendarType.Oceanic(),
+                        kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
+                        kalendarThemeColor = KalendarThemeColor(
+                            backgroundColor = Color.White,
+                            dayBackgroundColor = Color(0xffFBE3C7),
+                            headerTextColor = Color.Black),
+                        onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
-                        year = kalendarDay.localDate.year
-                        month = kalendarDay.localDate.monthNumber
-                        day = kalendarDay.localDate.dayOfMonth
+                            year = kalendarDay.localDate.year
+                            month = kalendarDay.localDate.monthNumber
+                            day = kalendarDay.localDate.dayOfMonth
 
-                        readTodo(token, year, month, day, response = {
+                            readTodo(token, year, month, day, response = {
 
-                            todoList.clear()
-                            for (i in it!!.data) {
-                                todoList.add(i)
-                            }
+                                todoList.clear()
+                                for (i in it!!.data) {
+                                    todoList.add(i)
+                                }
+                            })
                         })
-                    })
+                } else {
+                    Kalendar(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(428.dp)
+                            .padding(top = 30.dp),
+//                shape = RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp),
+                        kalendarType = KalendarType.Firey,
+                        kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
+                        kalendarThemeColor = KalendarThemeColor(
+                            backgroundColor = Color.White,
+                            dayBackgroundColor = Color(0xffFBE3C7),
+                            headerTextColor = Color.Black),
+                        onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
+
+                            year = kalendarDay.localDate.year
+                            month = kalendarDay.localDate.monthNumber
+                            day = kalendarDay.localDate.dayOfMonth
+
+                            readTodo(token, year, month, day, response = {
+
+                                todoList.clear()
+                                for (i in it!!.data) {
+                                    todoList.add(i)
+                                }
+                            })
+                        })
+                }
             }
         }
     }
