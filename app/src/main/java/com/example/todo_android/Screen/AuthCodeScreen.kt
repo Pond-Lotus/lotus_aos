@@ -239,7 +239,7 @@ fun EachTextFieldContainer(
             .run {
                 if (isFocused) {
                     border(
-                        width = 5.dp,
+                        width = 3.dp,
                         color = Color(0xffFFBE3C7),
                         shape = RoundedCornerShape(10.dp)
                     )

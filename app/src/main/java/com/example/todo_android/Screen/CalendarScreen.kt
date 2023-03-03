@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,10 +57,8 @@ fun createTodo(token: String, year: Int, month: Int, day: Int, title: String, ti
 
     var createTodoResponse: CreateTodoResponse? = null
 
-    var retrofit = Retrofit.Builder()
-        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var createTodoRequest: CreateTodoRequest = retrofit.create(CreateTodoRequest::class.java)
 
@@ -96,10 +95,8 @@ fun readTodo(
 
     var readTodoResponse: ReadTodoResponse? = null
 
-    var retrofit = Retrofit.Builder()
-        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var readTodoRequest: ReadTodoRequest = retrofit.create(ReadTodoRequest::class.java)
 
@@ -135,8 +132,7 @@ fun readTodo(
 fun CalendarScreen(routeAction: RouteAction) {
 
     val states = listOf(
-        "월간",
-        "주간"
+        "월간", "주간"
     )
     var selectedOption by remember { mutableStateOf(states[0]) }
 
@@ -160,72 +156,62 @@ fun CalendarScreen(routeAction: RouteAction) {
         mutableStateListOf<RToDoResponse>()
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
+    Scaffold(topBar = {
+        TopAppBar(title = {
+            Box(
+                modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
+            ) {
 //                        CustomSwitch()
-                        Row(
+                Row(
+                    modifier = Modifier
+                        .width(115.dp)
+                        .height(35.dp)
+                        .clip(shape = RoundedCornerShape(24.dp))
+                        .background(Color(0xffe9e9ed))
+                        .padding(start = 4.dp, top = 4.dp, end = 4.dp, bottom = 4.dp)
+                ) {
+                    states.forEach { text ->
+                        Text(text = text,
+                            fontSize = 10.sp,
+                            lineHeight = 16.sp,
+                            color = if (text == selectedOption) {
+                                Color.Black
+                            } else {
+                                Color.Gray
+                            },
+                            fontWeight = FontWeight.Medium,
                             modifier = Modifier
-                                .width(115.dp)
-                                .height(35.dp)
                                 .clip(shape = RoundedCornerShape(24.dp))
-                                .background(Color(0xffe9e9ed))
-                                .padding(4.dp)
-                        )
-                        {
-                            states.forEach { text ->
-                                Text(
-                                    text = text,
-                                    fontSize = 10.sp,
-                                    color =
-                                    if (text == selectedOption) {
-                                        Color.Black
-                                    } else {
-                                        Color.Gray
-                                    },
-                                    fontWeight = FontWeight.Medium,
-                                    modifier = Modifier
-                                        .clip(shape = RoundedCornerShape(24.dp))
-                                        .clickable {
-                                            onSelectionChange(text)
-                                            isVisible = (text == states[1])
+                                .clickable {
+                                    onSelectionChange(text)
+                                    isVisible = (text == states[1])
 //                                            isVisible = !isVisible
-                                        }
-                                        .background(
-                                            if (text == selectedOption) {
-                                                Color.White
-                                            } else {
-                                                Color(0xffe9e9ed)
-                                            }
-                                        )
-                                        .padding(
-                                            vertical = 5.dp,
-                                            horizontal = 16.dp,
-                                        )
+                                }
+                                .background(
+                                    if (text == selectedOption) {
+                                        Color.White
+                                    } else {
+                                        Color(0xffe9e9ed)
+                                    }
                                 )
-                            }
-                        }
+                                .padding(
+                                    vertical = 5.dp,
+                                    horizontal = 16.dp,
+                                ))
                     }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
-                    }) {
-                        Icon(imageVector = Icons.Filled.Menu, contentDescription = "profile")
-                    }
-                },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color.Black
-                )
-            )
-        }
-    ) {
+                }
+            }
+        }, actions = {
+            IconButton(onClick = {
+                goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
+            }) {
+                Icon(imageVector = Icons.Filled.Menu, contentDescription = "profile")
+            }
+        }, colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = Color.White, titleContentColor = Color.Black
+        )
+        )
+    }) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -234,24 +220,25 @@ fun CalendarScreen(routeAction: RouteAction) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(
-                        shape = RoundedCornerShape(
-                            bottomStart = 30.dp, bottomEnd = 30.dp
-                        )
-                    )
+//                    .aspectRatio(1f)
             ) {
                 if (isVisible) {
-                    Kalendar(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(260.dp),
+                    Kalendar(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(260.dp)
+                        .clip(
+                            shape = RoundedCornerShape(
+                                bottomStart = 30.dp, bottomEnd = 30.dp
+                            )
+                        ),
 //                        .padding(top = 20.dp, start = 30.dp, end = 30.dp),
                         kalendarType = KalendarType.Oceanic(),
                         kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
                         kalendarThemeColor = KalendarThemeColor(
                             backgroundColor = Color.White,
                             dayBackgroundColor = Color(0xffFBE3C7),
-                            headerTextColor = Color.Black),
+                            headerTextColor = Color.Black
+                        ),
                         onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
                             year = kalendarDay.localDate.year
@@ -267,18 +254,22 @@ fun CalendarScreen(routeAction: RouteAction) {
                             })
                         })
                 } else {
-                    Kalendar(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(428.dp)
-                            .padding(top = 30.dp),
-//                shape = RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp),
+                    Kalendar(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(428.dp)
+                        .padding(top = 30.dp)
+                        .clip(
+                            shape = RoundedCornerShape(
+                                bottomStart = 30.dp, bottomEnd = 30.dp
+                            )
+                        ),
                         kalendarType = KalendarType.Firey,
                         kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
                         kalendarThemeColor = KalendarThemeColor(
                             backgroundColor = Color.White,
                             dayBackgroundColor = Color(0xffFBE3C7),
-                            headerTextColor = Color.Black),
+                            headerTextColor = Color.Black
+                        ),
                         onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
                             year = kalendarDay.localDate.year
@@ -295,6 +286,32 @@ fun CalendarScreen(routeAction: RouteAction) {
                         })
                 }
             }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(
+                    text = day.toString(),
+                    modifier = Modifier.padding(12.dp)
+                )
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+                Divider(modifier = Modifier.padding(5.dp), color = Color(0xffe7e7e7))
+
+            }
+            TodoItemList(Todo = todoList)
+
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .aspectRatio(1f)
+//            ) {
+//
+//            }
         }
     }
 
