@@ -159,16 +159,18 @@ fun CalendarScreen(routeAction: RouteAction) {
     Scaffold(topBar = {
         TopAppBar(title = {
             Box(
-                modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                contentAlignment = Alignment.Center
             ) {
-//                        CustomSwitch()
                 Row(
                     modifier = Modifier
                         .width(115.dp)
                         .height(35.dp)
                         .clip(shape = RoundedCornerShape(24.dp))
                         .background(Color(0xffe9e9ed))
-                        .padding(start = 4.dp, top = 4.dp, end = 4.dp, bottom = 4.dp)
+                        .padding(4.dp)
                 ) {
                     states.forEach { text ->
                         Text(text = text,
@@ -209,8 +211,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }, colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = Color.White, titleContentColor = Color.Black
-        )
-        )
+        ))
     }) {
         Box(
             modifier = Modifier
@@ -219,13 +220,13 @@ fun CalendarScreen(routeAction: RouteAction) {
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-//                    .aspectRatio(1f)
+//                    .fillMaxSize()
+                    .aspectRatio(1f)
             ) {
                 if (isVisible) {
                     Kalendar(modifier = Modifier
                         .fillMaxWidth()
-                        .height(260.dp)
+//                        .height(260.dp)
                         .clip(
                             shape = RoundedCornerShape(
                                 bottomStart = 30.dp, bottomEnd = 30.dp
@@ -256,8 +257,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 } else {
                     Kalendar(modifier = Modifier
                         .fillMaxWidth()
-                        .height(428.dp)
-                        .padding(top = 30.dp)
+//                        .height(428.dp)
+//                        .padding(top = 30.dp)
                         .clip(
                             shape = RoundedCornerShape(
                                 bottomStart = 30.dp, bottomEnd = 30.dp
@@ -286,32 +287,28 @@ fun CalendarScreen(routeAction: RouteAction) {
                         })
                 }
             }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Text(
-                    text = day.toString(),
-                    modifier = Modifier.padding(12.dp)
-                )
-
-                Spacer(modifier = Modifier.width(5.dp))
-
-                Divider(modifier = Modifier.padding(5.dp), color = Color(0xffe7e7e7))
-
-            }
-            TodoItemList(Todo = todoList)
-
-//            Box(
-//                modifier = Modifier
+            Box(
+                modifier = Modifier
 //                    .fillMaxSize()
-//                    .aspectRatio(1f)
-//            ) {
-//
-//            }
+                    .aspectRatio(1f)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Text(
+                        text = day.toString(), modifier = Modifier.padding(12.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(5.dp))
+
+                    Divider(modifier = Modifier.padding(5.dp), color = Color(0xffe7e7e7))
+
+                }
+                TodoItemList(Todo = todoList)
+            }
         }
     }
 
