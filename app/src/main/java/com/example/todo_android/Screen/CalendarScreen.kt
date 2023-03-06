@@ -40,7 +40,15 @@ import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.Util.MyApplication
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.color.KalendarThemeColor
+import com.himanshoe.kalendar.component.day.KalendarDay
 import com.himanshoe.kalendar.component.day.config.KalendarDayColors
+import com.himanshoe.kalendar.component.day.config.KalendarDayState
+import com.himanshoe.kalendar.component.header.KalendarHeader
+import com.himanshoe.kalendar.component.header.config.KalendarHeaderConfig
+import com.himanshoe.kalendar.component.text.KalendarNormalText
+import com.himanshoe.kalendar.component.text.config.KalendarTextColor
+import com.himanshoe.kalendar.component.text.config.KalendarTextConfig
+import com.himanshoe.kalendar.component.text.config.KalendarTextSize
 import com.himanshoe.kalendar.model.KalendarDay
 import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
@@ -49,6 +57,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
 import androidx.compose.material3.TopAppBar as TopAppBar
 
 fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
@@ -133,9 +142,7 @@ fun readTodo(
 @Composable
 fun CalendarScreen(routeAction: RouteAction) {
 
-    val states = listOf(
-        "월간", "주간"
-    )
+    val states = listOf("월간", "주간")
     var selectedOption by remember { mutableStateOf(states[0]) }
 
     val onSelectionChange = { text: String -> selectedOption = text }
@@ -158,68 +165,59 @@ fun CalendarScreen(routeAction: RouteAction) {
         mutableStateListOf<RToDoResponse>()
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(title = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .width(115.dp)
-                            .height(35.dp)
-                            .clip(shape = RoundedCornerShape(24.dp))
-                            .background(Color(0xffe9e9ed))
-                            .padding(start = 10.dp, end = 5.dp, top = 6.dp, bottom = 5.dp)
-                    ) {
-                        states.forEach { text ->
-                            Text(text = text,
-                                fontSize = 10.sp,
-                                lineHeight = 16.sp,
-                                color = if (text == selectedOption) {
-                                    Color.Black
-                                } else {
-                                    Color.Gray
-                                },
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier
-                                    .clip(shape = RoundedCornerShape(24.dp))
-                                    .clickable {
-                                        onSelectionChange(text)
-                                        isVisible = (text == states[1])
+    Scaffold(topBar = {
+        TopAppBar(title = {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Row(modifier = Modifier
+                    .width(115.dp)
+                    .height(35.dp)
+                    .clip(shape = RoundedCornerShape(24.dp))
+                    .background(Color(0xffe9e9ed))
+                    .padding(start = 10.dp, end = 5.dp, top = 6.dp, bottom = 5.dp)) {
+                    states.forEach { text ->
+                        Text(text = text,
+                            fontSize = 10.sp,
+                            lineHeight = 16.sp,
+                            color = if (text == selectedOption) {
+                                Color.Black
+                            } else {
+                                Color.Gray
+                            },
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier
+                                .clip(shape = RoundedCornerShape(24.dp))
+                                .clickable {
+                                    onSelectionChange(text)
+                                    isVisible = (text == states[1])
 //                                            isVisible = !isVisible
-                                    }
-                                    .background(
-                                        if (text == selectedOption) {
-                                            Color.White
-                                        } else {
-                                            Color(0xffe9e9ed)
-                                        }
-                                    )
-                                    .padding(
-                                        vertical = 5.dp,
-                                        horizontal = 16.dp,
-                                    ))
-                        }
+                                }
+                                .background(if (text == selectedOption) {
+                                    Color.White
+                                } else {
+                                    Color(0xffe9e9ed)
+                                })
+                                .padding(
+                                    vertical = 5.dp,
+                                    horizontal = 16.dp,
+                                ))
                     }
                 }
-            }, actions = {
+            }
+        },
+            actions = {
                 IconButton(onClick = {
                     goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
                 }) {
                     Icon(imageVector = Icons.Filled.Menu, contentDescription = "profile")
                 }
-            }, colors = TopAppBarDefaults.smallTopAppBarColors(
-                containerColor = Color.White, titleContentColor = Color.Black
-            ))
-        }) {
+            },
+            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White,
+                titleContentColor = Color.Black))
+    }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xfff0f0f0))
-        ) {
+                .background(Color(0xfff0f0f0))) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -228,29 +226,28 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(
-                            shape = RoundedCornerShape(
-                                bottomStart = 30.dp, bottomEnd = 30.dp
-                            )
-                        )
-                ) {
+                        .clip(shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))) {
                     if (isVisible) {
                         Kalendar(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 45.dp)
-                                .clip(
-                                    shape = RoundedCornerShape(
-                                        bottomStart = 30.dp, bottomEnd = 30.dp
-                                    )
-                                ),
-                            kalendarType = KalendarType.Oceanic,
-                            kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                            kalendarThemeColor = KalendarThemeColor(
-                                backgroundColor = Color.White,
-                                dayBackgroundColor = Color(0xffFBE3C7),
-                                headerTextColor = Color.Black
+                                .clip(shape = RoundedCornerShape(bottomStart = 30.dp,
+                                    bottomEnd = 30.dp)),
+                            kalendarHeaderConfig = KalendarHeaderConfig(
+                                kalendarTextConfig = KalendarTextConfig(
+                                    kalendarTextColor = KalendarTextColor(Color.Black),
+                                    kalendarTextSize = KalendarTextSize.SubTitle)
                             ),
+//                            kalendarEvents = List<KalendarDay> (
+//                                size = ,
+//                                init =
+//                                    ),
+                            kalendarType = KalendarType.Oceanic(),
+                            kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
+                            kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
+                                dayBackgroundColor = Color(0xffFBE3C7),
+                                headerTextColor = Color.Black),
                             onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
                                 year = kalendarDay.localDate.year
@@ -272,16 +269,24 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 .padding(top = 25.dp)
                                 .clip(
                                     shape = RoundedCornerShape(
-                                        bottomStart = 30.dp, bottomEnd = 30.dp
-                                    )
-                                ),
+                                        bottomStart = 30.dp,
+                                        bottomEnd = 30.dp)),
+                            kalendarHeaderConfig = KalendarHeaderConfig(kalendarTextConfig = KalendarTextConfig(
+                                kalendarTextColor = KalendarTextColor(Color.Black),
+                                kalendarTextSize = KalendarTextSize.SubTitle)),
+//                            com.himanshoe.kalendar.component.day.KalendarDay(kalendarDay =,
+//                                selectedKalendarDay =,
+//                                kalendarDayColors =,
+//                                dotColor =,
+//                                dayBackgroundColor =),
+//                            kalendarEvents = List<KalendarEvent>(
+//
+//                            ),
                             kalendarType = KalendarType.Firey,
                             kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                            kalendarThemeColor = KalendarThemeColor(
-                                backgroundColor = Color.White,
+                            kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
                                 dayBackgroundColor = Color(0xffFBE3C7),
-                                headerTextColor = Color.Black
-                            ),
+                                headerTextColor = Color.Black),
                             onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
                                 year = kalendarDay.localDate.year
@@ -304,30 +309,42 @@ fun CalendarScreen(routeAction: RouteAction) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .padding(top = 30.dp)
-            ) {
+                    .padding(top = 30.dp)) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 21.dp, end = 21.dp),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-
                         Text(
-                            text = day.toString(), modifier = Modifier.padding(12.dp)
+                            text = day.toString(),
+                            fontSize = 26.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(end = 5.dp)
                         )
 
-                        Spacer(modifier = Modifier.width(5.dp))
-
-                        Divider(modifier = Modifier.padding(5.dp), color = Color(0xffe7e7e7))
-
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 5.dp),
+                            color = Color(0xffD8D8D8)
+                        )
                     }
-                    TodoItemList(Todo = todoList)
-
                 }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 50.dp),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        TodoItemList(Todo = todoList)
+                    }
             }
         }
 

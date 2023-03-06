@@ -74,8 +74,8 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.1.1'
 
     // Kalendar & Kalendar Endlos
-//    implementation("com.himanshoe:kalendar:1.2.0")
-    implementation("com.himanshoe:kalendar:1.1.0")
+    implementation("com.himanshoe:kalendar:1.2.0")
+//    implementation("com.himanshoe:kalendar:1.1.0")
 //    implementation("com.himanshoe:kalendar-endlos:1.0.2")
 
     // Modal

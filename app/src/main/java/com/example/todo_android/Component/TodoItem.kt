@@ -1,6 +1,7 @@
 package com.example.todo_android.Component
 
 import android.util.Log
+import android.widget.Space
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,6 +28,7 @@ import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
 import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
 import com.example.todo_android.Response.TodoResponse.DeleteTodoResponse
 import com.example.todo_android.Response.TodoResponse.RToDoResponse
+import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.Response.TodoResponse.UpdateTodoResponse
 import com.example.todo_android.Util.MyApplication
 import retrofit2.Call
@@ -37,7 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 fun deleteTodo(
     token: String,
-    id: Int,
+    id: Int
 ) {
     var deleteTodoResponse: DeleteTodoResponse? = null
 
@@ -134,6 +136,10 @@ fun TodoItem(Todo: RToDoResponse) {
     var done = true
     var color = 0
 
+    var todoList = remember {
+        mutableStateListOf<RToDoResponse>()
+    }
+
 //    val coroutineScope = rememberCoroutineScope()
 //    val bottomSheetScaffoldState =
 //        rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
@@ -165,9 +171,10 @@ fun TodoItem(Todo: RToDoResponse) {
     }
 
     Card(
+        colors = CardDefaults.cardColors(Color.White),
+        shape = RoundedCornerShape(8.dp),
         modifier = Modifier
-            .padding(12.dp)
-            .width(334.dp)
+            .width(335.dp)
             .height(60.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
@@ -190,12 +197,11 @@ fun TodoItem(Todo: RToDoResponse) {
 
                     }
                 )
-            },
-        shape = RoundedCornerShape(8.dp)
+            }
     ) {
         Row(
             modifier = Modifier
-                .padding(12.dp),
+                .padding(start = 13.dp, top = 15.dp, bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -214,6 +220,8 @@ fun TodoItem(Todo: RToDoResponse) {
             )
         }
     }
+    
+    Spacer(modifier = Modifier.height(6.dp))
 }
 
 @ExperimentalMaterialApi
@@ -226,7 +234,6 @@ fun TodoItemList(Todo: List<RToDoResponse>) {
 
 
     LazyColumn {
-
 
         itemsIndexed(items = Todo) { index, item ->
 
@@ -442,7 +449,9 @@ fun UpdateTodoDialog(
             }) {
 
             androidx.compose.material3.Surface(
-                modifier = Modifier.fillMaxWidth().height(400.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(400.dp),
                 shape = RoundedCornerShape(12.dp),
                 color = Color.White
             ) {
