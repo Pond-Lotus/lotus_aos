@@ -309,7 +309,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .padding(top = 30.dp)) {
+                    .padding(top = 30.dp)
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -335,7 +336,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                             color = Color(0xffD8D8D8)
                         )
                     }
-                }
 
                     Box(
                         modifier = Modifier
@@ -345,6 +345,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     ) {
                         TodoItemList(Todo = todoList)
                     }
+                }
             }
         }
 
