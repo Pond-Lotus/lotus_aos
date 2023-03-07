@@ -135,7 +135,6 @@ fun readTodo(
         })
 }
 
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
@@ -217,63 +216,56 @@ fun CalendarScreen(routeAction: RouteAction) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xfff0f0f0))) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f),
-            ) {
-                Box(
+                .background(Color(0xfff0f0f0))
+                .imePadding()
+        ) {
+            if (isVisible) {
+                Kalendar(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .clip(shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))) {
-                    if (isVisible) {
-                        Kalendar(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 45.dp)
-                                .clip(shape = RoundedCornerShape(bottomStart = 30.dp,
-                                    bottomEnd = 30.dp)),
-                            kalendarHeaderConfig = KalendarHeaderConfig(
-                                kalendarTextConfig = KalendarTextConfig(
-                                    kalendarTextColor = KalendarTextColor(Color.Black),
-                                    kalendarTextSize = KalendarTextSize.SubTitle)
-                            ),
+                        .fillMaxWidth()
+                        .padding(top = 45.dp)
+                        .clip(shape = RoundedCornerShape(bottomStart = 30.dp,
+                            bottomEnd = 30.dp)),
+                    kalendarHeaderConfig = KalendarHeaderConfig(
+                        kalendarTextConfig = KalendarTextConfig(
+                            kalendarTextColor = KalendarTextColor(Color.Black),
+                            kalendarTextSize = KalendarTextSize.SubTitle)
+                    ),
 //                            kalendarEvents = List<KalendarDay> (
 //                                size = ,
 //                                init =
 //                                    ),
-                            kalendarType = KalendarType.Oceanic(),
-                            kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                            kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
-                                dayBackgroundColor = Color(0xffFBE3C7),
-                                headerTextColor = Color.Black),
-                            onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
+                    kalendarType = KalendarType.Oceanic(),
+                    kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
+                    kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
+                        dayBackgroundColor = Color(0xffFBE3C7),
+                        headerTextColor = Color.Black),
+                    onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
-                                year = kalendarDay.localDate.year
-                                month = kalendarDay.localDate.monthNumber
-                                day = kalendarDay.localDate.dayOfMonth
+                        year = kalendarDay.localDate.year
+                        month = kalendarDay.localDate.monthNumber
+                        day = kalendarDay.localDate.dayOfMonth
 
-                                readTodo(token, year, month, day, response = {
+                        readTodo(token, year, month, day, response = {
 
-                                    todoList.clear()
-                                    for (i in it!!.data) {
-                                        todoList.add(i)
-                                    }
-                                })
-                            })
-                    } else {
-                        Kalendar(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 25.dp)
-                                .clip(
-                                    shape = RoundedCornerShape(
-                                        bottomStart = 30.dp,
-                                        bottomEnd = 30.dp)),
-                            kalendarHeaderConfig = KalendarHeaderConfig(kalendarTextConfig = KalendarTextConfig(
-                                kalendarTextColor = KalendarTextColor(Color.Black),
-                                kalendarTextSize = KalendarTextSize.SubTitle)),
+                            todoList.clear()
+                            for (i in it!!.data) {
+                                todoList.add(i)
+                            }
+                        })
+                    })
+            } else {
+                Kalendar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 25.dp)
+                        .clip(
+                            shape = RoundedCornerShape(
+                                bottomStart = 30.dp,
+                                bottomEnd = 30.dp)),
+                    kalendarHeaderConfig = KalendarHeaderConfig(kalendarTextConfig = KalendarTextConfig(
+                        kalendarTextColor = KalendarTextColor(Color.Black),
+                        kalendarTextSize = KalendarTextSize.SubTitle)),
 //                            com.himanshoe.kalendar.component.day.KalendarDay(kalendarDay =,
 //                                selectedKalendarDay =,
 //                                kalendarDayColors =,
@@ -282,129 +274,110 @@ fun CalendarScreen(routeAction: RouteAction) {
 //                            kalendarEvents = List<KalendarEvent>(
 //
 //                            ),
-                            kalendarType = KalendarType.Firey,
-                            kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                            kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
-                                dayBackgroundColor = Color(0xffFBE3C7),
-                                headerTextColor = Color.Black),
-                            onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
+                    kalendarType = KalendarType.Firey,
+                    kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
+                    kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
+                        dayBackgroundColor = Color(0xffFBE3C7),
+                        headerTextColor = Color.Black),
+                    onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
-                                year = kalendarDay.localDate.year
-                                month = kalendarDay.localDate.monthNumber
-                                day = kalendarDay.localDate.dayOfMonth
+                        year = kalendarDay.localDate.year
+                        month = kalendarDay.localDate.monthNumber
+                        day = kalendarDay.localDate.dayOfMonth
 
-                                readTodo(token, year, month, day, response = {
+                        readTodo(token, year, month, day, response = {
 
-                                    todoList.clear()
-                                    for (i in it!!.data) {
-                                        todoList.add(i)
-                                    }
-                                })
-                            })
-                    }
-                }
+                            todoList.clear()
+                            for (i in it!!.data) {
+                                todoList.add(i)
+                            }
+                        })
+                    })
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 21.dp, end = 21.dp, top = 30.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = day.toString(),
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(end = 5.dp)
+                )
+
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 5.dp),
+                    color = Color(0xffD8D8D8)
+                )
             }
 
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .padding(top = 30.dp)
+                    .fillMaxSize()
+                    .padding(top = 15.dp),
+                contentAlignment = Alignment.TopCenter
             ) {
-                Box(
+                TodoItemList(Todo = todoList)
+
+                FloatingActionButton(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .align(alignment = Alignment.BottomEnd)
+                        .padding(all = 16.dp),
+                    shape = CircleShape,
+                    onClick = {
+                        isVisiblily = !isVisiblily
+                    }
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 21.dp, end = 21.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = day.toString(),
-                            fontSize = 26.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(end = 5.dp)
-                        )
-
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 5.dp),
-                            color = Color(0xffD8D8D8)
-                        )
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 50.dp),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        TodoItemList(Todo = todoList)
-                    }
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "todolist 추가"
+                    )
                 }
             }
         }
+    }
 
 
-//    Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = {
-//                    Row(
+
+
+//                Row(
+//                    modifier = Modifier.padding(12.dp),
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    horizontalArrangement = Arrangement.Center
+//                ) {
+//                    TextField(
 //                        modifier = Modifier
-//                            .clip(shape = RoundedCornerShape(24.dp))
-//                            .background(Color(0xffe9e9ed))
-//                            .padding(4.dp)
-//                            .fillMaxSize()
-//                    )
-//                    {
-//                        states.forEach { text ->
-//                            Text(
-//                                text = text,
-//                                color =
-//                                if (text == selectedOption) {
-//                                    Color.Black
-//                                } else {
-//                                    Color.Gray
-//                                },
-//                                fontWeight = FontWeight.Medium,
-//                                modifier = Modifier
-//                                    .clip(shape = RoundedCornerShape(24.dp))
-//                                    .clickable {
-//                                        onSelectionChange(text)
-//                                        isVisible = !isVisible
-//                                    }
-//                                    .background(
-//                                        if (text == selectedOption) {
-//                                            Color.White
-//                                        } else {
-//                                            Color(0xffe9e9ed)
-//                                        }
-//                                    )
-//                                    .padding(
-//                                        vertical = 5.dp,
-//                                        horizontal = 16.dp,
-//                                    )
-//                            )
-//                        }
-//                    }
-//                },
-//                actions = {
-//                    IconButton(onClick = {
-//                        goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
-//                    }) {
-//                        Icon(imageVector = Icons.Filled.Menu, contentDescription = "profile")
-//                    }
-//                },
-//            )
-//        },
-//    ) {
+//                            .padding(12.dp)
+//                            .width(250.dp)
+//                            .height(50.dp),
 //
-//    }
+//                        value = title,
+//                        onValueChange = {
+//                            title = it
+//                        })
+//
+//                    Spacer(modifier = Modifier.width(10.dp))
+//
+//                    Button(
+//                        modifier = Modifier.width(),
+//                        onClick = {
+//                            createTodo(token, year, month, day, title, time)
+//                            isVisiblily = !isVisiblily
+//                        }
+//                    ) {
+//                        Text(text = "Todo 작성")
+//                    }
+//                }
+//
+//
+//
+
 
 //    Column(
 //        modifier = Modifier
@@ -611,5 +584,4 @@ fun CalendarScreen(routeAction: RouteAction) {
 //        }
 //    }
 //
-    }
 }
