@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -174,8 +175,8 @@ fun TodoItem(Todo: RToDoResponse) {
         colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
-            .width(335.dp)
-            .height(60.dp)
+            .width(350.dp)
+            .height(50.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onLongPress = { deleteTodo(token, Todo.id) },
@@ -213,10 +214,12 @@ fun TodoItem(Todo: RToDoResponse) {
                 }
             )
 
-            Spacer(modifier = Modifier.width(9.dp))
+//            Spacer(modifier = Modifier.width(7.dp))
 
             Text(
-                text = Todo.title
+                text = Todo.title,
+                fontSize = 13.sp,
+                fontStyle = FontStyle.Normal
             )
         }
     }

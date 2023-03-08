@@ -3,10 +3,13 @@ package com.example.todo_android.Screen
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
@@ -20,6 +23,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.graphics.Color
@@ -28,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.todo_android.Component.CustomSwitch
+import com.example.todo_android.Component.FloatingStateType
 import com.example.todo_android.Component.TodoItemList
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
@@ -149,6 +154,10 @@ fun CalendarScreen(routeAction: RouteAction) {
     var isVisible by remember { mutableStateOf(false) }
     var isVisiblily by remember { mutableStateOf(false) }
 
+    var multiFloatingState by remember {
+        mutableStateOf(FloatingStateType.Collapsed)
+    }
+
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
     var year by remember { mutableStateOf(0) }
@@ -165,44 +174,49 @@ fun CalendarScreen(routeAction: RouteAction) {
     }
 
     Scaffold(topBar = {
-        TopAppBar(title = {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Row(modifier = Modifier
-                    .width(115.dp)
-                    .height(35.dp)
-                    .clip(shape = RoundedCornerShape(24.dp))
-                    .background(Color(0xffe9e9ed))
-                    .padding(start = 10.dp, end = 5.dp, top = 6.dp, bottom = 5.dp)) {
-                    states.forEach { text ->
-                        Text(text = text,
-                            fontSize = 10.sp,
-                            lineHeight = 16.sp,
-                            color = if (text == selectedOption) {
-                                Color.Black
-                            } else {
-                                Color.Gray
-                            },
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier
-                                .clip(shape = RoundedCornerShape(24.dp))
-                                .clickable {
-                                    onSelectionChange(text)
-                                    isVisible = (text == states[1])
-//                                            isVisible = !isVisible
-                                }
-                                .background(if (text == selectedOption) {
-                                    Color.White
+        TopAppBar(
+            title = {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Row(
+                        modifier = Modifier
+                            .width(115.dp)
+                            .height(35.dp)
+                            .clip(shape = RoundedCornerShape(24.dp))
+                            .background(Color(0xffe9e9ed))
+                            .padding(start = 10.dp, end = 5.dp, top = 6.dp, bottom = 5.dp)
+                    ) {
+                        states.forEach { text ->
+                            Text(text = text,
+                                fontSize = 10.sp,
+                                lineHeight = 16.sp,
+                                color = if (text == selectedOption) {
+                                    Color.Black
                                 } else {
-                                    Color(0xffe9e9ed)
-                                })
-                                .padding(
-                                    vertical = 5.dp,
-                                    horizontal = 16.dp,
-                                ))
+                                    Color.Gray
+                                },
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier
+                                    .clip(shape = RoundedCornerShape(24.dp))
+                                    .clickable {
+                                        onSelectionChange(text)
+                                        isVisible = (text == states[1])
+//                                            isVisible = !isVisible
+                                    }
+                                    .background(
+                                        if (text == selectedOption) {
+                                            Color.White
+                                        } else {
+                                            Color(0xffe9e9ed)
+                                        }
+                                    )
+                                    .padding(
+                                        vertical = 5.dp,
+                                        horizontal = 16.dp,
+                                    ))
+                        }
                     }
                 }
-            }
-        },
+            },
             actions = {
                 IconButton(onClick = {
                     goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
@@ -210,8 +224,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                     Icon(imageVector = Icons.Filled.Menu, contentDescription = "profile")
                 }
             },
-            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White,
-                titleContentColor = Color.Black))
+            colors = TopAppBarDefaults.smallTopAppBarColors(
+                containerColor = Color.White,
+                titleContentColor = Color.Black
+            )
+        )
     }) {
         Column(
             modifier = Modifier
@@ -224,12 +241,17 @@ fun CalendarScreen(routeAction: RouteAction) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 45.dp)
-                        .clip(shape = RoundedCornerShape(bottomStart = 30.dp,
-                            bottomEnd = 30.dp)),
+                        .clip(
+                            shape = RoundedCornerShape(
+                                bottomStart = 30.dp,
+                                bottomEnd = 30.dp
+                            )
+                        ),
                     kalendarHeaderConfig = KalendarHeaderConfig(
                         kalendarTextConfig = KalendarTextConfig(
                             kalendarTextColor = KalendarTextColor(Color.Black),
-                            kalendarTextSize = KalendarTextSize.SubTitle)
+                            kalendarTextSize = KalendarTextSize.SubTitle
+                        )
                     ),
 //                            kalendarEvents = List<KalendarDay> (
 //                                size = ,
@@ -237,9 +259,11 @@ fun CalendarScreen(routeAction: RouteAction) {
 //                                    ),
                     kalendarType = KalendarType.Oceanic(),
                     kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                    kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
+                    kalendarThemeColor = KalendarThemeColor(
+                        backgroundColor = Color.White,
                         dayBackgroundColor = Color(0xffFBE3C7),
-                        headerTextColor = Color.Black),
+                        headerTextColor = Color.Black
+                    ),
                     onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
                         year = kalendarDay.localDate.year
@@ -262,10 +286,15 @@ fun CalendarScreen(routeAction: RouteAction) {
                         .clip(
                             shape = RoundedCornerShape(
                                 bottomStart = 30.dp,
-                                bottomEnd = 30.dp)),
-                    kalendarHeaderConfig = KalendarHeaderConfig(kalendarTextConfig = KalendarTextConfig(
-                        kalendarTextColor = KalendarTextColor(Color.Black),
-                        kalendarTextSize = KalendarTextSize.SubTitle)),
+                                bottomEnd = 30.dp
+                            )
+                        ),
+                    kalendarHeaderConfig = KalendarHeaderConfig(
+                        kalendarTextConfig = KalendarTextConfig(
+                            kalendarTextColor = KalendarTextColor(Color.Black),
+                            kalendarTextSize = KalendarTextSize.SubTitle
+                        )
+                    ),
 //                            com.himanshoe.kalendar.component.day.KalendarDay(kalendarDay =,
 //                                selectedKalendarDay =,
 //                                kalendarDayColors =,
@@ -276,9 +305,11 @@ fun CalendarScreen(routeAction: RouteAction) {
 //                            ),
                     kalendarType = KalendarType.Firey,
                     kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                    kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
+                    kalendarThemeColor = KalendarThemeColor(
+                        backgroundColor = Color.White,
                         dayBackgroundColor = Color(0xffFBE3C7),
-                        headerTextColor = Color.Black),
+                        headerTextColor = Color.Black
+                    ),
                     onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
                         year = kalendarDay.localDate.year
@@ -324,26 +355,63 @@ fun CalendarScreen(routeAction: RouteAction) {
                 contentAlignment = Alignment.TopCenter
             ) {
                 TodoItemList(Todo = todoList)
-
-                FloatingActionButton(
-                    modifier = Modifier
+                
+                AddTodoFloatingButton(
+                    multiFloatingState = multiFloatingState,
+                    onMultiFloatingStateChange = {
+                        multiFloatingState = it
+                    },
+                    position = Modifier
                         .align(alignment = Alignment.BottomEnd)
-                        .padding(all = 16.dp),
-                    shape = CircleShape,
-                    onClick = {
-                        isVisiblily = !isVisiblily
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "todolist 추가"
-                    )
-                }
+                        .padding(all = 16.dp)
+                )
+
             }
         }
     }
+}
 
+@Composable
+fun AddTodoFloatingButton(
+    multiFloatingState: FloatingStateType,
+    onMultiFloatingStateChange: (FloatingStateType) -> Unit,
+    position: Modifier
+) {
+    val transition = updateTransition(targetState = multiFloatingState, label = null)
+    val rotate by transition.animateFloat(label = "rotate") {
+        if (it == FloatingStateType.Expanded) {
+            315f
+        } else {
+            0f
+        }
+    }
 
+    FloatingActionButton(
+//        modifier = Modifier
+//            .align(alignment = Alignment.BottomEnd)
+//            .padding(all = 16.dp),
+        modifier = position,
+        containerColor = Color(0xffFBE3C7),
+        shape = CircleShape,
+        onClick = {
+
+            onMultiFloatingStateChange(
+                if (transition.currentState == FloatingStateType.Expanded) {
+                    FloatingStateType.Collapsed
+                } else {
+                    FloatingStateType.Expanded
+                }
+            )
+//                        isVisiblily = !isVisiblily
+        }
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Add,
+            contentDescription = "todolist 추가",
+            modifier = Modifier.rotate(rotate)
+        )
+    }
+}
 
 
 //                Row(
@@ -584,4 +652,3 @@ fun CalendarScreen(routeAction: RouteAction) {
 //        }
 //    }
 //
-}
