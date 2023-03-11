@@ -2,6 +2,7 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Button
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
@@ -11,7 +12,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
@@ -27,9 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,15 +42,18 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.todo_android.Component.CustomSwitch
 import com.example.todo_android.Component.FloatingStateType
 import com.example.todo_android.Component.TodoItemList
+import com.example.todo_android.Component.menuFABitem
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
+import com.example.todo_android.R
 import com.example.todo_android.Request.TodoRequest.CreateTodoRequest
 import com.example.todo_android.Request.TodoRequest.ReadTodoRequest
 import com.example.todo_android.Response.TodoResponse.CreateTodoResponse
 import com.example.todo_android.Response.TodoResponse.RToDoResponse
 import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.ui.theme.backButtonColor
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.color.KalendarThemeColor
 import com.himanshoe.kalendar.component.day.KalendarDay
@@ -161,9 +169,9 @@ fun CalendarScreen(routeAction: RouteAction) {
         mutableStateOf(FloatingStateType.Collapsed)
     }
 
-    val backgroundColor = if(multiFloatingState == FloatingStateType.Expanded) {
+    val colorFAB = if (multiFloatingState == FloatingStateType.Expanded) {
         Color(0xff9E9E9E)
-    } else{
+    } else {
         Color(0xffFFDAB9)
     }
 
@@ -174,6 +182,24 @@ fun CalendarScreen(routeAction: RouteAction) {
         "4",
         "5",
         "6"
+    )
+
+    var items = listOf(
+        menuFABitem(
+            icon = ImageBitmap.imageResource(id = R.drawable.lottie),
+            label = "test1",
+            identifier = "test1"
+        ),
+        menuFABitem(
+            icon = ImageBitmap.imageResource(id = R.drawable.appname),
+            label = "test2",
+            identifier = "test2"
+        ),
+        menuFABitem(
+            icon = ImageBitmap.imageResource(id = R.drawable.apptitle),
+            label = "test3",
+            identifier = "test3"
+        ),
     )
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
@@ -374,7 +400,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                     position = Modifier
                         .align(alignment = Alignment.BottomEnd)
                         .padding(all = 16.dp),
-                    backgroundColor = backgroundColor
+                    backgroundColor = colorFAB,
+                    items = items
                 )
 
             }
@@ -387,7 +414,8 @@ fun AddTodoFloatingButton(
     multiFloatingState: FloatingStateType,
     onMultiFloatingStateChange: (FloatingStateType) -> Unit,
     position: Modifier,
-    backgroundColor: Color
+    backgroundColor: Color,
+    items: List<menuFABitem>
 ) {
     val transition = updateTransition(targetState = multiFloatingState, label = null)
     val rotate by transition.animateFloat(label = "rotate") {
@@ -398,7 +426,23 @@ fun AddTodoFloatingButton(
         }
     }
 
-    FloatingActionButton(modifier = position,
+    Column(
+        horizontalAlignment = Alignment.End
+    ) {
+        if (transition.currentState == FloatingStateType.Expanded) {
+            items.forEach {
+                menuFAB(
+                    item = it,
+                    onMenuFABitemClick = {}
+                )
+
+                Spacer(modifier = Modifier.size(16.dp))
+            }
+        }
+    }
+
+    FloatingActionButton(
+        modifier = position,
         containerColor = backgroundColor,
         shape = CircleShape,
         onClick = {
@@ -422,16 +466,31 @@ fun AddTodoFloatingButton(
 
 @Composable
 fun menuFAB(
-    isOpen: Boolean,
-    actionMenuScale: Float,
-    onClose: (state: Boolean, selectedMenu: String) -> Unit
+    item: menuFABitem,
+    onMenuFABitemClick: (menuFABitem) -> Unit
 ) {
-    Box(
+    Canvas(
         modifier = Modifier
-            .width(150.dp)
-            .height(110.dp)
+            .size(32.dp)
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                onClick = {
+                    onMenuFABitemClick.invoke(item)
+                },
+                indication = rememberRipple(
+                    bounded = false,
+                    radius = 20.dp,
+                    color = Color.Green
+                )
+            )
     ) {
-
+        drawImage(
+            image = item.icon,
+            topLeft = Offset(
+                center.x - (item.icon.width / 2),
+                center.y - (item.icon.width / 2),
+            )
+        )
     }
 }
 
