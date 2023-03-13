@@ -2,44 +2,33 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.util.Log
-import android.widget.Button
-import androidx.compose.animation.AnimatedVisibility
+import android.widget.Space
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
-import androidx.compose.material3.AlertDialogDefaults.shape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.example.todo_android.Component.CustomSwitch
 import com.example.todo_android.Component.FloatingStateType
 import com.example.todo_android.Component.TodoItemList
 import com.example.todo_android.Component.menuFABitem
@@ -53,15 +42,10 @@ import com.example.todo_android.Response.TodoResponse.CreateTodoResponse
 import com.example.todo_android.Response.TodoResponse.RToDoResponse
 import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.Util.MyApplication
-import com.example.todo_android.ui.theme.backButtonColor
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.color.KalendarThemeColor
-import com.himanshoe.kalendar.component.day.KalendarDay
 import com.himanshoe.kalendar.component.day.config.KalendarDayColors
-import com.himanshoe.kalendar.component.day.config.KalendarDayState
-import com.himanshoe.kalendar.component.header.KalendarHeader
 import com.himanshoe.kalendar.component.header.config.KalendarHeaderConfig
-import com.himanshoe.kalendar.component.text.KalendarNormalText
 import com.himanshoe.kalendar.component.text.config.KalendarTextColor
 import com.himanshoe.kalendar.component.text.config.KalendarTextConfig
 import com.himanshoe.kalendar.component.text.config.KalendarTextSize
@@ -73,7 +57,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.time.LocalDate
 import androidx.compose.material3.TopAppBar as TopAppBar
 
 fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
@@ -175,32 +158,6 @@ fun CalendarScreen(routeAction: RouteAction) {
         Color(0xffFFDAB9)
     }
 
-    var colorButtons = listOf(
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6"
-    )
-
-    var items = listOf(
-        menuFABitem(
-            icon = ImageBitmap.imageResource(id = R.drawable.lottie),
-            label = "test1",
-            identifier = "test1"
-        ),
-        menuFABitem(
-            icon = ImageBitmap.imageResource(id = R.drawable.appname),
-            label = "test2",
-            identifier = "test2"
-        ),
-        menuFABitem(
-            icon = ImageBitmap.imageResource(id = R.drawable.apptitle),
-            label = "test3",
-            identifier = "test3"
-        ),
-    )
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
@@ -208,7 +165,7 @@ fun CalendarScreen(routeAction: RouteAction) {
     var month by remember { mutableStateOf(0) }
     var day by remember { mutableStateOf(0) }
     var title by remember { mutableStateOf("") }
-    var time = "0900"
+    var time = "0000"
 
 //    var done = true
 //    var color = 0
@@ -220,14 +177,12 @@ fun CalendarScreen(routeAction: RouteAction) {
     Scaffold(topBar = {
         TopAppBar(title = {
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Row(
-                    modifier = Modifier
-                        .width(115.dp)
-                        .height(35.dp)
-                        .clip(shape = RoundedCornerShape(24.dp))
-                        .background(Color(0xffe9e9ed))
-                        .padding(start = 10.dp, end = 5.dp, top = 6.dp, bottom = 5.dp)
-                ) {
+                Row(modifier = Modifier
+                    .width(115.dp)
+                    .height(35.dp)
+                    .clip(shape = RoundedCornerShape(24.dp))
+                    .background(Color(0xffe9e9ed))
+                    .padding(start = 10.dp, end = 5.dp, top = 6.dp, bottom = 5.dp)) {
                     states.forEach { text ->
                         Text(text = text,
                             fontSize = 10.sp,
@@ -245,13 +200,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                                     isVisible = (text == states[1])
 //                                            isVisible = !isVisible
                                 }
-                                .background(
-                                    if (text == selectedOption) {
-                                        Color.White
-                                    } else {
-                                        Color(0xffe9e9ed)
-                                    }
-                                )
+                                .background(if (text == selectedOption) {
+                                    Color.White
+                                } else {
+                                    Color(0xffe9e9ed)
+                                })
                                 .padding(
                                     vertical = 5.dp,
                                     horizontal = 16.dp,
@@ -259,49 +212,38 @@ fun CalendarScreen(routeAction: RouteAction) {
                     }
                 }
             }
-        }, actions = {
-            IconButton(onClick = {
-                goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
-            }) {
-                Icon(imageVector = Icons.Filled.Menu, contentDescription = "profile")
-            }
-        }, colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = Color.White, titleContentColor = Color.Black
-        )
-        )
+        },
+            actions = {
+                IconButton(onClick = {
+                    goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
+                }) {
+                    Icon(imageVector = Icons.Filled.Menu, contentDescription = "profile")
+                }
+            },
+            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White,
+                titleContentColor = Color.Black))
     }) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xfff0f0f0))
-                .imePadding()
-        ) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xfff0f0f0))
+            .imePadding()) {
             if (isVisible) {
                 Kalendar(modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 45.dp)
-                    .clip(
-                        shape = RoundedCornerShape(
-                            bottomStart = 30.dp, bottomEnd = 30.dp
-                        )
-                    ),
-                    kalendarHeaderConfig = KalendarHeaderConfig(
-                        kalendarTextConfig = KalendarTextConfig(
-                            kalendarTextColor = KalendarTextColor(Color.Black),
-                            kalendarTextSize = KalendarTextSize.SubTitle
-                        )
-                    ),
+                    .clip(shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)),
+                    kalendarHeaderConfig = KalendarHeaderConfig(kalendarTextConfig = KalendarTextConfig(
+                        kalendarTextColor = KalendarTextColor(Color.Black),
+                        kalendarTextSize = KalendarTextSize.SubTitle)),
 //                            kalendarEvents = List<KalendarDay> (
 //                                size = ,
 //                                init =
 //                                    ),
                     kalendarType = KalendarType.Oceanic(),
                     kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                    kalendarThemeColor = KalendarThemeColor(
-                        backgroundColor = Color.White,
+                    kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
                         dayBackgroundColor = Color(0xffFBE3C7),
-                        headerTextColor = Color.Black
-                    ),
+                        headerTextColor = Color.Black),
                     onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
                         year = kalendarDay.localDate.year
@@ -320,17 +262,10 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Kalendar(modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 25.dp)
-                    .clip(
-                        shape = RoundedCornerShape(
-                            bottomStart = 30.dp, bottomEnd = 30.dp
-                        )
-                    ),
-                    kalendarHeaderConfig = KalendarHeaderConfig(
-                        kalendarTextConfig = KalendarTextConfig(
-                            kalendarTextColor = KalendarTextColor(Color.Black),
-                            kalendarTextSize = KalendarTextSize.SubTitle
-                        )
-                    ),
+                    .clip(shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)),
+                    kalendarHeaderConfig = KalendarHeaderConfig(kalendarTextConfig = KalendarTextConfig(
+                        kalendarTextColor = KalendarTextColor(Color.Black),
+                        kalendarTextSize = KalendarTextSize.SubTitle)),
 //                            com.himanshoe.kalendar.component.day.KalendarDay(kalendarDay =,
 //                                selectedKalendarDay =,
 //                                kalendarDayColors =,
@@ -341,11 +276,9 @@ fun CalendarScreen(routeAction: RouteAction) {
 //                            ),
                     kalendarType = KalendarType.Firey,
                     kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                    kalendarThemeColor = KalendarThemeColor(
-                        backgroundColor = Color.White,
+                    kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
                         dayBackgroundColor = Color(0xffFBE3C7),
-                        headerTextColor = Color.Black
-                    ),
+                        headerTextColor = Color.Black),
                     onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
                         year = kalendarDay.localDate.year
@@ -362,48 +295,50 @@ fun CalendarScreen(routeAction: RouteAction) {
                     })
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 21.dp, end = 21.dp, top = 30.dp),
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 21.dp, end = 21.dp, top = 30.dp),
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = day.toString(),
+                verticalAlignment = Alignment.CenterVertically) {
+                Text(text = day.toString(),
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(end = 5.dp)
-                )
+                    modifier = Modifier.padding(end = 5.dp))
 
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 5.dp),
-                    color = Color(0xffD8D8D8)
-                )
+                Divider(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 5.dp),
+                    color = Color(0xffD8D8D8))
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 15.dp),
-                contentAlignment = Alignment.TopCenter
-            ) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 15.dp),
+                contentAlignment = Alignment.Center) {
                 TodoItemList(Todo = todoList)
 
-                AddTodoFloatingButton(
-                    multiFloatingState = multiFloatingState,
-                    onMultiFloatingStateChange = {
-                        multiFloatingState = it
-                    },
-                    position = Modifier
-                        .align(alignment = Alignment.BottomEnd)
-                        .padding(all = 16.dp),
-                    backgroundColor = colorFAB,
-                    items = items
-                )
+                Column(modifier = Modifier
+                    .align(alignment = Alignment.BottomEnd)
+                    .padding(all = 16.dp)
+                    .wrapContentSize()) {
 
+                    FloatingActionButtonMenus()
+
+
+                    Spacer(modifier = Modifier.padding(vertical = 20.dp))
+
+
+
+                    AddTodoFloatingButton(multiFloatingState = multiFloatingState,
+                        onMultiFloatingStateChange = {
+                            multiFloatingState = it
+                        },
+//                        position = Modifier
+////                            .align(alignment = Alignment.BottomEnd)
+//                            .padding(all = 16.dp)
+//                            .wrapContentSize(),
+                        backgroundColor = colorFAB)
+                }
             }
         }
     }
@@ -413,9 +348,8 @@ fun CalendarScreen(routeAction: RouteAction) {
 fun AddTodoFloatingButton(
     multiFloatingState: FloatingStateType,
     onMultiFloatingStateChange: (FloatingStateType) -> Unit,
-    position: Modifier,
+//    position: Modifier,
     backgroundColor: Color,
-    items: List<menuFABitem>
 ) {
     val transition = updateTransition(targetState = multiFloatingState, label = null)
     val rotate by transition.animateFloat(label = "rotate") {
@@ -426,34 +360,16 @@ fun AddTodoFloatingButton(
         }
     }
 
-    Column(
-        horizontalAlignment = Alignment.End
-    ) {
-        if (transition.currentState == FloatingStateType.Expanded) {
-            items.forEach {
-                menuFAB(
-                    item = it,
-                    onMenuFABitemClick = {}
-                )
-
-                Spacer(modifier = Modifier.size(16.dp))
-            }
-        }
-    }
-
     FloatingActionButton(
-        modifier = position,
-        containerColor = backgroundColor,
-        shape = CircleShape,
-        onClick = {
+//        modifier = position,
+        containerColor = backgroundColor, shape = CircleShape, onClick = {
 
             onMultiFloatingStateChange(
                 if (transition.currentState == FloatingStateType.Expanded) {
                     FloatingStateType.Collapsed
                 } else {
                     FloatingStateType.Expanded
-                }
-            )
+                })
 //                        isVisiblily = !isVisiblily
         }) {
         Icon(
@@ -465,36 +381,80 @@ fun AddTodoFloatingButton(
 }
 
 @Composable
-fun menuFAB(
-    item: menuFABitem,
-    onMenuFABitemClick: (menuFABitem) -> Unit
-) {
-    Canvas(
+fun FloatingActionButtonMenus() {
+    Box(
         modifier = Modifier
-            .size(32.dp)
-            .clickable(
-                interactionSource = MutableInteractionSource(),
-                onClick = {
-                    onMenuFABitemClick.invoke(item)
-                },
-                indication = rememberRipple(
-                    bounded = false,
-                    radius = 20.dp,
-                    color = Color.Green
-                )
-            )
+            .width(150.dp)
+            .height(110.dp)
+            .clip(shape = RoundedCornerShape(20.dp))
+            .shadow(elevation = 3.dp)
+            .background(Color.White),
     ) {
-        drawImage(
-            image = item.icon,
-            topLeft = Offset(
-                center.x - (item.icon.width / 2),
-                center.y - (item.icon.width / 2),
-            )
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize()
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        Color(0xffFFB4B4)),
+                    onClick = { /*TODO*/ }) {
+
+                }
+                Button(
+                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        Color(0xffFFDCA8)),
+                    onClick = { /*TODO*/ }) {
+
+                }
+                Button(
+                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        Color(0xffB1E0CF)),
+                    onClick = { /*TODO*/ }) {
+
+                }
+            }
+
+            Spacer(modifier = Modifier.padding(vertical = 7.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        Color(0xffB7D7F5)),
+                    onClick = { /*TODO*/ }) {
+
+                }
+                Button(
+                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        Color(0xffFFB8EB)),
+                    onClick = { /*TODO*/ }) {
+
+                }
+                Button(
+                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        Color(0xffB6B1EC)),
+                    onClick = { /*TODO*/ }) {
+
+                }
+            }
+        }
     }
 }
-
-
 //                Row(
 //                    modifier = Modifier.padding(12.dp),
 //                    verticalAlignment = Alignment.CenterVertically,
