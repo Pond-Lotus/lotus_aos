@@ -295,9 +295,10 @@ fun CalendarScreen(routeAction: RouteAction) {
                     })
             }
 
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 21.dp, end = 21.dp, top = 30.dp),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 21.dp, end = 21.dp, top = 30.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically) {
                 Text(text = day.toString(),
@@ -311,17 +312,20 @@ fun CalendarScreen(routeAction: RouteAction) {
                     color = Color(0xffD8D8D8))
             }
 
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 15.dp),
-                contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 15.dp, start = 21.dp, end = 21.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
                 TodoItemList(Todo = todoList)
 
-                Column(modifier = Modifier
-                    .align(alignment = Alignment.BottomEnd)
-                    .padding(all = 16.dp)
-                    .wrapContentSize(),
-                    horizontalAlignment = Alignment.End
+                Column(
+                    modifier = Modifier
+                        .align(alignment = Alignment.BottomEnd)
+                        .padding(all = 16.dp)
+                        .wrapContentSize()
+//                    horizontalAlignment = Alignment.End
                 ) {
                     if (multiFloatingState == FloatingStateType.Expanded) {
                         FloatingActionButtonMenus()
@@ -357,14 +361,17 @@ fun AddTodoFloatingButton(
         }
     }
 
-    FloatingActionButton(containerColor = backgroundColor, shape = CircleShape, onClick = {
-        onMultiFloatingStateChange(if (transition.currentState == FloatingStateType.Expanded) {
-            FloatingStateType.Collapsed
-        } else {
-            FloatingStateType.Expanded
-        })
+    FloatingActionButton(
+        containerColor = backgroundColor,
+        shape = CircleShape,
+        onClick = {
+            onMultiFloatingStateChange(if (transition.currentState == FloatingStateType.Expanded) {
+                FloatingStateType.Collapsed
+            } else {
+                FloatingStateType.Expanded
+            })
 //                        isVisiblily = !isVisiblily
-    }) {
+        }) {
         Icon(
             imageVector = Icons.Filled.Add,
             contentDescription = "todolist 추가",
@@ -374,17 +381,14 @@ fun AddTodoFloatingButton(
 }
 
 @Composable
-fun FloatingActionButtonMenus(
-
-) {
-
+fun FloatingActionButtonMenus() {
     Box(
         modifier = Modifier
             .width(150.dp)
             .height(110.dp)
             .clip(shape = RoundedCornerShape(20.dp))
             .shadow(elevation = 3.dp)
-            .background(Color.White),
+            .background(Color.White)
     ) {
         Column(modifier = Modifier
             .fillMaxSize()
