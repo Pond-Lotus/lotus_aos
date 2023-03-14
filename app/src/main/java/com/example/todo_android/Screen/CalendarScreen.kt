@@ -1,6 +1,7 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
+import android.opengl.Visibility
 import android.util.Log
 import android.widget.Space
 import androidx.compose.animation.core.animateFloat
@@ -31,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Component.FloatingStateType
 import com.example.todo_android.Component.TodoItemList
-import com.example.todo_android.Component.menuFABitem
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -320,24 +320,22 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Column(modifier = Modifier
                     .align(alignment = Alignment.BottomEnd)
                     .padding(all = 16.dp)
-                    .wrapContentSize()) {
+                    .wrapContentSize(),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    if (multiFloatingState == FloatingStateType.Expanded) {
+                        FloatingActionButtonMenus()
+                    }
 
-                    FloatingActionButtonMenus()
+                    Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
-
-                    Spacer(modifier = Modifier.padding(vertical = 20.dp))
-
-
-
-                    AddTodoFloatingButton(multiFloatingState = multiFloatingState,
+                    AddTodoFloatingButton(
+                        multiFloatingState = multiFloatingState,
                         onMultiFloatingStateChange = {
                             multiFloatingState = it
                         },
-//                        position = Modifier
-////                            .align(alignment = Alignment.BottomEnd)
-//                            .padding(all = 16.dp)
-//                            .wrapContentSize(),
-                        backgroundColor = colorFAB)
+                        backgroundColor = colorFAB,
+                    )
                 }
             }
         }
@@ -348,7 +346,6 @@ fun CalendarScreen(routeAction: RouteAction) {
 fun AddTodoFloatingButton(
     multiFloatingState: FloatingStateType,
     onMultiFloatingStateChange: (FloatingStateType) -> Unit,
-//    position: Modifier,
     backgroundColor: Color,
 ) {
     val transition = updateTransition(targetState = multiFloatingState, label = null)
@@ -360,18 +357,14 @@ fun AddTodoFloatingButton(
         }
     }
 
-    FloatingActionButton(
-//        modifier = position,
-        containerColor = backgroundColor, shape = CircleShape, onClick = {
-
-            onMultiFloatingStateChange(
-                if (transition.currentState == FloatingStateType.Expanded) {
-                    FloatingStateType.Collapsed
-                } else {
-                    FloatingStateType.Expanded
-                })
+    FloatingActionButton(containerColor = backgroundColor, shape = CircleShape, onClick = {
+        onMultiFloatingStateChange(if (transition.currentState == FloatingStateType.Expanded) {
+            FloatingStateType.Collapsed
+        } else {
+            FloatingStateType.Expanded
+        })
 //                        isVisiblily = !isVisiblily
-        }) {
+    }) {
         Icon(
             imageVector = Icons.Filled.Add,
             contentDescription = "todolist 추가",
@@ -381,7 +374,10 @@ fun AddTodoFloatingButton(
 }
 
 @Composable
-fun FloatingActionButtonMenus() {
+fun FloatingActionButtonMenus(
+
+) {
+
     Box(
         modifier = Modifier
             .width(150.dp)
@@ -390,34 +386,24 @@ fun FloatingActionButtonMenus() {
             .shadow(elevation = 3.dp)
             .background(Color.White),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize()) {
+            Row(modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        Color(0xffFFB4B4)),
+                horizontalArrangement = Arrangement.SpaceEvenly) {
+                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
                     onClick = { /*TODO*/ }) {
 
                 }
-                Button(
-                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        Color(0xffFFDCA8)),
+                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
                     onClick = { /*TODO*/ }) {
 
                 }
-                Button(
-                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        Color(0xffB1E0CF)),
+                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
                     onClick = { /*TODO*/ }) {
 
                 }
@@ -425,29 +411,21 @@ fun FloatingActionButtonMenus() {
 
             Spacer(modifier = Modifier.padding(vertical = 7.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
+            Row(modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        Color(0xffB7D7F5)),
+                horizontalArrangement = Arrangement.SpaceEvenly) {
+                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
                     onClick = { /*TODO*/ }) {
 
                 }
-                Button(
-                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        Color(0xffFFB8EB)),
+                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
                     onClick = { /*TODO*/ }) {
 
                 }
-                Button(
-                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        Color(0xffB6B1EC)),
+                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
                     onClick = { /*TODO*/ }) {
 
                 }
