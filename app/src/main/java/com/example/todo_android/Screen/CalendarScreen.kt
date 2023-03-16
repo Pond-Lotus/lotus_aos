@@ -198,7 +198,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 .clickable {
                                     onSelectionChange(text)
                                     isVisible = (text == states[1])
-//                                            isVisible = !isVisible
                                 }
                                 .background(if (text == selectedOption) {
                                     Color.White
@@ -222,7 +221,17 @@ fun CalendarScreen(routeAction: RouteAction) {
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White,
                 titleContentColor = Color.Black))
-    }) {
+    },
+        floatingActionButton = {
+            AddTodoFloatingButton(
+                multiFloatingState = multiFloatingState,
+                onMultiFloatingStateChange = {
+                    multiFloatingState = it
+                },
+                backgroundColor = colorFAB,
+            )
+        },
+        floatingActionButtonPosition = FabPosition.End) {
         Column(modifier = Modifier
             .fillMaxSize()
             .background(Color(0xfff0f0f0))
@@ -319,28 +328,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                 contentAlignment = Alignment.TopCenter
             ) {
                 TodoItemList(Todo = todoList)
-
-                Column(
-                    modifier = Modifier
-                        .align(alignment = Alignment.BottomEnd)
-                        .padding(all = 16.dp)
-                        .wrapContentSize()
-//                    horizontalAlignment = Alignment.End
-                ) {
-                    if (multiFloatingState == FloatingStateType.Expanded) {
-                        FloatingActionButtonMenus()
-                    }
-
-                    Spacer(modifier = Modifier.padding(vertical = 16.dp))
-
-                    AddTodoFloatingButton(
-                        multiFloatingState = multiFloatingState,
-                        onMultiFloatingStateChange = {
-                            multiFloatingState = it
-                        },
-                        backgroundColor = colorFAB,
-                    )
-                }
             }
         }
     }
@@ -360,23 +347,30 @@ fun AddTodoFloatingButton(
             0f
         }
     }
-
-    FloatingActionButton(
-        containerColor = backgroundColor,
-        shape = CircleShape,
-        onClick = {
-            onMultiFloatingStateChange(if (transition.currentState == FloatingStateType.Expanded) {
-                FloatingStateType.Collapsed
-            } else {
-                FloatingStateType.Expanded
-            })
-//                        isVisiblily = !isVisiblily
-        }) {
-        Icon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = "todolist 추가",
-            modifier = Modifier.rotate(rotate),
-        )
+    Column(
+        horizontalAlignment = Alignment.End
+    ) {
+        if (transition.currentState == FloatingStateType.Expanded) {
+            FloatingActionButtonMenus()
+            Spacer(modifier = Modifier.padding(vertical = 10.dp))
+        }
+        FloatingActionButton(
+            containerColor = backgroundColor,
+            shape = CircleShape,
+            onClick = {
+                onMultiFloatingStateChange(
+                    if (transition.currentState == FloatingStateType.Expanded) {
+                        FloatingStateType.Collapsed
+                    } else {
+                        FloatingStateType.Expanded
+                    })
+            }) {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "todolist 추가",
+                modifier = Modifier.rotate(rotate),
+            )
+        }
     }
 }
 
