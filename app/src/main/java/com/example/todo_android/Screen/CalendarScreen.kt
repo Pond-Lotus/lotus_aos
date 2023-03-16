@@ -352,8 +352,10 @@ fun AddTodoFloatingButton(
     ) {
         if (transition.currentState == FloatingStateType.Expanded) {
             FloatingActionButtonMenus()
-            Spacer(modifier = Modifier.padding(vertical = 10.dp))
         }
+
+        Spacer(modifier = Modifier.padding(vertical = 10.dp))
+
         FloatingActionButton(
             containerColor = backgroundColor,
             shape = CircleShape,
@@ -381,7 +383,6 @@ fun FloatingActionButtonMenus() {
             .width(150.dp)
             .height(110.dp)
             .clip(shape = RoundedCornerShape(20.dp))
-            .shadow(elevation = 3.dp)
             .background(Color.White)
     ) {
         Column(modifier = Modifier
