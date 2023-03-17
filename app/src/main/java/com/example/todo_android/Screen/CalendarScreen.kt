@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
@@ -26,6 +27,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -174,6 +176,29 @@ fun CalendarScreen(routeAction: RouteAction) {
         mutableStateListOf<RToDoResponse>()
     }
 
+    val onButtonClick: (String) -> Unit = { id ->
+        when (id) {
+            "1" -> {
+                Log.d("id", "id : ${id}")
+            }
+            "2" -> {
+                Log.d("id", "id : ${id}")
+            }
+            "3" -> {
+                Log.d("id", "id : ${id}")
+            }
+            "4" -> {
+                Log.d("id", "id : ${id}")
+            }
+            "5" -> {
+                Log.d("id", "id : ${id}")
+            }
+            "6" -> {
+                Log.d("id", "id : ${id}")
+            }
+        }
+    }
+
     Scaffold(topBar = {
         TopAppBar(title = {
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -229,6 +254,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     multiFloatingState = it
                 },
                 backgroundColor = colorFAB,
+                onButtonClick = onButtonClick
             )
         },
         floatingActionButtonPosition = FabPosition.End) {
@@ -338,6 +364,7 @@ fun AddTodoFloatingButton(
     multiFloatingState: FloatingStateType,
     onMultiFloatingStateChange: (FloatingStateType) -> Unit,
     backgroundColor: Color,
+    onButtonClick: (String) -> Unit,
 ) {
     val transition = updateTransition(targetState = multiFloatingState, label = null)
     val rotate by transition.animateFloat(label = "rotate") {
@@ -351,7 +378,10 @@ fun AddTodoFloatingButton(
         horizontalAlignment = Alignment.End
     ) {
         if (transition.currentState == FloatingStateType.Expanded) {
-            FloatingActionButtonMenus()
+            FloatingActionButtonMenus(
+                onMultiFloatingStateChange,
+                onButtonClick
+            )
         }
 
         Spacer(modifier = Modifier.padding(vertical = 10.dp))
@@ -377,12 +407,15 @@ fun AddTodoFloatingButton(
 }
 
 @Composable
-fun FloatingActionButtonMenus() {
-    Box(
+fun FloatingActionButtonMenus(
+    onMultiFloatingStateChange: (FloatingStateType) -> Unit,
+    onButtonClick: (String) -> Unit,
+) {
+    Surface(
         modifier = Modifier
             .width(150.dp)
             .height(110.dp)
-            .clip(shape = RoundedCornerShape(20.dp))
+            .shadow(shape = RoundedCornerShape(20.dp), elevation = 15.dp)
             .background(Color.White)
     ) {
         Column(modifier = Modifier
@@ -393,18 +426,24 @@ fun FloatingActionButtonMenus() {
                 horizontalArrangement = Arrangement.SpaceEvenly) {
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
-                    onClick = { /*TODO*/ }) {
-
+                    onClick = {
+                        onButtonClick("1")
+                        onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                    }) {
                 }
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
-                    onClick = { /*TODO*/ }) {
-
+                    onClick = {
+                        onButtonClick("2")
+                        onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                    }) {
                 }
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
-                    onClick = { /*TODO*/ }) {
-
+                    onClick = {
+                        onButtonClick("3")
+                        onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                    }) {
                 }
             }
 
@@ -415,18 +454,26 @@ fun FloatingActionButtonMenus() {
                 horizontalArrangement = Arrangement.SpaceEvenly) {
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
-                    onClick = { /*TODO*/ }) {
-
+                    onClick = {
+                        onButtonClick("4")
+                        onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                    }) {
                 }
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
-                    onClick = { /*TODO*/ }) {
-
+                    onClick = {
+                        onButtonClick("5")
+                        onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                    }) {
                 }
-                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                Button(
+                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
-                    onClick = { /*TODO*/ }) {
-
+                    onClick = {
+                        onButtonClick("6")
+                        onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                    }
+                ) {
                 }
             }
         }
