@@ -11,25 +11,36 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Component.FloatingStateType
@@ -65,7 +76,7 @@ fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
-fun createTodo(token: String, year: Int, month: Int, day: Int, title: String, time: String) {
+fun createTodo(token: String, year: Int, month: Int, day: Int, title: String, color: String) {
 
     var createTodoResponse: CreateTodoResponse? = null
 
@@ -74,7 +85,7 @@ fun createTodo(token: String, year: Int, month: Int, day: Int, title: String, ti
 
     var createTodoRequest: CreateTodoRequest = retrofit.create(CreateTodoRequest::class.java)
 
-    createTodoRequest.requestCreateTodo(token, CreateTodo(year, month, day, title, time))
+    createTodoRequest.requestCreateTodo(token, CreateTodo(year, month, day, title, color))
         .enqueue(object : Callback<CreateTodoResponse> {
 
             // 실패 했을때
@@ -136,6 +147,7 @@ fun readTodo(
         })
 }
 
+@ExperimentalComposeUiApi
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
@@ -148,7 +160,7 @@ fun CalendarScreen(routeAction: RouteAction) {
     val onSelectionChange = { text: String -> selectedOption = text }
 
     var isVisible by remember { mutableStateOf(false) }
-    var isVisiblily by remember { mutableStateOf(false) }
+    var isVisibility by remember { mutableStateOf(false) }
 
     var multiFloatingState by remember {
         mutableStateOf(FloatingStateType.Collapsed)
@@ -170,30 +182,52 @@ fun CalendarScreen(routeAction: RouteAction) {
     var time = "0000"
 
 //    var done = true
-//    var color = 0
+
+    var color by remember { mutableStateOf("0") }
 
     var todoList = remember {
         mutableStateListOf<RToDoResponse>()
     }
 
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(isVisibility) {
+        if (isVisibility) {
+            focusRequester.requestFocus()
+        }
+    }
+
     val onButtonClick: (String) -> Unit = { id ->
         when (id) {
             "1" -> {
+                isVisibility = !isVisibility
+                color = "1"
                 Log.d("id", "id : ${id}")
             }
             "2" -> {
+                isVisibility = !isVisibility
+                color = "2"
                 Log.d("id", "id : ${id}")
             }
             "3" -> {
+                isVisibility = !isVisibility
+                color = "3"
                 Log.d("id", "id : ${id}")
             }
             "4" -> {
+                isVisibility = !isVisibility
+                color = "4"
                 Log.d("id", "id : ${id}")
             }
             "5" -> {
+                isVisibility = !isVisibility
+                color = "5"
                 Log.d("id", "id : ${id}")
             }
             "6" -> {
+                isVisibility = !isVisibility
+                color = "6"
                 Log.d("id", "id : ${id}")
             }
         }
@@ -353,7 +387,39 @@ fun CalendarScreen(routeAction: RouteAction) {
                     .padding(top = 15.dp, start = 21.dp, end = 21.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
-                TodoItemList(Todo = todoList)
+                Column() {
+
+                    TodoItemList(Todo = todoList)
+
+                    if (isVisibility) {
+                        TextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp)
+                                .focusRequester(focusRequester),
+                            value = title,
+                            colors = TextFieldDefaults.textFieldColors(
+                                containerColor = Color(0xffD8D8D8),
+                                disabledLabelColor = Color(0xffD8D8D8),
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            ),
+                            singleLine = true,
+                            shape = RoundedCornerShape(8.dp),
+                            onValueChange = {
+                                title = it
+                            },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = {
+                                createTodo(token, year, month, day, title, color)
+                                keyboardController?.hide()
+                                title = ""
+                                isVisibility = !isVisibility
+                            })
+                        )
+                    }
+                }
             }
         }
     }
@@ -479,241 +545,3 @@ fun FloatingActionButtonMenus(
         }
     }
 }
-//                Row(
-//                    modifier = Modifier.padding(12.dp),
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.Center
-//                ) {
-//                    TextField(
-//                        modifier = Modifier
-//                            .padding(12.dp)
-//                            .width(250.dp)
-//                            .height(50.dp),
-//
-//                        value = title,
-//                        onValueChange = {
-//                            title = it
-//                        })
-//
-//                    Spacer(modifier = Modifier.width(10.dp))
-//
-//                    Button(
-//                        modifier = Modifier.width(),
-//                        onClick = {
-//                            createTodo(token, year, month, day, title, time)
-//                            isVisiblily = !isVisiblily
-//                        }
-//                    ) {
-//                        Text(text = "Todo 작성")
-//                    }
-//                }
-//
-//
-//
-
-
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-////            .background(Color(0xfff0f0f0))
-//            .background(Color.Red)
-//            .imePadding(),
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Top
-//    ) {
-//
-//        TopAppBar(
-//            title = { Text(text = "asdasdasd") },
-//            actions = {
-//                IconButton(onClick = {
-//                    goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
-//                }) {
-//                    Icon(imageVector = Icons.Filled.Menu, contentDescription = "profile")
-//                }
-//            }
-//        )
-//    }
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .background(Color.White),
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.Center
-//        ) {
-//
-//            Row(
-//                modifier = Modifier
-//                    .clip(shape = RoundedCornerShape(24.dp))
-//                    .background(Color(0xffe9e9ed))
-//                    .padding(4.dp)
-//            )
-//            {
-//                states.forEach { text ->
-//                    Text(
-//                        text = text,
-//                        color =
-//                        if (text == selectedOption) {
-//                            Color.Black
-//                        } else {
-//                            Color.Gray
-//                        },
-//                        fontWeight = FontWeight.Medium,
-//                        modifier = Modifier
-//                            .clip(shape = RoundedCornerShape(24.dp))
-//                            .clickable {
-//                                onSelectionChange(text)
-//                                isVisible = !isVisible
-//                            }
-//                            .background(
-//                                if (text == selectedOption) {
-//                                    Color.White
-//                                } else {
-//                                    Color(0xffe9e9ed)
-//                                }
-//                            )
-//                            .padding(
-//                                vertical = 5.dp,
-//                                horizontal = 16.dp,
-//                            )
-//                    )
-//                }
-//            }
-//        }
-//        Spacer(modifier = Modifier.height(15.dp))
-
-//    Column(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(Color.White),
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Center
-//    ) {
-//        AnimatedVisibility(isVisible)
-//        {
-//            Kalendar(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(260.dp),
-//                kalendarType = KalendarType.Oceanic(),
-//                kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-//                kalendarThemeColor = KalendarThemeColor(
-//                    backgroundColor = Color.White,
-//                    dayBackgroundColor = Color(0xffFBE3C7),
-//                    headerTextColor = Color.Black),
-//                onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
-//
-//                    year = kalendarDay.localDate.year
-//                    month = kalendarDay.localDate.monthNumber
-//                    day = kalendarDay.localDate.dayOfMonth
-//
-//                    readTodo(token, year, month, day, response = {
-//
-//                        todoList.clear()
-//                        for (i in it!!.data) {
-//                            todoList.add(i)
-//                        }
-//                    })
-//                })
-//        }
-//
-//        AnimatedVisibility(!isVisible) {
-//            Kalendar(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(428.dp)
-//                    .padding(30.dp),
-////                shape = RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp),
-//                kalendarType = KalendarType.Firey,
-//                kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-//                kalendarThemeColor = KalendarThemeColor(
-//                    backgroundColor = Color.White,
-//                    dayBackgroundColor = Color(0xffFBE3C7),
-//                    headerTextColor = Color.Black),
-//                onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
-//
-//                    year = kalendarDay.localDate.year
-//                    month = kalendarDay.localDate.monthNumber
-//                    day = kalendarDay.localDate.dayOfMonth
-//
-//                    readTodo(token, year, month, day, response = {
-//
-//                        todoList.clear()
-//                        for (i in it!!.data) {
-//                            todoList.add(i)
-//                        }
-//                    })
-//                })
-//        }
-//
-//        Spacer(modifier = Modifier.height(29.dp))
-//
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.Center,
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//
-//            Text(
-//                text = day.toString(),
-//                modifier = Modifier.padding(12.dp)
-//            )
-//
-//            Spacer(modifier = Modifier.width(5.dp))
-//
-//            Divider(modifier = Modifier.padding(5.dp), color = Color(0xffe7e7e7))
-//
-//        }
-//
-//        TodoItemList(Todo = todoList)
-//
-//        AnimatedVisibility(isVisiblily) {
-//            Row(
-//                modifier = Modifier.padding(12.dp),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.Center
-//            ) {
-//                TextField(
-//                    modifier = Modifier
-//                        .padding(12.dp)
-//                        .width(250.dp)
-//                        .height(50.dp),
-//
-//                    value = title,
-//                    onValueChange = {
-//                        title = it
-//                    })
-//
-//                Spacer(modifier = Modifier.width(10.dp))
-//
-//                Button(
-//                    onClick = {
-//                        createTodo(token, year, month, day, title, time)
-//                        isVisiblily = !isVisiblily
-//                    }
-//                ) {
-//                    Text(text = "Todo 작성")
-//                }
-//            }
-//        }
-//
-//
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(all = 25.dp)
-//        ) {
-//            FloatingActionButton(
-//                modifier = Modifier.align(alignment = Alignment.BottomEnd),
-//                shape = CircleShape,
-//                onClick = {
-//                    isVisiblily = !isVisiblily
-//                }
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Filled.Add,
-//                    contentDescription = "todolist 추가"
-//                )
-//            }
-//        }
-//    }
-//

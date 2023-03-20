@@ -4,6 +4,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -22,10 +23,11 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
     LOTTIE("LOTTIE", "로티 화면")
 }
 
+@ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
-fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.CALENDAR) {
+fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.LOGIN) {
 
     // 네비게이션 컨트롤러 가져오기
     val navController = rememberNavController()
