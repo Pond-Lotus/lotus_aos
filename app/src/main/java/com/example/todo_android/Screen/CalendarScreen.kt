@@ -3,6 +3,7 @@ package com.example.todo_android.Screen
 import android.annotation.SuppressLint
 import android.opengl.Visibility
 import android.util.Log
+import android.widget.ScrollView
 import android.widget.Space
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
@@ -15,6 +16,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SnackbarDefaults.backgroundColor
+import androidx.compose.material.TextFieldColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
@@ -43,17 +45,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.example.todo_android.Component.FloatingStateType
 import com.example.todo_android.Component.TodoItemList
 import com.example.todo_android.Data.Todo.CreateTodo
+import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.TodoRequest.CreateTodoRequest
+import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
 import com.example.todo_android.Request.TodoRequest.ReadTodoRequest
-import com.example.todo_android.Response.TodoResponse.CreateTodoResponse
-import com.example.todo_android.Response.TodoResponse.RToDoResponse
-import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
+import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
+import com.example.todo_android.Response.TodoResponse.*
 import com.example.todo_android.Util.MyApplication
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.color.KalendarThemeColor
@@ -147,6 +151,89 @@ fun readTodo(
         })
 }
 
+fun deleteTodo(
+    token: String,
+    id: Int,
+) {
+    var deleteTodoResponse: DeleteTodoResponse? = null
+
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
+
+    var deleteTodoRequest: DeleteTodoRequest = retrofit.create(DeleteTodoRequest::class.java)
+
+    deleteTodoRequest.requestDeleteTodo(token, id).enqueue(object : Callback<DeleteTodoResponse> {
+
+        // 실패 했을때
+        override fun onFailure(call: Call<DeleteTodoResponse>, t: Throwable) {
+            Log.e("updateTodo", t.message.toString())
+        }
+
+        // 성공 했을때
+        override fun onResponse(
+            call: Call<DeleteTodoResponse>,
+            response: Response<DeleteTodoResponse>,
+        ) {
+            deleteTodoResponse = response.body()
+
+            Log.d("deleteTodo", "token : " + MyApplication.prefs.getData("token", ""))
+            Log.d("deleteTodo", "resultCode : " + deleteTodoResponse?.resultCode)
+            Log.d("deleteTodo", "data : " + deleteTodoResponse?.data)
+        }
+    })
+}
+
+fun updateTodo(
+    token: String,
+    year: Int,
+    month: Int,
+    day: Int,
+    title: String,
+    done: Boolean,
+    description: String,
+    color: Int,
+    time: String,
+    id: Int,
+) {
+
+    var updateTodoResponse: UpdateTodoResponse? = null
+
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
+
+    var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
+
+    updateTodoRequest.requestUpdateTodo(token,
+        id,
+        UpdateTodo(year, month, day, title, done, description, color, time))
+        .enqueue(object : Callback<UpdateTodoResponse> {
+
+            // 실패 했을때
+            override fun onFailure(call: Call<UpdateTodoResponse>, t: Throwable) {
+                Log.e("updateTodo", t.message.toString())
+            }
+
+            // 성공 했을때
+            override fun onResponse(
+                call: Call<UpdateTodoResponse>,
+                response: Response<UpdateTodoResponse>,
+            ) {
+
+                if (response.isSuccessful) {
+                    updateTodoResponse = response.body()
+
+                    Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
+                    Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
+                    Log.d("updateTodo", "data : " + updateTodoResponse?.data)
+                } else {
+                    Log.e("updateTodo", "resultCode : " + response.body())
+                    Log.e("updateTodo", "code : " + response.code())
+                }
+            }
+        })
+}
+
+
 @ExperimentalComposeUiApi
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterialApi
@@ -180,8 +267,6 @@ fun CalendarScreen(routeAction: RouteAction) {
     var day by remember { mutableStateOf(0) }
     var title by remember { mutableStateOf("") }
     var time = "0000"
-
-//    var done = true
 
     var color by remember { mutableStateOf("0") }
 
@@ -280,18 +365,14 @@ fun CalendarScreen(routeAction: RouteAction) {
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White,
                 titleContentColor = Color.Black))
-    },
-        floatingActionButton = {
-            AddTodoFloatingButton(
-                multiFloatingState = multiFloatingState,
-                onMultiFloatingStateChange = {
-                    multiFloatingState = it
-                },
-                backgroundColor = colorFAB,
-                onButtonClick = onButtonClick
-            )
-        },
-        floatingActionButtonPosition = FabPosition.End) {
+    }, floatingActionButton = {
+        AddTodoFloatingButton(multiFloatingState = multiFloatingState,
+            onMultiFloatingStateChange = {
+                multiFloatingState = it
+            },
+            backgroundColor = colorFAB,
+            onButtonClick = onButtonClick)
+    }, floatingActionButtonPosition = FabPosition.End) {
         Column(modifier = Modifier
             .fillMaxSize()
             .background(Color(0xfff0f0f0))
@@ -300,7 +381,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Kalendar(modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 45.dp)
-                    .clip(shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)),
+                    .shadow(shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
+                        elevation = 3.dp),
                     kalendarHeaderConfig = KalendarHeaderConfig(kalendarTextConfig = KalendarTextConfig(
                         kalendarTextColor = KalendarTextColor(Color.Black),
                         kalendarTextSize = KalendarTextSize.SubTitle)),
@@ -331,7 +413,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Kalendar(modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 25.dp)
-                    .clip(shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)),
+                    .shadow(shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
+                        elevation = 3.dp),
                     kalendarHeaderConfig = KalendarHeaderConfig(kalendarTextConfig = KalendarTextConfig(
                         kalendarTextColor = KalendarTextColor(Color.Black),
                         kalendarTextSize = KalendarTextSize.SubTitle)),
@@ -364,10 +447,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                     })
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 21.dp, end = 21.dp, top = 30.dp),
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 21.dp, end = 21.dp, top = 30.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically) {
                 Text(text = day.toString(),
@@ -381,45 +463,38 @@ fun CalendarScreen(routeAction: RouteAction) {
                     color = Color(0xffD8D8D8))
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 15.dp, start = 21.dp, end = 21.dp),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                Column() {
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 15.dp, start = 21.dp, end = 21.dp)) {
 
-                    TodoItemList(Todo = todoList)
-
-                    if (isVisibility) {
-                        TextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(50.dp)
-                                .focusRequester(focusRequester),
-                            value = title,
-                            colors = TextFieldDefaults.textFieldColors(
-                                containerColor = Color(0xffD8D8D8),
-                                disabledLabelColor = Color(0xffD8D8D8),
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent
-                            ),
-                            singleLine = true,
-                            shape = RoundedCornerShape(8.dp),
-                            onValueChange = {
-                                title = it
-                            },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Done),
-                            keyboardActions = KeyboardActions(onDone = {
-                                createTodo(token, year, month, day, title, color)
-                                keyboardController?.hide()
-                                title = ""
-                                isVisibility = !isVisibility
-                            })
-                        )
-                    }
+                if (isVisibility) {
+                    TextField(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .focusRequester(focusRequester),
+                        value = title,
+                        colors = TextFieldDefaults.textFieldColors(containerColor = Color(
+                            0xffD8D8D8),
+                            disabledLabelColor = Color(0xffD8D8D8),
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent),
+                        singleLine = true,
+                        shape = RoundedCornerShape(8.dp),
+                        onValueChange = {
+                            title = it
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            createTodo(token, year, month, day, title, color)
+                            keyboardController?.hide()
+                            title = ""
+                            isVisibility = !isVisibility
+                        }))
+                    Spacer(modifier = Modifier.height(6.dp))
                 }
+
+                TodoItemList(Todo = todoList)
             }
         }
     }
@@ -440,29 +515,20 @@ fun AddTodoFloatingButton(
             0f
         }
     }
-    Column(
-        horizontalAlignment = Alignment.End
-    ) {
+    Column(horizontalAlignment = Alignment.End) {
         if (transition.currentState == FloatingStateType.Expanded) {
-            FloatingActionButtonMenus(
-                onMultiFloatingStateChange,
-                onButtonClick
-            )
+            FloatingActionButtonMenus(onMultiFloatingStateChange, onButtonClick)
         }
 
         Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
-        FloatingActionButton(
-            containerColor = backgroundColor,
-            shape = CircleShape,
-            onClick = {
-                onMultiFloatingStateChange(
-                    if (transition.currentState == FloatingStateType.Expanded) {
-                        FloatingStateType.Collapsed
-                    } else {
-                        FloatingStateType.Expanded
-                    })
-            }) {
+        FloatingActionButton(containerColor = backgroundColor, shape = CircleShape, onClick = {
+            onMultiFloatingStateChange(if (transition.currentState == FloatingStateType.Expanded) {
+                FloatingStateType.Collapsed
+            } else {
+                FloatingStateType.Expanded
+            })
+        }) {
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "todolist 추가",
@@ -477,13 +543,11 @@ fun FloatingActionButtonMenus(
     onMultiFloatingStateChange: (FloatingStateType) -> Unit,
     onButtonClick: (String) -> Unit,
 ) {
-    Surface(
-        modifier = Modifier
-            .width(150.dp)
-            .height(110.dp)
-            .shadow(shape = RoundedCornerShape(20.dp), elevation = 15.dp)
-            .background(Color.White)
-    ) {
+    Surface(modifier = Modifier
+        .width(150.dp)
+        .height(110.dp)
+        .shadow(shape = RoundedCornerShape(20.dp), elevation = 15.dp)
+        .background(Color.White)) {
         Column(modifier = Modifier
             .fillMaxSize()
             .wrapContentSize()) {
@@ -495,22 +559,19 @@ fun FloatingActionButtonMenus(
                     onClick = {
                         onButtonClick("1")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }) {
-                }
+                    }) {}
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
                     onClick = {
                         onButtonClick("2")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }) {
-                }
+                    }) {}
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
                     onClick = {
                         onButtonClick("3")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }) {
-                }
+                    }) {}
             }
 
             Spacer(modifier = Modifier.padding(vertical = 7.dp))
@@ -523,24 +584,19 @@ fun FloatingActionButtonMenus(
                     onClick = {
                         onButtonClick("4")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }) {
-                }
+                    }) {}
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
                     onClick = {
                         onButtonClick("5")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }) {
-                }
-                Button(
-                    modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                    }) {}
+                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
                     onClick = {
                         onButtonClick("6")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }
-                ) {
-                }
+                    }) {}
             }
         }
     }

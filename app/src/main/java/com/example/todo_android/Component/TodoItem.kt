@@ -6,7 +6,9 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -14,11 +16,17 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,6 +39,7 @@ import com.example.todo_android.Response.TodoResponse.DeleteTodoResponse
 import com.example.todo_android.Response.TodoResponse.RToDoResponse
 import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.Response.TodoResponse.UpdateTodoResponse
+import com.example.todo_android.Screen.createTodo
 import com.example.todo_android.Util.MyApplication
 import retrofit2.Call
 import retrofit2.Callback
@@ -177,28 +186,28 @@ fun TodoItem(Todo: RToDoResponse) {
         modifier = Modifier
             .width(350.dp)
             .height(50.dp)
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onLongPress = { deleteTodo(token, Todo.id) },
-                    onPress = {
-//                        coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
-//                        UpdateTodoSheet(
-//                            year = Todo.year,
-//                            month = Todo.month,
-//                            day = Todo.day,
-//                            done = done,
-//                            color = color,
-//                            id = Todo.id,
-//                            title = Todo.title,
-//                            time = time
-//                        )
-//                        onclickCard
-
-                        openDialog = !openDialog
-
-                    }
-                )
-            }
+//            .pointerInput(Unit) {
+//                detectTapGestures(
+//                    onLongPress = { deleteTodo(token, Todo.id) },
+//                    onPress = {
+////                        coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
+////                        UpdateTodoSheet(
+////                            year = Todo.year,
+////                            month = Todo.month,
+////                            day = Todo.day,
+////                            done = done,
+////                            color = color,
+////                            id = Todo.id,
+////                            title = Todo.title,
+////                            time = time
+////                        )
+////                        onclickCard
+//
+//                        openDialog = !openDialog
+//
+//                    }
+//                )
+//            }
     ) {
         Row(
             modifier = Modifier
@@ -206,15 +215,12 @@ fun TodoItem(Todo: RToDoResponse) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-
             Checkbox(
                 checked = checked,
                 onCheckedChange = {
                     checked = it
                 }
             )
-
-//            Spacer(modifier = Modifier.width(7.dp))
 
             Text(
                 text = Todo.title,
@@ -223,7 +229,6 @@ fun TodoItem(Todo: RToDoResponse) {
             )
         }
     }
-    
     Spacer(modifier = Modifier.height(6.dp))
 }
 
@@ -282,7 +287,6 @@ fun TodoItemList(Todo: List<RToDoResponse>) {
         }
     }
 }
-
 
 //@ExperimentalMaterialApi
 //@ExperimentalMaterial3Api
