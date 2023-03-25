@@ -80,7 +80,13 @@ fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
-fun createTodo(token: String, year: Int, month: Int, day: Int, title: String, color: String) {
+fun createTodo(
+    token: String,
+    year: Int,
+    month: Int,
+    day: Int,
+    title: String,
+    color: String) {
 
     var createTodoResponse: CreateTodoResponse? = null
 
@@ -150,89 +156,6 @@ fun readTodo(
             }
         })
 }
-
-fun deleteTodo(
-    token: String,
-    id: Int,
-) {
-    var deleteTodoResponse: DeleteTodoResponse? = null
-
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
-
-    var deleteTodoRequest: DeleteTodoRequest = retrofit.create(DeleteTodoRequest::class.java)
-
-    deleteTodoRequest.requestDeleteTodo(token, id).enqueue(object : Callback<DeleteTodoResponse> {
-
-        // 실패 했을때
-        override fun onFailure(call: Call<DeleteTodoResponse>, t: Throwable) {
-            Log.e("updateTodo", t.message.toString())
-        }
-
-        // 성공 했을때
-        override fun onResponse(
-            call: Call<DeleteTodoResponse>,
-            response: Response<DeleteTodoResponse>,
-        ) {
-            deleteTodoResponse = response.body()
-
-            Log.d("deleteTodo", "token : " + MyApplication.prefs.getData("token", ""))
-            Log.d("deleteTodo", "resultCode : " + deleteTodoResponse?.resultCode)
-            Log.d("deleteTodo", "data : " + deleteTodoResponse?.data)
-        }
-    })
-}
-
-fun updateTodo(
-    token: String,
-    year: Int,
-    month: Int,
-    day: Int,
-    title: String,
-    done: Boolean,
-    description: String,
-    color: Int,
-    time: String,
-    id: Int,
-) {
-
-    var updateTodoResponse: UpdateTodoResponse? = null
-
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
-
-    var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
-
-    updateTodoRequest.requestUpdateTodo(token,
-        id,
-        UpdateTodo(year, month, day, title, done, description, color, time))
-        .enqueue(object : Callback<UpdateTodoResponse> {
-
-            // 실패 했을때
-            override fun onFailure(call: Call<UpdateTodoResponse>, t: Throwable) {
-                Log.e("updateTodo", t.message.toString())
-            }
-
-            // 성공 했을때
-            override fun onResponse(
-                call: Call<UpdateTodoResponse>,
-                response: Response<UpdateTodoResponse>,
-            ) {
-
-                if (response.isSuccessful) {
-                    updateTodoResponse = response.body()
-
-                    Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
-                    Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
-                    Log.d("updateTodo", "data : " + updateTodoResponse?.data)
-                } else {
-                    Log.e("updateTodo", "resultCode : " + response.body())
-                    Log.e("updateTodo", "code : " + response.code())
-                }
-            }
-        })
-}
-
 
 @ExperimentalComposeUiApi
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

@@ -1,24 +1,39 @@
 package com.example.todo_android.Component
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Space
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -41,6 +56,9 @@ import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.Response.TodoResponse.UpdateTodoResponse
 import com.example.todo_android.Screen.createTodo
 import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.ui.theme.deleteBackground
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -49,37 +67,37 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 fun deleteTodo(
     token: String,
-    id: Int
+    id: Int,
+//    response: (DeleteTodoResponse?) -> Unit,
 ) {
     var deleteTodoResponse: DeleteTodoResponse? = null
 
-    var retrofit = Retrofit.Builder()
-        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var deleteTodoRequest: DeleteTodoRequest = retrofit.create(DeleteTodoRequest::class.java)
 
-    deleteTodoRequest.requestDeleteTodo(token, id)
-        .enqueue(object : Callback<DeleteTodoResponse> {
+    deleteTodoRequest.requestDeleteTodo(token, id).enqueue(object : Callback<DeleteTodoResponse> {
 
-            // 실패 했을때
-            override fun onFailure(call: Call<DeleteTodoResponse>, t: Throwable) {
-                Log.e("updateTodo", t.message.toString())
-            }
+        // 실패 했을때
+        override fun onFailure(call: Call<DeleteTodoResponse>, t: Throwable) {
+            Log.e("updateTodo", t.message.toString())
+        }
 
-            // 성공 했을때
-            override fun onResponse(
-                call: Call<DeleteTodoResponse>,
-                response: Response<DeleteTodoResponse>,
-            ) {
-                deleteTodoResponse = response.body()
+        // 성공 했을때
+        override fun onResponse(
+            call: Call<DeleteTodoResponse>,
+            response: Response<DeleteTodoResponse>,
+        ) {
+            deleteTodoResponse = response.body()
 
-                Log.d("deleteTodo", "token : " + MyApplication.prefs.getData("token", ""))
-                Log.d("deleteTodo", "resultCode : " + deleteTodoResponse?.resultCode)
-                Log.d("deleteTodo", "data : " + deleteTodoResponse?.data)
-            }
-        })
+//            response(deleteTodoResponse)
+
+            Log.d("deleteTodo", "token : " + MyApplication.prefs.getData("token", ""))
+            Log.d("deleteTodo", "resultCode : " + deleteTodoResponse?.resultCode)
+            Log.d("deleteTodo", "data : " + deleteTodoResponse?.data)
+        }
+    })
 }
 
 fun updateTodo(
@@ -97,10 +115,8 @@ fun updateTodo(
 
     var updateTodoResponse: UpdateTodoResponse? = null
 
-    var retrofit = Retrofit.Builder()
-        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
 
@@ -134,7 +150,6 @@ fun updateTodo(
         })
 }
 
-
 @ExperimentalMaterial3Api
 @ExperimentalMaterialApi
 @Composable
@@ -146,90 +161,29 @@ fun TodoItem(Todo: RToDoResponse) {
     var done = true
     var color = 0
 
-    var todoList = remember {
-        mutableStateListOf<RToDoResponse>()
-    }
-
-//    val coroutineScope = rememberCoroutineScope()
-//    val bottomSheetScaffoldState =
-//        rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
-
-//    val onclickCard = UpdateTodoSheet(
-//        year = Todo.year,
-//        month = Todo.month,
-//        day = Todo.day,
-//        done = Todo.done,
-//        color = Todo.color,
-//        id = Todo.id,
-//        title = Todo.title,
-//        time = Todo.time
-//    )
-
-    var openDialog by remember { mutableStateOf(false) }
-
-    if (openDialog) {
-        UpdateTodoDialog(
-            year = Todo.year,
-            month = Todo.month,
-            day = Todo.day,
-            done = done,
-            color = color,
-            id = Todo.id,
-            title = Todo.title,
-            time = time
-        )
-    }
-
     Card(
         colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .width(350.dp)
             .height(50.dp)
-//            .pointerInput(Unit) {
-//                detectTapGestures(
-//                    onLongPress = { deleteTodo(token, Todo.id) },
-//                    onPress = {
-////                        coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
-////                        UpdateTodoSheet(
-////                            year = Todo.year,
-////                            month = Todo.month,
-////                            day = Todo.day,
-////                            done = done,
-////                            color = color,
-////                            id = Todo.id,
-////                            title = Todo.title,
-////                            time = time
-////                        )
-////                        onclickCard
-//
-//                        openDialog = !openDialog
-//
-//                    }
-//                )
-//            }
-    ) {
+            .clickable {
+                Log.d("onclick", "onClick: ${Todo.id}")
+            }) {
         Row(
-            modifier = Modifier
-                .padding(start = 13.dp, top = 15.dp, bottom = 15.dp),
+            modifier = Modifier.padding(
+                start = 13.dp,
+                top = 15.dp,
+                bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Checkbox(
-                checked = checked,
-                onCheckedChange = {
-                    checked = it
-                }
-            )
+            horizontalArrangement = Arrangement.Center) {
+            Checkbox(checked = checked, onCheckedChange = {
+                checked = it
+            })
 
-            Text(
-                text = Todo.title,
-                fontSize = 13.sp,
-                fontStyle = FontStyle.Normal
-            )
+            Text(text = Todo.title, fontSize = 13.sp, fontStyle = FontStyle.Normal)
         }
     }
-    Spacer(modifier = Modifier.height(6.dp))
 }
 
 @ExperimentalMaterialApi
@@ -237,56 +191,212 @@ fun TodoItem(Todo: RToDoResponse) {
 @Composable
 fun TodoItemList(Todo: List<RToDoResponse>) {
 
-//    val token = "Token ${MyApplication.prefs.getData("token", "")}"
-//    var asdf = remember { mutableStateListOf(Todo) }
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+    var todoList = remember {
+        mutableStateListOf<RToDoResponse>()
+    }
 
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
-    LazyColumn {
+        items(
+            items = Todo,
+            key = { Todo -> Todo.id }
+        ) { item ->
 
-        itemsIndexed(items = Todo) { index, item ->
+            val dismissState = androidx.compose.material.rememberDismissState()
+            val dismissDirection = dismissState.dismissDirection
+            val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
+            if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+                deleteTodo(token, item.id)
+            }
 
-//            val dismissState = rememberDismissState(
-//                confirmValueChange = {
-//                    if (it == DismissValue.DismissedToStart) {
-//                        deleteTodo(token, Todo[0].id)
-////                        Todo.remove(item)
-//                        asdf.removeAt(index)
-//                        asdf.clear()
-//                    }
-//                    true
-//                }
-//            )
-
-//            SwipeToDismiss(
-//                state = dismissState,
-//                background = {
-//                    val color = when (dismissState.dismissDirection) {
-//                        DismissDirection.StartToEnd -> Color.Transparent
-//                        DismissDirection.EndToStart -> Color.Red
-//                        null -> Color.Transparent
-//                    }
-//
-//                    Box(modifier = Modifier
-//                        .fillMaxSize()
-//                        .background(color)
-//                        .padding(8.dp)) {
-//                        Text(
-//                            text = "삭제",
-//                            modifier = Modifier.align(Alignment.CenterEnd)
-//                        )
-//                    }
-//                },
-//                dismissContent = {
-//                    TodoItem(Todo = item)
-//                }
-//            )
-//
-//            Divider()
-
-            TodoItem(Todo = item)
+            androidx.compose.material.SwipeToDismiss(
+                state = dismissState,
+                background = { DeleteBackground() },
+                directions = setOf(DismissDirection.EndToStart),
+                dismissContent = {
+                    TodoItem(Todo = item)
+                },
+                dismissThresholds = {
+                    androidx.compose.material.FractionalThreshold(fraction = 0.2f)
+                })
         }
     }
 }
+
+@Composable
+fun DeleteBackground() {
+    Box(modifier = Modifier
+//        .fillMaxSize()
+        .width(350.dp)
+        .height(50.dp)
+        .clip(shape = RoundedCornerShape(8.dp))
+        .background(deleteBackground)
+        .padding(horizontal = 24.dp),
+        contentAlignment = Alignment.CenterEnd) {
+        Text(
+            text = "삭제",
+            color = Color.White
+        )
+    }
+}
+
+
+//@ExperimentalMaterial3Api
+//@ExperimentalMaterialApi
+//@Composable
+//fun TodoItem(Todo: RToDoResponse) {
+//
+//    var checked by remember { mutableStateOf(false) }
+//    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+//    var time = "0900"
+//    var done = true
+//    var color = 0
+//
+//    var todoList = remember {
+//        mutableStateListOf<RToDoResponse>()
+//    }
+//
+////    val coroutineScope = rememberCoroutineScope()
+////    val bottomSheetScaffoldState =
+////        rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
+//
+////    val onclickCard = UpdateTodoSheet(
+////        year = Todo.year,
+////        month = Todo.month,
+////        day = Todo.day,
+////        done = Todo.done,
+////        color = Todo.color,
+////        id = Todo.id,
+////        title = Todo.title,
+////        time = Todo.time
+////    )
+//
+//    var openDialog by remember { mutableStateOf(false) }
+//
+//    if (openDialog) {
+//        UpdateTodoDialog(
+//            year = Todo.year,
+//            month = Todo.month,
+//            day = Todo.day,
+//            done = done,
+//            color = color,
+//            id = Todo.id,
+//            title = Todo.title,
+//            time = time
+//        )
+//    }
+//
+//    Card(
+//        colors = CardDefaults.cardColors(Color.White),
+//        shape = RoundedCornerShape(8.dp),
+//        modifier = Modifier
+//            .width(350.dp)
+//            .height(50.dp)
+//            .clickable {
+//                Log.d("onclick", "onClick: ${Todo.id}")
+//            }
+////            .pointerInput(Unit) {
+////                detectTapGestures(
+////                    onLongPress = { deleteTodo(token, Todo.id) },
+////                    onPress = {
+//////                        coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
+//////                        UpdateTodoSheet(
+//////                            year = Todo.year,
+//////                            month = Todo.month,
+//////                            day = Todo.day,
+//////                            done = done,
+//////                            color = color,
+//////                            id = Todo.id,
+//////                            title = Todo.title,
+//////                            time = time
+//////                        )
+//////                        onclickCard
+////
+////                        openDialog = !openDialog
+////
+////                    }
+////                )
+////            }
+//    ) {
+//        Row(
+//            modifier = Modifier
+//                .padding(start = 13.dp, top = 15.dp, bottom = 15.dp),
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.Center
+//        ) {
+//            Checkbox(
+//                checked = checked,
+//                onCheckedChange = {
+//                    checked = it
+//                }
+//            )
+//
+//            Text(
+//                text = Todo.title,
+//                fontSize = 13.sp,
+//                fontStyle = FontStyle.Normal
+//            )
+//        }
+//    }
+//    Spacer(modifier = Modifier.height(6.dp))
+//}
+//
+//@ExperimentalMaterialApi
+//@ExperimentalMaterial3Api
+//@Composable
+//fun TodoItemList(Todo: List<RToDoResponse>) {
+//
+////    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+////    var asdf = remember { mutableStateListOf(Todo) }
+//
+//
+//    LazyColumn {
+//
+//        itemsIndexed(items = Todo) { index, item ->
+//
+////            val dismissState = rememberDismissState(
+////                confirmValueChange = {
+////                    if (it == DismissValue.DismissedToStart) {
+////                        deleteTodo(token, Todo[0].id)
+//////                        Todo.remove(item)
+////                        asdf.removeAt(index)
+////                        asdf.clear()
+////                    }
+////                    true
+////                }
+////            )
+//
+////            SwipeToDismiss(
+////                state = dismissState,
+////                background = {
+////                    val color = when (dismissState.dismissDirection) {
+////                        DismissDirection.StartToEnd -> Color.Transparent
+////                        DismissDirection.EndToStart -> Color.Red
+////                        null -> Color.Transparent
+////                    }
+////
+////                    Box(modifier = Modifier
+////                        .fillMaxSize()
+////                        .background(color)
+////                        .padding(8.dp)) {
+////                        Text(
+////                            text = "삭제",
+////                            modifier = Modifier.align(Alignment.CenterEnd)
+////                        )
+////                    }
+////                },
+////                dismissContent = {
+////                    TodoItem(Todo = item)
+////                }
+////            )
+////
+////            Divider()
+//
+//            TodoItem(Todo = item)
+//        }
+//    }
+//}
 
 //@ExperimentalMaterialApi
 //@ExperimentalMaterial3Api
@@ -450,123 +560,95 @@ fun UpdateTodoDialog(
 
     if (openDialog) {
 
-        Dialog(
-            onDismissRequest = {
-                openDialog = false
-            }) {
+        Dialog(onDismissRequest = {
+            openDialog = false
+        }) {
 
-            androidx.compose.material3.Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(400.dp),
+            androidx.compose.material3.Surface(modifier = Modifier
+                .fillMaxWidth()
+                .height(400.dp),
                 shape = RoundedCornerShape(12.dp),
-                color = Color.White
-            ) {
+                color = Color.White) {
                 Column() {
-                    TopAppBar(
-                        title = { Text(text = "") },
-                        navigationIcon = {
-                            IconButton(onClick = {
-                                openDialog = false
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Close,
-                                    contentDescription = "close"
-                                )
-                            }
+                    TopAppBar(title = { Text(text = "") }, navigationIcon = {
+                        IconButton(onClick = {
+                            openDialog = false
+                        }) {
+                            Icon(imageVector = Icons.Filled.Close, contentDescription = "close")
+                        }
+                    }, actions = {
+                        Button(onClick = {
+                            updateTodo(token,
+                                year,
+                                month,
+                                day,
+                                title,
+                                done,
+                                description,
+                                color,
+                                time,
+                                id)
+                            openDialog = false
                         },
-                        actions = {
-                            Button(
-                                onClick = {
-                                    updateTodo(token, year, month, day,
-                                        title, done, description, color, time, id)
-                                    openDialog = false
-                                },
-                                shape = RoundedCornerShape(20.dp),
-                                modifier = Modifier
-                                    .width(90.dp)
-                                    .height(50.dp)
-                            ) {
-                                Text(
-                                    text = "저장",
-                                    modifier = Modifier.padding(6.dp))
-                            }
-                        })
+                            shape = RoundedCornerShape(20.dp),
+                            modifier = Modifier
+                                .width(90.dp)
+                                .height(50.dp)) {
+                            Text(text = "저장", modifier = Modifier.padding(6.dp))
+                        }
+                    })
 
                     Spacer(modifier = Modifier.height(15.dp))
 
-                    Text(
-                        text = "${month} 월 ${day}일",
+                    Text(text = "${month} 월 ${day}일",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold)
 
                     Divider()
 
-                    Text(
-                        text = "제목",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold)
+                    Text(text = "제목", fontSize = 18.sp, fontWeight = FontWeight.Bold)
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    TextField(
-                        modifier = Modifier
-                            .width(340.dp)
-                            .height(65.dp),
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color(0xffF3F3F3),
+                    TextField(modifier = Modifier
+                        .width(340.dp)
+                        .height(65.dp),
+                        colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF3F3F3),
                             disabledLabelColor = Color(0xffF3F3F3),
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
+                            unfocusedIndicatorColor = Color.Transparent),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                         shape = RoundedCornerShape(10.dp),
                         placeholder = {
-                            Text(
-                                text = "수정할 텍스트 입력",
-                                fontSize = 16.sp,
-                                color = Color(0xffA9A9A9)
-                            )
+                            Text(text = "수정할 텍스트 입력", fontSize = 16.sp, color = Color(0xffA9A9A9))
                         },
                         value = title,
                         onValueChange = {
                             title = it
-                        }
-                    )
+                        })
 
                     Spacer(modifier = Modifier.height(15.dp))
 
-                    Text(
-                        text = "디테일한 내용",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold)
+                    Text(text = "디테일한 내용", fontSize = 18.sp, fontWeight = FontWeight.Bold)
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    TextField(
-                        modifier = Modifier
-                            .width(340.dp)
-                            .height(65.dp),
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color(0xffF3F3F3),
+                    TextField(modifier = Modifier
+                        .width(340.dp)
+                        .height(65.dp),
+                        colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF3F3F3),
                             disabledLabelColor = Color(0xffF3F3F3),
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
+                            unfocusedIndicatorColor = Color.Transparent),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                         shape = RoundedCornerShape(10.dp),
                         placeholder = {
-                            Text(
-                                text = "수정할 텍스트 입력",
-                                fontSize = 16.sp,
-                                color = Color(0xffA9A9A9)
-                            )
+                            Text(text = "수정할 텍스트 입력", fontSize = 16.sp, color = Color(0xffA9A9A9))
                         },
                         value = description,
                         onValueChange = {
                             description = it
-                        }
-                    )
+                        })
                 }
             }
         }

@@ -13,3 +13,4 @@ val Pink40 = Color(0xFF7D5260)
 
 val backButtonColor = Color(0xffD9D9D9)
 val nextButtonColor = Color(0xffFFBE3C7)
+val deleteBackground = Color(0xfff44336)
