@@ -227,7 +227,6 @@ fun TodoItemList(Todo: List<RToDoResponse>) {
 @Composable
 fun DeleteBackground() {
     Box(modifier = Modifier
-//        .fillMaxSize()
         .width(350.dp)
         .height(50.dp)
         .clip(shape = RoundedCornerShape(8.dp))
