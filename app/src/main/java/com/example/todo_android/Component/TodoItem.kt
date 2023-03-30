@@ -46,7 +46,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.todo_android.Component.UpdateTodoDialog
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
 import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
@@ -226,33 +225,6 @@ fun TodoItemList(Todo: List<RToDoResponse>) {
 
 @Composable
 fun DeleteBackground() {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    Box(modifier = Modifier
-=======
-    Box(modifier = Modifier
-//        .fillMaxSize()
->>>>>>> parent of 8f9100e... CalendarScreen Body UI 작업중
-=======
-    Box(modifier = Modifier
-//        .fillMaxSize()
->>>>>>> parent of 8f9100e... CalendarScreen Body UI 작업중
-=======
-    Box(modifier = Modifier
-//        .fillMaxSize()
->>>>>>> parent of 8f9100e... CalendarScreen Body UI 작업중
-        .width(350.dp)
-        .height(50.dp)
-        .clip(shape = RoundedCornerShape(8.dp))
-        .background(deleteBackground)
-        .padding(horizontal = 24.dp),
-        contentAlignment = Alignment.CenterEnd) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     Box(
         modifier = Modifier
             .width(350.dp)
@@ -262,13 +234,6 @@ fun DeleteBackground() {
             .padding(horizontal = 24.dp),
         contentAlignment = Alignment.CenterEnd
     ) {
->>>>>>> master
-=======
->>>>>>> parent of 8f9100e... CalendarScreen Body UI 작업중
-=======
->>>>>>> parent of 8f9100e... CalendarScreen Body UI 작업중
-=======
->>>>>>> parent of 8f9100e... CalendarScreen Body UI 작업중
         Text(
             text = "삭제",
             color = Color.White
