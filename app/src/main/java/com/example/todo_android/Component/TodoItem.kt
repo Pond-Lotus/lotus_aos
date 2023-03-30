@@ -228,7 +228,12 @@ fun TodoItemList(Todo: List<RToDoResponse>) {
 fun DeleteBackground() {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     Box(modifier = Modifier
+=======
+    Box(modifier = Modifier
+//        .fillMaxSize()
+>>>>>>> parent of 8f9100e... CalendarScreen Body UI 작업중
 =======
     Box(modifier = Modifier
 //        .fillMaxSize()
@@ -239,6 +244,7 @@ fun DeleteBackground() {
         .background(deleteBackground)
         .padding(horizontal = 24.dp),
         contentAlignment = Alignment.CenterEnd) {
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
     Box(
@@ -251,6 +257,8 @@ fun DeleteBackground() {
         contentAlignment = Alignment.CenterEnd
     ) {
 >>>>>>> master
+=======
+>>>>>>> parent of 8f9100e... CalendarScreen Body UI 작업중
 =======
 >>>>>>> parent of 8f9100e... CalendarScreen Body UI 작업중
         Text(
