@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
@@ -28,6 +29,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -68,7 +70,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 fun deleteTodo(
     token: String,
     id: Int,
-//    response: (DeleteTodoResponse?) -> Unit,
+    response: (DeleteTodoResponse?) -> Unit,
 ) {
     var deleteTodoResponse: DeleteTodoResponse? = null
 
@@ -91,7 +93,7 @@ fun deleteTodo(
         ) {
             deleteTodoResponse = response.body()
 
-//            response(deleteTodoResponse)
+            response(deleteTodoResponse)
 
             Log.d("deleteTodo", "token : " + MyApplication.prefs.getData("token", ""))
             Log.d("deleteTodo", "resultCode : " + deleteTodoResponse?.resultCode)
@@ -120,9 +122,11 @@ fun updateTodo(
 
     var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
 
-    updateTodoRequest.requestUpdateTodo(token,
+    updateTodoRequest.requestUpdateTodo(
+        token,
         id,
-        UpdateTodo(year, month, day, title, done, description, color, time))
+        UpdateTodo(year, month, day, title, done, description, color, time)
+    )
         .enqueue(object : Callback<UpdateTodoResponse> {
 
             // 실패 했을때
@@ -174,9 +178,11 @@ fun TodoItem(Todo: RToDoResponse) {
             modifier = Modifier.padding(
                 start = 13.dp,
                 top = 15.dp,
-                bottom = 15.dp),
+                bottom = 15.dp
+            ),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center) {
+            horizontalArrangement = Arrangement.Center
+        ) {
             Checkbox(checked = checked, onCheckedChange = {
                 checked = it
             })
@@ -207,7 +213,10 @@ fun TodoItemList(Todo: List<RToDoResponse>) {
             val dismissDirection = dismissState.dismissDirection
             val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
             if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-                deleteTodo(token, item.id)
+                deleteTodo(token, item.id, response = {
+                    todoList.remove(item)
+                    todoList.clear()
+                })
             }
 
             androidx.compose.material.SwipeToDismiss(
@@ -226,6 +235,7 @@ fun TodoItemList(Todo: List<RToDoResponse>) {
 
 @Composable
 fun DeleteBackground() {
+<<<<<<< HEAD
     Box(modifier = Modifier
         .width(350.dp)
         .height(50.dp)
@@ -233,6 +243,17 @@ fun DeleteBackground() {
         .background(deleteBackground)
         .padding(horizontal = 24.dp),
         contentAlignment = Alignment.CenterEnd) {
+=======
+    Box(
+        modifier = Modifier
+            .width(350.dp)
+            .height(50.dp)
+            .clip(shape = RoundedCornerShape(8.dp))
+            .background(deleteBackground)
+            .padding(horizontal = 24.dp),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+>>>>>>> master
         Text(
             text = "삭제",
             color = Color.White
@@ -563,11 +584,13 @@ fun UpdateTodoDialog(
             openDialog = false
         }) {
 
-            androidx.compose.material3.Surface(modifier = Modifier
-                .fillMaxWidth()
-                .height(400.dp),
+            androidx.compose.material3.Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(400.dp),
                 shape = RoundedCornerShape(12.dp),
-                color = Color.White) {
+                color = Color.White
+            ) {
                 Column() {
                     TopAppBar(title = { Text(text = "") }, navigationIcon = {
                         IconButton(onClick = {
@@ -576,32 +599,38 @@ fun UpdateTodoDialog(
                             Icon(imageVector = Icons.Filled.Close, contentDescription = "close")
                         }
                     }, actions = {
-                        Button(onClick = {
-                            updateTodo(token,
-                                year,
-                                month,
-                                day,
-                                title,
-                                done,
-                                description,
-                                color,
-                                time,
-                                id)
-                            openDialog = false
-                        },
+                        Button(
+                            onClick = {
+                                updateTodo(
+                                    token,
+                                    year,
+                                    month,
+                                    day,
+                                    title,
+                                    done,
+                                    description,
+                                    color,
+                                    time,
+                                    id
+                                )
+                                openDialog = false
+                            },
                             shape = RoundedCornerShape(20.dp),
                             modifier = Modifier
                                 .width(90.dp)
-                                .height(50.dp)) {
+                                .height(50.dp)
+                        ) {
                             Text(text = "저장", modifier = Modifier.padding(6.dp))
                         }
                     })
 
                     Spacer(modifier = Modifier.height(15.dp))
 
-                    Text(text = "${month} 월 ${day}일",
+                    Text(
+                        text = "${month} 월 ${day}일",
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
 
                     Divider()
 
@@ -612,10 +641,12 @@ fun UpdateTodoDialog(
                     TextField(modifier = Modifier
                         .width(340.dp)
                         .height(65.dp),
-                        colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF3F3F3),
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = Color(0xffF3F3F3),
                             disabledLabelColor = Color(0xffF3F3F3),
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent),
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                         shape = RoundedCornerShape(10.dp),
                         placeholder = {
@@ -635,10 +666,12 @@ fun UpdateTodoDialog(
                     TextField(modifier = Modifier
                         .width(340.dp)
                         .height(65.dp),
-                        colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF3F3F3),
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = Color(0xffF3F3F3),
                             disabledLabelColor = Color(0xffF3F3F3),
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent),
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                         shape = RoundedCornerShape(10.dp),
                         placeholder = {
