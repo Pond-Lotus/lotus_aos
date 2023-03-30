@@ -229,7 +229,12 @@ fun DeleteBackground() {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     Box(modifier = Modifier
+=======
+    Box(modifier = Modifier
+//        .fillMaxSize()
+>>>>>>> parent of 8f9100e... CalendarScreen Body UI 작업중
 =======
     Box(modifier = Modifier
 //        .fillMaxSize()
@@ -246,6 +251,7 @@ fun DeleteBackground() {
         contentAlignment = Alignment.CenterEnd) {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     Box(
         modifier = Modifier
@@ -257,6 +263,8 @@ fun DeleteBackground() {
         contentAlignment = Alignment.CenterEnd
     ) {
 >>>>>>> master
+=======
+>>>>>>> parent of 8f9100e... CalendarScreen Body UI 작업중
 =======
 >>>>>>> parent of 8f9100e... CalendarScreen Body UI 작업중
 =======
