@@ -67,7 +67,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 fun deleteTodo(
     token: String,
     id: Int,
-//    response: (DeleteTodoResponse?) -> Unit,
+    response: (DeleteTodoResponse?) -> Unit,
 ) {
     var deleteTodoResponse: DeleteTodoResponse? = null
 
@@ -90,7 +90,7 @@ fun deleteTodo(
         ) {
             deleteTodoResponse = response.body()
 
-//            response(deleteTodoResponse)
+            response(deleteTodoResponse)
 
             Log.d("deleteTodo", "token : " + MyApplication.prefs.getData("token", ""))
             Log.d("deleteTodo", "resultCode : " + deleteTodoResponse?.resultCode)
@@ -206,7 +206,10 @@ fun TodoItemList(Todo: List<RToDoResponse>) {
             val dismissDirection = dismissState.dismissDirection
             val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
             if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-                deleteTodo(token, item.id)
+                deleteTodo(token, item.id, response = {
+                    todoList.remove(item)
+                    todoList.clear()
+                })
             }
 
             androidx.compose.material.SwipeToDismiss(
