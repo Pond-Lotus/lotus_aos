@@ -10,11 +10,16 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.TextFieldColors
 import androidx.compose.material.icons.Icons
@@ -32,33 +37,26 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import com.example.todo_android.Component.FloatingStateType
-import com.example.todo_android.Component.TodoItemList
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
-import com.example.todo_android.R
 import com.example.todo_android.Request.TodoRequest.CreateTodoRequest
 import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
 import com.example.todo_android.Request.TodoRequest.ReadTodoRequest
 import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
 import com.example.todo_android.Response.TodoResponse.*
 import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.ui.theme.deleteBackground
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.color.KalendarThemeColor
 import com.himanshoe.kalendar.component.day.config.KalendarDayColors
@@ -86,7 +84,8 @@ fun createTodo(
     month: Int,
     day: Int,
     title: String,
-    color: String) {
+    color: String,
+) {
 
     var createTodoResponse: CreateTodoResponse? = null
 
@@ -153,6 +152,93 @@ fun readTodo(
                 Log.d("readTodo", "token : " + MyApplication.prefs.getData("token", ""))
                 Log.d("readTodo", "resultCode : " + readTodoResponse?.resultCode)
                 Log.d("readTodo", "data : " + readTodoResponse?.data)
+            }
+        })
+}
+
+fun deleteTodo(
+    token: String,
+    id: Int,
+    response: (DeleteTodoResponse?) -> Unit,
+) {
+    var deleteTodoResponse: DeleteTodoResponse? = null
+
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
+
+    var deleteTodoRequest: DeleteTodoRequest = retrofit.create(DeleteTodoRequest::class.java)
+
+    deleteTodoRequest.requestDeleteTodo(token, id).enqueue(object : Callback<DeleteTodoResponse> {
+
+        // 실패 했을때
+        override fun onFailure(call: Call<DeleteTodoResponse>, t: Throwable) {
+            Log.e("updateTodo", t.message.toString())
+        }
+
+        // 성공 했을때
+        override fun onResponse(
+            call: Call<DeleteTodoResponse>,
+            response: Response<DeleteTodoResponse>,
+        ) {
+            deleteTodoResponse = response.body()
+
+            response(deleteTodoResponse)
+
+            Log.d("deleteTodo", "token : " + MyApplication.prefs.getData("token", ""))
+            Log.d("deleteTodo", "resultCode : " + deleteTodoResponse?.resultCode)
+            Log.d("deleteTodo", "data : " + deleteTodoResponse?.data)
+        }
+    })
+}
+
+fun updateTodo(
+    token: String,
+    year: Int,
+    month: Int,
+    day: Int,
+    title: String,
+    done: Boolean,
+    description: String,
+    color: Int,
+    time: String,
+    id: Int,
+) {
+
+    var updateTodoResponse: UpdateTodoResponse? = null
+
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
+
+    var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
+
+    updateTodoRequest.requestUpdateTodo(
+        token,
+        id,
+        UpdateTodo(year, month, day, title, done, description, color, time)
+    )
+        .enqueue(object : Callback<UpdateTodoResponse> {
+
+            // 실패 했을때
+            override fun onFailure(call: Call<UpdateTodoResponse>, t: Throwable) {
+                Log.e("updateTodo", t.message.toString())
+            }
+
+            // 성공 했을때
+            override fun onResponse(
+                call: Call<UpdateTodoResponse>,
+                response: Response<UpdateTodoResponse>,
+            ) {
+
+                if (response.isSuccessful) {
+                    updateTodoResponse = response.body()
+
+                    Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
+                    Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
+                    Log.d("updateTodo", "data : " + updateTodoResponse?.data)
+                } else {
+                    Log.e("updateTodo", "resultCode : " + response.body())
+                    Log.e("updateTodo", "code : " + response.code())
+                }
             }
         })
 }
@@ -522,5 +608,107 @@ fun FloatingActionButtonMenus(
                     }) {}
             }
         }
+    }
+}
+
+@ExperimentalMaterial3Api
+@ExperimentalMaterialApi
+@Composable
+fun TodoItem(Todo: RToDoResponse) {
+
+    var checked by remember { mutableStateOf(false) }
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+    var time = "0900"
+    var done = true
+    var color = 0
+
+    Card(
+        colors = CardDefaults.cardColors(Color.White),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .width(350.dp)
+            .height(50.dp)
+            .clickable {
+                Log.d("onclick", "onClick: ${Todo.id}")
+            }) {
+        Row(
+            modifier = Modifier.padding(
+                start = 13.dp,
+                top = 15.dp,
+                bottom = 15.dp
+            ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Checkbox(checked = checked, onCheckedChange = {
+                checked = it
+            })
+
+            Text(text = Todo.title, fontSize = 13.sp, fontStyle = FontStyle.Normal)
+        }
+    }
+}
+
+@ExperimentalMaterialApi
+@ExperimentalMaterial3Api
+@Composable
+fun TodoItemList(Todo: List<RToDoResponse>) {
+
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+    var todoList = remember {
+        mutableStateListOf<RToDoResponse>()
+    }
+
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+
+        items(
+            items = Todo,
+            key = { Todo -> Todo.id }
+        ) { item ->
+
+            val dismissState = androidx.compose.material.rememberDismissState(confirmStateChange = {
+                if (it == DismissValue.DismissedToStart) {
+                    todoList.remove(item)
+                }
+                true
+            })
+            val dismissDirection = dismissState.dismissDirection
+            val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
+            if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+                deleteTodo(token, item.id, response = {
+                    todoList.remove(item)
+                    todoList.clear()
+                })
+            }
+
+            androidx.compose.material.SwipeToDismiss(
+                state = dismissState,
+                background = { DeleteBackground() },
+                directions = setOf(DismissDirection.EndToStart),
+                dismissContent = {
+                    TodoItem(Todo = item)
+                },
+                dismissThresholds = {
+                    FractionalThreshold(fraction = 0.2f)
+                })
+        }
+    }
+}
+
+@Composable
+fun DeleteBackground() {
+    Box(
+        modifier = Modifier
+            .width(350.dp)
+            .height(50.dp)
+            .clip(shape = RoundedCornerShape(8.dp))
+            .background(deleteBackground)
+            .padding(horizontal = 24.dp),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        Text(
+            text = "삭제",
+            color = Color.White
+        )
     }
 }
