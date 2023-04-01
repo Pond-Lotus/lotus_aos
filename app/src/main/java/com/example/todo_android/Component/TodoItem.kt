@@ -345,129 +345,129 @@ import retrofit2.converter.gson.GsonConverterFactory
 //    }
 //}
 
-@ExperimentalMaterial3Api
-@Composable
-fun UpdateTodoDialog(
-    year: Int,
-    month: Int,
-    day: Int,
-    done: Boolean,
-    color: Int,
-    id: Int,
-    title: String,
-    time: String,
-) {
-
-    var description by remember { mutableStateOf("") }
-    var title by remember { mutableStateOf("") }
-    val token = "Token ${MyApplication.prefs.getData("token", "")}"
-    var openDialog by remember { mutableStateOf(true) }
-
-    if (openDialog) {
-
-        Dialog(onDismissRequest = {
-            openDialog = false
-        }) {
-
-            androidx.compose.material3.Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(400.dp),
-                shape = RoundedCornerShape(12.dp),
-                color = Color.White
-            ) {
-                Column() {
-                    TopAppBar(title = { Text(text = "") }, navigationIcon = {
-                        IconButton(onClick = {
-                            openDialog = false
-                        }) {
-                            Icon(imageVector = Icons.Filled.Close, contentDescription = "close")
-                        }
-                    }, actions = {
-                        Button(
-                            onClick = {
-                                updateTodo(
-                                    token,
-                                    year,
-                                    month,
-                                    day,
-                                    title,
-                                    done,
-                                    description,
-                                    color,
-                                    time,
-                                    id
-                                )
-                                openDialog = false
-                            },
-                            shape = RoundedCornerShape(20.dp),
-                            modifier = Modifier
-                                .width(90.dp)
-                                .height(50.dp)
-                        ) {
-                            Text(text = "저장", modifier = Modifier.padding(6.dp))
-                        }
-                    })
-
-                    Spacer(modifier = Modifier.height(15.dp))
-
-                    Text(
-                        text = "${month} 월 ${day}일",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Divider()
-
-                    Text(text = "제목", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    TextField(modifier = Modifier
-                        .width(340.dp)
-                        .height(65.dp),
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color(0xffF3F3F3),
-                            disabledLabelColor = Color(0xffF3F3F3),
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                        shape = RoundedCornerShape(10.dp),
-                        placeholder = {
-                            Text(text = "수정할 텍스트 입력", fontSize = 16.sp, color = Color(0xffA9A9A9))
-                        },
-                        value = title,
-                        onValueChange = {
-                            title = it
-                        })
-
-                    Spacer(modifier = Modifier.height(15.dp))
-
-                    Text(text = "디테일한 내용", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    TextField(modifier = Modifier
-                        .width(340.dp)
-                        .height(65.dp),
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color(0xffF3F3F3),
-                            disabledLabelColor = Color(0xffF3F3F3),
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                        shape = RoundedCornerShape(10.dp),
-                        placeholder = {
-                            Text(text = "수정할 텍스트 입력", fontSize = 16.sp, color = Color(0xffA9A9A9))
-                        },
-                        value = description,
-                        onValueChange = {
-                            description = it
-                        })
-                }
-            }
-        }
-    }
-}
+//@ExperimentalMaterial3Api
+//@Composable
+//fun UpdateTodoDialog(
+//    year: Int,
+//    month: Int,
+//    day: Int,
+//    done: Boolean,
+//    color: Int,
+//    id: Int,
+//    title: String,
+//    time: String,
+//) {
+//
+//    var description by remember { mutableStateOf("") }
+//    var title by remember { mutableStateOf("") }
+//    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+//    var openDialog by remember { mutableStateOf(true) }
+//
+//    if (openDialog) {
+//
+//        Dialog(onDismissRequest = {
+//            openDialog = false
+//        }) {
+//
+//            androidx.compose.material3.Surface(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(400.dp),
+//                shape = RoundedCornerShape(12.dp),
+//                color = Color.White
+//            ) {
+//                Column() {
+//                    TopAppBar(title = { Text(text = "") }, navigationIcon = {
+//                        IconButton(onClick = {
+//                            openDialog = false
+//                        }) {
+//                            Icon(imageVector = Icons.Filled.Close, contentDescription = "close")
+//                        }
+//                    }, actions = {
+//                        Button(
+//                            onClick = {
+//                                updateTodo(
+//                                    token,
+//                                    year,
+//                                    month,
+//                                    day,
+//                                    title,
+//                                    done,
+//                                    description,
+//                                    color,
+//                                    time,
+//                                    id
+//                                )
+//                                openDialog = false
+//                            },
+//                            shape = RoundedCornerShape(20.dp),
+//                            modifier = Modifier
+//                                .width(90.dp)
+//                                .height(50.dp)
+//                        ) {
+//                            Text(text = "저장", modifier = Modifier.padding(6.dp))
+//                        }
+//                    })
+//
+//                    Spacer(modifier = Modifier.height(15.dp))
+//
+//                    Text(
+//                        text = "${month} 월 ${day}일",
+//                        fontSize = 18.sp,
+//                        fontWeight = FontWeight.Bold
+//                    )
+//
+//                    Divider()
+//
+//                    Text(text = "제목", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+//
+//                    Spacer(modifier = Modifier.height(10.dp))
+//
+//                    TextField(modifier = Modifier
+//                        .width(340.dp)
+//                        .height(65.dp),
+//                        colors = TextFieldDefaults.textFieldColors(
+//                            containerColor = Color(0xffF3F3F3),
+//                            disabledLabelColor = Color(0xffF3F3F3),
+//                            focusedIndicatorColor = Color.Transparent,
+//                            unfocusedIndicatorColor = Color.Transparent
+//                        ),
+//                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+//                        shape = RoundedCornerShape(10.dp),
+//                        placeholder = {
+//                            Text(text = "수정할 텍스트 입력", fontSize = 16.sp, color = Color(0xffA9A9A9))
+//                        },
+//                        value = title,
+//                        onValueChange = {
+//                            title = it
+//                        })
+//
+//                    Spacer(modifier = Modifier.height(15.dp))
+//
+//                    Text(text = "디테일한 내용", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+//
+//                    Spacer(modifier = Modifier.height(10.dp))
+//
+//                    TextField(modifier = Modifier
+//                        .width(340.dp)
+//                        .height(65.dp),
+//                        colors = TextFieldDefaults.textFieldColors(
+//                            containerColor = Color(0xffF3F3F3),
+//                            disabledLabelColor = Color(0xffF3F3F3),
+//                            focusedIndicatorColor = Color.Transparent,
+//                            unfocusedIndicatorColor = Color.Transparent
+//                        ),
+//                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+//                        shape = RoundedCornerShape(10.dp),
+//                        placeholder = {
+//                            Text(text = "수정할 텍스트 입력", fontSize = 16.sp, color = Color(0xffA9A9A9))
+//                        },
+//                        value = description,
+//                        onValueChange = {
+//                            description = it
+//                        })
+//                }
+//            }
+//        }
+//    }
+//}
