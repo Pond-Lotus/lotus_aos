@@ -12,15 +12,25 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.material.DismissDirection
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -59,6 +69,8 @@ import com.himanshoe.kalendar.component.text.config.KalendarTextSize
 import com.himanshoe.kalendar.model.KalendarDay
 import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -613,6 +625,7 @@ fun FloatingActionButtonMenus(
     }
 }
 
+@ExperimentalComposeUiApi
 @ExperimentalMaterial3Api
 @ExperimentalMaterialApi
 @Composable
@@ -623,7 +636,6 @@ fun TodoItem(Todo: RToDoResponse) {
     var time = "0900"
     var done = true
     var color = 0
-
     Card(
         colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
@@ -645,12 +657,12 @@ fun TodoItem(Todo: RToDoResponse) {
             Checkbox(checked = checked, onCheckedChange = {
                 checked = it
             })
-
             Text(text = Todo.title, fontSize = 13.sp, fontStyle = FontStyle.Normal)
         }
     }
 }
 
+@ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
@@ -671,12 +683,16 @@ fun TodoItemList(Todo: List<RToDoResponse>, todoList: MutableList<RToDoResponse>
             if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
                 deleteTodo(token, item.id, response = {
                     todoList.remove(item)
-                    readTodo(token, year = item.year, month = item.month, day = item.day, response = {
-                        todoList.clear()
-                        for(i in it!!.data) {
-                            todoList.add(i)
-                        }
-                    })
+                    readTodo(token,
+                        year = item.year,
+                        month = item.month,
+                        day = item.day,
+                        response = {
+                            todoList.clear()
+                            for (i in it!!.data) {
+                                todoList.add(i)
+                            }
+                        })
                 })
             }
 
@@ -688,7 +704,7 @@ fun TodoItemList(Todo: List<RToDoResponse>, todoList: MutableList<RToDoResponse>
                     TodoItem(Todo = item)
                 },
                 dismissThresholds = {
-                    FractionalThreshold(fraction = 0.2f)
+                    androidx.compose.material.FractionalThreshold(fraction = 0.2f)
                 })
         }
     }
@@ -711,3 +727,73 @@ fun DeleteBackground() {
         )
     }
 }
+
+
+@ExperimentalMaterialApi
+@Composable
+fun SheetLayout() {
+
+    val sheetState  = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+    )
+
+    //Our flag variable
+    val showModalSheet = rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+            BottomSheetContent()
+        }
+    ) {
+        //Rest of the Scaffold
+    }
+}
+
+@Composable
+fun BottomSheetContent() {
+    Surface(
+        modifier = Modifier
+            .height(300.dp)
+            .clip(shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)),
+        color = Color(0xff7353ba)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Modal Bottom Sheet",
+                fontSize = 20.sp,
+                modifier = Modifier.padding(10.dp),
+                color = Color.White
+            )
+        }
+    }
+}
+
+//@Composable
+//@ExperimentalMaterialApi
+//fun ModalSheetWithAnchor(
+//    sheetState: ModalBottomSheetState,
+//    showModalSheet: MutableState<Boolean>
+//) {
+//    val scope = rememberCoroutineScope()
+//
+//    Box(modifier = Modifier.fillMaxSize()) {
+//        Icon(
+//            imageVector = Icons.Default.KeyboardArrowUp,
+//            contentDescription = "",
+//            modifier = Modifier
+//                .align(alignment = Alignment.BottomCenter)
+//                .clickable {
+//                    showModalSheet.value = !showModalSheet.value
+//                    scope.launch {
+//                        sheetState.show()
+//                    }
+//                }
+//        )
+//    }
+//}
