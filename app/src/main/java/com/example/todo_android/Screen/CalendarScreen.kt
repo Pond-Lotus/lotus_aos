@@ -1,14 +1,10 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
-import android.opengl.Visibility
 import android.util.Log
-import android.widget.ScrollView
-import android.widget.Space
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,18 +13,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
-import androidx.compose.material.SnackbarDefaults.backgroundColor
-import androidx.compose.material.TextFieldColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -85,6 +77,7 @@ fun createTodo(
     day: Int,
     title: String,
     color: String,
+    response: (CreateTodoResponse?) -> Unit,
 ) {
 
     var createTodoResponse: CreateTodoResponse? = null
@@ -108,6 +101,8 @@ fun createTodo(
                 response: Response<CreateTodoResponse>,
             ) {
                 createTodoResponse = response.body()
+
+                response(createTodoResponse)
 
                 Log.d("createTodo", "token : " + MyApplication.prefs.getData("token", ""))
                 Log.d("createTodo", "resultCode : " + createTodoResponse?.resultCode)
@@ -495,7 +490,14 @@ fun CalendarScreen(routeAction: RouteAction) {
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(onDone = {
-                            createTodo(token, year, month, day, title, color)
+                            createTodo(token, year, month, day, title, color, response = {
+                                readTodo(token, year = year, month = month, day = day, response = {
+                                    todoList.clear()
+                                    for (i in it!!.data) {
+                                        todoList.add(i)
+                                    }
+                                })
+                            })
                             keyboardController?.hide()
                             title = ""
                             isVisibility = !isVisibility
@@ -503,7 +505,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     Spacer(modifier = Modifier.height(6.dp))
                 }
 
-                TodoItemList(Todo = todoList)
+                TodoItemList(Todo = todoList, todoList)
             }
         }
     }
@@ -652,12 +654,9 @@ fun TodoItem(Todo: RToDoResponse) {
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
-fun TodoItemList(Todo: List<RToDoResponse>) {
+fun TodoItemList(Todo: List<RToDoResponse>, todoList: MutableList<RToDoResponse>) {
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
-    var todoList = remember {
-        mutableStateListOf<RToDoResponse>()
-    }
 
     LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
@@ -666,18 +665,18 @@ fun TodoItemList(Todo: List<RToDoResponse>) {
             key = { Todo -> Todo.id }
         ) { item ->
 
-            val dismissState = androidx.compose.material.rememberDismissState(confirmStateChange = {
-                if (it == DismissValue.DismissedToStart) {
-                    todoList.remove(item)
-                }
-                true
-            })
+            val dismissState = androidx.compose.material.rememberDismissState()
             val dismissDirection = dismissState.dismissDirection
             val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
             if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
                 deleteTodo(token, item.id, response = {
                     todoList.remove(item)
-                    todoList.clear()
+                    readTodo(token, year = item.year, month = item.month, day = item.day, response = {
+                        todoList.clear()
+                        for(i in it!!.data) {
+                            todoList.add(i)
+                        }
+                    })
                 })
             }
 
