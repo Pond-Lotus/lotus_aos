@@ -16,6 +16,7 @@ import androidx.compose.material.*
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.material3.Button
@@ -71,6 +72,7 @@ import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import okhttp3.Route
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -636,6 +638,11 @@ fun TodoItem(Todo: RToDoResponse) {
     var time = "0900"
     var done = true
     var color = 0
+
+    // Bottom sheet state
+    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val scope = rememberCoroutineScope()
+
     Card(
         colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
@@ -643,6 +650,9 @@ fun TodoItem(Todo: RToDoResponse) {
             .width(350.dp)
             .height(50.dp)
             .clickable {
+                scope.launch {
+                    bottomSheetState.show()
+                }
                 Log.d("onclick", "onClick: ${Todo.id}")
             }) {
         Row(
@@ -770,6 +780,13 @@ fun BottomSheetContent() {
                 modifier = Modifier.padding(10.dp),
                 color = Color.White
             )
+
+            IconButton(
+                onClick = {/*TODO*/ },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Icon(Icons.Default.Close, contentDescription = "Close Bottom Sheet")
+            }
         }
     }
 }
