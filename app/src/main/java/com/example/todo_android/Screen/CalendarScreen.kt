@@ -70,6 +70,8 @@ import com.himanshoe.kalendar.component.text.config.KalendarTextSize
 import com.himanshoe.kalendar.model.KalendarDay
 import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.Route
@@ -639,9 +641,7 @@ fun TodoItem(Todo: RToDoResponse) {
     var done = true
     var color = 0
 
-    // Bottom sheet state
-    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    val scope = rememberCoroutineScope()
+    var showUpdateTodoBottomSheet by remember { mutableStateOf(false) }
 
     Card(
         colors = CardDefaults.cardColors(Color.White),
@@ -650,9 +650,7 @@ fun TodoItem(Todo: RToDoResponse) {
             .width(350.dp)
             .height(50.dp)
             .clickable {
-                scope.launch {
-                    bottomSheetState.show()
-                }
+                showUpdateTodoBottomSheet = true
                 Log.d("onclick", "onClick: ${Todo.id}")
             }) {
         Row(
@@ -669,6 +667,10 @@ fun TodoItem(Todo: RToDoResponse) {
             })
             Text(text = Todo.title, fontSize = 13.sp, fontStyle = FontStyle.Normal)
         }
+    }
+
+    if (showUpdateTodoBottomSheet) {
+        UpdateTodoBottomSheet(onDismiss = { showUpdateTodoBottomSheet = false })
     }
 }
 
@@ -738,79 +740,29 @@ fun DeleteBackground() {
     }
 }
 
-
-@ExperimentalMaterialApi
 @Composable
-fun SheetLayout() {
-
-    val sheetState  = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-    )
-
-    //Our flag variable
-    val showModalSheet = rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetContent = {
-            BottomSheetContent()
-        }
-    ) {
-        //Rest of the Scaffold
-    }
-}
-
-@Composable
-fun BottomSheetContent() {
-    Surface(
-        modifier = Modifier
-            .height(300.dp)
-            .clip(shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)),
-        color = Color(0xff7353ba)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+fun UpdateTodoBottomSheet(onDismiss: () -> Unit) {
+    var show by remember{ mutableStateOf(false)}
+    if(show) {
+        BottomSheetDialog(
+            onDismissRequest = {
+                onDismiss
+            },
+            properties = BottomSheetDialogProperties(
+                dismissOnClickOutside = true,
+                dismissOnBackPress = true,
+                dismissWithAnimation = true)
         ) {
-            Text(
-                text = "Modal Bottom Sheet",
-                fontSize = 20.sp,
-                modifier = Modifier.padding(10.dp),
-                color = Color.White
-            )
-
-            IconButton(
-                onClick = {/*TODO*/ },
-                modifier = Modifier.align(Alignment.End)
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(500.dp)
+                    .background(Color.Green)
             ) {
-                Icon(Icons.Default.Close, contentDescription = "Close Bottom Sheet")
+                Text(
+                    text = "Test",
+                )
             }
         }
     }
 }
-
-//@Composable
-//@ExperimentalMaterialApi
-//fun ModalSheetWithAnchor(
-//    sheetState: ModalBottomSheetState,
-//    showModalSheet: MutableState<Boolean>
-//) {
-//    val scope = rememberCoroutineScope()
-//
-//    Box(modifier = Modifier.fillMaxSize()) {
-//        Icon(
-//            imageVector = Icons.Default.KeyboardArrowUp,
-//            contentDescription = "",
-//            modifier = Modifier
-//                .align(alignment = Alignment.BottomCenter)
-//                .clickable {
-//                    showModalSheet.value = !showModalSheet.value
-//                    scope.launch {
-//                        sheetState.show()
-//                    }
-//                }
-//        )
-//    }
-//}
