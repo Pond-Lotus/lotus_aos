@@ -70,6 +70,8 @@ import com.himanshoe.kalendar.component.text.config.KalendarTextSize
 import com.himanshoe.kalendar.model.KalendarDay
 import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.Route
@@ -337,43 +339,48 @@ fun CalendarScreen(routeAction: RouteAction) {
     }
 
     Scaffold(topBar = {
-        TopAppBar(title = {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Row(modifier = Modifier
-                    .width(115.dp)
-                    .height(35.dp)
-                    .clip(shape = RoundedCornerShape(24.dp))
-                    .background(Color(0xffe9e9ed))
-                    .padding(start = 10.dp, end = 5.dp, top = 6.dp, bottom = 5.dp)) {
-                    states.forEach { text ->
-                        Text(text = text,
-                            fontSize = 10.sp,
-                            lineHeight = 16.sp,
-                            color = if (text == selectedOption) {
-                                Color.Black
-                            } else {
-                                Color.Gray
-                            },
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier
-                                .clip(shape = RoundedCornerShape(24.dp))
-                                .clickable {
-                                    onSelectionChange(text)
-                                    isVisible = (text == states[1])
-                                }
-                                .background(if (text == selectedOption) {
-                                    Color.White
+        TopAppBar(
+            title = {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Row(
+                        modifier = Modifier
+                            .width(115.dp)
+                            .height(35.dp)
+                            .clip(shape = RoundedCornerShape(24.dp))
+                            .background(Color(0xffe9e9ed))
+                            .padding(start = 10.dp, end = 5.dp, top = 6.dp, bottom = 5.dp)
+                    ) {
+                        states.forEach { text ->
+                            Text(text = text,
+                                fontSize = 10.sp,
+                                lineHeight = 16.sp,
+                                color = if (text == selectedOption) {
+                                    Color.Black
                                 } else {
-                                    Color(0xffe9e9ed)
-                                })
-                                .padding(
-                                    vertical = 5.dp,
-                                    horizontal = 16.dp,
-                                ))
+                                    Color.Gray
+                                },
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier
+                                    .clip(shape = RoundedCornerShape(24.dp))
+                                    .clickable {
+                                        onSelectionChange(text)
+                                        isVisible = (text == states[1])
+                                    }
+                                    .background(
+                                        if (text == selectedOption) {
+                                            Color.White
+                                        } else {
+                                            Color(0xffe9e9ed)
+                                        }
+                                    )
+                                    .padding(
+                                        vertical = 5.dp,
+                                        horizontal = 16.dp,
+                                    ))
+                        }
                     }
                 }
-            }
-        },
+            },
             actions = {
                 IconButton(onClick = {
                     goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
@@ -381,38 +388,52 @@ fun CalendarScreen(routeAction: RouteAction) {
                     Icon(imageVector = Icons.Filled.Menu, contentDescription = "profile")
                 }
             },
-            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White,
-                titleContentColor = Color.Black))
+            colors = TopAppBarDefaults.smallTopAppBarColors(
+                containerColor = Color.White,
+                titleContentColor = Color.Black
+            )
+        )
     }, floatingActionButton = {
-        AddTodoFloatingButton(multiFloatingState = multiFloatingState,
+        AddTodoFloatingButton(
+            multiFloatingState = multiFloatingState,
             onMultiFloatingStateChange = {
                 multiFloatingState = it
             },
             backgroundColor = colorFAB,
-            onButtonClick = onButtonClick)
+            onButtonClick = onButtonClick
+        )
     }, floatingActionButtonPosition = FabPosition.End) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xfff0f0f0))
-            .imePadding()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xfff0f0f0))
+                .imePadding()
+        ) {
             if (isVisible) {
                 Kalendar(modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 45.dp)
-                    .shadow(shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
-                        elevation = 3.dp),
-                    kalendarHeaderConfig = KalendarHeaderConfig(kalendarTextConfig = KalendarTextConfig(
-                        kalendarTextColor = KalendarTextColor(Color.Black),
-                        kalendarTextSize = KalendarTextSize.SubTitle)),
+                    .shadow(
+                        shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
+                        elevation = 3.dp
+                    ),
+                    kalendarHeaderConfig = KalendarHeaderConfig(
+                        kalendarTextConfig = KalendarTextConfig(
+                            kalendarTextColor = KalendarTextColor(Color.Black),
+                            kalendarTextSize = KalendarTextSize.SubTitle
+                        )
+                    ),
 //                            kalendarEvents = List<KalendarDay> (
 //                                size = ,
 //                                init =
 //                                    ),
                     kalendarType = KalendarType.Oceanic(),
                     kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                    kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
+                    kalendarThemeColor = KalendarThemeColor(
+                        backgroundColor = Color.White,
                         dayBackgroundColor = Color(0xffFBE3C7),
-                        headerTextColor = Color.Black),
+                        headerTextColor = Color.Black
+                    ),
                     onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
                         year = kalendarDay.localDate.year
@@ -431,11 +452,16 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Kalendar(modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 25.dp)
-                    .shadow(shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
-                        elevation = 3.dp),
-                    kalendarHeaderConfig = KalendarHeaderConfig(kalendarTextConfig = KalendarTextConfig(
-                        kalendarTextColor = KalendarTextColor(Color.Black),
-                        kalendarTextSize = KalendarTextSize.SubTitle)),
+                    .shadow(
+                        shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
+                        elevation = 3.dp
+                    ),
+                    kalendarHeaderConfig = KalendarHeaderConfig(
+                        kalendarTextConfig = KalendarTextConfig(
+                            kalendarTextColor = KalendarTextColor(Color.Black),
+                            kalendarTextSize = KalendarTextSize.SubTitle
+                        )
+                    ),
 //                            com.himanshoe.kalendar.component.day.KalendarDay(kalendarDay =,
 //                                selectedKalendarDay =,
 //                                kalendarDayColors =,
@@ -446,9 +472,11 @@ fun CalendarScreen(routeAction: RouteAction) {
 //                            ),
                     kalendarType = KalendarType.Firey,
                     kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                    kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
+                    kalendarThemeColor = KalendarThemeColor(
+                        backgroundColor = Color.White,
                         dayBackgroundColor = Color(0xffFBE3C7),
-                        headerTextColor = Color.Black),
+                        headerTextColor = Color.Black
+                    ),
                     onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
                         year = kalendarDay.localDate.year
@@ -465,44 +493,58 @@ fun CalendarScreen(routeAction: RouteAction) {
                     })
             }
 
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 21.dp, end = 21.dp, top = 30.dp),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 21.dp, end = 21.dp, top = 30.dp),
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically) {
-                Text(text = day.toString(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = day.toString(),
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(end = 5.dp))
+                    modifier = Modifier.padding(end = 5.dp)
+                )
 
-                Divider(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 5.dp),
-                    color = Color(0xffD8D8D8))
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 5.dp),
+                    color = Color(0xffD8D8D8)
+                )
             }
 
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 15.dp, start = 21.dp, end = 21.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 15.dp, start = 21.dp, end = 21.dp)
+            ) {
 
                 if (isVisibility) {
-                    TextField(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .focusRequester(focusRequester),
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                            .focusRequester(focusRequester),
                         value = title,
-                        colors = TextFieldDefaults.textFieldColors(containerColor = Color(
-                            0xffD8D8D8),
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = Color(
+                                0xffD8D8D8
+                            ),
                             disabledLabelColor = Color(0xffD8D8D8),
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent),
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
                         singleLine = true,
                         shape = RoundedCornerShape(8.dp),
                         onValueChange = {
                             title = it
                         },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done
+                        ),
                         keyboardActions = KeyboardActions(onDone = {
                             createTodo(token, year, month, day, title, color, response = {
                                 readTodo(token, year = year, month = month, day = day, response = {
@@ -515,7 +557,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                             keyboardController?.hide()
                             title = ""
                             isVisibility = !isVisibility
-                        }))
+                        })
+                    )
                     Spacer(modifier = Modifier.height(6.dp))
                 }
 
@@ -548,11 +591,13 @@ fun AddTodoFloatingButton(
         Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
         FloatingActionButton(containerColor = backgroundColor, shape = CircleShape, onClick = {
-            onMultiFloatingStateChange(if (transition.currentState == FloatingStateType.Expanded) {
-                FloatingStateType.Collapsed
-            } else {
-                FloatingStateType.Expanded
-            })
+            onMultiFloatingStateChange(
+                if (transition.currentState == FloatingStateType.Expanded) {
+                    FloatingStateType.Collapsed
+                } else {
+                    FloatingStateType.Expanded
+                }
+            )
         }) {
             Icon(
                 imageVector = Icons.Filled.Add,
@@ -568,17 +613,23 @@ fun FloatingActionButtonMenus(
     onMultiFloatingStateChange: (FloatingStateType) -> Unit,
     onButtonClick: (String) -> Unit,
 ) {
-    Surface(modifier = Modifier
-        .width(150.dp)
-        .height(110.dp)
-        .shadow(shape = RoundedCornerShape(20.dp), elevation = 15.dp)
-        .background(Color.White)) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize()) {
-            Row(modifier = Modifier.fillMaxWidth(),
+    Surface(
+        modifier = Modifier
+            .width(150.dp)
+            .height(110.dp)
+            .shadow(shape = RoundedCornerShape(20.dp), elevation = 15.dp)
+            .background(Color.White)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize()
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly) {
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
                     onClick = {
@@ -601,9 +652,11 @@ fun FloatingActionButtonMenus(
 
             Spacer(modifier = Modifier.padding(vertical = 7.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly) {
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
                     onClick = {
@@ -639,9 +692,13 @@ fun TodoItem(Todo: RToDoResponse) {
     var done = true
     var color = 0
 
-    // Bottom sheet state
-    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    val scope = rememberCoroutineScope()
+    var show = remember { mutableStateOf(false) }
+
+
+//    // Bottom sheet state
+//    val bottomSheetState =
+//        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+//    val scope = rememberCoroutineScope()
 
     Card(
         colors = CardDefaults.cardColors(Color.White),
@@ -650,9 +707,7 @@ fun TodoItem(Todo: RToDoResponse) {
             .width(350.dp)
             .height(50.dp)
             .clickable {
-                scope.launch {
-                    bottomSheetState.show()
-                }
+                show.value = true
                 Log.d("onclick", "onClick: ${Todo.id}")
             }) {
         Row(
@@ -669,6 +724,10 @@ fun TodoItem(Todo: RToDoResponse) {
             })
             Text(text = Todo.title, fontSize = 13.sp, fontStyle = FontStyle.Normal)
         }
+    }
+
+    BottomModal(show = show.value) {
+        show.value = false
     }
 }
 
@@ -743,7 +802,7 @@ fun DeleteBackground() {
 @Composable
 fun SheetLayout() {
 
-    val sheetState  = rememberModalBottomSheetState(
+    val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
     )
 
@@ -814,3 +873,38 @@ fun BottomSheetContent() {
 //        )
 //    }
 //}
+
+@Composable
+fun BottomModal() {
+
+    val show by remember { mutableStateOf(false) }
+
+    if (show) {
+        BottomSheetDialog(
+            onDismissRequest = {
+                show
+            },
+            properties = BottomSheetDialogProperties(
+                dismissWithAnimation = true,
+                dismissOnClickOutside = true,
+
+                )
+        ) {
+            // content
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Magenta)
+                    .clip(shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp))
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "test입니다")
+                }
+            }
+        }
+    }
+}
