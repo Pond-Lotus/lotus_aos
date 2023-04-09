@@ -692,6 +692,8 @@ fun TodoItem(Todo: RToDoResponse) {
     var done = true
     var color = 0
 
+    var showUpdateTodoBottomSheet by remember { mutableStateOf(false) }
+
     Card(
         colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
@@ -699,6 +701,7 @@ fun TodoItem(Todo: RToDoResponse) {
             .width(350.dp)
             .height(50.dp)
             .clickable {
+                showUpdateTodoBottomSheet = true
                 Log.d("onclick", "onClick: ${Todo.id}")
             }) {
         Row(
@@ -715,6 +718,10 @@ fun TodoItem(Todo: RToDoResponse) {
             })
             Text(text = Todo.title, fontSize = 13.sp, fontStyle = FontStyle.Normal)
         }
+    }
+
+    if (showUpdateTodoBottomSheet) {
+        UpdateTodoBottomSheet(onDismiss = { showUpdateTodoBottomSheet = false })
     }
 }
 
@@ -781,5 +788,32 @@ fun DeleteBackground() {
             text = "삭제",
             color = Color.White
         )
+    }
+}
+
+@Composable
+fun UpdateTodoBottomSheet(onDismiss: () -> Unit) {
+    var show by remember{ mutableStateOf(false)}
+    if(show) {
+        BottomSheetDialog(
+            onDismissRequest = {
+                onDismiss
+            },
+            properties = BottomSheetDialogProperties(
+                dismissOnClickOutside = true,
+                dismissOnBackPress = true,
+                dismissWithAnimation = true)
+        ) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(500.dp)
+                    .background(Color.Green)
+            ) {
+                Text(
+                    text = "Test",
+                )
+            }
+        }
     }
 }
