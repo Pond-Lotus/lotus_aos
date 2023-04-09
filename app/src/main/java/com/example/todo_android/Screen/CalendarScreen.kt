@@ -692,6 +692,7 @@ fun TodoItem(Todo: RToDoResponse) {
     var done = true
     var color = 0
 
+<<<<<<< HEAD
     var show = remember { mutableStateOf(false) }
 
 
@@ -699,6 +700,9 @@ fun TodoItem(Todo: RToDoResponse) {
 //    val bottomSheetState =
 //        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 //    val scope = rememberCoroutineScope()
+=======
+    var showUpdateTodoBottomSheet by remember { mutableStateOf(false) }
+>>>>>>> master
 
     Card(
         colors = CardDefaults.cardColors(Color.White),
@@ -707,7 +711,11 @@ fun TodoItem(Todo: RToDoResponse) {
             .width(350.dp)
             .height(50.dp)
             .clickable {
+<<<<<<< HEAD
                 show.value = true
+=======
+                showUpdateTodoBottomSheet = true
+>>>>>>> master
                 Log.d("onclick", "onClick: ${Todo.id}")
             }) {
         Row(
@@ -726,8 +734,13 @@ fun TodoItem(Todo: RToDoResponse) {
         }
     }
 
+<<<<<<< HEAD
     BottomModal(show = show.value) {
         show.value = false
+=======
+    if (showUpdateTodoBottomSheet) {
+        UpdateTodoBottomSheet(onDismiss = { showUpdateTodoBottomSheet = false })
+>>>>>>> master
     }
 }
 
@@ -797,9 +810,8 @@ fun DeleteBackground() {
     }
 }
 
-
-@ExperimentalMaterialApi
 @Composable
+<<<<<<< HEAD
 fun SheetLayout() {
 
     val sheetState = rememberModalBottomSheetState(
@@ -832,23 +844,34 @@ fun BottomSheetContent() {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
+=======
+fun UpdateTodoBottomSheet(onDismiss: () -> Unit) {
+    var show by remember{ mutableStateOf(false)}
+    if(show) {
+        BottomSheetDialog(
+            onDismissRequest = {
+                onDismiss
+            },
+            properties = BottomSheetDialogProperties(
+                dismissOnClickOutside = true,
+                dismissOnBackPress = true,
+                dismissWithAnimation = true)
+>>>>>>> master
         ) {
-            Text(
-                text = "Modal Bottom Sheet",
-                fontSize = 20.sp,
-                modifier = Modifier.padding(10.dp),
-                color = Color.White
-            )
-
-            IconButton(
-                onClick = {/*TODO*/ },
-                modifier = Modifier.align(Alignment.End)
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(500.dp)
+                    .background(Color.Green)
             ) {
-                Icon(Icons.Default.Close, contentDescription = "Close Bottom Sheet")
+                Text(
+                    text = "Test",
+                )
             }
         }
     }
 }
+<<<<<<< HEAD
 
 //@Composable
 //@ExperimentalMaterialApi
@@ -908,3 +931,5 @@ fun BottomModal() {
         }
     }
 }
+=======
+>>>>>>> master
