@@ -692,18 +692,6 @@ fun TodoItem(Todo: RToDoResponse) {
     var done = true
     var color = 0
 
-<<<<<<< HEAD
-    var show = remember { mutableStateOf(false) }
-
-
-//    // Bottom sheet state
-//    val bottomSheetState =
-//        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-//    val scope = rememberCoroutineScope()
-=======
-    var showUpdateTodoBottomSheet by remember { mutableStateOf(false) }
->>>>>>> master
-
     Card(
         colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
@@ -711,11 +699,6 @@ fun TodoItem(Todo: RToDoResponse) {
             .width(350.dp)
             .height(50.dp)
             .clickable {
-<<<<<<< HEAD
-                show.value = true
-=======
-                showUpdateTodoBottomSheet = true
->>>>>>> master
                 Log.d("onclick", "onClick: ${Todo.id}")
             }) {
         Row(
@@ -732,15 +715,6 @@ fun TodoItem(Todo: RToDoResponse) {
             })
             Text(text = Todo.title, fontSize = 13.sp, fontStyle = FontStyle.Normal)
         }
-    }
-
-<<<<<<< HEAD
-    BottomModal(show = show.value) {
-        show.value = false
-=======
-    if (showUpdateTodoBottomSheet) {
-        UpdateTodoBottomSheet(onDismiss = { showUpdateTodoBottomSheet = false })
->>>>>>> master
     }
 }
 
@@ -809,127 +783,3 @@ fun DeleteBackground() {
         )
     }
 }
-
-@Composable
-<<<<<<< HEAD
-fun SheetLayout() {
-
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-    )
-
-    //Our flag variable
-    val showModalSheet = rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetContent = {
-            BottomSheetContent()
-        }
-    ) {
-        //Rest of the Scaffold
-    }
-}
-
-@Composable
-fun BottomSheetContent() {
-    Surface(
-        modifier = Modifier
-            .height(300.dp)
-            .clip(shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)),
-        color = Color(0xff7353ba)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-=======
-fun UpdateTodoBottomSheet(onDismiss: () -> Unit) {
-    var show by remember{ mutableStateOf(false)}
-    if(show) {
-        BottomSheetDialog(
-            onDismissRequest = {
-                onDismiss
-            },
-            properties = BottomSheetDialogProperties(
-                dismissOnClickOutside = true,
-                dismissOnBackPress = true,
-                dismissWithAnimation = true)
->>>>>>> master
-        ) {
-            Surface(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .height(500.dp)
-                    .background(Color.Green)
-            ) {
-                Text(
-                    text = "Test",
-                )
-            }
-        }
-    }
-}
-<<<<<<< HEAD
-
-//@Composable
-//@ExperimentalMaterialApi
-//fun ModalSheetWithAnchor(
-//    sheetState: ModalBottomSheetState,
-//    showModalSheet: MutableState<Boolean>
-//) {
-//    val scope = rememberCoroutineScope()
-//
-//    Box(modifier = Modifier.fillMaxSize()) {
-//        Icon(
-//            imageVector = Icons.Default.KeyboardArrowUp,
-//            contentDescription = "",
-//            modifier = Modifier
-//                .align(alignment = Alignment.BottomCenter)
-//                .clickable {
-//                    showModalSheet.value = !showModalSheet.value
-//                    scope.launch {
-//                        sheetState.show()
-//                    }
-//                }
-//        )
-//    }
-//}
-
-@Composable
-fun BottomModal() {
-
-    val show by remember { mutableStateOf(false) }
-
-    if (show) {
-        BottomSheetDialog(
-            onDismissRequest = {
-                show
-            },
-            properties = BottomSheetDialogProperties(
-                dismissWithAnimation = true,
-                dismissOnClickOutside = true,
-
-                )
-        ) {
-            // content
-            Surface(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Magenta)
-                    .clip(shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp))
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = "test입니다")
-                }
-            }
-        }
-    }
-}
-=======
->>>>>>> master
