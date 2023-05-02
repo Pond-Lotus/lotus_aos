@@ -19,24 +19,22 @@ fun ProfileModalDrawer(
     scope: CoroutineScope,
     scaffoldState: ScaffoldState,
 ) {
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(text = "Text in Drawer")
-            Text(text = "Text in Drawer")
-            Text(text = "Text in Drawer")
-            Text(text = "Text in Drawer")
-            Text(text = "Text in Drawer")
-            Text(text = "Text in Drawer")
-            Button(onClick = {
-                scope.launch {
-                    scaffoldState.drawerState.close()
-                }
-            }) {
-                Text(text = "Close Drawer")
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = "Text in Drawer")
+        Text(text = "Text in Drawer")
+        Text(text = "Text in Drawer")
+        Text(text = "Text in Drawer")
+        Text(text = "Text in Drawer")
+        Text(text = "Text in Drawer")
+        Button(onClick = {
+            scope.launch {
+                scaffoldState.drawerState.close()
             }
+        }) {
+            Text(text = "Close Drawer")
         }
     }
 }

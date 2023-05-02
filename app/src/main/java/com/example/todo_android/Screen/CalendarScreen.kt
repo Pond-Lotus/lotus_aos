@@ -1,11 +1,18 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
+import android.provider.ContactsContract.Profile
 import android.util.Log
+import androidx.compose.animation.AnimatedContentScope.SlideDirection.Companion.Start
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.Start
+import androidx.compose.foundation.layout.WindowInsetsSides.Companion.Start
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -41,15 +48,26 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
@@ -58,6 +76,7 @@ import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
+import com.example.todo_android.R
 import com.example.todo_android.Request.TodoRequest.CreateTodoRequest
 import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
 import com.example.todo_android.Request.TodoRequest.ReadTodoRequest
@@ -76,6 +95,7 @@ import com.himanshoe.kalendar.model.KalendarDay
 import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import okhttp3.Route
 import retrofit2.Call
 import retrofit2.Callback
@@ -224,11 +244,9 @@ fun updateTodo(
 
     var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
 
-    updateTodoRequest.requestUpdateTodo(
-        token,
+    updateTodoRequest.requestUpdateTodo(token,
         id,
-        UpdateTodo(year, month, day, title, done, description, color, time)
-    )
+        UpdateTodo(year, month, day, title, done, description, color, time))
         .enqueue(object : Callback<UpdateTodoResponse> {
 
             // 실패 했을때
@@ -263,12 +281,13 @@ fun updateTodo(
 @Composable
 fun CalendarScreen(routeAction: RouteAction) {
 
-    val states = listOf("주간", "월간")
+    val states = listOf("월간", "주간")
     var selectedOption by remember { mutableStateOf(states[0]) }
 
     val onSelectionChange = { text: String -> selectedOption = text }
 
-    var isVisible by remember { mutableStateOf(false) }
+    var selectCalendar by remember { mutableStateOf(false) }
+    var showTodoInput by remember { mutableStateOf(false) }
     var isVisibility by remember { mutableStateOf(false) }
 
     var multiFloatingState by remember { mutableStateOf(FloatingStateType.Collapsed) }
@@ -295,12 +314,12 @@ fun CalendarScreen(routeAction: RouteAction) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val bottomScaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(isVisibility) {
         if (isVisibility) {
@@ -342,87 +361,194 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }
     }
-
-    Scaffold(
-        scaffoldState = scaffoldState,
-        drawerContent = {
-            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                ProfileModalDrawer(scope = scope, scaffoldState = scaffoldState)
+    BottomSheetScaffold(scaffoldState = bottomScaffoldState, drawerContent = {
+        ProfileModalDrawer(scope = scope, scaffoldState = scaffoldState)
+    }, topBar = {
+        CenterAlignedTopAppBar(title = {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Row(modifier = Modifier
+                    .width(115.dp)
+                    .height(35.dp)
+                    .clip(shape = RoundedCornerShape(24.dp))
+                    .background(Color(0xffe9e9ed))
+                    .padding(start = 8.dp, end = 8.dp, top = 5.dp, bottom = 5.dp)) {
+                    states.forEach { text ->
+                        Text(text = text,
+                            fontSize = 10.sp,
+                            lineHeight = 14.sp,
+                            color = if (text == selectedOption) {
+                                Color.Black
+                            } else {
+                                Color.Gray
+                            },
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier
+                                .clip(shape = RoundedCornerShape(24.dp))
+                                .clickable {
+                                    onSelectionChange(text)
+                                    selectCalendar = (text == states[1])
+                                }
+                                .background(if (text == selectedOption) {
+                                    Color.White
+                                } else {
+                                    Color(0xffe9e9ed)
+                                })
+                                .padding(
+                                    vertical = 6.dp,
+                                    horizontal = 16.dp,
+                                ))
+                    }
+                }
             }
         },
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Box(modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center) {
-                        Row(
-                            modifier = Modifier
-                                .width(115.dp)
-                                .height(35.dp)
-                                .clip(shape = RoundedCornerShape(24.dp))
-                                .background(Color(0xffe9e9ed))
-                                .padding(start = 8.dp, end = 8.dp, top = 5.dp, bottom = 5.dp)
-                        ) {
-                            states.forEach { text ->
-                                Text(text = text,
-                                    fontSize = 10.sp,
-                                    lineHeight = 14.sp,
-                                    color = if (text == selectedOption) {
-                                        Color.Black
-                                    } else {
-                                        Color.Gray
-                                    },
-                                    fontWeight = FontWeight.Medium,
-                                    modifier = Modifier
-                                        .clip(shape = RoundedCornerShape(24.dp))
-                                        .clickable {
-                                            onSelectionChange(text)
-                                            isVisible = (text == states[0])
-                                        }
-                                        .background(
-                                            if (text == selectedOption) {
-                                                Color.White
-                                            } else {
-                                                Color(0xffe9e9ed)
-                                            }
-                                        )
-                                        .padding(
-                                            vertical = 6.dp,
-                                            horizontal = 16.dp,
-                                        ))
+            actions = {
+                IconButton(onClick = {
+                    scope.launch {
+                        scaffoldState.drawerState.open()
+                    }
+                }) {
+                    Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
+                }
+            },
+            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White,
+                titleContentColor = Color.Black))
+    }, floatingActionButton = {
+        AddTodoFloatingButton(multiFloatingState = multiFloatingState,
+            onMultiFloatingStateChange = {
+                multiFloatingState = it
+            },
+            backgroundColor = colorFAB,
+            onButtonClick = onButtonClick)
+    }, floatingActionButtonPosition = androidx.compose.material.FabPosition.End, sheetContent = {
+        TodoUpdateBottomSheet()
+    }, sheetPeekHeight = 20.dp, sheetShape = RoundedCornerShape(20.dp)
+
+    ) {
+
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xfff0f0f0))
+            .imePadding()
+//                .horizontalScroll(scrollState)
+//                .verticalScroll(scrollState)
+//                .scrollable(state = scrollState, orientation = Orientation.Horizontal)
+        ) {
+            if (selectCalendar) {
+                Kalendar(modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
+                        elevation = 3.dp),
+                    kalendarHeaderConfig = KalendarHeaderConfig(kalendarTextConfig = KalendarTextConfig(
+                        kalendarTextColor = KalendarTextColor(Color.Black),
+                        kalendarTextSize = KalendarTextSize.SubTitle)),
+                    kalendarType = KalendarType.Oceanic(),
+                    kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
+                    kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
+                        dayBackgroundColor = Color(0xffFBE3C7),
+                        headerTextColor = Color.Black),
+                    onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
+
+                        year = kalendarDay.localDate.year
+                        month = kalendarDay.localDate.monthNumber
+                        day = kalendarDay.localDate.dayOfMonth
+
+                        readTodo(token, year, month, day, response = {
+
+                            todoList.clear()
+                            for (i in it!!.data) {
+                                todoList.add(i)
                             }
-                        }
+                        })
+                    })
+            } else {
+                Kalendar(modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
+                        elevation = 3.dp),
+                    kalendarHeaderConfig = KalendarHeaderConfig(kalendarTextConfig = KalendarTextConfig(
+                        kalendarTextColor = KalendarTextColor(Color.Black),
+                        kalendarTextSize = KalendarTextSize.SubTitle)),
+                    kalendarType = KalendarType.Firey,
+                    kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
+                    kalendarThemeColor = KalendarThemeColor(backgroundColor = Color.White,
+                        dayBackgroundColor = Color(0xffFBE3C7),
+                        headerTextColor = Color.Black),
+                    onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
+
+                        year = kalendarDay.localDate.year
+                        month = kalendarDay.localDate.monthNumber
+                        day = kalendarDay.localDate.dayOfMonth
+
+                        readTodo(token, year, month, day, response = {
+
+                            todoList.clear()
+                            for (i in it!!.data) {
+                                todoList.add(i)
+                            }
+                        })
+                    })
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 21.dp, end = 21.dp, top = 30.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = day.toString(),
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(end = 5.dp))
+
+                    Divider(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 5.dp),
+                        color = Color(0xffD8D8D8))
+                }
+
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 15.dp, start = 21.dp, end = 21.dp)) {
+
+                    if (showTodoInput) {
+                        TextField(modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                            .focusRequester(focusRequester),
+                            value = title,
+                            colors = TextFieldDefaults.textFieldColors(containerColor = Color(
+                                0xffD8D8D8),
+                                disabledLabelColor = Color(0xffD8D8D8),
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent),
+                            singleLine = true,
+                            shape = RoundedCornerShape(8.dp),
+                            onValueChange = {
+                                title = it
+                            },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = {
+                                createTodo(token, year, month, day, title, color, response = {
+                                    readTodo(token,
+                                        year = year,
+                                        month = month,
+                                        day = day,
+                                        response = {
+                                            todoList.clear()
+                                            for (i in it!!.data) {
+                                                todoList.add(i)
+                                            }
+                                        })
+                                })
+                                keyboardController?.hide()
+                                title = ""
+                                showTodoInput = !showTodoInput
+                            }))
+                        Spacer(modifier = Modifier.height(6.dp))
                     }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        scope.launch {
-                            scaffoldState.drawerState.open()
-                        }
-                    }) {
-                        Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
-                    }
-                },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color.Black
-                )
-            )
-        },
-        floatingActionButton = {
-            AddTodoFloatingButton(
-                multiFloatingState = multiFloatingState,
-                onMultiFloatingStateChange = {
-                    multiFloatingState = it
-                },
-                backgroundColor = colorFAB,
-                onButtonClick = onButtonClick
-            )
-        },
-        floatingActionButtonPosition = androidx.compose.material.FabPosition.End
-    )
-    {
-        Text(text = "text")
+                    TodoItemList(Todo = todoList, todoList)
+                }
+            }
+        }
+
     }
 }
 
@@ -449,13 +575,11 @@ fun AddTodoFloatingButton(
         Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
         FloatingActionButton(containerColor = backgroundColor, shape = CircleShape, onClick = {
-            onMultiFloatingStateChange(
-                if (transition.currentState == FloatingStateType.Expanded) {
-                    FloatingStateType.Collapsed
-                } else {
-                    FloatingStateType.Expanded
-                }
-            )
+            onMultiFloatingStateChange(if (transition.currentState == FloatingStateType.Expanded) {
+                FloatingStateType.Collapsed
+            } else {
+                FloatingStateType.Expanded
+            })
         }) {
             Icon(
                 imageVector = Icons.Filled.Add,
@@ -471,23 +595,17 @@ fun FloatingActionButtonMenus(
     onMultiFloatingStateChange: (FloatingStateType) -> Unit,
     onButtonClick: (String) -> Unit,
 ) {
-    Surface(
-        modifier = Modifier
-            .width(150.dp)
-            .height(110.dp)
-            .shadow(shape = RoundedCornerShape(20.dp), elevation = 15.dp)
-            .background(Color.White)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
+    Surface(modifier = Modifier
+        .width(150.dp)
+        .height(110.dp)
+        .shadow(shape = RoundedCornerShape(20.dp), elevation = 15.dp)
+        .background(Color.White)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize()) {
+            Row(modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
+                horizontalArrangement = Arrangement.SpaceEvenly) {
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
                     onClick = {
@@ -510,11 +628,9 @@ fun FloatingActionButtonMenus(
 
             Spacer(modifier = Modifier.padding(vertical = 7.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
+            Row(modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
+                horizontalArrangement = Arrangement.SpaceEvenly) {
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
                     onClick = {
@@ -552,8 +668,7 @@ fun TodoItem(Todo: RToDoResponse) {
 
     var showUpdateTodoBottomSheet by remember { mutableStateOf(false) }
 
-    Card(
-        colors = CardDefaults.cardColors(Color.White),
+    Card(colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .width(350.dp)
@@ -562,15 +677,9 @@ fun TodoItem(Todo: RToDoResponse) {
                 showUpdateTodoBottomSheet = true
                 Log.d("onclick", "onClick: ${Todo.id}")
             }) {
-        Row(
-            modifier = Modifier.padding(
-                start = 13.dp,
-                top = 15.dp,
-                bottom = 15.dp
-            ),
+        Row(modifier = Modifier.padding(start = 13.dp, top = 15.dp, bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
+            horizontalArrangement = Arrangement.Center) {
             Checkbox(checked = checked, onCheckedChange = {
                 checked = it
             })
@@ -589,10 +698,7 @@ fun TodoItemList(Todo: List<RToDoResponse>, todoList: MutableList<RToDoResponse>
 
     LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
-        items(
-            items = Todo,
-            key = { Todo -> Todo.id }
-        ) { item ->
+        items(items = Todo, key = { Todo -> Todo.id }) { item ->
 
             val dismissState = androidx.compose.material.rememberDismissState()
             val dismissDirection = dismissState.dismissDirection
@@ -613,8 +719,7 @@ fun TodoItemList(Todo: List<RToDoResponse>, todoList: MutableList<RToDoResponse>
                 })
             }
 
-            androidx.compose.material.SwipeToDismiss(
-                state = dismissState,
+            androidx.compose.material.SwipeToDismiss(state = dismissState,
                 background = { DeleteBackground() },
                 directions = setOf(DismissDirection.EndToStart),
                 dismissContent = {
@@ -629,18 +734,152 @@ fun TodoItemList(Todo: List<RToDoResponse>, todoList: MutableList<RToDoResponse>
 
 @Composable
 fun DeleteBackground() {
-    Box(
-        modifier = Modifier
-            .width(350.dp)
-            .height(50.dp)
-            .clip(shape = RoundedCornerShape(8.dp))
-            .background(deleteBackground)
-            .padding(horizontal = 24.dp),
-        contentAlignment = Alignment.CenterEnd
-    ) {
-        Text(
-            text = "삭제",
-            color = Color.White
-        )
+    Box(modifier = Modifier
+        .width(350.dp)
+        .height(50.dp)
+        .clip(shape = RoundedCornerShape(8.dp))
+        .background(deleteBackground)
+        .padding(horizontal = 24.dp),
+        contentAlignment = Alignment.CenterEnd) {
+        Text(text = "삭제", color = Color.White)
+    }
+}
+
+@ExperimentalMaterial3Api
+@Composable
+fun TodoUpdateBottomSheet() {
+
+    var text by remember {
+        mutableStateOf("")
+    }
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .height(380.dp)
+        .padding(start = 25.dp, end = 25.dp, top = 35.dp)) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 17.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween) {
+            androidx.compose.material.Icon(imageVector = Icons.Filled.Close,
+                contentDescription = null)
+            Button(modifier = Modifier
+                .width(70.dp)
+                .height(30.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
+                onClick = {/*TODO()*/ },
+                shape = RoundedCornerShape(20.dp)) {
+                Text(text = "저장",
+                    color = Color.Black,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Normal)
+            }
+        }
+
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 15.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            Button(modifier = Modifier
+                .width(9.dp)
+                .height(51.dp),
+                onClick = { /*TODO*/ },
+                enabled = false) {}
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.Start) {
+                Text(text = "test", fontSize = 15.sp, lineHeight = 19.sp)
+                Spacer(modifier = Modifier.padding(vertical = 5.dp))
+                Text(text = "test",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 31.sp)
+            }
+        }
+
+        TextField(modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .padding(bottom = 22.dp),
+            value = text,
+            colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF2F2F2),
+                disabledLabelColor = Color(0xffF2F2F2),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            shape = RoundedCornerShape(10.dp),
+            onValueChange = {
+                text = it
+            })
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 22.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            Image(painter = painterResource(id = R.drawable.clock),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(30.dp)
+                    .padding(end = 11.dp))
+            Text(text = "시간",
+                modifier = Modifier.padding(end = 10.dp),
+                fontWeight = FontWeight.Bold,
+                lineHeight = 19.sp,
+                fontSize = 19.sp)
+            Text(text = "시간",
+                lineHeight = 19.sp,
+                fontSize = 19.sp)
+        }
+
+        Divider(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 5.dp, bottom = 19.dp),
+            color = Color(0xffe9e9e9))
+
+        Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly) {
+            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
+                onClick = {
+//                    onButtonClick("1")
+//                    onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                }) {}
+            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
+                onClick = {
+//                    onButtonClick("2")
+//                    onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                }) {}
+            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
+                onClick = {
+//                    onButtonClick("3")
+//                    onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                }) {}
+            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
+                onClick = {
+//                    onButtonClick("4")
+//                    onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                }) {}
+            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
+                onClick = {
+//                    onButtonClick("5")
+//                    onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                }) {}
+            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
+                onClick = {
+//                    onButtonClick("6")
+//                    onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                }) {}
+        }
     }
 }
