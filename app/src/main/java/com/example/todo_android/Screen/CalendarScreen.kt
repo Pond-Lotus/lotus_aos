@@ -1,18 +1,11 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
-import android.provider.ContactsContract.Profile
 import android.util.Log
-import androidx.compose.animation.AnimatedContentScope.SlideDirection.Companion.Start
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement.Start
-import androidx.compose.foundation.layout.WindowInsetsSides.Companion.Start
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -30,16 +23,13 @@ import androidx.compose.material3.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -48,29 +38,15 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.example.todo_android.Component.*
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
@@ -94,15 +70,13 @@ import com.himanshoe.kalendar.component.text.config.KalendarTextSize
 import com.himanshoe.kalendar.model.KalendarDay
 import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
-import okhttp3.Route
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import androidx.compose.material3.TopAppBar as TopAppBar
 
 fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
@@ -361,67 +335,73 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }
     }
-    BottomSheetScaffold(scaffoldState = bottomScaffoldState, drawerContent = {
-        ProfileModalDrawer(scope = scope, scaffoldState = scaffoldState)
-    }, topBar = {
-        CenterAlignedTopAppBar(title = {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Row(modifier = Modifier
-                    .width(115.dp)
-                    .height(35.dp)
-                    .clip(shape = RoundedCornerShape(24.dp))
-                    .background(Color(0xffe9e9ed))
-                    .padding(start = 8.dp, end = 8.dp, top = 5.dp, bottom = 5.dp)) {
-                    states.forEach { text ->
-                        Text(text = text,
-                            fontSize = 10.sp,
-                            lineHeight = 14.sp,
-                            color = if (text == selectedOption) {
-                                Color.Black
-                            } else {
-                                Color.Gray
-                            },
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier
-                                .clip(shape = RoundedCornerShape(24.dp))
-                                .clickable {
-                                    onSelectionChange(text)
-                                    selectCalendar = (text == states[1])
-                                }
-                                .background(if (text == selectedOption) {
-                                    Color.White
+    BottomSheetScaffold(
+        scaffoldState = bottomScaffoldState,
+        drawerContent = {
+            ProfileModalDrawer(
+                scope = scope,
+                scaffoldState = scaffoldState
+            )
+        }, topBar = {
+            CenterAlignedTopAppBar(title = {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Row(modifier = Modifier
+                        .width(115.dp)
+                        .height(35.dp)
+                        .clip(shape = RoundedCornerShape(24.dp))
+                        .background(Color(0xffe9e9ed))
+                        .padding(start = 8.dp, end = 8.dp, top = 5.dp, bottom = 5.dp)) {
+                        states.forEach { text ->
+                            Text(text = text,
+                                fontSize = 10.sp,
+                                lineHeight = 14.sp,
+                                color = if (text == selectedOption) {
+                                    Color.Black
                                 } else {
-                                    Color(0xffe9e9ed)
-                                })
-                                .padding(
-                                    vertical = 6.dp,
-                                    horizontal = 16.dp,
-                                ))
+                                    Color.Gray
+                                },
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier
+                                    .clip(shape = RoundedCornerShape(24.dp))
+                                    .clickable {
+                                        onSelectionChange(text)
+                                        selectCalendar = (text == states[1])
+                                    }
+                                    .background(if (text == selectedOption) {
+                                        Color.White
+                                    } else {
+                                        Color(0xffe9e9ed)
+                                    })
+                                    .padding(
+                                        vertical = 6.dp,
+                                        horizontal = 16.dp,
+                                    ))
+                        }
                     }
                 }
-            }
-        },
-            actions = {
-                IconButton(onClick = {
-                    scope.launch {
-                        scaffoldState.drawerState.open()
+            },
+                actions = {
+                    IconButton(onClick = {
+                        scope.launch {
+                            scaffoldState.drawerState.open()
+                        }
+                    }) {
+                        Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
                     }
-                }) {
-                    Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
-                }
-            },
-            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White,
-                titleContentColor = Color.Black))
-    }, floatingActionButton = {
-        AddTodoFloatingButton(multiFloatingState = multiFloatingState,
-            onMultiFloatingStateChange = {
-                multiFloatingState = it
-            },
-            backgroundColor = colorFAB,
-            onButtonClick = onButtonClick)
-    }, floatingActionButtonPosition = androidx.compose.material.FabPosition.End, sheetContent = {
-        TodoUpdateBottomSheet()
-    }, sheetPeekHeight = 20.dp, sheetShape = RoundedCornerShape(20.dp)
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White,
+                    titleContentColor = Color.Black))
+        }, floatingActionButton = {
+            AddTodoFloatingButton(multiFloatingState = multiFloatingState,
+                onMultiFloatingStateChange = {
+                    multiFloatingState = it
+                },
+                backgroundColor = colorFAB,
+                onButtonClick = onButtonClick)
+        }, floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
+        sheetContent = {
+            TodoUpdateBottomSheet(scope, bottomScaffoldState)
+        }, sheetPeekHeight = 0.dp, sheetShape = RoundedCornerShape(20.dp)
 
     ) {
 
@@ -544,7 +524,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                             }))
                         Spacer(modifier = Modifier.height(6.dp))
                     }
-                    TodoItemList(Todo = todoList, todoList)
+                    TodoItemList(Todo = todoList, todoList, onTodoItemClick = { todo ->
+                        scope.launch {
+                            bottomScaffoldState.bottomSheetState.expand()
+                        }
+                    })
                 }
             }
         }
@@ -611,19 +595,19 @@ fun FloatingActionButtonMenus(
                     onClick = {
                         onButtonClick("1")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }) {}
+                    }, content = {})
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
                     onClick = {
                         onButtonClick("2")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }) {}
+                    }, content = {})
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
                     onClick = {
                         onButtonClick("3")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }) {}
+                    }, content = {})
             }
 
             Spacer(modifier = Modifier.padding(vertical = 7.dp))
@@ -636,19 +620,19 @@ fun FloatingActionButtonMenus(
                     onClick = {
                         onButtonClick("4")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }) {}
+                    }, content = {})
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
                     onClick = {
                         onButtonClick("5")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }) {}
+                    }, content = {})
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
                     onClick = {
                         onButtonClick("6")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }) {}
+                    }, content = {})
             }
         }
     }
@@ -658,7 +642,7 @@ fun FloatingActionButtonMenus(
 @ExperimentalMaterial3Api
 @ExperimentalMaterialApi
 @Composable
-fun TodoItem(Todo: RToDoResponse) {
+fun TodoItem(Todo: RToDoResponse, onTodoItemClick: (RToDoResponse) -> Unit) {
 
     var checked by remember { mutableStateOf(false) }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
@@ -666,15 +650,13 @@ fun TodoItem(Todo: RToDoResponse) {
     var done = true
     var color = 0
 
-    var showUpdateTodoBottomSheet by remember { mutableStateOf(false) }
-
     Card(colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .width(350.dp)
             .height(50.dp)
             .clickable {
-                showUpdateTodoBottomSheet = true
+                onTodoItemClick(Todo)
                 Log.d("onclick", "onClick: ${Todo.id}")
             }) {
         Row(modifier = Modifier.padding(start = 13.dp, top = 15.dp, bottom = 15.dp),
@@ -692,7 +674,11 @@ fun TodoItem(Todo: RToDoResponse) {
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
-fun TodoItemList(Todo: List<RToDoResponse>, todoList: MutableList<RToDoResponse>) {
+fun TodoItemList(
+    Todo: List<RToDoResponse>,
+    todoList: MutableList<RToDoResponse>,
+    onTodoItemClick: (RToDoResponse) -> Unit,
+) {
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
@@ -723,7 +709,7 @@ fun TodoItemList(Todo: List<RToDoResponse>, todoList: MutableList<RToDoResponse>
                 background = { DeleteBackground() },
                 directions = setOf(DismissDirection.EndToStart),
                 dismissContent = {
-                    TodoItem(Todo = item)
+                    TodoItem(Todo = item, onTodoItemClick = onTodoItemClick)
                 },
                 dismissThresholds = {
                     androidx.compose.material.FractionalThreshold(fraction = 0.2f)
@@ -745,9 +731,14 @@ fun DeleteBackground() {
     }
 }
 
+@ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
-fun TodoUpdateBottomSheet() {
+fun TodoUpdateBottomSheet(
+    scope: CoroutineScope,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
+//    Todo: RToDoResponse,
+) {
 
     var text by remember {
         mutableStateOf("")
@@ -762,13 +753,25 @@ fun TodoUpdateBottomSheet() {
             .padding(bottom = 17.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween) {
-            androidx.compose.material.Icon(imageVector = Icons.Filled.Close,
-                contentDescription = null)
+            androidx.compose.material.IconButton(
+
+                onClick = {
+                    scope.launch {
+                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                    }
+                }) {
+                Icon(imageVector = Icons.Filled.Close, contentDescription = null
+                )
+            }
             Button(modifier = Modifier
                 .width(70.dp)
                 .height(30.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-                onClick = {/*TODO()*/ },
+                onClick = {
+                    scope.launch {
+                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                    }
+                },
                 shape = RoundedCornerShape(20.dp)) {
                 Text(text = "저장",
                     color = Color.Black,
@@ -785,18 +788,28 @@ fun TodoUpdateBottomSheet() {
                 .width(9.dp)
                 .height(51.dp),
                 onClick = { /*TODO*/ },
-                enabled = false) {}
+                enabled = false, content = {})
             Column(modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 8.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start) {
-                Text(text = "test", fontSize = 15.sp, lineHeight = 19.sp)
+
+                Text(text = "test",
+                    fontSize = 15.sp,
+                    lineHeight = 19.sp)
+//                Text(text = "${Todo.month}" + "월" + "${Todo.day}" + "일",
+//                    fontSize = 15.sp,
+//                    lineHeight = 19.sp)
                 Spacer(modifier = Modifier.padding(vertical = 5.dp))
                 Text(text = "test",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 31.sp)
+//                Text(text = Todo.description,
+//                    fontSize = 24.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    lineHeight = 31.sp)
             }
         }
 
@@ -847,39 +860,27 @@ fun TodoUpdateBottomSheet() {
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
                 onClick = {
-//                    onButtonClick("1")
-//                    onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                }) {}
+                }, content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
                 onClick = {
-//                    onButtonClick("2")
-//                    onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                }) {}
+                }, content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
                 onClick = {
-//                    onButtonClick("3")
-//                    onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                }) {}
+                }, content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
                 onClick = {
-//                    onButtonClick("4")
-//                    onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                }) {}
+                }, content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
                 onClick = {
-//                    onButtonClick("5")
-//                    onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                }) {}
+                }, content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
                 onClick = {
-//                    onButtonClick("6")
-//                    onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                }) {}
+                }, content = {})
         }
     }
 }
