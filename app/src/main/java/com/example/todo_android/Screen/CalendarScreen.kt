@@ -751,6 +751,37 @@ fun TodoUpdateBottomSheet(
         mutableStateOf("")
     }
 
+    var color by remember { mutableStateOf("0") }
+
+    val onButtonClick: (String) -> Unit = { id ->
+        when (id) {
+            "1" -> {
+                color = "1"
+                Log.d("id", "id : ${id}")
+            }
+            "2" -> {
+                color = "2"
+                Log.d("id", "id : ${id}")
+            }
+            "3" -> {
+                color = "3"
+                Log.d("id", "id : ${id}")
+            }
+            "4" -> {
+                color = "4"
+                Log.d("id", "id : ${id}")
+            }
+            "5" -> {
+                color = "5"
+                Log.d("id", "id : ${id}")
+            }
+            "6" -> {
+                color = "6"
+                Log.d("id", "id : ${id}")
+            }
+        }
+    }
+
     Column(modifier = Modifier
         .fillMaxWidth()
         .height(380.dp)
@@ -802,18 +833,23 @@ fun TodoUpdateBottomSheet(
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start) {
 
-//                Text(text = "test",
-//                    fontSize = 15.sp,
-//                    lineHeight = 19.sp)
                 Text(
                     text = "${Todo?.month}" + "월 " + "${Todo?.day}" + "일",
                     fontSize = 15.sp,
                     lineHeight = 19.sp)
                 Spacer(modifier = Modifier.padding(vertical = 2.dp))
-//                Text(text = "test",
-//                    fontSize = 24.sp,
-//                    fontWeight = FontWeight.Bold,
-//                    lineHeight = 31.sp)
+//                TextField(
+//                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+//                    value = "${Todo?.title}",
+//                    onValueChange = { text = it },
+//                    colors = TextFieldDefaults.textFieldColors(
+//                        containerColor = Color.White,
+//                        disabledLabelColor = Color.White,
+//                        focusedIndicatorColor = Color.Transparent,
+//                        unfocusedIndicatorColor = Color.Transparent),
+//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+//
+//                )
                 Text(
                     text = "${Todo?.title}",
                     fontSize = 24.sp,
@@ -853,7 +889,7 @@ fun TodoUpdateBottomSheet(
                 fontWeight = FontWeight.Bold,
                 lineHeight = 19.sp,
                 fontSize = 19.sp)
-            Text(text = "시간",
+            Text(text = "${Todo?.time}",
                 lineHeight = 19.sp,
                 fontSize = 19.sp)
         }
