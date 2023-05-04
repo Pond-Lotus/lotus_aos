@@ -2,6 +2,8 @@ package com.example.todo_android.Component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -14,10 +16,11 @@ import com.example.todo_android.Navigation.Action.RouteAction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@ExperimentalMaterialApi
 @Composable
 fun ProfileModalDrawer(
     scope: CoroutineScope,
-    scaffoldState: ScaffoldState,
+    bottomScaffoldState: BottomSheetScaffoldState,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -31,7 +34,7 @@ fun ProfileModalDrawer(
         Text(text = "Text in Drawer")
         Button(onClick = {
             scope.launch {
-                scaffoldState.drawerState.close()
+                bottomScaffoldState.drawerState.close()
             }
         }) {
             Text(text = "Close Drawer")

@@ -340,7 +340,7 @@ fun CalendarScreen(routeAction: RouteAction) {
         drawerContent = {
             ProfileModalDrawer(
                 scope = scope,
-                scaffoldState = scaffoldState
+                bottomScaffoldState = bottomScaffoldState
             )
         }, topBar = {
             CenterAlignedTopAppBar(title = {
@@ -383,7 +383,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 actions = {
                     IconButton(onClick = {
                         scope.launch {
-                            scaffoldState.drawerState.open()
+                            bottomScaffoldState.drawerState.open()
                         }
                     }) {
                         Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
@@ -524,7 +524,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                             }))
                         Spacer(modifier = Modifier.height(6.dp))
                     }
-                    TodoItemList(Todo = todoList, todoList, onTodoItemClick = { todo ->
+                    TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = { todo ->
                         scope.launch {
                             bottomScaffoldState.bottomSheetState.expand()
                         }
@@ -737,7 +737,7 @@ fun DeleteBackground() {
 fun TodoUpdateBottomSheet(
     scope: CoroutineScope,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-//    Todo: RToDoResponse,
+    Todo: RToDoResponse,
 ) {
 
     var text by remember {
@@ -798,15 +798,17 @@ fun TodoUpdateBottomSheet(
                 Text(text = "test",
                     fontSize = 15.sp,
                     lineHeight = 19.sp)
-//                Text(text = "${Todo.month}" + "월" + "${Todo.day}" + "일",
+//                Text(
+//                    text = "${Todo.month}" + "월" + "${Todo.day}" + "일",
 //                    fontSize = 15.sp,
 //                    lineHeight = 19.sp)
-                Spacer(modifier = Modifier.padding(vertical = 5.dp))
+                Spacer(modifier = Modifier.padding(vertical = 2.dp))
                 Text(text = "test",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 31.sp)
-//                Text(text = Todo.description,
+//                Text(
+//                    text = Todo.description,
 //                    fontSize = 24.sp,
 //                    fontWeight = FontWeight.Bold,
 //                    lineHeight = 31.sp)
