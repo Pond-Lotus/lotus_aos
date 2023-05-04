@@ -295,6 +295,8 @@ fun CalendarScreen(routeAction: RouteAction) {
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
     val scrollState = rememberScrollState()
 
+    val selectedTodo = remember { mutableStateOf<RToDoResponse?>(null) }
+
     LaunchedEffect(isVisibility) {
         if (isVisibility) {
             focusRequester.requestFocus()
@@ -400,7 +402,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 onButtonClick = onButtonClick)
         }, floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
         sheetContent = {
-            TodoUpdateBottomSheet(scope, bottomScaffoldState)
+            TodoUpdateBottomSheet(scope, bottomScaffoldState, selectedTodo.value)
         }, sheetPeekHeight = 0.dp, sheetShape = RoundedCornerShape(20.dp)
 
     ) {
@@ -487,7 +489,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     .fillMaxSize()
                     .padding(top = 15.dp, start = 21.dp, end = 21.dp)) {
 
-                    if (showTodoInput) {
+                    if (isVisibility) {
                         TextField(modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
@@ -520,15 +522,20 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 })
                                 keyboardController?.hide()
                                 title = ""
-                                showTodoInput = !showTodoInput
+                                isVisibility = !isVisibility
                             }))
                         Spacer(modifier = Modifier.height(6.dp))
                     }
-                    TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = { todo ->
-                        scope.launch {
-                            bottomScaffoldState.bottomSheetState.expand()
+                    TodoItemList(Todo = todoList, todoList = todoList,
+//                        onTodoItemClick = {
+
+//                    }
+                        onTodoItemClick = { selectedTodo.value = it
+                            scope.launch {
+                                bottomScaffoldState.bottomSheetState.expand()
+                            }
                         }
-                    })
+                    )
                 }
             }
         }
@@ -709,7 +716,7 @@ fun TodoItemList(
                 background = { DeleteBackground() },
                 directions = setOf(DismissDirection.EndToStart),
                 dismissContent = {
-                    TodoItem(Todo = item, onTodoItemClick = onTodoItemClick)
+                    TodoItem(Todo = item, onTodoItemClick = { onTodoItemClick(it)})
                 },
                 dismissThresholds = {
                     androidx.compose.material.FractionalThreshold(fraction = 0.2f)
@@ -737,7 +744,7 @@ fun DeleteBackground() {
 fun TodoUpdateBottomSheet(
     scope: CoroutineScope,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-    Todo: RToDoResponse,
+    Todo: RToDoResponse?,
 ) {
 
     var text by remember {
@@ -795,23 +802,23 @@ fun TodoUpdateBottomSheet(
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start) {
 
-                Text(text = "test",
-                    fontSize = 15.sp,
-                    lineHeight = 19.sp)
-//                Text(
-//                    text = "${Todo.month}" + "월" + "${Todo.day}" + "일",
+//                Text(text = "test",
 //                    fontSize = 15.sp,
 //                    lineHeight = 19.sp)
+                Text(
+                    text = "${Todo?.month}" + "월 " + "${Todo?.day}" + "일",
+                    fontSize = 15.sp,
+                    lineHeight = 19.sp)
                 Spacer(modifier = Modifier.padding(vertical = 2.dp))
-                Text(text = "test",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 31.sp)
-//                Text(
-//                    text = Todo.description,
+//                Text(text = "test",
 //                    fontSize = 24.sp,
 //                    fontWeight = FontWeight.Bold,
 //                    lineHeight = 31.sp)
+                Text(
+                    text = "${Todo?.title}",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 31.sp)
             }
         }
 
