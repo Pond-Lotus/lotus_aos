@@ -12,7 +12,7 @@ interface UpdateTodoRequest {
     @PUT("/todo/todo/{id}/")
     fun requestUpdateTodo(
         @Header("Authorization") token: String,
-        @Path("id") id: Int,
+        @Path("id") id: String,
         @Body createUpdateRequest: UpdateTodo,
     ): Call<UpdateTodoResponse>
 }

@@ -10,8 +10,8 @@ interface ReadTodoRequest {
     @GET("/todo/todo/")
     fun requestReadTodo(
         @Header("Authorization") token: String,
-        @Query("year") year: Int,
-        @Query("month") month: Int,
-        @Query("day") day: Int
+        @Query("year") year: String,
+        @Query("month") month: String,
+        @Query("day") day: String
         ): Call<ReadTodoResponse>
 }

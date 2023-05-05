@@ -10,6 +10,6 @@ interface DeleteTodoRequest {
     @DELETE("/todo/todo/{id}/")
     fun requestDeleteTodo(
         @Header("Authorization") token: String,
-        @Path("id") id: Int
+        @Path("id") id: String
     ): Call<DeleteTodoResponse>
 }

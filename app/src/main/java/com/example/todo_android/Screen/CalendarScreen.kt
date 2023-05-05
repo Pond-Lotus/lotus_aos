@@ -84,9 +84,9 @@ fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
 
 fun createTodo(
     token: String,
-    year: Int,
-    month: Int,
-    day: Int,
+    year: String,
+    month: String,
+    day: String,
     title: String,
     color: String,
     response: (CreateTodoResponse?) -> Unit,
@@ -126,9 +126,9 @@ fun createTodo(
 
 fun readTodo(
     token: String,
-    year: Int,
-    month: Int,
-    day: Int,
+    year: String,
+    month: String,
+    day: String,
     response: (ReadTodoResponse?) -> Unit,
 ) {
 
@@ -165,7 +165,7 @@ fun readTodo(
 
 fun deleteTodo(
     token: String,
-    id: Int,
+    id: String,
     response: (DeleteTodoResponse?) -> Unit,
 ) {
     var deleteTodoResponse: DeleteTodoResponse? = null
@@ -200,15 +200,16 @@ fun deleteTodo(
 
 fun updateTodo(
     token: String,
-    year: Int,
-    month: Int,
-    day: Int,
+    year: String,
+    month: String,
+    day: String,
     title: String,
     done: Boolean,
     description: String,
-    color: Int,
+    color: String,
     time: String,
-    id: Int,
+    id: String,
+    response: (UpdateTodoResponse?) -> Unit,
 ) {
 
     var updateTodoResponse: UpdateTodoResponse? = null
@@ -237,9 +238,10 @@ fun updateTodo(
                 if (response.isSuccessful) {
                     updateTodoResponse = response.body()
 
+                    response(updateTodoResponse)
+
                     Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
                     Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
-                    Log.d("updateTodo", "data : " + updateTodoResponse?.data)
                 } else {
                     Log.e("updateTodo", "resultCode : " + response.body())
                     Log.e("updateTodo", "code : " + response.code())
@@ -275,13 +277,13 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
-    var year by remember { mutableStateOf(0) }
-    var month by remember { mutableStateOf(0) }
-    var day by remember { mutableStateOf(0) }
+    var year by remember { mutableStateOf("") }
+    var month by remember { mutableStateOf("") }
+    var day by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("") }
     var time = "0000"
 
-    var color by remember { mutableStateOf("0") }
+    var color by remember { mutableStateOf("") }
 
     var todoList = remember { mutableStateListOf<RToDoResponse>() }
 
@@ -430,17 +432,17 @@ fun CalendarScreen(routeAction: RouteAction) {
                         headerTextColor = Color.Black),
                     onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
-                        year = kalendarDay.localDate.year
-                        month = kalendarDay.localDate.monthNumber
-                        day = kalendarDay.localDate.dayOfMonth
+                        year = kalendarDay.localDate.year.toString()
+                        month = kalendarDay.localDate.monthNumber.toString()
+                        day = kalendarDay.localDate.dayOfMonth.toString()
 
-                        readTodo(token, year, month, day, response = {
+                        readTodo(token, year.toString(), month.toString(), day.toString()) {
 
                             todoList.clear()
                             for (i in it!!.data) {
                                 todoList.add(i)
                             }
-                        })
+                        }
                     })
             } else {
                 Kalendar(modifier = Modifier
@@ -457,24 +459,24 @@ fun CalendarScreen(routeAction: RouteAction) {
                         headerTextColor = Color.Black),
                     onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
-                        year = kalendarDay.localDate.year
-                        month = kalendarDay.localDate.monthNumber
-                        day = kalendarDay.localDate.dayOfMonth
+                        year = kalendarDay.localDate.year.toString()
+                        month = kalendarDay.localDate.monthNumber.toString()
+                        day = kalendarDay.localDate.dayOfMonth.toString()
 
-                        readTodo(token, year, month, day, response = {
+                        readTodo(token, year, month, day) {
 
                             todoList.clear()
                             for (i in it!!.data) {
                                 todoList.add(i)
                             }
-                        })
+                        }
                     })
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 21.dp, end = 21.dp, top = 30.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = day.toString(),
+                    Text(text = day,
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(end = 5.dp))
@@ -508,29 +510,26 @@ fun CalendarScreen(routeAction: RouteAction) {
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
                                 imeAction = ImeAction.Done),
                             keyboardActions = KeyboardActions(onDone = {
-                                createTodo(token, year, month, day, title, color, response = {
+                                createTodo(token, year, month, day, title, color) {
                                     readTodo(token,
                                         year = year,
                                         month = month,
-                                        day = day,
-                                        response = {
-                                            todoList.clear()
-                                            for (i in it!!.data) {
-                                                todoList.add(i)
-                                            }
-                                        })
-                                })
+                                        day = day
+                                    ) {
+                                        todoList.clear()
+                                        for (i in it!!.data) {
+                                            todoList.add(i)
+                                        }
+                                    }
+                                }
                                 keyboardController?.hide()
                                 title = ""
                                 isVisibility = !isVisibility
                             }))
                         Spacer(modifier = Modifier.height(6.dp))
                     }
-                    TodoItemList(Todo = todoList, todoList = todoList,
-//                        onTodoItemClick = {
-
-//                    }
-                        onTodoItemClick = { selectedTodo.value = it
+                    TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = {
+                            selectedTodo.value = it
                             scope.launch {
                                 bottomScaffoldState.bottomSheetState.expand()
                             }
@@ -664,7 +663,7 @@ fun TodoItem(Todo: RToDoResponse, onTodoItemClick: (RToDoResponse) -> Unit) {
             .height(50.dp)
             .clickable {
                 onTodoItemClick(Todo)
-                Log.d("onclick", "onClick: ${Todo.id}")
+                Log.d("onclick", "onClick: ${Todo.id} ${Todo.year} ${Todo.month} ${Todo.day} ${Todo.color} ${Todo.description} ${Todo.time}")
             }) {
         Row(modifier = Modifier.padding(start = 13.dp, top = 15.dp, bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -700,15 +699,15 @@ fun TodoItemList(
                 deleteTodo(token, item.id, response = {
                     todoList.remove(item)
                     readTodo(token,
-                        year = item.year,
-                        month = item.month,
-                        day = item.day,
-                        response = {
-                            todoList.clear()
-                            for (i in it!!.data) {
-                                todoList.add(i)
-                            }
-                        })
+                        year = item.year.toString(),
+                        month = item.month.toString(),
+                        day = item.day.toString()
+                    ) {
+                        todoList.clear()
+                        for (i in it!!.data) {
+                            todoList.add(i)
+                        }
+                    }
                 })
             }
 
@@ -716,7 +715,7 @@ fun TodoItemList(
                 background = { DeleteBackground() },
                 directions = setOf(DismissDirection.EndToStart),
                 dismissContent = {
-                    TodoItem(Todo = item, onTodoItemClick = { onTodoItemClick(it)})
+                    TodoItem(Todo = item, onTodoItemClick = { onTodoItemClick(it) })
                 },
                 dismissThresholds = {
                     androidx.compose.material.FractionalThreshold(fraction = 0.2f)
@@ -744,7 +743,7 @@ fun DeleteBackground() {
 fun TodoUpdateBottomSheet(
     scope: CoroutineScope,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-    Todo: RToDoResponse?,
+    Todo: RToDoResponse?
 ) {
 
     var text by remember {
@@ -752,6 +751,10 @@ fun TodoUpdateBottomSheet(
     }
 
     var color by remember { mutableStateOf("0") }
+
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
+    var todoList = remember { mutableStateListOf<RToDoResponse>() }
 
     val onButtonClick: (String) -> Unit = { id ->
         when (id) {
@@ -806,6 +809,28 @@ fun TodoUpdateBottomSheet(
                 .height(30.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
                 onClick = {
+
+                    updateTodo(token,
+                        Todo?.year.toString(),
+                        Todo?.month.toString(),
+                        Todo?.day.toString(),
+                        Todo?.title.toString(),
+                        Todo?.done!!,
+                        text,
+                        color,
+                        Todo?.time.toString(),
+                        Todo?.id.toString(),
+                        response = {
+                            readTodo(token, Todo?.year.toString(), Todo?.month.toString(), Todo?.day.toString()) {
+                                todoList.clear()
+                                for (i in it!!.data) {
+                                    todoList.add(i)
+                                }
+
+                            }
+                        })
+
+
                     scope.launch {
                         bottomSheetScaffoldState.bottomSheetState.collapse()
                     }
@@ -834,7 +859,8 @@ fun TodoUpdateBottomSheet(
                 horizontalAlignment = Alignment.Start) {
 
                 Text(
-                    text = "${Todo?.month}" + "월 " + "${Todo?.day}" + "일",
+//                    text = "${Todo?.month}" + "월 " + "${Todo?.day}" + "일",
+                    text = "${Todo?.month}월 ${Todo?.day}일",
                     fontSize = 15.sp,
                     lineHeight = 19.sp)
                 Spacer(modifier = Modifier.padding(vertical = 2.dp))
@@ -851,7 +877,7 @@ fun TodoUpdateBottomSheet(
 //
 //                )
                 Text(
-                    text = "${Todo?.title}",
+                    text = Todo?.title.toString(),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 31.sp)
@@ -905,26 +931,32 @@ fun TodoUpdateBottomSheet(
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
                 onClick = {
+                    onButtonClick("1")
                 }, content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
                 onClick = {
+                    onButtonClick("2")
                 }, content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
                 onClick = {
+                    onButtonClick("3")
                 }, content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
                 onClick = {
+                    onButtonClick("4")
                 }, content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
                 onClick = {
+                    onButtonClick("5")
                 }, content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
                 onClick = {
+                    onButtonClick("6")
                 }, content = {})
         }
     }

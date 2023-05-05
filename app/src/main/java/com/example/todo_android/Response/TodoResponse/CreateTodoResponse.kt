@@ -12,11 +12,11 @@ data class CreateTodoResponse(
 
 // 응답값으로 data의 디테일한 값들
 data class CTodoResponse(
-    val id: Int,
+    val id: String,
     val writer: String,
-    val year: Int,
-    val month: Int,
-    val day: Int,
+    val year: String,
+    val month: String,
+    val day: String,
     val title: String,
     val description: String,
     val done: Boolean,
