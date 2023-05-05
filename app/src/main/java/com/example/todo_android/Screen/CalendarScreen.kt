@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -41,10 +42,12 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Component.*
@@ -404,7 +407,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 onButtonClick = onButtonClick)
         }, floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
         sheetContent = {
-            TodoUpdateBottomSheet(scope, bottomScaffoldState, selectedTodo.value)
+            TodoUpdateBottomSheet(scope, bottomScaffoldState, selectedTodo?.value, todoList)
         }, sheetPeekHeight = 0.dp, sheetShape = RoundedCornerShape(20.dp)
 
     ) {
@@ -529,11 +532,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                         Spacer(modifier = Modifier.height(6.dp))
                     }
                     TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = {
-                            selectedTodo.value = it
-                            scope.launch {
-                                bottomScaffoldState.bottomSheetState.expand()
-                            }
+                        selectedTodo.value = it
+                        scope.launch {
+                            bottomScaffoldState.bottomSheetState.expand()
                         }
+                    }
                     )
                 }
             }
@@ -663,7 +666,8 @@ fun TodoItem(Todo: RToDoResponse, onTodoItemClick: (RToDoResponse) -> Unit) {
             .height(50.dp)
             .clickable {
                 onTodoItemClick(Todo)
-                Log.d("onclick", "onClick: ${Todo.id} ${Todo.year} ${Todo.month} ${Todo.day} ${Todo.color} ${Todo.description} ${Todo.time}")
+                Log.d("onclick",
+                    "onClick: ${Todo.id} ${Todo.year} ${Todo.month} ${Todo.day} ${Todo.color} title: ${Todo.title} ${Todo.description}")
             }) {
         Row(modifier = Modifier.padding(start = 13.dp, top = 15.dp, bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -699,9 +703,9 @@ fun TodoItemList(
                 deleteTodo(token, item.id, response = {
                     todoList.remove(item)
                     readTodo(token,
-                        year = item.year.toString(),
-                        month = item.month.toString(),
-                        day = item.day.toString()
+                        year = item.year,
+                        month = item.month,
+                        day = item.day
                     ) {
                         todoList.clear()
                         for (i in it!!.data) {
@@ -743,18 +747,23 @@ fun DeleteBackground() {
 fun TodoUpdateBottomSheet(
     scope: CoroutineScope,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-    Todo: RToDoResponse?
+    Todo: RToDoResponse?,
+    todoList: MutableList<RToDoResponse>,
 ) {
 
-    var text by remember {
+//    var title by remember {
+//        mutableStateOf(Todo?.title)
+//    }.apply { value = Todo?.title }
+
+    var title by remember { mutableStateOf("") }
+
+    var description by remember {
         mutableStateOf("")
     }
 
     var color by remember { mutableStateOf("0") }
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
-
-    var todoList = remember { mutableStateListOf<RToDoResponse>() }
 
     val onButtonClick: (String) -> Unit = { id ->
         when (id) {
@@ -787,7 +796,7 @@ fun TodoUpdateBottomSheet(
 
     Column(modifier = Modifier
         .fillMaxWidth()
-        .height(380.dp)
+        .height(400.dp)
         .padding(start = 25.dp, end = 25.dp, top = 35.dp)) {
         Row(modifier = Modifier
             .fillMaxWidth()
@@ -814,14 +823,17 @@ fun TodoUpdateBottomSheet(
                         Todo?.year.toString(),
                         Todo?.month.toString(),
                         Todo?.day.toString(),
-                        Todo?.title.toString(),
+                        title.toString(),
                         Todo?.done!!,
-                        text,
+                        description,
                         color,
                         Todo?.time.toString(),
                         Todo?.id.toString(),
                         response = {
-                            readTodo(token, Todo?.year.toString(), Todo?.month.toString(), Todo?.day.toString()) {
+                            readTodo(token,
+                                Todo?.year.toString(),
+                                Todo?.month.toString(),
+                                Todo?.day.toString()) {
                                 todoList.clear()
                                 for (i in it!!.data) {
                                     todoList.add(i)
@@ -829,7 +841,6 @@ fun TodoUpdateBottomSheet(
 
                             }
                         })
-
 
                     scope.launch {
                         bottomSheetScaffoldState.bottomSheetState.collapse()
@@ -859,36 +870,32 @@ fun TodoUpdateBottomSheet(
                 horizontalAlignment = Alignment.Start) {
 
                 Text(
-//                    text = "${Todo?.month}" + "월 " + "${Todo?.day}" + "일",
                     text = "${Todo?.month}월 ${Todo?.day}일",
                     fontSize = 15.sp,
                     lineHeight = 19.sp)
-                Spacer(modifier = Modifier.padding(vertical = 2.dp))
-//                TextField(
-//                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-//                    value = "${Todo?.title}",
-//                    onValueChange = { text = it },
-//                    colors = TextFieldDefaults.textFieldColors(
-//                        containerColor = Color.White,
-//                        disabledLabelColor = Color.White,
-//                        focusedIndicatorColor = Color.Transparent,
-//                        unfocusedIndicatorColor = Color.Transparent),
-//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-//
-//                )
-                Text(
-                    text = Todo?.title.toString(),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 31.sp)
+
+                BasicTextField(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .wrapContentHeight(),
+                    value = title,
+                    onValueChange = { title = it },
+                    textStyle = TextStyle(
+                        color = Color.Black,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 31.sp
+                    ),
+                    singleLine = true
+                )
             }
         }
 
         TextField(modifier = Modifier
             .fillMaxWidth()
-            .height(64.dp)
+            .height(75.dp)
             .padding(bottom = 22.dp),
-            value = text,
+            value = description,
             colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF2F2F2),
                 disabledLabelColor = Color(0xffF2F2F2),
                 focusedIndicatorColor = Color.Transparent,
@@ -897,7 +904,7 @@ fun TodoUpdateBottomSheet(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             shape = RoundedCornerShape(10.dp),
             onValueChange = {
-                text = it
+                description = it
             })
 
         Row(
@@ -915,7 +922,7 @@ fun TodoUpdateBottomSheet(
                 fontWeight = FontWeight.Bold,
                 lineHeight = 19.sp,
                 fontSize = 19.sp)
-            Text(text = "${Todo?.time}",
+            Text(text = Todo?.time.toString(),
                 lineHeight = 19.sp,
                 fontSize = 19.sp)
         }
