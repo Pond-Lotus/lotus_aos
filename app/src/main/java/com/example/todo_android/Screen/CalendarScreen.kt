@@ -86,6 +86,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Calendar
 
 fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
@@ -298,6 +299,10 @@ fun CalendarScreen(routeAction: RouteAction) {
         mutableStateOf(Color)
     }
 
+    var dayString by remember {
+        mutableStateOf("")
+    }
+
     var todoList = remember { mutableStateListOf<RToDoResponse>() }
 
     val focusRequester = remember { FocusRequester() }
@@ -311,7 +316,6 @@ fun CalendarScreen(routeAction: RouteAction) {
     val scrollState = rememberScrollState()
 
     val selectedTodo = remember { mutableStateOf<RToDoResponse?>(null) }
-
     LaunchedEffect(isVisibility) {
         if (isVisibility) {
             focusRequester.requestFocus()
@@ -495,6 +499,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(end = 5.dp))
+
+                    /*Text(text = cal.toString(),
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(end = 5.dp))*/
 
                     Divider(modifier = Modifier
                         .fillMaxWidth()
@@ -789,39 +798,6 @@ fun TodoItemList(
                     })
             }
         }
-
-
-//        items(items = Todo, key = { Todo -> Todo.id }) { item ->
-//
-//            val dismissState = androidx.compose.material.rememberDismissState()
-//            val dismissDirection = dismissState.dismissDirection
-//            val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
-//            if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-//                deleteTodo(token, item.id, response = {
-//                    todoList.remove(item)
-//                    readTodo(token,
-//                        year = item.year,
-//                        month = item.month,
-//                        day = item.day
-//                    ) {
-//                        todoList.clear()
-//                        for (i in it!!.data) {
-//                            todoList.add(i)
-//                        }
-//                    }
-//                })
-//            }
-//
-//            androidx.compose.material.SwipeToDismiss(state = dismissState,
-//                background = { DeleteBackground() },
-//                directions = setOf(DismissDirection.EndToStart),
-//                dismissContent = {
-//                    TodoItem(Todo = item, onTodoItemClick = { onTodoItemClick(it) })
-//                },
-//                dismissThresholds = {
-//                    androidx.compose.material.FractionalThreshold(fraction = 0.2f)
-//                })
-//        }
     }
 }
 
