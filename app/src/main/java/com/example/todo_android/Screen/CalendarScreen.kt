@@ -2,10 +2,12 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Space
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -14,6 +16,8 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.icons.Icons
@@ -63,6 +67,7 @@ import com.example.todo_android.Request.TodoRequest.ReadTodoRequest
 import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
 import com.example.todo_android.Response.TodoResponse.*
 import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.ui.theme.backButtonColor
 import com.example.todo_android.ui.theme.deleteBackground
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.color.KalendarThemeColor
@@ -289,6 +294,9 @@ fun CalendarScreen(routeAction: RouteAction) {
     var time = "0000"
 
     var color by remember { mutableStateOf("") }
+    var groupColors by remember {
+        mutableStateOf(Color)
+    }
 
     var todoList = remember { mutableStateListOf<RToDoResponse>() }
 
@@ -355,7 +363,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             CenterAlignedTopAppBar(title = {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Row(modifier = Modifier
-                        .width(115.dp)
+                        .width(120.dp)
                         .height(35.dp)
                         .clip(shape = RoundedCornerShape(24.dp))
                         .background(Color(0xffe9e9ed))
@@ -475,9 +483,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                             }
                         }
                     })
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 21.dp, end = 21.dp, top = 30.dp),
+            }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 21.dp, end = 21.dp, top = 30.dp),
+//                    .padding(start = 21.dp, end = 50.dp, top = 30.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically) {
                     Text(text = day,
@@ -537,14 +548,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                         scope.launch {
                             bottomScaffoldState.bottomSheetState.expand()
                         }
-                    }
-                    )
+                    })
                 }
             }
         }
-
     }
-}
 
 @Composable
 fun AddTodoFloatingButton(
@@ -673,9 +681,23 @@ fun TodoItem(Todo: RToDoResponse, onTodoItemClick: (RToDoResponse) -> Unit) {
         Row(modifier = Modifier.padding(start = 13.dp, top = 15.dp, bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
-            Checkbox(checked = checked, onCheckedChange = {
-                checked = it
-            })
+            Checkbox(
+                checked = checked,
+                onCheckedChange = {
+                checked = it },
+                colors = CheckboxDefaults.colors(
+                    when(Todo.color){
+                        1 -> Color(0xffFFB4B4)
+                        2 -> Color(0xffFFDCA8)
+                        3 -> Color(0xffB1E0CF)
+                        4 -> Color(0xffB7D7F5)
+                        5 -> Color(0xffFFB8EB)
+                        6 -> Color(0xffB6B1EC)
+                        else -> Color.Black
+                    }
+                )
+
+            )
             Text(text = Todo.title, fontSize = 13.sp, fontStyle = FontStyle.Normal)
         }
     }
@@ -697,14 +719,43 @@ fun TodoItemList(
 
     LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
-        val grouped = Todo.groupBy {it.color}
+        val grouped = Todo.groupBy { it.color }
 
         grouped.forEach { (header, items) ->
-            stickyHeader{
-                Text(
-                    text = "그룹 ${header.toString()}",
-                    style = MaterialTheme.typography.titleMedium
-                )
+
+            stickyHeader {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Button(
+                        modifier = Modifier.size(9.dp),
+                        onClick = { /*TODO*/ },
+                        enabled = false,
+                        content = {},
+                        colors = ButtonDefaults.buttonColors(
+                            disabledContainerColor = when(header){
+                                1 -> Color(0xffFFB4B4)
+                                2 -> Color(0xffFFDCA8)
+                                3 -> Color(0xffB1E0CF)
+                                4 -> Color(0xffB7D7F5)
+                                5 -> Color(0xffFFB8EB)
+                                6 -> Color(0xffB6B1EC)
+                                else -> Color.Black
+                            }
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+
+                    Text(
+                        text = "그룹 $header",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp,
+                        lineHeight = 17.sp
+                    )
+                }
             }
             items(items = items, key = { Todo -> Todo.id }) { item ->
 
