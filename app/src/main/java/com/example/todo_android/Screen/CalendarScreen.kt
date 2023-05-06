@@ -26,6 +26,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -253,6 +254,7 @@ fun updateTodo(
         })
 }
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalMaterialApi
@@ -386,16 +388,15 @@ fun CalendarScreen(routeAction: RouteAction) {
                         }
                     }
                 }
-            },
-                actions = {
-                    IconButton(onClick = {
-                        scope.launch {
-                            bottomScaffoldState.drawerState.open()
-                        }
-                    }) {
-                        Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    scope.launch {
+                        bottomScaffoldState.drawerState.open()
                     }
-                },
+                }) {
+                    Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
+                }
+            },
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White,
                     titleContentColor = Color.Black))
         }, floatingActionButton = {
@@ -680,6 +681,7 @@ fun TodoItem(Todo: RToDoResponse, onTodoItemClick: (RToDoResponse) -> Unit) {
     }
 }
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
@@ -692,39 +694,83 @@ fun TodoItemList(
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
+
     LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
-        items(items = Todo, key = { Todo -> Todo.id }) { item ->
+        val grouped = Todo.groupBy {it.color}
 
-            val dismissState = androidx.compose.material.rememberDismissState()
-            val dismissDirection = dismissState.dismissDirection
-            val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
-            if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-                deleteTodo(token, item.id, response = {
-                    todoList.remove(item)
-                    readTodo(token,
-                        year = item.year,
-                        month = item.month,
-                        day = item.day
-                    ) {
-                        todoList.clear()
-                        for (i in it!!.data) {
-                            todoList.add(i)
-                        }
-                    }
-                })
+        grouped.forEach { (header, items) ->
+            stickyHeader{
+                Text(
+                    text = "그룹 ${header.toString()}",
+                    style = MaterialTheme.typography.titleMedium
+                )
             }
+            items(items = items, key = { Todo -> Todo.id }) { item ->
 
-            androidx.compose.material.SwipeToDismiss(state = dismissState,
-                background = { DeleteBackground() },
-                directions = setOf(DismissDirection.EndToStart),
-                dismissContent = {
-                    TodoItem(Todo = item, onTodoItemClick = { onTodoItemClick(it) })
-                },
-                dismissThresholds = {
-                    androidx.compose.material.FractionalThreshold(fraction = 0.2f)
-                })
+                val dismissState = androidx.compose.material.rememberDismissState()
+                val dismissDirection = dismissState.dismissDirection
+                val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
+                if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+                    deleteTodo(token, item.id, response = {
+                        todoList.remove(item)
+                        readTodo(token,
+                            year = item.year,
+                            month = item.month,
+                            day = item.day
+                        ) {
+                            todoList.clear()
+                            for (i in it!!.data) {
+                                todoList.add(i)
+                            }
+                        }
+                    })
+                }
+
+                androidx.compose.material.SwipeToDismiss(state = dismissState,
+                    background = { DeleteBackground() },
+                    directions = setOf(DismissDirection.EndToStart),
+                    dismissContent = {
+                        TodoItem(Todo = item, onTodoItemClick = { onTodoItemClick(it) })
+                    },
+                    dismissThresholds = {
+                        androidx.compose.material.FractionalThreshold(fraction = 0.2f)
+                    })
+            }
         }
+
+
+//        items(items = Todo, key = { Todo -> Todo.id }) { item ->
+//
+//            val dismissState = androidx.compose.material.rememberDismissState()
+//            val dismissDirection = dismissState.dismissDirection
+//            val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
+//            if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+//                deleteTodo(token, item.id, response = {
+//                    todoList.remove(item)
+//                    readTodo(token,
+//                        year = item.year,
+//                        month = item.month,
+//                        day = item.day
+//                    ) {
+//                        todoList.clear()
+//                        for (i in it!!.data) {
+//                            todoList.add(i)
+//                        }
+//                    }
+//                })
+//            }
+//
+//            androidx.compose.material.SwipeToDismiss(state = dismissState,
+//                background = { DeleteBackground() },
+//                directions = setOf(DismissDirection.EndToStart),
+//                dismissContent = {
+//                    TodoItem(Todo = item, onTodoItemClick = { onTodoItemClick(it) })
+//                },
+//                dismissThresholds = {
+//                    androidx.compose.material.FractionalThreshold(fraction = 0.2f)
+//                })
+//        }
     }
 }
 
@@ -757,11 +803,9 @@ fun TodoUpdateBottomSheet(
 
     var title by remember { mutableStateOf("") }
 
-    var description by remember {
-        mutableStateOf("")
-    }
+    var description by remember { mutableStateOf("") }
 
-    var color by remember { mutableStateOf("0") }
+    var color by remember { mutableStateOf("1") }
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
@@ -841,6 +885,9 @@ fun TodoUpdateBottomSheet(
 
                             }
                         })
+
+                    title = ""
+                    description = ""
 
                     scope.launch {
                         bottomSheetScaffoldState.bottomSheetState.collapse()
