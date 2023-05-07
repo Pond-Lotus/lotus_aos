@@ -674,7 +674,7 @@ fun TodoItem(Todo: RToDoResponse, onTodoItemClick: (RToDoResponse) -> Unit) {
     Card(colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
-            .width(350.dp)
+            .fillMaxWidth()
             .height(50.dp)
             .clickable {
                 onTodoItemClick(Todo)
