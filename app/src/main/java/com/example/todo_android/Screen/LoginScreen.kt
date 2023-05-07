@@ -80,6 +80,7 @@ fun sendLogin(
                     goCalendar(NAV_ROUTE.CALENDAR, routeAction)
                     MyApplication.prefs.setData("token", loginResponse?.token.toString())
                     MyApplication.prefs.setData("email", loginResponse?.email.toString())
+                    MyApplication.prefs.setData("nickname", loginResponse?.nickname.toString())
 
                     Log.d("LOGIN", "resultCode : " + loginResponse?.resultCode)
                     Log.d("LOGIN", "token : " + loginResponse?.token)

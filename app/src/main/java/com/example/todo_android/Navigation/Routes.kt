@@ -1,5 +1,6 @@
 package com.example.todo_android.Navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
     LOTTIE("LOTTIE", "로티 화면")
 }
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api

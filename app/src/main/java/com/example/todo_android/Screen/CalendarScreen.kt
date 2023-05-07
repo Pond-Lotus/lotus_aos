@@ -492,18 +492,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 21.dp, end = 21.dp, top = 30.dp),
-//                    .padding(start = 21.dp, end = 50.dp, top = 30.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically) {
                     Text(text = day,
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(end = 5.dp))
-
-                    /*Text(text = cal.toString(),
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(end = 5.dp))*/
 
                     Divider(modifier = Modifier
                         .fillMaxWidth()
@@ -875,12 +869,10 @@ fun TodoUpdateBottomSheet(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween) {
             androidx.compose.material.IconButton(
-
                 onClick = {
                     scope.launch {
                         bottomSheetScaffoldState.bottomSheetState.collapse()
-                    }
-                }) {
+                    }}) {
                 Icon(imageVector = Icons.Filled.Close, contentDescription = null
                 )
             }
