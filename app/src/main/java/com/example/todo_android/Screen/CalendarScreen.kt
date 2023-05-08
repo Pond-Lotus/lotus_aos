@@ -81,16 +81,13 @@ import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import okhttp3.Route
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Calendar
-
-fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
-    routeAction.navTo(route)
-}
 
 fun createTodo(
     token: String,
@@ -361,7 +358,8 @@ fun CalendarScreen(routeAction: RouteAction) {
         drawerContent = {
             ProfileModalDrawer(
                 scope = scope,
-                bottomScaffoldState = bottomScaffoldState
+                bottomScaffoldState = bottomScaffoldState,
+                routeAction = routeAction
             )
         }, topBar = {
             CenterAlignedTopAppBar(title = {

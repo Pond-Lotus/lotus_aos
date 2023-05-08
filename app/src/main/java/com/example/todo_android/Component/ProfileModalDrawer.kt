@@ -25,17 +25,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.todo_android.Navigation.Action.RouteAction
+import com.example.todo_android.Navigation.NAV_ROUTE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import com.example.todo_android.R
 import com.example.todo_android.Util.MyApplication
+
+fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
+    routeAction.navTo(route)
+}
 
 @ExperimentalMaterialApi
 @Composable
 fun ProfileModalDrawer(
     scope: CoroutineScope,
     bottomScaffoldState: BottomSheetScaffoldState,
+    routeAction: RouteAction
 ) {
 
     val nickname: String = MyApplication.prefs.getData("nickname", "")
@@ -71,7 +78,12 @@ fun ProfileModalDrawer(
                     lineHeight = 16.sp)
             }
 
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = {
+                scope.launch {
+                    bottomScaffoldState.drawerState.close()
+                }
+                goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
+            }) {
                 Icon(modifier = Modifier
                     .size(24.dp)
                     .padding(start = 5.dp),
@@ -83,23 +95,21 @@ fun ProfileModalDrawer(
         Divider(modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 21.dp),
-            color = Color(0xffe9e9e9))
+            color = Color(0xffe9e9e9),
+            thickness = 1.dp)
 
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 2.dp, bottom = 20.dp),
+        Text(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 2.dp, bottom = 20.dp),
             text = "환경 설정",
             fontWeight = FontWeight.Bold,
             fontSize = 13.sp,
             lineHeight = 17.sp)
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 2.dp, bottom = 22.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 2.dp, bottom = 22.dp),
+            verticalAlignment = Alignment.CenterVertically) {
 
             Image(modifier = Modifier
                 .size(22.dp)
@@ -107,21 +117,17 @@ fun ProfileModalDrawer(
                 painter = painterResource(id = R.drawable.setting),
                 contentDescription = null)
 
-            Text(
-                modifier = Modifier
-                    .wrapContentWidth(),
+            Text(modifier = Modifier.wrapContentWidth(),
                 text = "비밀번호 변경",
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
                 lineHeight = 17.sp)
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 22.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 2.dp, bottom = 22.dp),
+            verticalAlignment = Alignment.CenterVertically) {
 
             Image(modifier = Modifier
                 .size(22.dp)
@@ -129,21 +135,17 @@ fun ProfileModalDrawer(
                 painter = painterResource(id = R.drawable.setting),
                 contentDescription = null)
 
-            Text(
-                modifier = Modifier
-                    .wrapContentWidth(),
+            Text(modifier = Modifier.wrapContentWidth(),
                 text = "알림 설정",
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
                 lineHeight = 17.sp)
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 28.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 2.dp, bottom = 28.dp),
+            verticalAlignment = Alignment.CenterVertically) {
 
             Image(modifier = Modifier
                 .size(22.dp)
@@ -151,9 +153,7 @@ fun ProfileModalDrawer(
                 painter = painterResource(id = R.drawable.setting),
                 contentDescription = null)
 
-            Text(
-                modifier = Modifier
-                    .wrapContentWidth(),
+            Text(modifier = Modifier.wrapContentWidth(),
                 text = "테마 변경",
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
@@ -163,28 +163,25 @@ fun ProfileModalDrawer(
         Divider(modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 21.dp),
-            color = Color(0xffe9e9e9))
+            color = Color(0xffe9e9e9),
+            thickness = 1.dp)
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 19.dp),
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 19.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+            horizontalArrangement = Arrangement.SpaceBetween) {
 
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 2.dp),
+            Text(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 2.dp),
                 text = "그룹 설정",
                 fontWeight = FontWeight.Bold,
                 fontSize = 13.sp,
                 lineHeight = 17.sp)
 
             IconButton(onClick = { /*TODO*/ }) {
-                Icon(modifier = Modifier
-                    .size(14.dp),
+                Icon(modifier = Modifier.size(14.dp),
                     painter = painterResource(id = R.drawable.arrow),
                     contentDescription = null)
             }
@@ -195,41 +192,33 @@ fun ProfileModalDrawer(
             .padding(bottom = 28.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround) {
-            Button(
-                modifier = Modifier.size(width = 25.dp, height = 25.dp),
+            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
                 onClick = {},
                 content = {})
-            Button(
-                modifier = Modifier.size(width = 25.dp, height = 25.dp),
+            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
                 onClick = {},
                 content = {})
-            Button(
-                modifier = Modifier.size(width = 25.dp, height = 25.dp),
+            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
                 onClick = {},
                 content = {})
-            Button(
-                modifier = Modifier.size(width = 25.dp, height = 25.dp),
+            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
                 onClick = {},
                 content = {})
-            Button(
-                modifier = Modifier.size(width = 25.dp, height = 25.dp),
+            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
                 onClick = {},
                 content = {})
-            Button(
-                modifier = Modifier.size(width = 25.dp, height = 25.dp),
+            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
                 onClick = {},
                 content = {})
         }
 
-        Divider(modifier = Modifier
-            .fillMaxWidth(),
-            color = Color(0xffe9e9e9))
+        Divider(modifier = Modifier.fillMaxWidth(), color = Color(0xffe9e9e9), thickness = 1.dp)
 
 
 //        Button(onClick = {
