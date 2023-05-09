@@ -199,30 +199,6 @@ fun ProfileScreen(routeAction: RouteAction) {
         MultipartBody.Part.createFormData("image", file.name, requestFile)
     }
 
-
-//    Column(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .imePadding(),
-//        horizontalAlignment = Alignment.CenterHorizontally,
-////            verticalArrangement = Arrangement.Top
-//    ) {
-//
-//        Spacer(modifier = Modifier.height(50.dp))
-//
-//        Image(
-////                painter = painter,
-//            painter = painterResource(id = R.drawable.defaultprofile),
-//            contentDescription = "profileImage",
-//            modifier = Modifier
-//                .size(150.dp)
-//                .clickable {
-//                    openDialog = !openDialog
-//                },
-//            contentScale = ContentScale.Crop
-//        )
-//    }
-
     Scaffold(modifier = Modifier
         .fillMaxWidth()
         .imePadding(), topBar = {
@@ -341,7 +317,9 @@ fun ProfileScreen(routeAction: RouteAction) {
                 .width(120.dp)
                 .height(40.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffE9E9E9)),
-                onClick = {},
+                onClick = {
+                          routeAction.navTo(NAV_ROUTE.DELETEACCOUNT)
+                },
                 shape = RoundedCornerShape(10.dp)) {
                 Text(text = "계정 탈퇴하기",
                     color = Color(0xff8D8D8D),

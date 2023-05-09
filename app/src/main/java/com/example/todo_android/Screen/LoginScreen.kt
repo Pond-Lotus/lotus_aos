@@ -241,15 +241,14 @@ fun LoginScreen(routeAction: RouteAction) {
         Spacer(modifier = Modifier.height(10.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().clickable {
+                checked = !checked
+            },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
 
         ) {
             Image(
-                modifier = Modifier.clickable {
-                    checked = !checked
-                },
                 painter = onCheck,
                 contentDescription = null)
 
@@ -266,7 +265,7 @@ fun LoginScreen(routeAction: RouteAction) {
 
         Button(
             modifier = Modifier
-                .width(308.dp)
+                .fillMaxWidth()
                 .height(54.dp),
             colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
             onClick =

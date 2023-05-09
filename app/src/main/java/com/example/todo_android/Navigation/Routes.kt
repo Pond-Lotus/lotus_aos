@@ -21,7 +21,8 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
     CALENDAR("CALENDAR", "캘린더 화면"),
     PROFILE("PROFILE", "프로파일 화면"),
     CHANGEPASSWORD("CHANGEPASSWORD", "비밀번호 변경 화면"),
-    LOTTIE("LOTTIE", "로티 화면")
+    LOTTIE("LOTTIE", "로티 화면"),
+    DELETEACCOUNT("DELETEACCOUNT", "계정 탈퇴")
 }
 
 @ExperimentalFoundationApi
@@ -95,6 +96,13 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.LOGIN) {
         composable(NAV_ROUTE.LOTTIE.routeName) {
             // 화면이 들어가는 부분 = 값
             LottieScreen(routeAction)
+        }
+
+        //라우트 이름 = 화면의 키
+        //계정 탈퇴 화면
+        composable(NAV_ROUTE.DELETEACCOUNT.routeName) {
+            // 화면이 들어가는 부분 = 값
+            DeleteAccount(routeAction)
         }
     }
 }
