@@ -105,7 +105,7 @@ fun Register(
                             MyApplication.prefs.setData("nickname", nickname)
                             MyApplication.prefs.setData("password1", password1)
                             MyApplication.prefs.setData("password2", password2)
-                            MyApplication.prefs.setData("defaultProfileImage", encodedImage)
+                            MyApplication.prefs.setData("image", encodedImage)
 
                             goLottie(NAV_ROUTE.LOTTIE, routeAction)
                             Log.d("REGISTER", "메인 화면으로 갑니다.")
