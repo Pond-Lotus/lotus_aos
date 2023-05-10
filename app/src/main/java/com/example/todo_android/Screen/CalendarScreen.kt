@@ -353,52 +353,49 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }
     }
-    BottomSheetScaffold(
-        scaffoldState = bottomScaffoldState,
-        drawerContent = {
-            ProfileModalDrawer(
-                scope = scope,
-                bottomScaffoldState = bottomScaffoldState,
-                routeAction = routeAction
-            )
-        }, topBar = {
-            CenterAlignedTopAppBar(title = {
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Row(modifier = Modifier
-                        .width(120.dp)
-                        .height(35.dp)
-                        .clip(shape = RoundedCornerShape(24.dp))
-                        .background(Color(0xffe9e9ed))
-                        .padding(start = 8.dp, end = 8.dp, top = 5.dp, bottom = 5.dp)) {
-                        states.forEach { text ->
-                            Text(text = text,
-                                fontSize = 10.sp,
-                                lineHeight = 14.sp,
-                                color = if (text == selectedOption) {
-                                    Color.Black
+    BottomSheetScaffold(scaffoldState = bottomScaffoldState, drawerContent = {
+        ProfileModalDrawer(scope = scope,
+            bottomScaffoldState = bottomScaffoldState,
+            routeAction = routeAction)
+    }, topBar = {
+        CenterAlignedTopAppBar(title = {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Row(modifier = Modifier
+                    .width(120.dp)
+                    .height(35.dp)
+                    .clip(shape = RoundedCornerShape(24.dp))
+                    .background(Color(0xffe9e9ed))
+                    .padding(start = 8.dp, end = 8.dp, top = 5.dp, bottom = 5.dp)) {
+                    states.forEach { text ->
+                        Text(text = text,
+                            fontSize = 10.sp,
+                            lineHeight = 14.sp,
+                            color = if (text == selectedOption) {
+                                Color.Black
+                            } else {
+                                Color.Gray
+                            },
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier
+                                .clip(shape = RoundedCornerShape(24.dp))
+                                .clickable {
+                                    onSelectionChange(text)
+                                    selectCalendar = (text == states[1])
+                                }
+                                .background(if (text == selectedOption) {
+                                    Color.White
                                 } else {
-                                    Color.Gray
-                                },
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier
-                                    .clip(shape = RoundedCornerShape(24.dp))
-                                    .clickable {
-                                        onSelectionChange(text)
-                                        selectCalendar = (text == states[1])
-                                    }
-                                    .background(if (text == selectedOption) {
-                                        Color.White
-                                    } else {
-                                        Color(0xffe9e9ed)
-                                    })
-                                    .padding(
-                                        vertical = 6.dp,
-                                        horizontal = 16.dp,
-                                    ))
-                        }
+                                    Color(0xffe9e9ed)
+                                })
+                                .padding(
+                                    vertical = 6.dp,
+                                    horizontal = 16.dp,
+                                ))
                     }
                 }
-            }, navigationIcon = {
+            }
+        },
+            navigationIcon = {
                 IconButton(onClick = {
                     scope.launch {
                         bottomScaffoldState.drawerState.open()
@@ -407,19 +404,18 @@ fun CalendarScreen(routeAction: RouteAction) {
                     Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
                 }
             },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White,
-                    titleContentColor = Color.Black))
-        }, floatingActionButton = {
-            AddTodoFloatingButton(multiFloatingState = multiFloatingState,
-                onMultiFloatingStateChange = {
-                    multiFloatingState = it
-                },
-                backgroundColor = colorFAB,
-                onButtonClick = onButtonClick)
-        }, floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
-        sheetContent = {
-            TodoUpdateBottomSheet(scope, bottomScaffoldState, selectedTodo?.value, todoList)
-        }, sheetPeekHeight = 0.dp, sheetShape = RoundedCornerShape(20.dp)
+            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White,
+                titleContentColor = Color.Black))
+    }, floatingActionButton = {
+        AddTodoFloatingButton(multiFloatingState = multiFloatingState,
+            onMultiFloatingStateChange = {
+                multiFloatingState = it
+            },
+            backgroundColor = colorFAB,
+            onButtonClick = onButtonClick)
+    }, floatingActionButtonPosition = androidx.compose.material.FabPosition.End, sheetContent = {
+        TodoUpdateBottomSheet(scope, bottomScaffoldState, selectedTodo?.value, todoList)
+    }, sheetPeekHeight = 0.dp, sheetShape = RoundedCornerShape(20.dp)
 
     ) {
 
@@ -486,74 +482,68 @@ fun CalendarScreen(routeAction: RouteAction) {
                         }
                     })
             }
-                Row(
-                    modifier = Modifier
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 21.dp, end = 21.dp, top = 30.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically) {
+                Text(text = day,
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(end = 5.dp))
+
+                Divider(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 5.dp),
+                    color = Color(0xffD8D8D8))
+            }
+
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 15.dp, start = 21.dp, end = 21.dp)) {
+
+                if (isVisibility) {
+                    TextField(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 21.dp, end = 21.dp, top = 30.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = day,
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(end = 5.dp))
-
-                    Divider(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 5.dp),
-                        color = Color(0xffD8D8D8))
-                }
-
-                Column(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 15.dp, start = 21.dp, end = 21.dp)) {
-
-                    if (isVisibility) {
-                        TextField(modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .focusRequester(focusRequester),
-                            value = title,
-                            colors = TextFieldDefaults.textFieldColors(containerColor = Color(
-                                0xffD8D8D8),
-                                disabledLabelColor = Color(0xffD8D8D8),
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent),
-                            singleLine = true,
-                            shape = RoundedCornerShape(8.dp),
-                            onValueChange = {
-                                title = it
-                            },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Done),
-                            keyboardActions = KeyboardActions(onDone = {
-                                createTodo(token, year, month, day, title, color) {
-                                    readTodo(token,
-                                        year = year,
-                                        month = month,
-                                        day = day
-                                    ) {
-                                        todoList.clear()
-                                        for (i in it!!.data) {
-                                            todoList.add(i)
-                                        }
+                        .height(50.dp)
+                        .focusRequester(focusRequester),
+                        value = title,
+                        colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffD8D8D8),
+                            disabledLabelColor = Color(0xffD8D8D8),
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent),
+                        singleLine = true,
+                        shape = RoundedCornerShape(8.dp),
+                        onValueChange = {
+                            title = it
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            createTodo(token, year, month, day, title, color) {
+                                readTodo(token, year = year, month = month, day = day) {
+                                    todoList.clear()
+                                    for (i in it!!.data) {
+                                        todoList.add(i)
                                     }
                                 }
-                                keyboardController?.hide()
-                                title = ""
-                                isVisibility = !isVisibility
-                            }))
-                        Spacer(modifier = Modifier.height(6.dp))
-                    }
-                    TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = {
-                        selectedTodo.value = it
-                        scope.launch {
-                            bottomScaffoldState.bottomSheetState.expand()
-                        }
-                    })
+                            }
+                            keyboardController?.hide()
+                            title = ""
+                            isVisibility = !isVisibility
+                        }))
+                    Spacer(modifier = Modifier.height(6.dp))
                 }
+                TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = {
+                    selectedTodo.value = it
+                    scope.launch {
+                        bottomScaffoldState.bottomSheetState.expand()
+                    }
+                })
             }
         }
     }
+}
 
 @Composable
 fun AddTodoFloatingButton(
@@ -614,19 +604,22 @@ fun FloatingActionButtonMenus(
                     onClick = {
                         onButtonClick("1")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }, content = {})
+                    },
+                    content = {})
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
                     onClick = {
                         onButtonClick("2")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }, content = {})
+                    },
+                    content = {})
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
                     onClick = {
                         onButtonClick("3")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }, content = {})
+                    },
+                    content = {})
             }
 
             Spacer(modifier = Modifier.padding(vertical = 7.dp))
@@ -639,19 +632,22 @@ fun FloatingActionButtonMenus(
                     onClick = {
                         onButtonClick("4")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }, content = {})
+                    },
+                    content = {})
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
                     onClick = {
                         onButtonClick("5")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }, content = {})
+                    },
+                    content = {})
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
                     onClick = {
                         onButtonClick("6")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
-                    }, content = {})
+                    },
+                    content = {})
             }
         }
     }
@@ -682,21 +678,17 @@ fun TodoItem(Todo: RToDoResponse, onTodoItemClick: (RToDoResponse) -> Unit) {
         Row(modifier = Modifier.padding(start = 13.dp, top = 15.dp, bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
-            Checkbox(
-                checked = checked,
-                onCheckedChange = {
-                checked = it },
-                colors = CheckboxDefaults.colors(
-                    when(Todo.color){
-                        1 -> Color(0xffFFB4B4)
-                        2 -> Color(0xffFFDCA8)
-                        3 -> Color(0xffB1E0CF)
-                        4 -> Color(0xffB7D7F5)
-                        5 -> Color(0xffFFB8EB)
-                        6 -> Color(0xffB6B1EC)
-                        else -> Color.Black
-                    }
-                )
+            Checkbox(checked = checked, onCheckedChange = {
+                checked = it
+            }, colors = CheckboxDefaults.colors(when (Todo.color) {
+                1 -> Color(0xffFFB4B4)
+                2 -> Color(0xffFFDCA8)
+                3 -> Color(0xffB1E0CF)
+                4 -> Color(0xffB7D7F5)
+                5 -> Color(0xffFFB8EB)
+                6 -> Color(0xffB6B1EC)
+                else -> Color.Black
+            })
 
             )
             Text(text = Todo.title, fontSize = 13.sp, fontStyle = FontStyle.Normal)
@@ -725,37 +717,29 @@ fun TodoItemList(
         grouped.forEach { (header, items) ->
 
             stickyHeader {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically) {
 
-                    Button(
-                        modifier = Modifier.size(9.dp),
+                    Button(modifier = Modifier.size(9.dp),
                         onClick = { /*TODO*/ },
                         enabled = false,
                         content = {},
-                        colors = ButtonDefaults.buttonColors(
-                            disabledContainerColor = when(header){
-                                1 -> Color(0xffFFB4B4)
-                                2 -> Color(0xffFFDCA8)
-                                3 -> Color(0xffB1E0CF)
-                                4 -> Color(0xffB7D7F5)
-                                5 -> Color(0xffFFB8EB)
-                                6 -> Color(0xffB6B1EC)
-                                else -> Color.Black
-                            }
-                        )
-                    )
+                        colors = ButtonDefaults.buttonColors(disabledContainerColor = when (header) {
+                            1 -> Color(0xffFFB4B4)
+                            2 -> Color(0xffFFDCA8)
+                            3 -> Color(0xffB1E0CF)
+                            4 -> Color(0xffB7D7F5)
+                            5 -> Color(0xffFFB8EB)
+                            6 -> Color(0xffB6B1EC)
+                            else -> Color.Black
+                        }))
 
                     Spacer(modifier = Modifier.padding(horizontal = 5.dp))
 
-                    Text(
-                        text = "그룹 $header",
+                    Text(text = "그룹 $header",
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp,
-                        lineHeight = 17.sp
-                    )
+                        lineHeight = 17.sp)
                 }
             }
             items(items = items, key = { Todo -> Todo.id }) { item ->
@@ -766,11 +750,7 @@ fun TodoItemList(
                 if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
                     deleteTodo(token, item.id, response = {
                         todoList.remove(item)
-                        readTodo(token,
-                            year = item.year,
-                            month = item.month,
-                            day = item.day
-                        ) {
+                        readTodo(token, year = item.year, month = item.month, day = item.day) {
                             todoList.clear()
                             for (i in it!!.data) {
                                 todoList.add(i)
@@ -857,6 +837,34 @@ fun TodoUpdateBottomSheet(
         }
     }
 
+    val categoryColor: (Int?) -> Color = {
+        when (Todo?.color) {
+            1 -> {
+                Color(0xffFFB4B4)
+            }
+            2 -> {
+                Color(0xffFFDCA8)
+            }
+            3 -> {
+                Color(0xffB1E0CF)
+            }
+            4 -> {
+                Color(0xffB7D7F5)
+            }
+            5 -> {
+                Color(0xffFFB8EB)
+            }
+            6 -> {
+                Color(0xffB6B1EC)
+            }
+            else -> {
+                Color.Black
+            }
+        }
+    }
+
+
+
     Column(modifier = Modifier
         .fillMaxWidth()
         .height(400.dp)
@@ -866,13 +874,12 @@ fun TodoUpdateBottomSheet(
             .padding(bottom = 17.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween) {
-            androidx.compose.material.IconButton(
-                onClick = {
-                    scope.launch {
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                    }}) {
-                Icon(imageVector = Icons.Filled.Close, contentDescription = null
-                )
+            androidx.compose.material.IconButton(onClick = {
+                scope.launch {
+                    bottomSheetScaffoldState.bottomSheetState.collapse()
+                }
+            }) {
+                Icon(imageVector = Icons.Filled.Close, contentDescription = null)
             }
             Button(modifier = Modifier
                 .width(70.dp)
@@ -926,7 +933,10 @@ fun TodoUpdateBottomSheet(
                 .width(9.dp)
                 .height(51.dp),
                 onClick = { /*TODO*/ },
-                enabled = false, content = {})
+                enabled = false,
+                content = {},
+                colors = ButtonDefaults.buttonColors(
+                    disabledContainerColor = categoryColor(Todo?.color)))
             Column(modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 8.dp),
@@ -936,22 +946,21 @@ fun TodoUpdateBottomSheet(
                 Text(
                     text = "${Todo?.month}월 ${Todo?.day}일",
                     fontSize = 15.sp,
-                    lineHeight = 19.sp)
+                    lineHeight = 19.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = categoryColor(Todo?.color)
+                )
 
-                BasicTextField(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .wrapContentHeight(),
+                BasicTextField(modifier = Modifier
+                    .wrapContentWidth()
+                    .wrapContentHeight(),
                     value = title,
                     onValueChange = { title = it },
-                    textStyle = TextStyle(
-                        color = Color.Black,
+                    textStyle = TextStyle(color = Color.Black,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        lineHeight = 31.sp
-                    ),
-                    singleLine = true
-                )
+                        lineHeight = 31.sp),
+                    singleLine = true)
             }
         }
 
@@ -971,10 +980,9 @@ fun TodoUpdateBottomSheet(
                 description = it
             })
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 22.dp),
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 22.dp),
             verticalAlignment = Alignment.CenterVertically) {
             Image(painter = painterResource(id = R.drawable.clock),
                 contentDescription = null,
@@ -986,9 +994,7 @@ fun TodoUpdateBottomSheet(
                 fontWeight = FontWeight.Bold,
                 lineHeight = 19.sp,
                 fontSize = 19.sp)
-            Text(text = Todo?.time.toString(),
-                lineHeight = 19.sp,
-                fontSize = 19.sp)
+            Text(text = Todo?.time.toString(), lineHeight = 19.sp, fontSize = 19.sp)
         }
 
         Divider(modifier = Modifier
@@ -1003,32 +1009,38 @@ fun TodoUpdateBottomSheet(
                 colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
                 onClick = {
                     onButtonClick("1")
-                }, content = {})
+                },
+                content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
                 onClick = {
                     onButtonClick("2")
-                }, content = {})
+                },
+                content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
                 onClick = {
                     onButtonClick("3")
-                }, content = {})
+                },
+                content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
                 onClick = {
                     onButtonClick("4")
-                }, content = {})
+                },
+                content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
                 onClick = {
                     onButtonClick("5")
-                }, content = {})
+                },
+                content = {})
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
                 onClick = {
                     onButtonClick("6")
-                }, content = {})
+                },
+                content = {})
         }
     }
 }
