@@ -2,7 +2,6 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.util.Log
-import android.widget.Space
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
@@ -16,7 +15,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DrawerValue
@@ -27,7 +25,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -796,9 +793,7 @@ fun TodoUpdateBottomSheet(
     todoList: MutableList<RToDoResponse>,
 ) {
 
-//    var title by remember {
-//        mutableStateOf(Todo?.title)
-//    }.apply { value = Todo?.title }
+//    var title by remember { mutableStateOf(Todo?.title) }.apply { value = Todo?.title }
 
     var title by remember { mutableStateOf("") }
 
@@ -950,17 +945,17 @@ fun TodoUpdateBottomSheet(
                     fontWeight = FontWeight.Bold,
                     color = categoryColor(Todo?.color)
                 )
+                    BasicTextField(modifier = Modifier
+                        .wrapContentWidth()
+                        .wrapContentHeight(),
+                        value = title,
+                        onValueChange = { title = it },
+                        textStyle = TextStyle(color = Color.Black,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            lineHeight = 31.sp),
+                        singleLine = true)
 
-                BasicTextField(modifier = Modifier
-                    .wrapContentWidth()
-                    .wrapContentHeight(),
-                    value = title,
-                    onValueChange = { title = it },
-                    textStyle = TextStyle(color = Color.Black,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 31.sp),
-                    singleLine = true)
             }
         }
 
