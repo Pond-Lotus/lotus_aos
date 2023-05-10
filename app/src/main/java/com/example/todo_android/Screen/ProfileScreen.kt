@@ -135,7 +135,7 @@ fun changeNicknameAndProfile(
 @Composable
 fun ProfileScreen(routeAction: RouteAction) {
 
-    var email by remember { mutableStateOf("") }
+    var email: String = MyApplication.prefs.getData("email", "")
 
     var nickname by remember { mutableStateOf(MyApplication.prefs.getData("nickname", "")) }
 
