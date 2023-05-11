@@ -4,15 +4,21 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,10 +44,8 @@ fun authEmail(email: String, routeAction: RouteAction) {
 
     var authEmailResponse: AuthEmailResponse? = null
 
-    var retrofit = Retrofit.Builder()
-        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var authEmailRequest: AuthEmailRequest = retrofit.create(AuthEmailRequest::class.java)
 
@@ -78,27 +82,25 @@ fun authEmail(email: String, routeAction: RouteAction) {
 @ExperimentalMaterial3Api
 @Composable
 fun AuthEmailScreen(routeAction: RouteAction) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(start = 25.dp, end = 25.dp)
-            .imePadding(),
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.White)
+        .padding(start = 25.dp, end = 25.dp)
+        .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+        verticalArrangement = Arrangement.Center) {
+
         var email by remember { mutableStateOf("") }
 
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(id = R.string.FirstPageNumber),
+        val emailPattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}".toRegex()
+
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(text = stringResource(id = R.string.FirstPageNumber),
                 fontSize = 20.sp,
                 lineHeight = 29.sp,
                 fontWeight = FontWeight.Light,
-                color = Color(0xff9E9E9E)
-            )
+                color = Color(0xff9E9E9E))
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -118,31 +120,23 @@ fun AuthEmailScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(38.dp))
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth(),
+        Column(horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
+            Text(modifier = Modifier.fillMaxWidth(),
                 text = stringResource(id = R.string.ShowEmailText),
                 fontSize = 13.sp,
                 lineHeight = 17.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xff808080)
-            )
+                color = Color(0xff808080))
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
+            TextField(modifier = Modifier.fillMaxWidth(),
                 value = email,
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent,
+                colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent,
                     disabledLabelColor = Color.Transparent,
                     focusedIndicatorColor = Color(0xff4D000000),
-                    unfocusedIndicatorColor = Color(0xff4D000000)
-                ),
+                    unfocusedIndicatorColor = Color(0xff4D000000)),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 shape = RoundedCornerShape(20.dp),
@@ -157,28 +151,41 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                         fontWeight = FontWeight.Light,
                         color = Color(0xffD3D3D3),
                     )
-                }
-            )
+                },
+                trailingIcon = {
+                    if (emailPattern.matches(email)) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.checkemail),
+                            contentDescription = null,
+                            tint = Color(0xffFF9D4D)
+                        )
+                    }
+                })
+
+//            BasicTextField(
+//                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+//                value = email,
+//                singleLine = true,
+//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+//                shape = RoundedCornerShape(20.dp),
+//                onValueChange = {
+//                    email = it })
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth(),
+            Text(modifier = Modifier.fillMaxWidth(),
                 text = stringResource(id = R.string.CantUseEmail),
                 fontSize = 13.sp,
                 lineHeight = 19.sp,
-                color = Color(0xffE47979)
-            )
+                fontWeight = FontWeight.Medium,
+                color = Color(0xffFF9D4D))
         }
 
         Spacer(modifier = Modifier.height(250.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
+        Row(modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+            horizontalArrangement = Arrangement.SpaceBetween) {
             Button(
                 modifier = Modifier
                     .width(90.dp)
@@ -187,13 +194,11 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                 onClick = { routeAction.goBack() },
                 shape = RoundedCornerShape(24.dp),
             ) {
-                Text(
-                    text = "< 이전",
+                Text(text = "< 이전",
                     color = Color.Black,
-                    fontSize = 16.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    lineHeight = 23.sp
-                )
+                    lineHeight = 23.sp)
             }
 
             Button(
@@ -204,13 +209,11 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                 onClick = { authEmail(email, routeAction) },
                 shape = RoundedCornerShape(24.dp),
             ) {
-                Text(
-                    text = "다음 >",
+                Text(text = "다음 >",
                     color = Color.Black,
-                    fontSize = 16.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    lineHeight = 23.sp
-                )
+                    lineHeight = 23.sp)
             }
         }
     }

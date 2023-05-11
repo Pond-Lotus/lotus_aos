@@ -48,7 +48,7 @@
 
 
     <!-- ShowText Error  -->
-    <string name="CantUseEmail">사용할 수 없는 이메일입니다.</string>
+    <string name="CantUseEmail">이미 존재하는 이메일입니다.</string>
     <string name="CantUseCode">유효하지 않은 인증코드입니다.</string>
     <string name="UnderPassword">비밀번호가 8자리 미만입니다.</string>
     <string name="NoMatchPassword">비밀번호가 일치하지 않습니다.</string>
