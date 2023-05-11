@@ -111,7 +111,7 @@ fun LoginScreen(routeAction: RouteAction) {
     var openDialog by remember { mutableStateOf(false) }
 
     if (openDialog) {
-        FailureLoginDialog()
+        FailureLoginDialog(onDismissRequest = { openDialog = false })
     }
 
     val icon = if (passwordVisible) {
@@ -174,7 +174,8 @@ fun LoginScreen(routeAction: RouteAction) {
                 Text(
                     text = stringResource(id = R.string.InpurtEmail),
                     fontSize = 16.sp,
-                    color = Color(0xffA9A9A9)
+                    color = Color(0xffA9A9A9),
+                    fontWeight = FontWeight.Medium
                 )
             },
             trailingIcon = {
@@ -219,7 +220,8 @@ fun LoginScreen(routeAction: RouteAction) {
                 Text(
                     text = stringResource(id = R.string.InpurtPassword),
                     fontSize = 16.sp,
-                    color = Color(0xffA9A9A9)
+                    color = Color(0xffA9A9A9),
+                    fontWeight = FontWeight.Medium
                 )
             },
             trailingIcon = {
@@ -255,6 +257,8 @@ fun LoginScreen(routeAction: RouteAction) {
             Spacer(modifier = Modifier.width(3.dp))
 
             Text(
+                modifier = Modifier
+                    .wrapContentWidth(),
                 text = stringResource(id = R.string.AuthLogin),
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
@@ -267,19 +271,16 @@ fun LoginScreen(routeAction: RouteAction) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(54.dp),
-            colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
+            colors = ButtonDefaults.buttonColors(Color(0xffFFDAB9)),
             onClick =
             {
-                sendLogin(email, password, routeAction, response = {
-//                    for (i in it!!.resultCode) {
-//                        when (i.toString()) {
-//                            "500" -> {
-//                                openDialog = !openDialog
-//                            }
-//                        }
-//                    }
-                    openDialog = !openDialog
-                })
+                if(email == "" || password == ""){
+                    openDialog = true
+                }else{
+                    sendLogin(email, password, routeAction, response = {
+                        openDialog = true
+                    })
+                }
             },
             shape = RoundedCornerShape(18.dp)
         ) {
@@ -287,7 +288,7 @@ fun LoginScreen(routeAction: RouteAction) {
                 text = stringResource(id = R.string.Login),
                 color = Color.Black,
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Normal
+                fontWeight = FontWeight.ExtraBold
             )
         }
 
@@ -321,66 +322,63 @@ fun LoginScreen(routeAction: RouteAction) {
 }
 
 @Composable
-fun FailureLoginDialog() {
+fun FailureLoginDialog(onDismissRequest: () -> Unit) {
 
-    var openDialog by remember { mutableStateOf(true) }
-
-    if (openDialog) {
-        Dialog(
-            onDismissRequest = {
-                openDialog = false
-            }) {
-            Surface(
-                shape = RoundedCornerShape(15.dp),
-                color = Color.White
+    Dialog(
+        onDismissRequest = { onDismissRequest }) {
+        Surface(
+            shape = RoundedCornerShape(15.dp),
+            color = Color.White
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(290.dp)
+                    .height(140.dp)
+                    .padding(
+                        start = 19.dp,
+//                        end = 10.dp,
+//                        top = 19.dp,
+//                        bottom = 10.dp
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Column(
+                Text(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp)
-                        .padding(start = 19.dp, end = 19.dp, top = 19.dp, bottom = 19.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                        .fillMaxWidth(),
+                    text = "로그인 실패",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth().padding(bottom = 12.dp),
+                    text = "이메일 혹은 비밀번호를 다시 확인해 주세요.",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Light
+                )
+
+//                Spacer(modifier = Modifier.height(35.dp))
+
+                Button(
+                    onClick = { onDismissRequest() },
+                    shape = RoundedCornerShape(20.dp),
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(50.dp)
+                        .padding(start = 14.dp, top = 7.dp, end = 14.dp, bottom = 7.dp)
+                        .align(Alignment.End),
+                    colors = ButtonDefaults.buttonColors(nextButtonColor),
                 ) {
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        text = "로그인 실패",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        text = "이메일 혹은 비밀번호를 다시 확인해 주세요.",
+                        text = "확인",
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Light
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.Black
                     )
-
-                    Spacer(modifier = Modifier.height(35.dp))
-
-                    Button(
-                        onClick = {
-                            openDialog = false
-                        },
-                        shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier
-                            .width(100.dp)
-                            .height(50.dp)
-                            .padding(start = 14.dp, top = 7.dp, end = 14.dp, bottom = 7.dp)
-                            .align(Alignment.End),
-                        colors = ButtonDefaults.buttonColors(nextButtonColor),
-                    ) {
-                        Text(
-                            text = "확인",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color.Black
-                        )
-                    }
                 }
             }
         }
