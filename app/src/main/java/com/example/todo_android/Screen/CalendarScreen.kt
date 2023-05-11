@@ -309,7 +309,7 @@ fun CalendarScreen(routeAction: RouteAction) {
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
     val scrollState = rememberScrollState()
 
-    val selectedTodo = remember { mutableStateOf<RToDoResponse?>(null) }
+    var selectedTodo by remember { mutableStateOf<RToDoResponse?>(null) }
     LaunchedEffect(isVisibility) {
         if (isVisibility) {
             focusRequester.requestFocus()
@@ -411,7 +411,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             backgroundColor = colorFAB,
             onButtonClick = onButtonClick)
     }, floatingActionButtonPosition = androidx.compose.material.FabPosition.End, sheetContent = {
-        TodoUpdateBottomSheet(scope, bottomScaffoldState, selectedTodo?.value, todoList)
+        selectedTodo?.let { TodoUpdateBottomSheet(scope, bottomScaffoldState, it, todoList) }
     }, sheetPeekHeight = 0.dp, sheetShape = RoundedCornerShape(20.dp)
 
     ) {
@@ -532,7 +532,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     Spacer(modifier = Modifier.height(6.dp))
                 }
                 TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = {
-                    selectedTodo.value = it
+                    selectedTodo = it
                     scope.launch {
                         bottomScaffoldState.bottomSheetState.expand()
                     }
@@ -789,15 +789,15 @@ fun DeleteBackground() {
 fun TodoUpdateBottomSheet(
     scope: CoroutineScope,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-    Todo: RToDoResponse?,
+    Todo: RToDoResponse,
     todoList: MutableList<RToDoResponse>,
 ) {
 
 //    var title by remember { mutableStateOf(Todo?.title) }.apply { value = Todo?.title }
 
-    var title by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(Todo.title) }
 
-    var description by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf(Todo.description) }
 
     var color by remember { mutableStateOf("1") }
 
@@ -871,6 +871,10 @@ fun TodoUpdateBottomSheet(
             horizontalArrangement = Arrangement.SpaceBetween) {
             androidx.compose.material.IconButton(onClick = {
                 scope.launch {
+
+                    title = Todo.title
+                    description = Todo.description
+
                     bottomSheetScaffoldState.bottomSheetState.collapse()
                 }
             }) {
@@ -905,8 +909,8 @@ fun TodoUpdateBottomSheet(
                             }
                         })
 
-                    title = ""
-                    description = ""
+                    title = Todo.title
+                    description = Todo.description
 
                     scope.launch {
                         bottomSheetScaffoldState.bottomSheetState.collapse()
