@@ -27,6 +27,7 @@ import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.AuthEmailRequest
 import com.example.todo_android.Response.ProfileResponse.AuthEmailResponse
+import com.example.todo_android.Response.ProfileResponse.LoginResponse
 import com.example.todo_android.Util.MyApplication
 import com.example.todo_android.ui.theme.backButtonColor
 import com.example.todo_android.ui.theme.nextButtonColor
@@ -40,7 +41,7 @@ fun goAuthCode(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
-fun authEmail(email: String, routeAction: RouteAction) {
+fun authEmail(email: String, routeAction: RouteAction, response: (AuthEmailResponse?) -> Unit) {
 
     var authEmailResponse: AuthEmailResponse? = null
 
@@ -71,6 +72,7 @@ fun authEmail(email: String, routeAction: RouteAction) {
                     goAuthCode(NAV_ROUTE.AUTHCODE, routeAction)
                 }
                 "500" -> {
+                    response(authEmailResponse)
                     Log.d("AUTHEMAIL", "resultCode : " + authEmailResponse?.resultCode)
                 }
             }
@@ -93,6 +95,9 @@ fun AuthEmailScreen(routeAction: RouteAction) {
         var email by remember { mutableStateOf("") }
 
         val emailPattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}".toRegex()
+
+        var showErrorText by remember { mutableStateOf(false) }
+
 
 
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -142,6 +147,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                 shape = RoundedCornerShape(20.dp),
                 onValueChange = {
                     email = it
+                    showErrorText = false
                 },
                 placeholder = {
                     Text(
@@ -154,11 +160,9 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                 },
                 trailingIcon = {
                     if (emailPattern.matches(email)) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.checkemail),
+                        Icon(painter = painterResource(id = R.drawable.checkemail),
                             contentDescription = null,
-                            tint = Color(0xffFF9D4D)
-                        )
+                            tint = Color(0xffFF9D4D))
                     }
                 })
 
@@ -173,12 +177,14 @@ fun AuthEmailScreen(routeAction: RouteAction) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = R.string.CantUseEmail),
-                fontSize = 13.sp,
-                lineHeight = 19.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color(0xffFF9D4D))
+            if (showErrorText) {
+                Text(modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(id = R.string.CantUseEmail),
+                    fontSize = 13.sp,
+                    lineHeight = 19.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xffFF9D4D))
+            }
         }
 
         Spacer(modifier = Modifier.height(250.dp))
@@ -206,7 +212,13 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                     .width(90.dp)
                     .height(38.dp),
                 colors = ButtonDefaults.buttonColors(nextButtonColor),
-                onClick = { authEmail(email, routeAction) },
+                onClick = {
+                    if (email != "") {
+                        authEmail(email, routeAction, response = {
+                            showErrorText = true
+                        })
+                    }
+                },
                 shape = RoundedCornerShape(24.dp),
             ) {
                 Text(text = "다음 >",
@@ -217,4 +229,8 @@ fun AuthEmailScreen(routeAction: RouteAction) {
             }
         }
     }
+}
+
+fun BasicTextField(modifier: Modifier, value: String, textStyle: TextStyle, singleLine: Boolean, keyboardOptions: KeyboardOptions, decorationBox: Any, onValueChange: () -> Unit, placeholder: () -> Unit) {
+
 }
