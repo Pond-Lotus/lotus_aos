@@ -179,7 +179,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                         Box(modifier = Modifier.weight(1f)) {
                             innerTextField()
                         }
-                        Spacer(modifier = Modifier.padding(vertical = 18.dp))
+                        Spacer(modifier = Modifier.padding(vertical = 12.dp))
                         if (emailPattern.matches(email)) {
                             Icon(painter = painterResource(id = R.drawable.checkemail),
                                 contentDescription = null,
