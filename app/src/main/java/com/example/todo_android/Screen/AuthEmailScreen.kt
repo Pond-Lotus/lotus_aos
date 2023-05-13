@@ -2,6 +2,8 @@ package com.example.todo_android.Screen
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -12,13 +14,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -136,44 +142,52 @@ fun AuthEmailScreen(routeAction: RouteAction) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TextField(modifier = Modifier.fillMaxWidth(),
+
+            BasicTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = email,
-                colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent,
-                    disabledLabelColor = Color.Transparent,
-                    focusedIndicatorColor = Color(0xff4D000000),
-                    unfocusedIndicatorColor = Color(0xff4D000000)),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                shape = RoundedCornerShape(20.dp),
                 onValueChange = {
                     email = it
                     showErrorText = false
                 },
-                placeholder = {
-                    Text(
-                        text = stringResource(id = R.string.ShowEmailPlaceholder),
-                        fontSize = 16.sp,
-                        lineHeight = 23.sp,
-                        fontWeight = FontWeight.Light,
-                        color = Color(0xffD3D3D3),
-                    )
-                },
-                trailingIcon = {
-                    if (emailPattern.matches(email)) {
-                        Icon(painter = painterResource(id = R.drawable.checkemail),
-                            contentDescription = null,
-                            tint = Color(0xffFF9D4D))
+                singleLine = true,
+                textStyle = LocalTextStyle.current.copy(
+                    fontSize = 16.sp,
+                    lineHeight = 23.sp,
+                    fontWeight = FontWeight.Light),
+                decorationBox = { innerTextField ->
+                    if (email.isEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.ShowEmailPlaceholder),
+                            fontSize = 16.sp,
+                            lineHeight = 23.sp,
+                            fontWeight = FontWeight.Light,
+                            color = Color(0xffD3D3D3),
+                        )
                     }
-                })
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .drawWithContent {
+                            drawContent()
+                            drawLine(
+                                color = Color(0xffE9E9E9),
+                                start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                                end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                                strokeWidth = 1.dp.toPx())
+                        },
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            innerTextField()
+                        }
+                        Spacer(modifier = Modifier.padding(vertical = 18.dp))
+                        if (emailPattern.matches(email)) {
+                            Icon(painter = painterResource(id = R.drawable.checkemail),
+                                contentDescription = null,
+                                tint = Color(0xffFF9D4D))
+                        }
+                    }
 
-//            BasicTextField(
-//                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-//                value = email,
-//                singleLine = true,
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-//                shape = RoundedCornerShape(20.dp),
-//                onValueChange = {
-//                    email = it })
+                })
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -229,8 +243,4 @@ fun AuthEmailScreen(routeAction: RouteAction) {
             }
         }
     }
-}
-
-fun BasicTextField(modifier: Modifier, value: String, textStyle: TextStyle, singleLine: Boolean, keyboardOptions: KeyboardOptions, decorationBox: Any, onValueChange: () -> Unit, placeholder: () -> Unit) {
-
 }
