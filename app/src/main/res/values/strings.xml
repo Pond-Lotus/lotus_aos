@@ -39,7 +39,7 @@
     <string name="ShowNicknameText">닉네임</string>
     <string name="ShowNicknamePlaceholder">2~6 글자로 입력해 주세요</string>
     <string name="ShowPasswordText">비밀번호</string>
-    <string name="ShowPasswordPlaceholder">8자 이상 대문자, 소문자, 특수문자를 포함해 주세요.</string>
+    <string name="ShowPasswordPlaceholder">8~15자 이내의 영문자, 숫자, 특수문자</string>
     <string name="CheckPasswordText">비밀번호 확인</string>
 
     <!-- ShowText on LottieScreen   -->
@@ -50,7 +50,7 @@
     <!-- ShowText Error  -->
     <string name="CantUseEmail">이미 존재하는 이메일입니다.</string>
     <string name="CantUseCode">유효하지 않은 인증코드입니다.</string>
-    <string name="UnderPassword">비밀번호가 8자리 미만입니다.</string>
+    <string name="UnderPassword">비밀번호 생성 규칙에 맞지 않습니다.</string>
     <string name="NoMatchPassword">비밀번호가 일치하지 않습니다.</string>
 
 </resources>

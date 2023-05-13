@@ -16,6 +16,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -141,6 +143,11 @@ fun RegisterScreen(routeAction: RouteAction) {
 
         var authEmail: String = MyApplication.prefs.getData("email", "")
 
+        val passwordPattern = Regex("^[a-zA-Z0-9!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]{8,15}\$")
+
+        var showErrorPassword1 by remember { mutableStateOf(false) }
+        var showMatchPassword by remember { mutableStateOf(false) }
+
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -214,31 +221,45 @@ fun RegisterScreen(routeAction: RouteAction) {
                 color = Color(0xff808080)
             )
 
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
+            BasicTextField(
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 value = nickname,
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent,
-                    disabledLabelColor = Color.Transparent,
-                    focusedIndicatorColor = Color(0xff4D000000),
-                    unfocusedIndicatorColor = Color(0xff4D000000)
-                ),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                shape = RoundedCornerShape(20.dp),
                 onValueChange = {
                     nickname = it
                 },
-                placeholder = {
-                    Text(
-                        text = stringResource(id = R.string.ShowNicknamePlaceholder),
-                        fontSize = 14.sp,
-                        lineHeight = 19.sp,
-                        fontWeight = FontWeight.Light,
-                        color = Color(0xffD3D3D3),
-                    )
-                }
-            )
+                singleLine = true,
+                textStyle = LocalTextStyle.current.copy(
+                    fontSize = 16.sp,
+                    lineHeight = 23.sp,
+                    fontWeight = FontWeight.Light),
+                decorationBox = { innerTextField ->
+                    if (nickname.isEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.ShowNicknamePlaceholder),
+                            fontSize = 15.sp,
+                            lineHeight = 19.sp,
+                            fontWeight = FontWeight.Light,
+                            color = Color(0xffD3D3D3),
+                        )
+                    }
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .drawWithContent {
+                            drawContent()
+                            drawLine(
+                                color = Color(0xff9E9E9E),
+                                start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                                end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                                strokeWidth = 1.5.dp.toPx())
+                        },
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            innerTextField()
+                        }
+                        Spacer(modifier = Modifier.padding(vertical = 14.dp))
+                    }
+                })
+
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -251,43 +272,58 @@ fun RegisterScreen(routeAction: RouteAction) {
                 color = Color(0xff808080)
             )
 
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
+            BasicTextField(
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 value = password1,
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent,
-                    disabledLabelColor = Color.Transparent,
-                    focusedIndicatorColor = Color(0xff4D000000),
-                    unfocusedIndicatorColor = Color(0xff4D000000)
-                ),
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                shape = RoundedCornerShape(20.dp),
                 onValueChange = {
                     password1 = it
+                    showErrorPassword1 = !it.matches(passwordPattern)
                 },
-                placeholder = {
-                    Text(
-                        text = stringResource(id = R.string.ShowPasswordPlaceholder),
-                        fontSize = 14.sp,
-                        lineHeight = 19.sp,
-                        fontWeight = FontWeight.Light,
-                        color = Color(0xffD3D3D3),
-                    )
-                }
-            )
+                singleLine = true,
+                textStyle = LocalTextStyle.current.copy(
+                    fontSize = 16.sp,
+                    lineHeight = 23.sp,
+                    fontWeight = FontWeight.Light),
+                decorationBox = { innerTextField ->
+                    if (password1.isEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.ShowPasswordPlaceholder),
+                            fontSize = 15.sp,
+                            lineHeight = 19.sp,
+                            fontWeight = FontWeight.Light,
+                            color = Color(0xffD3D3D3),
+                        )
+                    }
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .drawWithContent {
+                            drawContent()
+                            drawLine(
+                                color = Color(0xff9E9E9E),
+                                start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                                end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                                strokeWidth = 1.5.dp.toPx())
+                        },
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            innerTextField()
+                        }
+                        Spacer(modifier = Modifier.padding(vertical = 14.dp))
+                    }
+                })
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                text = stringResource(id = R.string.UnderPassword),
-                fontSize = 13.sp,
-                lineHeight = 19.sp,
-                color = Color(0xffE47979)
-            )
+            if(showErrorPassword1){
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = stringResource(id = R.string.UnderPassword),
+                    fontSize = 13.sp,
+                    lineHeight = 19.sp,
+                    color = Color(0xffFF9D4D)
+                )
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -300,43 +336,60 @@ fun RegisterScreen(routeAction: RouteAction) {
                 color = Color(0xff808080)
             )
 
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
+            BasicTextField(
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 value = password2,
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent,
-                    disabledLabelColor = Color.Transparent,
-                    focusedIndicatorColor = Color(0xff4D000000),
-                    unfocusedIndicatorColor = Color(0xff4D000000)
-                ),
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                shape = RoundedCornerShape(20.dp),
                 onValueChange = {
                     password2 = it
+                    showMatchPassword = (it != password1)
                 },
-                placeholder = {
-                    Text(
-                        text = stringResource(id = R.string.ShowPasswordPlaceholder),
-                        fontSize = 14.sp,
-                        lineHeight = 19.sp,
-                        fontWeight = FontWeight.Light,
-                        color = Color(0xffD3D3D3),
-                    )
-                }
-            )
+                singleLine = true,
+                textStyle = LocalTextStyle.current.copy(
+                    fontSize = 16.sp,
+                    lineHeight = 23.sp,
+                    fontWeight = FontWeight.Light),
+                decorationBox = { innerTextField ->
+                    if (password2.isEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.ShowPasswordPlaceholder),
+                            fontSize = 15.sp,
+                            lineHeight = 19.sp,
+                            fontWeight = FontWeight.Light,
+                            color = Color(0xffD3D3D3),
+                        )
+                    }
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .drawWithContent {
+                            drawContent()
+                            drawLine(
+                                color = Color(0xff9E9E9E),
+                                start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                                end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                                strokeWidth = 1.5.dp.toPx())
+                        },
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            innerTextField()
+                        }
+                        Spacer(modifier = Modifier.padding(vertical = 14.dp))
+                    }
+                })
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                text = stringResource(id = R.string.NoMatchPassword),
-                fontSize = 13.sp,
-                lineHeight = 19.sp,
-                color = Color(0xffE47979)
-            )
+            if(showMatchPassword){
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = stringResource(id = R.string.NoMatchPassword),
+                    fontSize = 13.sp,
+                    lineHeight = 19.sp,
+                    color = Color(0xffFF9D4D)
+                )
+
+            }
+
 
             Spacer(modifier = Modifier.height(60.dp))
 
@@ -356,7 +409,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                     Text(
                         text = "< 이전",
                         color = Color.Black,
-                        fontSize = 16.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         lineHeight = 23.sp
                     )
@@ -380,7 +433,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                     Text(
                         text = "다음 >",
                         color = Color.Black,
-                        fontSize = 16.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         lineHeight = 23.sp
                     )
