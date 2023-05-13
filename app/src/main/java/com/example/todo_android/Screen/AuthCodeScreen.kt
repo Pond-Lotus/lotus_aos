@@ -23,6 +23,7 @@ import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.AuthCodeRequest
 import com.example.todo_android.Response.ProfileResponse.AuthCodeResponse
+import com.example.todo_android.Response.ProfileResponse.AuthEmailResponse
 import com.example.todo_android.Util.MyApplication
 import com.example.todo_android.ui.theme.backButtonColor
 import com.example.todo_android.ui.theme.nextButtonColor
@@ -37,7 +38,7 @@ fun goProfile(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
-fun authCode(authEmail: String, code: String, routeAction: RouteAction) {
+fun authCode(authEmail: String, code: String, routeAction: RouteAction, response: (AuthCodeResponse?) -> Unit) {
 
     var authCodeResponse: AuthCodeResponse? = null
 
@@ -71,6 +72,7 @@ fun authCode(authEmail: String, code: String, routeAction: RouteAction) {
                         goProfile(NAV_ROUTE.REGISTER, routeAction)
                     }
                     "500" -> {
+                        response(authCodeResponse)
                         Log.d("AUTHCODE", "resultCode : " + authCodeResponse?.resultCode)
                     }
                 }
@@ -94,6 +96,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
         var authEmail = MyApplication.prefs.getData("email", email)
         var code by remember { mutableStateOf("") }
 
+        var showErrorText by remember { mutableStateOf(false) }
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -147,6 +150,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                 onValueChange = { input ->
                     if (input.length <= 6) {
                         code = input
+                        showErrorText = false
                     }
                 },
                 decorationBox = {
@@ -171,14 +175,17 @@ fun AuthCodeScreen(routeAction: RouteAction) {
 
             Spacer(modifier = Modifier.height(13.dp))
 
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                text = stringResource(id = R.string.CantUseCode),
-                fontSize = 13.sp,
-                lineHeight = 19.sp,
-                color = Color(0xffE47979)
-            )
+            if(showErrorText){
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = stringResource(id = R.string.CantUseCode),
+                    fontSize = 13.sp,
+                    lineHeight = 19.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xffFF9D4D)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(250.dp))
@@ -200,7 +207,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                 Text(
                     text = "< 이전",
                     color = Color.Black,
-                    fontSize = 16.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 23.sp
                 )
@@ -211,13 +218,15 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                     .width(90.dp)
                     .height(38.dp),
                 colors = ButtonDefaults.buttonColors(nextButtonColor),
-                onClick = { authCode(authEmail, code, routeAction) },
+                onClick = { authCode(authEmail, code, routeAction, response = {
+                    showErrorText = true
+                }) },
                 shape = RoundedCornerShape(24.dp),
             ) {
                 Text(
                     text = "다음 >",
                     color = Color.Black,
-                    fontSize = 16.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 23.sp
                 )
