@@ -1,7 +1,9 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
@@ -84,7 +86,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 fun createTodo(
     token: String,
@@ -254,6 +259,7 @@ fun updateTodo(
         })
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter")
@@ -287,6 +293,8 @@ fun CalendarScreen(routeAction: RouteAction) {
     var day by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("") }
     var time = "0000"
+
+    var dayOfWeekString: String? = null
 
     var color by remember { mutableStateOf("") }
     var groupColors by remember {
@@ -443,6 +451,20 @@ fun CalendarScreen(routeAction: RouteAction) {
                         month = kalendarDay.localDate.monthNumber.toString()
                         day = kalendarDay.localDate.dayOfMonth.toString()
 
+                        val selectedDate = LocalDate.of(kalendarDay.localDate.year, kalendarDay.localDate.monthNumber, kalendarDay.localDate.dayOfMonth)
+                        val dayOfWeek = selectedDate.dayOfWeek
+
+                        dayOfWeekString = when(dayOfWeek.value) {
+                            1 -> "월"
+                            2 -> "화"
+                            3 -> "수"
+                            4 -> "목"
+                            5 -> "금"
+                            6 -> "토"
+                            7 -> "일"
+                            else -> ""
+                        }
+
                         readTodo(token, year.toString(), month.toString(), day.toString()) {
 
                             todoList.clear()
@@ -470,6 +492,20 @@ fun CalendarScreen(routeAction: RouteAction) {
                         month = kalendarDay.localDate.monthNumber.toString()
                         day = kalendarDay.localDate.dayOfMonth.toString()
 
+                        val selectedDate = LocalDate.of(kalendarDay.localDate.year, kalendarDay.localDate.monthNumber, kalendarDay.localDate.dayOfMonth)
+                        val dayOfWeek = selectedDate.dayOfWeek
+
+                        dayOfWeekString = when(dayOfWeek.value) {
+                            1 -> "월"
+                            2 -> "화"
+                            3 -> "수"
+                            4 -> "목"
+                            5 -> "금"
+                            6 -> "토"
+                            7 -> "일"
+                            else -> ""
+                        }
+
                         readTodo(token, year, month, day) {
 
                             todoList.clear()
@@ -488,6 +524,13 @@ fun CalendarScreen(routeAction: RouteAction) {
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(end = 5.dp))
+
+                dayOfWeekString?.let { it1 -> Text(text = it1) }
+
+//                Text(text = dayName,
+//                    fontSize = 26.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    modifier = Modifier.padding(end = 5.dp))
 
                 Divider(modifier = Modifier
                     .fillMaxWidth()
