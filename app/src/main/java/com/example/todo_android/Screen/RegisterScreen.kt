@@ -143,7 +143,7 @@ fun RegisterScreen(routeAction: RouteAction) {
 
         var authEmail: String = MyApplication.prefs.getData("email", "")
 
-        val passwordPattern = Regex("^[a-zA-Z0-9!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]{8,15}\$")
+        val passwordPattern = Regex("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@\$!%*#?&])[A-Za-z\\d@\$!%*#?&]{8,15}\$")
 
         var showErrorPassword1 by remember { mutableStateOf(false) }
         var showMatchPassword by remember { mutableStateOf(false) }
