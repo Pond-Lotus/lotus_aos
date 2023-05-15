@@ -455,13 +455,13 @@ fun CalendarScreen(routeAction: RouteAction) {
                         val dayOfWeek = selectedDate.dayOfWeek
 
                         dayOfWeekString = when(dayOfWeek.value) {
-                            1 -> "월"
-                            2 -> "화"
-                            3 -> "수"
-                            4 -> "목"
-                            5 -> "금"
-                            6 -> "토"
-                            7 -> "일"
+                            1 -> "월요일"
+                            2 -> "화요일"
+                            3 -> "수요일"
+                            4 -> "목요일"
+                            5 -> "금요일"
+                            6 -> "토요일"
+                            7 -> "일요일"
                             else -> ""
                         }
 
@@ -496,13 +496,13 @@ fun CalendarScreen(routeAction: RouteAction) {
                         val dayOfWeek = selectedDate.dayOfWeek
 
                         dayOfWeekString = when(dayOfWeek.value) {
-                            1 -> "월"
-                            2 -> "화"
-                            3 -> "수"
-                            4 -> "목"
-                            5 -> "금"
-                            6 -> "토"
-                            7 -> "일"
+                            1 -> "월요일"
+                            2 -> "화요일"
+                            3 -> "수요일"
+                            4 -> "목요일"
+                            5 -> "금요일"
+                            6 -> "토요일"
+                            7 -> "일요일"
                             else -> ""
                         }
 
@@ -523,18 +523,20 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Text(text = day,
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(end = 5.dp))
+                    modifier = Modifier.padding(end = 6.dp))
 
-                dayOfWeekString?.let { it1 -> Text(text = it1) }
-
-//                Text(text = dayName,
-//                    fontSize = 26.sp,
-//                    fontWeight = FontWeight.Bold,
-//                    modifier = Modifier.padding(end = 5.dp))
+                dayOfWeekString?.let { dayText ->
+                    Text(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        lineHeight = 18.sp,
+                        color = Color(0xff9E9E9E),
+                        text = dayText
+                    ) }
 
                 Divider(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 5.dp),
+                    .padding(start = 6.dp),
                     color = Color(0xffD8D8D8))
             }
 
