@@ -259,10 +259,10 @@ fun updateTodo(
         })
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter",
+    "NewApi")
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable

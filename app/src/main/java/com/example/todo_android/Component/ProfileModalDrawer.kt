@@ -219,14 +219,5 @@ fun ProfileModalDrawer(
         }
 
         Divider(modifier = Modifier.fillMaxWidth(), color = Color(0xffe9e9e9), thickness = 1.dp)
-
-
-//        Button(onClick = {
-//            scope.launch {
-//                bottomScaffoldState.drawerState.close()
-//            }
-//        }) {
-//            Text(text = "Close Drawer")
-//        }
     }
 }

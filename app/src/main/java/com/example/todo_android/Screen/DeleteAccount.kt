@@ -213,8 +213,6 @@ fun DeleteAccount(routeAction: RouteAction) {
                     fontWeight = FontWeight.Bold
                 )
             }
-
-
         }
     }
 }

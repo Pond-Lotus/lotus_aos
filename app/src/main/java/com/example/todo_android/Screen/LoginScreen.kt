@@ -304,6 +304,9 @@ fun LoginScreen(routeAction: RouteAction) {
                 fontSize = 14.sp,
                 color = Color(0xFF999999),
                 modifier = Modifier.padding(end = 10.dp)
+                    .clickable {
+                    routeAction.navTo(NAV_ROUTE.SEARCHPASSWORD)
+                }
             )
 
             Text(
