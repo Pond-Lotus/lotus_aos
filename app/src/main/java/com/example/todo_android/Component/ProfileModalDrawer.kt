@@ -1,6 +1,7 @@
 package com.example.todo_android.Component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material3.Button
@@ -56,14 +57,15 @@ fun ProfileModalDrawer(
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 21.dp),
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween) {
             Image(modifier = Modifier.size(41.dp),
                 painter = painterResource(id = R.drawable.defaultprofile),
                 contentDescription = "profile",
                 contentScale = ContentScale.Crop)
 
             Column(modifier = Modifier
-                .fillMaxWidth()
+                .weight(1f)
                 .padding(start = 8.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start) {
@@ -78,16 +80,19 @@ fun ProfileModalDrawer(
                     lineHeight = 16.sp)
             }
 
-            IconButton(onClick = {
-                scope.launch {
-                    bottomScaffoldState.drawerState.close()
-                }
-                goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
-            }) {
+            IconButton(
+                modifier = Modifier.background(Color.White),
+                onClick = {
+                    scope.launch {
+                        bottomScaffoldState.drawerState.close()
+                    }
+                    goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
+                }) {
                 Icon(modifier = Modifier
+                    .background(Color.White)
                     .size(24.dp)
                     .padding(start = 5.dp),
-                    painter = painterResource(id = R.drawable.edit),
+                    painter = painterResource(id = R.drawable.ic_pen),
                     contentDescription = null)
             }
         }
@@ -173,7 +178,7 @@ fun ProfileModalDrawer(
             horizontalArrangement = Arrangement.SpaceBetween) {
 
             Text(modifier = Modifier
-                .fillMaxWidth()
+                .weight(1f)
                 .padding(start = 2.dp),
                 text = "그룹 설정",
                 fontWeight = FontWeight.Bold,
@@ -182,7 +187,7 @@ fun ProfileModalDrawer(
 
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(modifier = Modifier.size(14.dp),
-                    painter = painterResource(id = R.drawable.arrow),
+                    painter = painterResource(id = R.drawable.ic_arrow),
                     contentDescription = null)
             }
         }
