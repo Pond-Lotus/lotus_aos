@@ -32,7 +32,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun SearchPassword(email: String, response: (SearchEmailResponse?) -> Unit){
+fun SearchPassword(email: String, routeAction: RouteAction ,response: (SearchEmailResponse?) -> Unit){
 
     var authEmailResponse: SearchEmailResponse? = null
 
@@ -52,6 +52,7 @@ fun SearchPassword(email: String, response: (SearchEmailResponse?) -> Unit){
 
             when(authEmailResponse?.resultCode){
                 "200" -> {
+                    routeAction.navTo(NAV_ROUTE.LOGIN)
                     Log.d("SEARCHEMAIL", "resultCode : " + authEmailResponse?.resultCode)
                 }
                 "500" -> {
@@ -195,7 +196,7 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
                 colors = ButtonDefaults.buttonColors(color),
                 onClick = {
                           if(isButtonClickable == true){
-                              SearchPassword(email, response = {
+                              SearchPassword(email, routeAction, response = {
                                   showErrorText = true
                               })
                           }
