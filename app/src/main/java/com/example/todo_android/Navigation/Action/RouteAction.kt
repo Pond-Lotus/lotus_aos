@@ -5,6 +5,9 @@ import com.example.todo_android.Navigation.NAV_ROUTE
 
 // 컴포즈 네비게이션 라우트 액션
 class RouteAction(navHostController: NavHostController) {
+    fun navigateTo(login: Any) {
+
+    }
 
     //특정 라우트 이동
     val navTo: (NAV_ROUTE) -> Unit = { route ->

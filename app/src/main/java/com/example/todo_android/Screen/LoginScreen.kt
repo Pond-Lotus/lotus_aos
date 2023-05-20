@@ -82,6 +82,7 @@ fun sendLogin(
                     MyApplication.prefs.setData("email", loginResponse?.email.toString())
                     MyApplication.prefs.setData("nickname", loginResponse?.nickname.toString())
                     MyApplication.prefs.setData("image", loginResponse?.image.toString())
+                    MyApplication.prefs.setData("password1", password)
 
                     Log.d("LOGIN", "resultCode : " + loginResponse?.resultCode)
                     Log.d("LOGIN", "token : " + loginResponse?.token)

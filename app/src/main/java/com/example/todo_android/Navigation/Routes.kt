@@ -22,8 +22,9 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
     PROFILE("PROFILE", "프로파일 화면"),
     CHANGEPASSWORD("CHANGEPASSWORD", "비밀번호 변경 화면"),
     LOTTIE("LOTTIE", "로티 화면"),
-    DELETEACCOUNT("DELETEACCOUNT", "계정 탈퇴"),
-    SEARCHPASSWORD("SEARCHPASSWORD", "비밀번호 찾기")
+    DELETEACCOUNT("DELETEACCOUNT", "계정 탈퇴 화면"),
+    SEARCHPASSWORD("SEARCHPASSWORD", "비밀번호 찾기 화면"),
+    SPLASH("SPLASH", "실행 로딩 화면")
 }
 
 @ExperimentalFoundationApi
@@ -31,7 +32,7 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
-fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.LOGIN) {
+fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
 
     // 네비게이션 컨트롤러 가져오기
     val navController = rememberNavController()
@@ -103,7 +104,7 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.LOGIN) {
         //계정 탈퇴 화면
         composable(NAV_ROUTE.DELETEACCOUNT.routeName) {
             // 화면이 들어가는 부분 = 값
-            DeleteAccount(routeAction)
+            DeleteAccountScreen(routeAction)
         }
 
         //라우트 이름 = 화면의 키
@@ -111,6 +112,13 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.LOGIN) {
         composable(NAV_ROUTE.SEARCHPASSWORD.routeName) {
             // 화면이 들어가는 부분 = 값
             SearchPasswordScreen(routeAction)
+        }
+
+        //라우트 이름 = 화면의 키
+        //실행 로딩 화면
+        composable(NAV_ROUTE.SPLASH.routeName) {
+            // 화면이 들어가는 부분 = 값
+            SplashScreen(routeAction)
         }
     }
 }

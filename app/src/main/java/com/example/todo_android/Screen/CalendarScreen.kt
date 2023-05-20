@@ -950,7 +950,6 @@ fun TodoUpdateBottomSheet(
                                 for (i in it!!.data) {
                                     todoList.add(i)
                                 }
-
                             }
                         })
 

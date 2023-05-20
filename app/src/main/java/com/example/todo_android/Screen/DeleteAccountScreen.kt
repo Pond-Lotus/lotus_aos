@@ -61,7 +61,7 @@ fun deleteAccount(token: String, routeAction: RouteAction){
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
 @Composable
-fun DeleteAccount(routeAction: RouteAction) {
+fun DeleteAccountScreen(routeAction: RouteAction) {
 
     var checked by remember { mutableStateOf(false) }
 
