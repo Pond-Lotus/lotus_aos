@@ -57,10 +57,8 @@ fun sendLogin(
 
     var loginResponse: LoginResponse? = null
 
-    var retrofit = Retrofit.Builder()
-        .baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var loginRequest: LoginRequest = retrofit.create(LoginRequest::class.java)
 
@@ -79,10 +77,8 @@ fun sendLogin(
                 "200" -> {
                     goCalendar(NAV_ROUTE.CALENDAR, routeAction)
                     MyApplication.prefs.setData("token", loginResponse?.token.toString())
-                    MyApplication.prefs.setData("email", loginResponse?.email.toString())
                     MyApplication.prefs.setData("nickname", loginResponse?.nickname.toString())
                     MyApplication.prefs.setData("image", loginResponse?.image.toString())
-                    MyApplication.prefs.setData("password1", password)
 
                     Log.d("LOGIN", "resultCode : " + loginResponse?.resultCode)
                     Log.d("LOGIN", "token : " + loginResponse?.token)
@@ -127,23 +123,23 @@ fun LoginScreen(routeAction: RouteAction) {
         painterResource(id = R.drawable.nocheck)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(start = 41.dp, end = 41.dp)
-            .imePadding(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    )
-    {
+    if(checked){
+        MyApplication.prefs.setData("email", email)
+        MyApplication.prefs.setData("password1", password)
+    }
 
-        Image(
-            modifier = Modifier.size(117.dp),
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.White)
+        .padding(start = 41.dp, end = 41.dp)
+        .imePadding(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center) {
+
+        Image(modifier = Modifier.size(117.dp),
             painter = painterResource(id = R.drawable.apptitle),
             contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
+            contentScale = ContentScale.Crop)
         Image(
             modifier = Modifier
                 .width(94.dp)
@@ -154,17 +150,14 @@ fun LoginScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(61.dp))
 
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp),
+        TextField(modifier = Modifier
+            .fillMaxWidth()
+            .height(54.dp),
             value = email,
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color(0xffF2F2F2),
+            colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF2F2F2),
                 disabledLabelColor = Color(0xffF2F2F2),
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
+                unfocusedIndicatorColor = Color.Transparent),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             shape = RoundedCornerShape(18.dp),
@@ -172,40 +165,31 @@ fun LoginScreen(routeAction: RouteAction) {
                 email = it
             },
             placeholder = {
-                Text(
-                    text = stringResource(id = R.string.InpurtEmail),
+                Text(text = stringResource(id = R.string.InpurtEmail),
                     fontSize = 16.sp,
                     color = Color(0xffA9A9A9),
-                    fontWeight = FontWeight.Medium
-                )
+                    fontWeight = FontWeight.Medium)
             },
             trailingIcon = {
                 if (email.isNotEmpty()) {
                     IconButton(onClick = {
                         email = ""
                     }) {
-                        Icon(
-                            imageVector = Icons.Default.Clear,
-                            contentDescription = null
-                        )
+                        Icon(imageVector = Icons.Default.Clear, contentDescription = null)
                     }
                 }
-            }
-        )
+            })
 
         Spacer(modifier = Modifier.height(5.dp))
 
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp),
+        TextField(modifier = Modifier
+            .fillMaxWidth()
+            .height(54.dp),
             value = password,
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color(0xffF2F2F2),
+            colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF2F2F2),
                 disabledLabelColor = Color(0xffF2F2F2),
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
+                unfocusedIndicatorColor = Color.Transparent),
             singleLine = true,
             visualTransformation = if (passwordVisible) {
                 VisualTransformation.None
@@ -218,48 +202,38 @@ fun LoginScreen(routeAction: RouteAction) {
                 password = it
             },
             placeholder = {
-                Text(
-                    text = stringResource(id = R.string.InpurtPassword),
+                Text(text = stringResource(id = R.string.InpurtPassword),
                     fontSize = 16.sp,
                     color = Color(0xffA9A9A9),
-                    fontWeight = FontWeight.Medium
-                )
+                    fontWeight = FontWeight.Medium)
             },
             trailingIcon = {
                 if (password.isNotEmpty()) {
-                    IconButton(onClick =
-                    {
+                    IconButton(onClick = {
                         passwordVisible = !passwordVisible
-                    })
-                    {
-                        Icon(
-                            painter = icon,
-                            contentDescription = null
-                        )
+                    }) {
+                        Icon(painter = icon, contentDescription = null)
                     }
                 }
-            }
-        )
+            })
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth().clickable {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
                 checked = !checked
             },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
 
         ) {
-            Image(
-                painter = onCheck,
-                contentDescription = null)
+            Image(painter = onCheck, contentDescription = null)
 
             Spacer(modifier = Modifier.width(3.dp))
 
             Text(
-                modifier = Modifier
-                    .wrapContentWidth(),
+                modifier = Modifier.wrapContentWidth(),
                 text = stringResource(id = R.string.AuthLogin),
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
@@ -268,50 +242,41 @@ fun LoginScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(38.dp))
 
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp),
+        Button(modifier = Modifier
+            .fillMaxWidth()
+            .height(54.dp),
             colors = ButtonDefaults.buttonColors(Color(0xffFFDAB9)),
-            onClick =
-            {
-                if(email == "" || password == ""){
+            onClick = {
+                if (email == "" || password == "") {
                     openDialog = true
-                }else{
+                } else {
                     sendLogin(email, password, routeAction, response = {
                         openDialog = true
                     })
                 }
             },
-            shape = RoundedCornerShape(18.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.Login),
+            shape = RoundedCornerShape(18.dp)) {
+            Text(text = stringResource(id = R.string.Login),
                 color = Color.Black,
                 fontSize = 16.sp,
-                fontWeight = FontWeight.ExtraBold
-            )
+                fontWeight = FontWeight.ExtraBold)
         }
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
+        Row(modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = stringResource(id = R.string.Search),
+            horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(text = stringResource(id = R.string.Search),
                 fontSize = 14.sp,
                 color = Color(0xFF999999),
-                modifier = Modifier.padding(end = 10.dp)
+                modifier = Modifier
+                    .padding(end = 10.dp)
                     .clickable {
-                    routeAction.navTo(NAV_ROUTE.SEARCHPASSWORD)
-                }
-            )
+                        routeAction.navTo(NAV_ROUTE.SEARCHPASSWORD)
+                    })
 
-            Text(
-                text = stringResource(id = R.string.Register),
+            Text(text = stringResource(id = R.string.Register),
                 color = Color.Black,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
@@ -319,8 +284,7 @@ fun LoginScreen(routeAction: RouteAction) {
                     .padding(start = 7.dp)
                     .clickable {
                         goAuthEmail(NAV_ROUTE.AUTHEMAIL, routeAction)
-                    }
-            )
+                    })
         }
     }
 }
@@ -328,42 +292,32 @@ fun LoginScreen(routeAction: RouteAction) {
 @Composable
 fun FailureLoginDialog(onDismissRequest: () -> Unit) {
 
-    Dialog(
-        onDismissRequest = { onDismissRequest }) {
-        Surface(
-            shape = RoundedCornerShape(15.dp),
-            color = Color.White
-        ) {
-            Column(
-                modifier = Modifier
-                    .width(290.dp)
-                    .height(140.dp)
-                    .padding(
-                        start = 19.dp,
+    Dialog(onDismissRequest = { onDismissRequest }) {
+        Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
+            Column(modifier = Modifier
+                .width(290.dp)
+                .height(140.dp)
+                .padding(
+                    start = 19.dp,
 //                        end = 10.dp,
 //                        top = 19.dp,
 //                        bottom = 10.dp
-                    ),
+                ),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center) {
+                Text(modifier = Modifier.fillMaxWidth(),
                     text = "로그인 실패",
                     fontSize = 14.sp,
-                    fontWeight = FontWeight.ExtraBold
-                )
+                    fontWeight = FontWeight.ExtraBold)
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth().padding(bottom = 12.dp),
+                Text(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
                     text = "이메일 혹은 비밀번호를 다시 확인해 주세요.",
                     fontSize = 12.sp,
-                    fontWeight = FontWeight.Light
-                )
+                    fontWeight = FontWeight.Light)
 
 //                Spacer(modifier = Modifier.height(35.dp))
 
@@ -377,12 +331,10 @@ fun FailureLoginDialog(onDismissRequest: () -> Unit) {
                         .align(Alignment.End),
                     colors = ButtonDefaults.buttonColors(nextButtonColor),
                 ) {
-                    Text(
-                        text = "확인",
+                    Text(text = "확인",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.ExtraBold,
-                        color = Color.Black
-                    )
+                        color = Color.Black)
                 }
             }
         }

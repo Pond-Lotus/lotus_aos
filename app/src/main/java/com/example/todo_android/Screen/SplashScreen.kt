@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
+import com.example.todo_android.Util.MyApplication
 import kotlinx.coroutines.delay
 
 @Composable
@@ -27,8 +28,12 @@ fun SplashScreen(routeAction: RouteAction) {
     LaunchedEffect(Unit) {
         delay(3000) // 3초 동안 딜레이 설정
 
-        // 로그인 화면으로 전환
-        routeAction.navTo(NAV_ROUTE.LOGIN)
+        if(MyApplication.prefs.getData("email", "").isNotEmpty() && MyApplication.prefs.getData("password1", "").isNotEmpty()){
+            routeAction.navTo(NAV_ROUTE.CALENDAR)
+        } else{
+            // 로그인 화면으로 전환
+            routeAction.navTo(NAV_ROUTE.LOGIN)
+        }
     }
 
     Column(
