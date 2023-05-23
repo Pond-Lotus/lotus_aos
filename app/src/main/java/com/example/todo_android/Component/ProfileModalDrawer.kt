@@ -1,41 +1,71 @@
 package com.example.todo_android.Component
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.compose.ui.window.Dialog
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import com.example.todo_android.R
+import com.example.todo_android.Request.ProfileRequest.LogoutRequest
+import com.example.todo_android.Response.ProfileResponse.LogoutResponse
 import com.example.todo_android.Util.MyApplication
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
-fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
-    routeAction.navTo(route)
+fun Logout(
+    token: String,
+    response: (LogoutResponse?) -> Unit
+) {
+    var logoutResponse: LogoutResponse? = null
+
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
+
+    var logoutRequest: LogoutRequest = retrofit.create(LogoutRequest::class.java)
+
+    logoutRequest.requestLogout(token).enqueue(object : Callback<LogoutResponse> {
+        override fun onResponse(call: Call<LogoutResponse>, response: Response<LogoutResponse>) {
+            logoutResponse = response.body()
+
+            when (logoutResponse?.resultCode) {
+                200 -> {
+                    Log.d("logout", "data : " + logoutResponse?.resultCode)
+                    MyApplication.prefs.setData("email", "")
+                    MyApplication.prefs.setData("password1", "")
+                    response(logoutResponse)
+                }
+                500 -> {
+                    Log.d("logout", "data : " + logoutResponse?.resultCode)
+                }
+            }
+        }
+        override fun onFailure(call: Call<LogoutResponse>, t: Throwable) {
+            Log.e("logout", t.message.toString())
+        }
+    })
 }
 
 @ExperimentalMaterialApi
@@ -43,11 +73,17 @@ fun goDetailProfile(route: NAV_ROUTE, routeAction: RouteAction) {
 fun ProfileModalDrawer(
     scope: CoroutineScope,
     bottomScaffoldState: BottomSheetScaffoldState,
-    routeAction: RouteAction
+    routeAction: RouteAction,
 ) {
 
     val nickname: String = MyApplication.prefs.getData("nickname", "")
     val email: String = MyApplication.prefs.getData("email", "")
+
+    var openDialog by remember { mutableStateOf(false) }
+
+    if (openDialog) {
+        showLogOutDialog(onDismissRequest = { openDialog = false }, routeAction)
+    }
 
     Column(
         modifier = Modifier
@@ -58,7 +94,7 @@ fun ProfileModalDrawer(
             .fillMaxWidth()
             .padding(bottom = 21.dp),
             verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween) {
+            horizontalArrangement = Arrangement.SpaceBetween) {
             Image(modifier = Modifier.size(41.dp),
                 painter = painterResource(id = R.drawable.defaultprofile),
                 contentDescription = "profile",
@@ -80,14 +116,12 @@ fun ProfileModalDrawer(
                     lineHeight = 16.sp)
             }
 
-            IconButton(
-                modifier = Modifier.background(Color.White),
-                onClick = {
-                    scope.launch {
-                        bottomScaffoldState.drawerState.close()
-                    }
-                    goDetailProfile(NAV_ROUTE.PROFILE, routeAction)
-                }) {
+            IconButton(modifier = Modifier.background(Color.White), onClick = {
+                scope.launch {
+                    bottomScaffoldState.drawerState.close()
+                }
+                routeAction.navTo(NAV_ROUTE.PROFILE)
+            }) {
                 Icon(modifier = Modifier
                     .background(Color.White)
                     .size(24.dp)
@@ -223,6 +257,79 @@ fun ProfileModalDrawer(
                 content = {})
         }
 
+        Divider(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 280.dp),
+            color = Color(0xffe9e9e9),
+            thickness = 1.dp)
+
         Divider(modifier = Modifier.fillMaxWidth(), color = Color(0xffe9e9e9), thickness = 1.dp)
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 18.dp)
+            .clickable {
+                openDialog = true
+            }, verticalAlignment = Alignment.CenterVertically) {
+
+            Icon(modifier = Modifier.size(14.dp),
+                painter = painterResource(id = R.drawable.logout),
+                contentDescription = null)
+
+            Text(modifier = Modifier
+                .weight(1f)
+                .padding(start = 6.dp),
+                text = "로그아웃",
+                fontWeight = FontWeight.Medium,
+                fontSize = 13.sp,
+                lineHeight = 17.sp)
+        }
+    }
+}
+
+@Composable
+fun showLogOutDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
+
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
+    Dialog(onDismissRequest = { onDismissRequest }) {
+        androidx.compose.material3.Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
+            Column(modifier = Modifier.width(265.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center) {
+                Text(modifier = Modifier.padding(top = 35.dp, bottom = 12.dp),
+                    text = "로그아웃",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.ExtraBold)
+
+                Text(modifier = Modifier.padding(bottom = 38.dp),
+                    text = "로그아웃 하시겠습니까?",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Light)
+
+                Row(modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround) {
+                    TextButton(modifier = Modifier
+                        .background(Color(0xffE9E9E9))
+                        .weight(1f),
+                        onClick = {
+                            onDismissRequest()
+                        }) {
+                        Text(text = "취소", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    }
+                    TextButton(modifier = Modifier
+                        .background(Color(0xffFFDAB9))
+                        .weight(1f),
+                        onClick = {
+                            Logout(token, response = {
+                                onDismissRequest()
+                                routeAction.navTo(NAV_ROUTE.LOGIN)
+                            })
+                        }) {
+                        Text(text = "로그아웃", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
     }
 }
