@@ -32,7 +32,7 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
-fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.PROFILE) {
+fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SEARCHPASSWORD) {
 
     // 네비게이션 컨트롤러 가져오기
     val navController = rememberNavController()
