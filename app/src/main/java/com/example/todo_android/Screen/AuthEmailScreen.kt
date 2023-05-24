@@ -1,14 +1,17 @@
 package com.example.todo_android.Screen
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -87,75 +90,88 @@ fun authEmail(email: String, routeAction: RouteAction, response: (AuthEmailRespo
 }
 
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
 @Composable
 fun AuthEmailScreen(routeAction: RouteAction) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.White)
-        .padding(start = 25.dp, end = 25.dp)
-        .imePadding(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
 
-        var email by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
 
-        val emailPattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}".toRegex()
+    val emailPattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}".toRegex()
 
-        var showErrorText by remember { mutableStateOf(false) }
+    var showErrorText by remember { mutableStateOf(false) }
 
 
+    Scaffold(modifier = Modifier
+        .fillMaxWidth()
+        .imePadding(), topBar = {
+        CenterAlignedTopAppBar(title = {}, navigationIcon = {
+            IconButton(onClick = {
+                routeAction.goBack()
+            }) {
+                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+            }
+        })
+    }) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(start = 25.dp, end = 25.dp)
+                .imePadding(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
 
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(text = stringResource(id = R.string.FirstPageNumber),
-                fontSize = 20.sp,
-                lineHeight = 29.sp,
-                fontWeight = FontWeight.Light,
-                color = Color(0xff9E9E9E))
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = stringResource(id = R.string.FirstPageNumber),
+                    fontSize = 20.sp,
+                    lineHeight = 29.sp,
+                    fontWeight = FontWeight.Light,
+                    color = Color(0xff9E9E9E)
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = stringResource(id = R.string.FirstAuthEmailText),
-                fontSize = 28.sp,
-                lineHeight = 36.sp,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
-                text = stringResource(id = R.string.SecondAuthEmailText),
-                fontSize = 28.sp,
-                lineHeight = 36.sp,
-                fontWeight = FontWeight.Bold,
-            )
-        }
+                Text(
+                    text = stringResource(id = R.string.FirstAuthEmailText),
+                    fontSize = 28.sp,
+                    lineHeight = 36.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = stringResource(id = R.string.SecondAuthEmailText),
+                    fontSize = 28.sp,
+                    lineHeight = 36.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
 
-        Spacer(modifier = Modifier.height(38.dp))
+            Spacer(modifier = Modifier.height(38.dp))
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
-            Text(modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = R.string.ShowEmailText),
-                fontSize = 13.sp,
-                lineHeight = 17.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xff808080))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(id = R.string.ShowEmailText),
+                    fontSize = 13.sp,
+                    lineHeight = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xff808080)
+                )
 
-            Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
 
-            BasicTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = email,
-                onValueChange = {
+                BasicTextField(modifier = Modifier.fillMaxWidth(), value = email, onValueChange = {
                     email = it
                     showErrorText = false
-                },
-                singleLine = true,
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 16.sp,
-                    lineHeight = 23.sp,
-                    fontWeight = FontWeight.Light),
-                decorationBox = { innerTextField ->
+                }, singleLine = true, textStyle = LocalTextStyle.current.copy(
+                    fontSize = 16.sp, lineHeight = 23.sp, fontWeight = FontWeight.Light
+                ), decorationBox = { innerTextField ->
                     if (email.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.ShowEmailPlaceholder),
@@ -165,81 +181,72 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                             color = Color(0xffD3D3D3),
                         )
                     }
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .drawWithContent {
-                            drawContent()
-                            drawLine(
-                                color = Color(0xffE9E9E9),
-                                start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
-                                end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
-                                strokeWidth = 1.dp.toPx())
-                        },
-                        verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .drawWithContent {
+                                drawContent()
+                                drawLine(
+                                    color = Color(0xffE9E9E9),
+                                    start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                                    end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                                    strokeWidth = 1.dp.toPx()
+                                )
+                            }, verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Box(modifier = Modifier.weight(1f)) {
                             innerTextField()
                         }
                         Spacer(modifier = Modifier.padding(vertical = 12.dp))
                         if (emailPattern.matches(email)) {
-                            Icon(painter = painterResource(id = R.drawable.checkemail),
+                            Icon(
+                                painter = painterResource(id = R.drawable.checkemail),
                                 contentDescription = null,
-                                tint = Color(0xffFF9D4D))
+                                tint = Color(0xffFF9D4D)
+                            )
                         }
                     }
 
                 })
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-            if (showErrorText) {
-                Text(modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(id = R.string.CantUseEmail),
-                    fontSize = 13.sp,
-                    lineHeight = 19.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xffFF9D4D))
-            }
-        }
-
-        Spacer(modifier = Modifier.height(250.dp))
-
-        Row(modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween) {
-            Button(
-                modifier = Modifier
-                    .width(90.dp)
-                    .height(38.dp),
-                colors = ButtonDefaults.buttonColors(backButtonColor),
-                onClick = { routeAction.goBack() },
-                shape = RoundedCornerShape(24.dp),
-            ) {
-                Text(text = "< 이전",
-                    color = Color.Black,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 23.sp)
+                if (showErrorText) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(id = R.string.CantUseEmail),
+                        fontSize = 13.sp,
+                        lineHeight = 19.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xffFF9D4D)
+                    )
+                }
             }
 
-            Button(
-                modifier = Modifier
-                    .width(90.dp)
-                    .height(38.dp),
-                colors = ButtonDefaults.buttonColors(nextButtonColor),
-                onClick = {
-                    if (email != "") {
-                        authEmail(email, routeAction, response = {
-                            showErrorText = true
-                        })
-                    }
-                },
-                shape = RoundedCornerShape(24.dp),
+            Spacer(modifier = Modifier.height(250.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "다음 >",
-                    color = Color.Black,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 23.sp)
+
+                Text(text = "")
+
+                IconButton(modifier = Modifier.size(43.dp),
+                    colors = IconButtonDefaults.iconButtonColors(nextButtonColor),
+                    onClick = {
+                        if (email != "") {
+                            authEmail(email, routeAction, response = {
+                                showErrorText = true
+                            })
+                        }
+                    }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_right_24),
+                        contentDescription = null
+                    )
+                }
             }
         }
     }

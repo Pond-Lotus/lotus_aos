@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.todo_android.Component.Logout
 import com.example.todo_android.Data.Profile.Login
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -292,49 +293,86 @@ fun LoginScreen(routeAction: RouteAction) {
 @Composable
 fun FailureLoginDialog(onDismissRequest: () -> Unit) {
 
+//    Dialog(onDismissRequest = { onDismissRequest }) {
+//        Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
+//            Column(modifier = Modifier
+//                .width(290.dp)
+//                .height(140.dp)
+//                .padding(
+//                    start = 19.dp,
+////                        end = 10.dp,
+////                        top = 19.dp,
+////                        bottom = 10.dp
+//                ),
+//                horizontalAlignment = Alignment.CenterHorizontally,
+//                verticalArrangement = Arrangement.Center) {
+//                Text(modifier = Modifier.fillMaxWidth(),
+//                    text = "로그인 실패",
+//                    fontSize = 14.sp,
+//                    fontWeight = FontWeight.ExtraBold)
+//
+//                Spacer(modifier = Modifier.height(4.dp))
+//
+//                Text(modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(bottom = 12.dp),
+//                    text = "이메일 혹은 비밀번호를 다시 확인해 주세요.",
+//                    fontSize = 12.sp,
+//                    fontWeight = FontWeight.Light)
+//
+////                Spacer(modifier = Modifier.height(35.dp))
+//
+//                Button(
+//                    onClick = { onDismissRequest() },
+//                    shape = RoundedCornerShape(20.dp),
+//                    modifier = Modifier
+//                        .width(100.dp)
+//                        .height(50.dp)
+//                        .padding(start = 14.dp, top = 7.dp, end = 14.dp, bottom = 7.dp)
+//                        .align(Alignment.End),
+//                    colors = ButtonDefaults.buttonColors(nextButtonColor),
+//                ) {
+//                    Text(text = "확인",
+//                        fontSize = 12.sp,
+//                        fontWeight = FontWeight.ExtraBold,
+//                        color = Color.Black)
+//                }
+//            }
+//        }
+//    }
+
+
     Dialog(onDismissRequest = { onDismissRequest }) {
-        Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
-            Column(modifier = Modifier
-                .width(290.dp)
-                .height(140.dp)
-                .padding(
-                    start = 19.dp,
-//                        end = 10.dp,
-//                        top = 19.dp,
-//                        bottom = 10.dp
-                ),
+        androidx.compose.material3.Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
+            Column(modifier = Modifier.width(265.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center) {
-                Text(modifier = Modifier.fillMaxWidth(),
+                Text(modifier = Modifier.padding(top = 27.dp, bottom = 11.dp),
                     text = "로그인 실패",
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.ExtraBold)
 
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp),
-                    text = "이메일 혹은 비밀번호를 다시 확인해 주세요.",
+                Text(
+                    text = "이메일 혹은 비밀번호를",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Light)
 
-//                Spacer(modifier = Modifier.height(35.dp))
+                Text(modifier = Modifier.padding(bottom = 29.dp),
+                    text = "다시 확인해 주세요.",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Light)
 
-                Button(
-                    onClick = { onDismissRequest() },
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier
-                        .width(100.dp)
-                        .height(50.dp)
-                        .padding(start = 14.dp, top = 7.dp, end = 14.dp, bottom = 7.dp)
-                        .align(Alignment.End),
-                    colors = ButtonDefaults.buttonColors(nextButtonColor),
-                ) {
-                    Text(text = "확인",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color.Black)
+                Row(modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround) {
+                    androidx.compose.material.TextButton(modifier = Modifier
+                        .background(Color(0xffE9E9E9))
+                        .weight(1f),
+                        onClick = {
+                            onDismissRequest()
+                        }) {
+                        Text(text = "확인", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }

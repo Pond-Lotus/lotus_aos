@@ -259,7 +259,7 @@ fun ProfileModalDrawer(
 
         Divider(modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 280.dp),
+            .padding(bottom = 260.dp),
             color = Color(0xffe9e9e9),
             thickness = 1.dp)
 
