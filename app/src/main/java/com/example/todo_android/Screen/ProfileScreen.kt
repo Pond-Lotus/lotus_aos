@@ -255,7 +255,7 @@ fun ProfileScreen(routeAction: RouteAction) {
 
             OutlinedTextField(modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
+                .height(54.dp),
                 value = nickname,
                 onValueChange = {
                     nickname = it
@@ -278,7 +278,7 @@ fun ProfileScreen(routeAction: RouteAction) {
 
             OutlinedTextField(modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(54.dp)
                 .focusable(false),
                 value = email,
                 onValueChange = {
@@ -314,7 +314,7 @@ fun ProfileScreen(routeAction: RouteAction) {
             Spacer(modifier = Modifier.padding(vertical = 115.dp))
 
             Button(modifier = Modifier
-                .width(120.dp)
+                .width(130.dp)
                 .height(40.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffE9E9E9)),
                 onClick = {
