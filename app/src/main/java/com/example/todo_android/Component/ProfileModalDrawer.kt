@@ -23,12 +23,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.LogoutRequest
 import com.example.todo_android.Response.ProfileResponse.LogoutResponse
 import com.example.todo_android.Util.MyApplication
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,8 +36,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 fun Logout(
-    token: String,
-    response: (LogoutResponse?) -> Unit
+    token: String, response: (LogoutResponse?) -> Unit
 ) {
     var logoutResponse: LogoutResponse? = null
 
@@ -62,6 +61,7 @@ fun Logout(
                 }
             }
         }
+
         override fun onFailure(call: Call<LogoutResponse>, t: Throwable) {
             Log.e("logout", t.message.toString())
         }
@@ -90,30 +90,40 @@ fun ProfileModalDrawer(
             .fillMaxSize()
             .padding(start = 17.dp, end = 17.dp, top = 73.dp),
     ) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 21.dp),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 21.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween) {
-            Image(modifier = Modifier.size(41.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Image(
+                modifier = Modifier.size(41.dp),
                 painter = painterResource(id = R.drawable.defaultprofile),
                 contentDescription = "profile",
-                contentScale = ContentScale.Crop)
+                contentScale = ContentScale.Crop
+            )
 
-            Column(modifier = Modifier
-                .weight(1f)
-                .padding(start = 8.dp),
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.Start) {
-                Text(text = nickname,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = nickname,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    lineHeight = 21.sp)
-                Text(text = email,
+                    lineHeight = 21.sp
+                )
+                Text(
+                    text = email,
                     color = Color(0xff9E9E9E),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
-                    lineHeight = 16.sp)
+                    lineHeight = 16.sp
+                )
             }
 
             IconButton(modifier = Modifier.background(Color.White), onClick = {
@@ -122,115 +132,129 @@ fun ProfileModalDrawer(
                 }
                 routeAction.navTo(NAV_ROUTE.PROFILE)
             }) {
-                Icon(modifier = Modifier
-                    .background(Color.White)
-                    .size(24.dp)
-                    .padding(start = 5.dp),
+                Icon(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .size(24.dp)
+                        .padding(start = 5.dp),
                     painter = painterResource(id = R.drawable.ic_pen),
-                    contentDescription = null)
+                    contentDescription = null
+                )
             }
         }
 
-        Divider(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 21.dp),
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 21.dp),
             color = Color(0xffe9e9e9),
-            thickness = 1.dp)
+            thickness = 1.dp
+        )
 
-        Text(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 2.dp, bottom = 20.dp),
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 2.dp, bottom = 20.dp),
             text = "환경 설정",
             fontWeight = FontWeight.Bold,
             fontSize = 13.sp,
-            lineHeight = 17.sp)
+            lineHeight = 17.sp
+        )
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 2.dp, bottom = 22.dp),
-            verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 2.dp, bottom = 22.dp)
+                .clickable {
+                    routeAction.navTo(NAV_ROUTE.CHANGEPASSWORD)
+                }, verticalAlignment = Alignment.CenterVertically
+        ) {
 
-            Image(modifier = Modifier
-                .size(22.dp)
-                .padding(start = 2.dp, end = 6.dp),
+            Image(
+                modifier = Modifier
+                    .size(22.dp)
+                    .padding(start = 2.dp, end = 6.dp),
                 painter = painterResource(id = R.drawable.setting),
-                contentDescription = null)
+                contentDescription = null
+            )
 
-            Text(modifier = Modifier.wrapContentWidth(),
+            Text(
+                modifier = Modifier.wrapContentWidth(),
                 text = "비밀번호 변경",
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
-                lineHeight = 17.sp)
+                lineHeight = 17.sp
+            )
         }
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 2.dp, bottom = 22.dp),
-            verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 2.dp, bottom = 22.dp)
+                .clickable {}, verticalAlignment = Alignment.CenterVertically
+        ) {
 
-            Image(modifier = Modifier
-                .size(22.dp)
-                .padding(start = 2.dp, end = 6.dp),
+            Image(
+                modifier = Modifier
+                    .size(22.dp)
+                    .padding(start = 2.dp, end = 6.dp),
                 painter = painterResource(id = R.drawable.setting),
-                contentDescription = null)
+                contentDescription = null
+            )
 
-            Text(modifier = Modifier.wrapContentWidth(),
+            Text(
+                modifier = Modifier.wrapContentWidth(),
                 text = "알림 설정",
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
-                lineHeight = 17.sp)
+                lineHeight = 17.sp
+            )
         }
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 2.dp, bottom = 28.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-
-            Image(modifier = Modifier
-                .size(22.dp)
-                .padding(start = 2.dp, end = 6.dp),
-                painter = painterResource(id = R.drawable.setting),
-                contentDescription = null)
-
-            Text(modifier = Modifier.wrapContentWidth(),
-                text = "테마 변경",
-                fontWeight = FontWeight.Medium,
-                fontSize = 13.sp,
-                lineHeight = 17.sp)
-        }
-
-        Divider(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 21.dp),
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 15.dp),
             color = Color(0xffe9e9e9),
-            thickness = 1.dp)
+            thickness = 1.dp
+        )
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 19.dp),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 19.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween) {
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
 
-            Text(modifier = Modifier
-                .weight(1f)
-                .padding(start = 2.dp),
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 2.dp),
                 text = "그룹 설정",
                 fontWeight = FontWeight.Bold,
                 fontSize = 13.sp,
-                lineHeight = 17.sp)
+                lineHeight = 17.sp
+            )
 
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(modifier = Modifier.size(14.dp),
+            IconButton(onClick = {
+                routeAction.navTo(NAV_ROUTE.SELECTGROUP)
+            }) {
+                Icon(
+                    modifier = Modifier.size(14.dp),
                     painter = painterResource(id = R.drawable.ic_arrow),
-                    contentDescription = null)
+                    contentDescription = null
+                )
             }
         }
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 28.dp),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 28.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround) {
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
                 onClick = {},
@@ -257,31 +281,39 @@ fun ProfileModalDrawer(
                 content = {})
         }
 
-        Divider(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 260.dp),
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 320.dp),
             color = Color(0xffe9e9e9),
-            thickness = 1.dp)
+            thickness = 1.dp
+        )
 
         Divider(modifier = Modifier.fillMaxWidth(), color = Color(0xffe9e9e9), thickness = 1.dp)
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 18.dp)
-            .clickable {
-                openDialog = true
-            }, verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 18.dp)
+                .clickable {
+                    openDialog = true
+                }, verticalAlignment = Alignment.CenterVertically
+        ) {
 
-            Icon(modifier = Modifier.size(14.dp),
+            Icon(
+                modifier = Modifier.size(14.dp),
                 painter = painterResource(id = R.drawable.logout),
-                contentDescription = null)
+                contentDescription = null
+            )
 
-            Text(modifier = Modifier
-                .weight(1f)
-                .padding(start = 6.dp),
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 6.dp),
                 text = "로그아웃",
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
-                lineHeight = 17.sp)
+                lineHeight = 17.sp
+            )
         }
     }
 }
@@ -293,33 +325,43 @@ fun showLogOutDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
 
     Dialog(onDismissRequest = { onDismissRequest }) {
         androidx.compose.material3.Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
-            Column(modifier = Modifier.width(265.dp),
+            Column(
+                modifier = Modifier.width(265.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
-                Text(modifier = Modifier.padding(top = 35.dp, bottom = 12.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    modifier = Modifier.padding(top = 35.dp, bottom = 12.dp),
                     text = "로그아웃",
                     fontSize = 14.sp,
-                    fontWeight = FontWeight.ExtraBold)
+                    fontWeight = FontWeight.ExtraBold
+                )
 
-                Text(modifier = Modifier.padding(bottom = 38.dp),
+                Text(
+                    modifier = Modifier.padding(bottom = 38.dp),
                     text = "로그아웃 하시겠습니까?",
                     fontSize = 12.sp,
-                    fontWeight = FontWeight.Light)
+                    fontWeight = FontWeight.Light
+                )
 
-                Row(modifier = Modifier.fillMaxWidth(),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround) {
-                    TextButton(modifier = Modifier
-                        .background(Color(0xffE9E9E9))
-                        .weight(1f),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    TextButton(
+                        modifier = Modifier
+                            .background(Color(0xffE9E9E9))
+                            .weight(1f),
                         onClick = {
                             onDismissRequest()
                         }) {
                         Text(text = "취소", fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }
-                    TextButton(modifier = Modifier
-                        .background(Color(0xffFFDAB9))
-                        .weight(1f),
+                    TextButton(
+                        modifier = Modifier
+                            .background(Color(0xffFFDAB9))
+                            .weight(1f),
                         onClick = {
                             Logout(token, response = {
                                 onDismissRequest()

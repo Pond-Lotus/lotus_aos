@@ -1,51 +1,5 @@
 package com.example.todo_android.Component
 
-import android.annotation.SuppressLint
-import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import com.example.todo_android.Data.Todo.UpdateTodo
-import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
-import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
-import com.example.todo_android.Response.TodoResponse.DeleteTodoResponse
-import com.example.todo_android.Response.TodoResponse.RToDoResponse
-import com.example.todo_android.Response.TodoResponse.UpdateTodoResponse
-import com.example.todo_android.Screen.readTodo
-import com.example.todo_android.Util.MyApplication
-import com.example.todo_android.ui.theme.deleteBackground
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-
-
-
-
-
-
 
 //@ExperimentalMaterial3Api
 //@ExperimentalMaterialApi

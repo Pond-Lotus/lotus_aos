@@ -27,9 +27,7 @@ import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.AuthCodeRequest
 import com.example.todo_android.Response.ProfileResponse.AuthCodeResponse
-import com.example.todo_android.Response.ProfileResponse.AuthEmailResponse
 import com.example.todo_android.Util.MyApplication
-import com.example.todo_android.ui.theme.backButtonColor
 import com.example.todo_android.ui.theme.nextButtonColor
 import retrofit2.Call
 import retrofit2.Callback

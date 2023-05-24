@@ -1,7 +1,6 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -12,8 +11,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -21,29 +18,14 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.KeyboardType.Companion.Uri
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
-import coil.compose.AsyncImagePainter
-import coil.compose.ImagePainter
-import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -51,16 +33,6 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ModifyRequest.ChangeNicknameAndProfileRequest
 import com.example.todo_android.Response.ModifyResponse.ChangeNicknameAndProfileResponse
 import com.example.todo_android.Util.MyApplication
-import com.himanshoe.kalendar.Kalendar
-import com.himanshoe.kalendar.color.KalendarThemeColor
-import com.himanshoe.kalendar.component.day.config.KalendarDayColors
-import com.himanshoe.kalendar.component.header.config.KalendarHeaderConfig
-import com.himanshoe.kalendar.component.text.config.KalendarTextColor
-import com.himanshoe.kalendar.component.text.config.KalendarTextConfig
-import com.himanshoe.kalendar.component.text.config.KalendarTextSize
-import com.himanshoe.kalendar.model.KalendarDay
-import com.himanshoe.kalendar.model.KalendarEvent
-import com.himanshoe.kalendar.model.KalendarType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -69,7 +41,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 

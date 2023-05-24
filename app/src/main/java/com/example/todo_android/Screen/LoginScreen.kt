@@ -24,16 +24,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.todo_android.Component.Logout
 import com.example.todo_android.Data.Profile.Login
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.LoginRequest
 import com.example.todo_android.Response.ProfileResponse.LoginResponse
-import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.Util.MyApplication
-import com.example.todo_android.ui.theme.nextButtonColor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
