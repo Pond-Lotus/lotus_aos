@@ -908,6 +908,13 @@ fun TodoUpdateBottomSheet(
     var title by remember { mutableStateOf(Todo.title) }
     var description by remember { mutableStateOf(Todo.description) }
 
+
+    LaunchedEffect(key1 = Todo.title, block = {
+        title = Todo.title
+
+        description = Todo.description
+    })
+
     var color by remember { mutableStateOf("") }
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
