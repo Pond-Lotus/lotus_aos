@@ -899,11 +899,12 @@ fun TodoUpdateBottomSheet(
     todoList: MutableList<RToDoResponse>,
 ) {
 
-//    var title by remember { mutableStateOf(Todo?.title) }.apply { value = Todo?.title }
+    var title by remember { mutableStateOf(Todo.title) }.apply { value = Todo.title }
+    var description by remember { mutableStateOf(Todo.title) }.apply { value = Todo.title }
 
-    var title by remember { mutableStateOf(Todo.title) }
+//    var title by remember { mutableStateOf(Todo.title) }
 
-    var description by remember { mutableStateOf(Todo.description) }
+//    var description by remember { mutableStateOf(Todo.description) }
 
     var color by remember { mutableStateOf("") }
 
