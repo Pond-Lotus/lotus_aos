@@ -3,6 +3,7 @@ package com.example.todo_android.Screen
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import com.example.todo_android.Component.Logout
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
@@ -30,13 +33,14 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun deleteAccount(token: String, routeAction: RouteAction){
+fun deleteAccount(token: String, response: (DeleteAccountResponse?) -> Unit) {
     var deleteAccountResponse: DeleteAccountResponse? = null
 
     var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
         .addConverterFactory(GsonConverterFactory.create()).build()
 
-    var deleteAccountRequest: DeleteAccountRequest = retrofit.create(DeleteAccountRequest::class.java)
+    var deleteAccountRequest: DeleteAccountRequest =
+        retrofit.create(DeleteAccountRequest::class.java)
 
     deleteAccountRequest.requestDeleteTodo(token).enqueue(object : Callback<DeleteAccountResponse> {
         override fun onResponse(
@@ -44,9 +48,8 @@ fun deleteAccount(token: String, routeAction: RouteAction){
             response: Response<DeleteAccountResponse>,
         ) {
             deleteAccountResponse = response.body()
-
+            response(deleteAccountResponse)
             Log.d("deleteAccount", "data : " + deleteAccountResponse?.resultCode)
-            routeAction.navTo(NAV_ROUTE.LOGIN)
         }
 
         override fun onFailure(call: Call<DeleteAccountResponse>, t: Throwable) {
@@ -62,6 +65,12 @@ fun deleteAccount(token: String, routeAction: RouteAction){
 @ExperimentalMaterial3Api
 @Composable
 fun DeleteAccountScreen(routeAction: RouteAction) {
+    val nickname: String = MyApplication.prefs.getData("nickname", "")
+    val email: String = MyApplication.prefs.getData("email", "")
+
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
+    var openDialog by remember { mutableStateOf(false) }
 
     var checked by remember { mutableStateOf(false) }
 
@@ -81,16 +90,23 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
         Color(0xffE9E9E9)
     }
 
-    val nickname: String = MyApplication.prefs.getData("nickname", "")
-    val email: String = MyApplication.prefs.getData("email", "")
 
-    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+    if (openDialog) {
+        showDeleteDialog(onDismissRequest = {
+            openDialog = false
+        }, routeAction)
+    }
 
     Scaffold(modifier = Modifier
         .fillMaxWidth()
         .imePadding(), topBar = {
         CenterAlignedTopAppBar(title = {
-            Text(text = "계정 탈퇴", fontSize = 16.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp)
+            Text(
+                text = "계정 탈퇴",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 24.sp
+            )
         }, navigationIcon = {
             IconButton(onClick = {
                 routeAction.goBack()
@@ -107,78 +123,105 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
 
             Spacer(modifier = Modifier.padding(vertical = 41.dp))
 
-            Text(modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 7.dp),
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 7.dp),
                 text = "계정 정보",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                lineHeight = 21.sp)
+                lineHeight = 21.sp
+            )
 
-            Card(modifier = Modifier
-                .fillMaxWidth()
-                .height(63.dp),
-                colors = CardDefaults.cardColors(Color(0xffF4F4F4)),
-                shape = RoundedCornerShape(10.dp)) {
-                Row(modifier = Modifier
+            Card(
+                modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 11.dp, bottom = 11.dp, start = 15.dp),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Image(modifier = Modifier.size(41.dp),
+                    .height(63.dp),
+                colors = CardDefaults.cardColors(Color(0xffF4F4F4)),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 11.dp, bottom = 11.dp, start = 15.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        modifier = Modifier.size(41.dp),
                         painter = painterResource(id = R.drawable.defaultprofile),
                         contentDescription = "profile",
-                        contentScale = ContentScale.Crop)
+                        contentScale = ContentScale.Crop
+                    )
 
-                    Column(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp),
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 8.dp),
                         verticalArrangement = Arrangement.SpaceBetween,
-                        horizontalAlignment = Alignment.Start) {
-                        Text(text = nickname,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = nickname,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            lineHeight = 21.sp)
-                        Text(text = email,
+                            lineHeight = 21.sp
+                        )
+                        Text(
+                            text = email,
                             color = Color(0xff9E9E9E),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
-                            lineHeight = 16.sp)
+                            lineHeight = 16.sp
+                        )
                     }
                 }
             }
 
-            Text(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 22.dp),
-                text = "탈퇴 전 안내드려요",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.ExtraBold,
-                lineHeight = 21.sp,
-                color = Color(0xffFF9D4D))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 28.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.info_circle),
+                    contentDescription = null
+                )
+
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(start = 3.dp),
+                    text = "탈퇴 전 안내드려요",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    lineHeight = 21.sp,
+                    color = Color(0xffFF9D4D)
+                )
+            }
 
             Spacer(modifier = Modifier.padding(vertical = 7.dp))
 
             Text(text = "계정 탈퇴 시 모든 정보와 데이터가 삭제됩니다.", fontSize = 14.sp, lineHeight = 21.sp)
             Text(text = "복구 및 백업이 불가능하오니, 신중히 생각해 주세요.", fontSize = 14.sp, lineHeight = 21.sp)
 
-            Divider(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 22.dp),
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 22.dp),
                 color = Color(0xffE9E9E9),
-                thickness = 1.dp)
+                thickness = 1.dp
+            )
 
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 19.dp, bottom = 41.dp)
-                .clickable {
-                    checked = !checked
-                    isButtonClickable = !isButtonClickable
-                },
-                verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 19.dp, bottom = 41.dp)
+                    .clickable {
+                        checked = !checked
+                        isButtonClickable = !isButtonClickable
+                    }, verticalAlignment = Alignment.CenterVertically
+            ) {
                 Image(
-                    modifier = Modifier.size(14.dp),
-                    painter = onCheck,
-                    contentDescription = null
+                    modifier = Modifier.size(14.dp), painter = onCheck, contentDescription = null
                 )
 
                 Text(
@@ -198,9 +241,10 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
                     .height(54.dp),
                 colors = ButtonDefaults.buttonColors(color),
                 onClick = {
-                          if(isButtonClickable == true){
-                              deleteAccount(token, routeAction)
-                          }
+                    if (isButtonClickable == true) {
+                        openDialog = true
+//                              deleteAccount(token, routeAction)
+                    }
                 },
                 enabled = isButtonClickable,
                 shape = RoundedCornerShape(8.dp)
@@ -212,6 +256,69 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
                     lineHeight = 22.sp,
                     fontWeight = FontWeight.Bold
                 )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun showDeleteDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
+
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
+    Dialog(onDismissRequest = { onDismissRequest }) {
+        Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
+            Column(
+                modifier = Modifier.width(265.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    modifier = Modifier.padding(top = 35.dp, bottom = 12.dp),
+                    text = "정말 떠나시나요? \uD83D\uDE22",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+
+                Text(
+                    modifier = Modifier.padding(bottom = 38.dp),
+                    text = "다음에 또 만나길 기대할게요.",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Light
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    androidx.compose.material.TextButton(modifier = Modifier
+                        .background(
+                            Color(
+                                0xffE9E9E9
+                            )
+                        )
+                        .weight(1f), onClick = {
+                        onDismissRequest()
+                    }) {
+                        Text(text = "취소", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    }
+                    androidx.compose.material.TextButton(modifier = Modifier
+                        .background(
+                            Color(
+                                0xffFFDAB9
+                            )
+                        )
+                        .weight(1f), onClick = {
+                        deleteAccount(token, response = {
+                            routeAction.navTo(NAV_ROUTE.LOGIN)
+                        })
+                        onDismissRequest()
+                    }) {
+                        Text(text = "확인", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
             }
         }
     }
