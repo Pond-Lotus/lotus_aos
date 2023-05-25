@@ -765,7 +765,10 @@ fun TodoItem(Todo: RToDoResponse, onTodoItemClick: (RToDoResponse) -> Unit) {
                 )
             }) {
         Row(
-            modifier = Modifier.padding(start = 13.dp, top = 15.dp, bottom = 15.dp),
+            modifier = Modifier.padding(
+                start = 7.dp,
+                top = 15.dp,
+                bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -878,7 +881,7 @@ fun TodoItemList(
 fun DeleteBackground() {
     Box(
         modifier = Modifier
-            .width(350.dp)
+            .fillMaxWidth()
             .height(50.dp)
             .clip(shape = RoundedCornerShape(8.dp))
             .background(deleteBackground)
@@ -899,12 +902,11 @@ fun TodoUpdateBottomSheet(
     todoList: MutableList<RToDoResponse>,
 ) {
 
-    var title by remember { mutableStateOf(Todo.title) }.apply { value = Todo.title }
-    var description by remember { mutableStateOf(Todo.title) }.apply { value = Todo.title }
+//    var title by remember { mutableStateOf(Todo.title) }.apply { value = Todo.title }
+//    var description by remember { mutableStateOf(Todo.title) }.apply { value = Todo.title }
 
-//    var title by remember { mutableStateOf(Todo.title) }
-
-//    var description by remember { mutableStateOf(Todo.description) }
+    var title by remember { mutableStateOf(Todo.title) }
+    var description by remember { mutableStateOf(Todo.description) }
 
     var color by remember { mutableStateOf("") }
 

@@ -291,55 +291,6 @@ fun LoginScreen(routeAction: RouteAction) {
 @Composable
 fun FailureLoginDialog(onDismissRequest: () -> Unit) {
 
-//    Dialog(onDismissRequest = { onDismissRequest }) {
-//        Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
-//            Column(modifier = Modifier
-//                .width(290.dp)
-//                .height(140.dp)
-//                .padding(
-//                    start = 19.dp,
-////                        end = 10.dp,
-////                        top = 19.dp,
-////                        bottom = 10.dp
-//                ),
-//                horizontalAlignment = Alignment.CenterHorizontally,
-//                verticalArrangement = Arrangement.Center) {
-//                Text(modifier = Modifier.fillMaxWidth(),
-//                    text = "로그인 실패",
-//                    fontSize = 14.sp,
-//                    fontWeight = FontWeight.ExtraBold)
-//
-//                Spacer(modifier = Modifier.height(4.dp))
-//
-//                Text(modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(bottom = 12.dp),
-//                    text = "이메일 혹은 비밀번호를 다시 확인해 주세요.",
-//                    fontSize = 12.sp,
-//                    fontWeight = FontWeight.Light)
-//
-////                Spacer(modifier = Modifier.height(35.dp))
-//
-//                Button(
-//                    onClick = { onDismissRequest() },
-//                    shape = RoundedCornerShape(20.dp),
-//                    modifier = Modifier
-//                        .width(100.dp)
-//                        .height(50.dp)
-//                        .padding(start = 14.dp, top = 7.dp, end = 14.dp, bottom = 7.dp)
-//                        .align(Alignment.End),
-//                    colors = ButtonDefaults.buttonColors(nextButtonColor),
-//                ) {
-//                    Text(text = "확인",
-//                        fontSize = 12.sp,
-//                        fontWeight = FontWeight.ExtraBold,
-//                        color = Color.Black)
-//                }
-//            }
-//        }
-//    }
-
-
     Dialog(onDismissRequest = { onDismissRequest }) {
         androidx.compose.material3.Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
             Column(modifier = Modifier.width(265.dp),
