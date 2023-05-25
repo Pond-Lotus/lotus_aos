@@ -27,14 +27,14 @@ fun SplashScreen(routeAction: RouteAction) {
     LaunchedEffect(Unit) {
         delay(3000) // 3초 동안 딜레이 설정
 
-        routeAction.navTo(NAV_ROUTE.LOGIN)
+//        routeAction.navTo(NAV_ROUTE.LOGIN)
 
-//        if(MyApplication.prefs.getData("email", "").isNotEmpty() && MyApplication.prefs.getData("password1", "").isNotEmpty()){
-//            routeAction.navTo(NAV_ROUTE.CALENDAR)
-//        } else{
-//            // 로그인 화면으로 전환
-//            routeAction.navTo(NAV_ROUTE.LOGIN)
-//        }
+        if(MyApplication.prefs.getData("email", "").isNotEmpty() && MyApplication.prefs.getData("password1", "").isNotEmpty()){
+            routeAction.navTo(NAV_ROUTE.CALENDAR)
+        } else{
+            // 로그인 화면으로 전환
+            routeAction.navTo(NAV_ROUTE.LOGIN)
+        }
     }
 
     Column(

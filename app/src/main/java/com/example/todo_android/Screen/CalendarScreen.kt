@@ -905,7 +905,7 @@ fun TodoUpdateBottomSheet(
 
     var description by remember { mutableStateOf(Todo.description) }
 
-    var color by remember { mutableStateOf("1") }
+    var color by remember { mutableStateOf("") }
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
@@ -982,6 +982,8 @@ fun TodoUpdateBottomSheet(
             androidx.compose.material.IconButton(onClick = {
                 scope.launch {
                     bottomSheetScaffoldState.bottomSheetState.collapse()
+                    title = Todo.title
+                    description = Todo.description
                 }
             }) {
                 Icon(imageVector = Icons.Filled.Close, contentDescription = null)

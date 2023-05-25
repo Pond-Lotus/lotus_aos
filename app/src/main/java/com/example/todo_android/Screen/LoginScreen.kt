@@ -83,6 +83,7 @@ fun sendLogin(
                     Log.d("LOGIN", "nickname : " + loginResponse?.nickname)
                     Log.d("LOGIN", "email : " + loginResponse?.email)
                     Log.d("LOGIN", "image : " + loginResponse?.image)
+                    MyApplication.prefs.setData("email", email)
                     Log.d("LOGIN", "메인 화면으로 갑니다.")
                 }
                 "500" -> {
@@ -122,7 +123,7 @@ fun LoginScreen(routeAction: RouteAction) {
     }
 
     if(checked){
-        MyApplication.prefs.setData("email", email)
+//        MyApplication.prefs.setData("email", email)
         MyApplication.prefs.setData("password1", password)
     }
 
