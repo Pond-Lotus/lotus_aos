@@ -29,12 +29,12 @@ fun SplashScreen(routeAction: RouteAction) {
 
         routeAction.navTo(NAV_ROUTE.LOGIN)
 
-        if(MyApplication.prefs.getData("email", "").isNotEmpty() && MyApplication.prefs.getData("password1", "").isNotEmpty()){
-            routeAction.navTo(NAV_ROUTE.CALENDAR)
-        } else{
-            // 로그인 화면으로 전환
-            routeAction.navTo(NAV_ROUTE.LOGIN)
-        }
+//        if(MyApplication.prefs.getData("email", "").isNotEmpty() && MyApplication.prefs.getData("password1", "").isNotEmpty()){
+//            routeAction.navTo(NAV_ROUTE.CALENDAR)
+//        } else{
+//            // 로그인 화면으로 전환
+//            routeAction.navTo(NAV_ROUTE.LOGIN)
+//        }
     }
 
     Column(

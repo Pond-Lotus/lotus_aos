@@ -981,10 +981,6 @@ fun TodoUpdateBottomSheet(
         ) {
             androidx.compose.material.IconButton(onClick = {
                 scope.launch {
-
-                    title = Todo.title
-                    description = Todo.description
-
                     bottomSheetScaffoldState.bottomSheetState.collapse()
                 }
             }) {
@@ -1020,9 +1016,6 @@ fun TodoUpdateBottomSheet(
                                 }
                             }
                         })
-
-                    title = Todo.title
-                    description = Todo.description
 
                     scope.launch {
                         bottomSheetScaffoldState.bottomSheetState.collapse()
