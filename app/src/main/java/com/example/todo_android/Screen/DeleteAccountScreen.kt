@@ -312,6 +312,8 @@ fun showDeleteDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
                         )
                         .weight(1f), onClick = {
                         deleteAccount(token, response = {
+                            MyApplication.prefs.setData("email", "")
+                            MyApplication.prefs.setData("password1", "")
                             routeAction.navTo(NAV_ROUTE.LOGIN)
                         })
                         onDismissRequest()
