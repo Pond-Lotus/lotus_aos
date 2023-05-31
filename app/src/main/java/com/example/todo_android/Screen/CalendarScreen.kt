@@ -222,30 +222,30 @@ fun updateTodo(
         token, id, UpdateTodo(year, month, day, title, done, description, color, time)
     ).enqueue(object : Callback<UpdateTodoResponse> {
 
-            // 실패 했을때
-            override fun onFailure(call: Call<UpdateTodoResponse>, t: Throwable) {
-                Log.e("updateTodo", t.message.toString())
+        // 실패 했을때
+        override fun onFailure(call: Call<UpdateTodoResponse>, t: Throwable) {
+            Log.e("updateTodo", t.message.toString())
+        }
+
+        // 성공 했을때
+        override fun onResponse(
+            call: Call<UpdateTodoResponse>,
+            response: Response<UpdateTodoResponse>,
+        ) {
+
+            if (response.isSuccessful) {
+                updateTodoResponse = response.body()
+
+                response(updateTodoResponse)
+
+                Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
+                Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
+            } else {
+                Log.e("updateTodo", "resultCode : " + response.body())
+                Log.e("updateTodo", "code : " + response.code())
             }
-
-            // 성공 했을때
-            override fun onResponse(
-                call: Call<UpdateTodoResponse>,
-                response: Response<UpdateTodoResponse>,
-            ) {
-
-                if (response.isSuccessful) {
-                    updateTodoResponse = response.body()
-
-                    response(updateTodoResponse)
-
-                    Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
-                    Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
-                } else {
-                    Log.e("updateTodo", "resultCode : " + response.body())
-                    Log.e("updateTodo", "code : " + response.code())
-                }
-            }
-        })
+        }
+    })
 }
 
 @ExperimentalFoundationApi
@@ -282,10 +282,6 @@ fun CalendarScreen(routeAction: RouteAction) {
     var month by remember { mutableStateOf("") }
     var day by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("") }
-    var time = "0000"
-
-//    var dayOfWeekString: String? = null
-
     var color by remember { mutableStateOf("") }
     var groupColors by remember {
         mutableStateOf(Color)
@@ -766,9 +762,8 @@ fun TodoItem(Todo: RToDoResponse, onTodoItemClick: (RToDoResponse) -> Unit) {
             }) {
         Row(
             modifier = Modifier.padding(
-                start = 7.dp,
-                top = 15.dp,
-                bottom = 15.dp),
+                start = 7.dp, top = 15.dp, bottom = 15.dp
+            ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -902,17 +897,17 @@ fun TodoUpdateBottomSheet(
     todoList: MutableList<RToDoResponse>,
 ) {
 
-//    var title by remember { mutableStateOf(Todo.title) }.apply { value = Todo.title }
-//    var description by remember { mutableStateOf(Todo.title) }.apply { value = Todo.title }
-
     var title by remember { mutableStateOf(Todo.title) }
     var description by remember { mutableStateOf(Todo.description) }
 
 
-    LaunchedEffect(key1 = Todo.title, block = {
-        title = Todo.title
-
-        description = Todo.description
+    LaunchedEffect(
+        key1 = Todo.title,
+        key2 = Todo.description,
+        key3 = Todo.color,
+        block = {
+            title = Todo.title
+            description = Todo.description
     })
 
     var color by remember { mutableStateOf("") }
