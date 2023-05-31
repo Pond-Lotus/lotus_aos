@@ -114,6 +114,8 @@ fun ProfileScreen(routeAction: RouteAction) {
 
     var openDialog by remember { mutableStateOf(false) }
 
+    var imdel by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
 
 
@@ -267,9 +269,11 @@ fun ProfileScreen(routeAction: RouteAction) {
             Button(modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .border(width = 0.5.dp,
+                .border(
+                    width = 0.5.dp,
                     color = Color(0xff424242),
-                    shape = RoundedCornerShape(percent = 8)),
+                    shape = RoundedCornerShape(percent = 8)
+                ),
                 colors = ButtonDefaults.buttonColors(Color.White),
                 onClick = {
                     goChangePassword(NAV_ROUTE.CHANGEPASSWORD, routeAction)
