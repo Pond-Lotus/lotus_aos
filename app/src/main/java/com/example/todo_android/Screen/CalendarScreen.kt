@@ -744,9 +744,7 @@ fun TodoItem(Todo: RToDoResponse, onTodoItemClick: (RToDoResponse) -> Unit) {
 
     var checked by remember { mutableStateOf(false) }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
-    var time = "0900"
-    var done = true
-    var color = 0
+    var done by remember { mutableStateOf(false) }
 
     Card(colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
@@ -770,6 +768,10 @@ fun TodoItem(Todo: RToDoResponse, onTodoItemClick: (RToDoResponse) -> Unit) {
             Checkbox(
                 checked = checked, onCheckedChange = {
                     checked = it
+                    if(checked){
+                        UpdateTodo(Todo.year, Todo.month, Todo.day, Todo.title, !done, Todo.description,
+                            Todo.color.toString(), Todo.time)
+                    }
                 }, colors = CheckboxDefaults.colors(
                     when (Todo.color) {
                         1 -> Color(0xffFFB4B4)
