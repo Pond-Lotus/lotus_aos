@@ -412,7 +412,7 @@ fun CalendarScreen(routeAction: RouteAction) {
     ) {
 
         Column(modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .background(Color(0xfff0f0f0))
             .imePadding()
 //                .horizontalScroll(scrollState)
@@ -690,9 +690,9 @@ fun FloatingActionButtonMenus(
 fun TodoItem(
     Todo: RToDoResponse,
     onTodoItemClick: (RToDoResponse) -> Unit,
-    onUpdateTodo: () -> Unit,
+    onCheckedUpdateTodo: () -> Unit,
+    onUnCheckedUpdateTodo: () -> Unit
 ) {
-
     var checked by remember { mutableStateOf(false) }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
     var done by remember { mutableStateOf(false) }
@@ -726,7 +726,7 @@ fun TodoItem(
                         Todo.time,
                         Todo.id,
                         response = {
-                            onUpdateTodo()
+                            onCheckedUpdateTodo()
                         })
                 } else {
                     done = false
@@ -742,7 +742,7 @@ fun TodoItem(
                         Todo.time,
                         Todo.id,
                         response = {
-                            onUpdateTodo()
+                            onUnCheckedUpdateTodo()
                         })
                 }
             }, colors = CheckboxDefaults.colors(when (Todo.color) {
@@ -830,11 +830,18 @@ fun TodoItemList(
                     dismissContent = {
                         TodoItem(Todo = item,
                             onTodoItemClick = { onTodoItemClick(it) },
-                            onUpdateTodo = {
+                            onCheckedUpdateTodo = {
                                 todoList.removeAll {
                                     it.id == item.id
                                 }
                                 todoList.add(item)
+                            }, onUnCheckedUpdateTodo = {
+                                readTodo(token, year = item.year, month = item.month, day = item.day) {
+                                    todoList.clear()
+                                    for (i in it!!.data) {
+                                        todoList.add(i)
+                                    }
+                                }
                             })
                     },
                     dismissThresholds = {
