@@ -265,11 +265,11 @@ fun updateTodo(
 fun CalendarScreen(routeAction: RouteAction) {
 
     val states = listOf("월간", "주간")
-    var selectedOption by remember { mutableStateOf(states[0]) }
+    var selectedOption by remember { mutableStateOf(states[1]) }
 
     val onSelectionChange = { text: String -> selectedOption = text }
 
-    var selectCalendar by remember { mutableStateOf(false) }
+    var selectCalendar by remember { mutableStateOf(true) }
     var showTodoInput by remember { mutableStateOf(false) }
     var isVisibility by remember { mutableStateOf(false) }
 
@@ -352,15 +352,6 @@ fun CalendarScreen(routeAction: RouteAction) {
     }
 
     LaunchedEffect(
-//        key1 = LocalDate.now().year,
-//        key2 = LocalDate.now().monthValue,
-//        key3 = LocalDate.now().dayOfMonth,
-//        block = {
-//            year = year
-//            month = month
-//            day = day
-//        }
-
         key1 = Unit,
         block = {
             readTodo(
@@ -813,8 +804,29 @@ fun TodoItem(
     var done by remember { mutableStateOf(false) }
 
     LaunchedEffect(
-        key1 = Todo.done,
-        block = { done = Todo.done })
+        key1 = Unit,
+        block = {
+            done = Todo.done
+
+            if (checked) {
+                done = true
+                checked = true
+                updateTodo(token,
+                    Todo.year,
+                    Todo.month,
+                    Todo.day,
+                    Todo.title,
+                    done,
+                    Todo.description,
+                    Todo.color.toString(),
+                    Todo.time,
+                    Todo.id,
+                    response = {
+                        onCheckedUpdateTodo()
+                    })
+            }
+        }
+    )
 
     Card(colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
