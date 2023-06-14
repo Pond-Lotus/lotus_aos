@@ -31,6 +31,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -350,7 +351,7 @@ fun CalendarScreen(routeAction: RouteAction) {
         }
     }
 
-//    LaunchedEffect(
+    LaunchedEffect(
 //        key1 = LocalDate.now().year,
 //        key2 = LocalDate.now().monthValue,
 //        key3 = LocalDate.now().dayOfMonth,
@@ -358,10 +359,47 @@ fun CalendarScreen(routeAction: RouteAction) {
 //            year = year
 //            month = month
 //            day = day
-//        })
+//        }
+
+        key1 = Unit,
+        block = {
+            readTodo(
+                token,
+                LocalDate.now().year.toString(),
+                LocalDate.now().monthValue.toString(),
+                LocalDate.now().dayOfMonth.toString()
+            ) {
+                todoList.clear()
+                for (i in it!!.data) {
+                    todoList.add(i)
+                }
+            }
+
+            day = LocalDate.now().dayOfMonth.toString()
+
+            val selectedDate = LocalDate.of(
+                LocalDate.now().year,
+                LocalDate.now().monthValue,
+                LocalDate.now().dayOfMonth
+            )
+            val dayOfWeek = selectedDate.dayOfWeek
+
+            dayString = when (dayOfWeek.value) {
+                1 -> "월요일"
+                2 -> "화요일"
+                3 -> "수요일"
+                4 -> "목요일"
+                5 -> "금요일"
+                6 -> "토요일"
+                7 -> "일요일"
+                else -> ""
+            }
+        }
+    )
 
 
-    BottomSheetScaffold(scaffoldState = bottomScaffoldState,
+    BottomSheetScaffold(
+        scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
                 scope = scope,
@@ -594,10 +632,11 @@ fun CalendarScreen(routeAction: RouteAction) {
             ) {
 
                 if (isVisibility) {
-                    TextField(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .focusRequester(focusRequester),
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                            .focusRequester(focusRequester),
                         value = title,
                         colors = TextFieldDefaults.textFieldColors(
                             containerColor = Color(0xffD8D8D8),
@@ -769,7 +808,7 @@ fun TodoItem(
     onCheckedUpdateTodo: () -> Unit,
     onUnCheckedUpdateTodo: () -> Unit
 ) {
-    var checked by remember { mutableStateOf(false) }
+    var checked by rememberSaveable { mutableStateOf(Todo.done) }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
     var done by remember { mutableStateOf(false) }
 
@@ -784,10 +823,6 @@ fun TodoItem(
             .height(50.dp)
             .clickable {
                 onTodoItemClick(Todo)
-                Log.d(
-                    "onclick",
-                    "onClick: ${Todo.id} ${Todo.year} ${Todo.month} ${Todo.day} ${Todo.color} title: ${Todo.title} ${Todo.description}"
-                )
             }) {
         Row(
             modifier = Modifier.padding(start = 7.dp, top = 15.dp, bottom = 15.dp),
@@ -795,12 +830,6 @@ fun TodoItem(
             horizontalArrangement = Arrangement.Center
         ) {
             Checkbox(
-//                checked =
-//                if (Todo.done) {
-//                    Todo.done
-//                } else {
-//                    checked
-//                },
                 checked = checked,
                 onCheckedChange = {
                     checked = it
