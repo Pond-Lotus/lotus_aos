@@ -979,15 +979,15 @@ fun TodoItemList(
                                 }
                                 todoList.add(item)
                             }, onUnCheckedUpdateTodo = {
-                                readTodo(
-                                    token,
-                                    year = item.year,
-                                    month = item.month,
-                                    day = item.day
-                                ) {
-                                    todoList.clear()
-                                    for (i in it!!.data) {
-                                        todoList.add(i)
+                                val itemIndex = todoList.indexOfFirst { it.id == item.id }
+                                if (itemIndex != -1) {
+                                    val updatedItem = item.copy(done = false)
+                                    todoList.removeAt(itemIndex)
+                                    val newIndex = todoList.indexOfFirst { !it.done || it.id == item.id }
+                                    if (newIndex != -1) {
+                                        todoList.add(newIndex, updatedItem)
+                                    } else {
+                                        todoList.add(updatedItem)
                                     }
                                 }
                             })
