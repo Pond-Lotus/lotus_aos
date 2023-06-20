@@ -979,17 +979,11 @@ fun TodoItemList(
                                 }
                                 todoList.add(item)
                             }, onUnCheckedUpdateTodo = {
-                                val itemIndex = todoList.indexOfFirst { it.id == item.id }
-                                if (itemIndex != -1) {
-                                    val updatedItem = item.copy(done = false)
-                                    todoList.removeAt(itemIndex)
-                                    val newIndex = todoList.indexOfFirst { !it.done || it.id == item.id }
-                                    if (newIndex != -1) {
-                                        todoList.add(newIndex, updatedItem)
-                                    } else {
-                                        todoList.add(updatedItem)
-                                    }
-                                }
+                                    todoList.removeAt(todoList.indexOfFirst { it.id == item.id })
+                                    todoList.add(
+                                        todoList.indexOfFirst { !it.done || it.id == item.id },
+                                        item.copy(done = false)
+                                    )
                             })
                     },
                     dismissThresholds = {
