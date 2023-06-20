@@ -974,16 +974,13 @@ fun TodoItemList(
                         TodoItem(Todo = item,
                             onTodoItemClick = { onTodoItemClick(it) },
                             onCheckedUpdateTodo = {
-                                todoList.removeAll {
-                                    it.id == item.id
-                                }
+                                todoList.removeAll { it.id == item.id }
                                 todoList.add(item)
                             }, onUnCheckedUpdateTodo = {
-                                    todoList.removeAt(todoList.indexOfFirst { it.id == item.id })
+                                    todoList.removeAll { it.id == item.id }
                                     todoList.add(
                                         todoList.indexOfFirst { !it.done || it.id == item.id },
-                                        item.copy(done = false)
-                                    )
+                                        item.copy(done = false))
                             })
                     },
                     dismissThresholds = {
