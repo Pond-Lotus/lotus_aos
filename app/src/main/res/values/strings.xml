@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">todo-android</string>
+    <string name="app_name">TODORI</string>
 
     <!-- Button -->
     <string name="Login">로그인</string>
