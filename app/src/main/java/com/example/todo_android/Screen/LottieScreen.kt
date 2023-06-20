@@ -8,6 +8,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +21,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.*
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
@@ -34,6 +37,18 @@ fun LottieScreen(routeAction: RouteAction) {
 
     val nickname = MyApplication.prefs.getData("nickname", "")
 
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie))
+    val lottieAnimatable = rememberLottieAnimatable()
+
+    LaunchedEffect(composition) {
+        lottieAnimatable.animate(
+            composition = composition,
+            clipSpec = LottieClipSpec.Frame(0, 1200),
+            initialProgress = 0f
+        )
+    }
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,12 +57,19 @@ fun LottieScreen(routeAction: RouteAction) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Image(
-            modifier = Modifier.size(223.dp),
-            painter = painterResource(id = R.drawable.lottie),
-            contentDescription = null,
-            contentScale = ContentScale.Crop
+        LottieAnimation(
+            composition = composition,
+            progress = lottieAnimatable.progress,
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier.size(223.dp)
         )
+
+//        Image(
+//            modifier = Modifier.size(223.dp),
+//            painter = painterResource(id = R.drawable.lottie),
+//            contentDescription = null,
+//            contentScale = ContentScale.Crop
+//        )
 
         Text(
             text = stringResource(id = R.string.SucessRegister),
