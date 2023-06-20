@@ -37,8 +37,9 @@ fun LottieScreen(routeAction: RouteAction) {
 
     val nickname = MyApplication.prefs.getData("nickname", "")
 
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie))
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.todori))
     val lottieAnimatable = rememberLottieAnimatable()
+    val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
 
     LaunchedEffect(composition) {
         lottieAnimatable.animate(
@@ -59,17 +60,11 @@ fun LottieScreen(routeAction: RouteAction) {
     ) {
         LottieAnimation(
             composition = composition,
-            progress = lottieAnimatable.progress,
+            progress = progress,
             contentScale = ContentScale.FillHeight,
-            modifier = Modifier.size(223.dp)
+            modifier = Modifier.size(250.dp)
         )
 
-//        Image(
-//            modifier = Modifier.size(223.dp),
-//            painter = painterResource(id = R.drawable.lottie),
-//            contentDescription = null,
-//            contentScale = ContentScale.Crop
-//        )
 
         Text(
             text = stringResource(id = R.string.SucessRegister),

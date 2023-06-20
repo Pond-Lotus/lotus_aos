@@ -52,14 +52,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Component.FloatingStateType
 import com.example.todo_android.Component.ProfileModalDrawer
+import com.example.todo_android.Data.Category.ReadCategory
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.R
+import com.example.todo_android.Request.CategoryRequest.ReadCategoryRequest
 import com.example.todo_android.Request.TodoRequest.CreateTodoRequest
 import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
 import com.example.todo_android.Request.TodoRequest.ReadTodoRequest
 import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
+import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.Response.TodoResponse.*
 import com.example.todo_android.Util.MyApplication
 import com.example.todo_android.ui.theme.deleteBackground
@@ -250,6 +253,36 @@ fun updateTodo(
                 }
             }
         })
+}
+
+fun readCategory(
+    response: (ReadCategoryResponse?) -> Unit
+) {
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
+    var readCategoryResponse: ReadCategoryResponse ?= null
+
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
+
+    var readCategoryRequest: ReadCategoryRequest = retrofit.create(ReadCategoryRequest::class.java)
+
+    readCategoryRequest.requestReadCategory(token).enqueue(object : Callback<ReadCategoryResponse> {
+        override fun onResponse(
+            call: Call<ReadCategoryResponse>,
+            response: Response<ReadCategoryResponse>
+        ) {
+            readCategoryResponse = response.body()
+            response(readCategoryResponse)
+            Log.d("readCategory", "resultCode : " + readCategoryResponse?.resultCode)
+            Log.d("readCategory", "data : " + readCategoryResponse?.data)
+        }
+
+        override fun onFailure(call: Call<ReadCategoryResponse>, t: Throwable) {
+            Log.e("readCategory", t.message.toString())
+        }
+
+    })
 }
 
 @ExperimentalFoundationApi
@@ -909,6 +942,13 @@ fun TodoItemList(
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
+    var categoryName by remember { mutableStateOf<ReadCategoryResponse?>(null) }
+
+    // 카테고리를 요청하는 함수를 호출하고, 응답을 categoryResponse에 저장합니다.
+    readCategory { response ->
+        categoryName = response
+    }
+
 
     LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
@@ -943,7 +983,8 @@ fun TodoItemList(
                     Spacer(modifier = Modifier.padding(horizontal = 5.dp))
 
                     Text(
-                        text = "그룹 $header",
+//                        text = "그룹 $header",
+                        text = categoryName?.data?.get(header.toString()) ?: "",
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp,
                         lineHeight = 17.sp
