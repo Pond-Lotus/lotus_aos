@@ -28,8 +28,7 @@ import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 @Composable
 fun CategoryScreen(routeAction: RouteAction) {
 
-//    var categoryList by remember { mutableStateOf<ReadCategoryResponse?>(null) }
-    var categoryList = remember{ mutableStateListOf<ReadCategoryResponse>()}
+    var categoryList = remember { mutableStateListOf<ReadCategoryResponse>() }
 
     Scaffold(modifier = Modifier
         .fillMaxWidth()
@@ -73,13 +72,13 @@ fun CategoryItem(Category: ReadCategoryResponse) {
             Button(
                 modifier = Modifier.size(23.dp),
                 colors = ButtonDefaults.buttonColors(
-                    when(Category.data) {
-                        mapOf("1" to 1).values.toList() -> Color(0xffFFB4B4)
-                        mapOf("2" to 2).values.toList() -> Color(0xffFFDCA8)
-                        mapOf("3" to 3).values.toList() -> Color(0xffB1E0CF)
-                        mapOf("4" to 4).values.toList() -> Color(0xffB7D7F5)
-                        mapOf("5" to 5).values.toList() -> Color(0xffFFB8EB)
-                        mapOf("6" to 6).values.toList() -> Color(0xffB6B1EC)
+                    when(Category.data.toList().toString()) {
+                        "1" -> Color(0xffFFB4B4)
+                        "2" -> Color(0xffFFDCA8)
+                        "3" -> Color(0xffB1E0CF)
+                        "4" -> Color(0xffB7D7F5)
+                        "5" -> Color(0xffFFB8EB)
+                        "6" -> Color(0xffB6B1EC)
                         else -> Color.Black
                     }),
                 onClick = {},
@@ -87,7 +86,7 @@ fun CategoryItem(Category: ReadCategoryResponse) {
             )
 
             Text(
-                text = Category.data.map { it.value }.toList().toString(),
+                text = Category.data.toList().toString(),
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
                 lineHeight = 18.sp,
