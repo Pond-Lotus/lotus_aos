@@ -983,7 +983,6 @@ fun TodoItemList(
                     Spacer(modifier = Modifier.padding(horizontal = 5.dp))
 
                     Text(
-//                        text = "그룹 $header",
                         text = categoryName?.data?.get(header.toString()) ?: "",
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp,

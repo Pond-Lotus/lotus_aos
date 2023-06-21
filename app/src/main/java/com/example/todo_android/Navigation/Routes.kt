@@ -25,7 +25,7 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
     DELETEACCOUNT("DELETEACCOUNT", "계정 탈퇴 화면"),
     SEARCHPASSWORD("SEARCHPASSWORD", "비밀번호 찾기 화면"),
     SPLASH("SPLASH", "실행 로딩 화면"),
-    SELECTGROUP("SELECTGROUP", "그룹 설정 화면"),
+    SELECTCATEGORY("SELECTGROUP", "그룹 설정 화면"),
     CHANGECATEGORY("CHANGECATEGORY", "그룹 이름 변경 화면")
 }
 
@@ -34,7 +34,7 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
-fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.CALENDAR) {
+fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
 
     // 네비게이션 컨트롤러 가져오기
     val navController = rememberNavController()
@@ -125,9 +125,9 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.CALENDAR) {
 
         //라우트 이름 = 화면의 키
         //그룹 설정 화면
-        composable(NAV_ROUTE.SELECTGROUP.routeName) {
+        composable(NAV_ROUTE.SELECTCATEGORY.routeName) {
             // 화면이 들어가는 부분 = 값
-            GroupScreen(routeAction)
+            CategoryScreen(routeAction)
         }
 
         //라우트 이름 = 화면의 키

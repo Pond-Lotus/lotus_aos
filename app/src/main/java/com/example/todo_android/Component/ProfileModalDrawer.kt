@@ -238,7 +238,7 @@ fun ProfileModalDrawer(
             )
 
             IconButton(onClick = {
-                routeAction.navTo(NAV_ROUTE.SELECTGROUP)
+                routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
             }) {
                 Icon(
                     modifier = Modifier.size(14.dp),
