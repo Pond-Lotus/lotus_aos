@@ -1,14 +1,12 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,8 +18,6 @@ import androidx.compose.ui.unit.sp
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.R
 import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
-import com.example.todo_android.Response.TodoResponse.RToDoResponse
-import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
@@ -29,6 +25,25 @@ import com.example.todo_android.Response.TodoResponse.ReadTodoResponse
 fun CategoryScreen(routeAction: RouteAction) {
 
     var categoryList = remember { mutableStateListOf<ReadCategoryResponse>() }
+
+    LaunchedEffect(
+        key1 = Unit,
+        block = {
+            readCategory(response = {
+                categoryList.clear()
+                for (entry in it?.data ?: emptyMap()) {
+                    val readCategoryResponse = ReadCategoryResponse(
+                        resultCode = it?.resultCode ?: 0,
+                        data = mapOf(entry.key to entry.value)
+                    )
+                    categoryList.add(readCategoryResponse)
+                }
+//                for(i in it!!.data) {
+//                    categoryList.get(i.value.toInt())
+//                }
+            })
+        }
+    )
 
     Scaffold(modifier = Modifier
         .fillMaxWidth()

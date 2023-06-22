@@ -5,8 +5,6 @@ import android.util.Log
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -52,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Component.FloatingStateType
 import com.example.todo_android.Component.ProfileModalDrawer
-import com.example.todo_android.Data.Category.ReadCategory
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
@@ -945,9 +942,10 @@ fun TodoItemList(
     var categoryName by remember { mutableStateOf<ReadCategoryResponse?>(null) }
 
     // 카테고리를 요청하는 함수를 호출하고, 응답을 categoryResponse에 저장합니다.
-    readCategory { response ->
-        categoryName = response
-    }
+
+    readCategory(response = {
+        categoryName = it
+    })
 
 
     LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
