@@ -29,17 +29,11 @@ fun CategoryScreen(routeAction: RouteAction) {
     LaunchedEffect(
         key1 = Unit,
         block = {
-            readCategory(response = {
+            readCategory(response = { response ->
                 categoryList.clear()
-//                for (entry in it?.data ?: emptyMap()) {
-//                    val readCategoryResponse = ReadCategoryResponse(
-//                        resultCode = it?.resultCode ?: 0,
-//                        data = mapOf(entry.key to entry.value)
-//                    )
-//                    categoryList.add(readCategoryResponse)
-//                }
-                for(i in it!!.data) {
-                    categoryList.add()
+                response?.data?.let { data ->
+                    val readCategoryResponse = ReadCategoryResponse(response.resultCode, data)
+                    categoryList.add(readCategoryResponse)
                 }
             })
         }
@@ -86,7 +80,7 @@ fun CategoryItem(Category: ReadCategoryResponse) {
             Button(
                 modifier = Modifier.size(23.dp),
                 colors = ButtonDefaults.buttonColors(
-                    when(Category.data.toList().toString()) {
+                    when(Category.data.values.toString()) {
                         "1" -> Color(0xffFFB4B4)
                         "2" -> Color(0xffFFDCA8)
                         "3" -> Color(0xffB1E0CF)
@@ -100,7 +94,7 @@ fun CategoryItem(Category: ReadCategoryResponse) {
             )
 
             Text(
-                text = Category.data.toList().toString(),
+                text = Category.data.values.toString(),
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
                 lineHeight = 18.sp,
@@ -128,9 +122,9 @@ fun CategoryItem(Category: ReadCategoryResponse) {
 
 
 @Composable
-fun CategoryItemList(Category: List<ReadCategoryResponse>) {
+fun CategoryItemList(categoryList: List<ReadCategoryResponse>) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        items(items = Category, key = { item -> item }) { item ->
+        items(items = categoryList, key = { item -> item.data }) { item ->
             CategoryItem(Category = item)
         }
     }
