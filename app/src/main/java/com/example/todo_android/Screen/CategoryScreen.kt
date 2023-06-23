@@ -31,16 +31,16 @@ fun CategoryScreen(routeAction: RouteAction) {
         block = {
             readCategory(response = {
                 categoryList.clear()
-                for (entry in it?.data ?: emptyMap()) {
-                    val readCategoryResponse = ReadCategoryResponse(
-                        resultCode = it?.resultCode ?: 0,
-                        data = mapOf(entry.key to entry.value)
-                    )
-                    categoryList.add(readCategoryResponse)
-                }
-//                for(i in it!!.data) {
-//                    categoryList.get(i.value.toInt())
+//                for (entry in it?.data ?: emptyMap()) {
+//                    val readCategoryResponse = ReadCategoryResponse(
+//                        resultCode = it?.resultCode ?: 0,
+//                        data = mapOf(entry.key to entry.value)
+//                    )
+//                    categoryList.add(readCategoryResponse)
 //                }
+                for(i in it!!.data) {
+                    categoryList.add()
+                }
             })
         }
     )
@@ -78,7 +78,6 @@ fun CategoryScreen(routeAction: RouteAction) {
 
 @Composable
 fun CategoryItem(Category: ReadCategoryResponse) {
-
     Card(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
