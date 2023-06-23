@@ -32,8 +32,7 @@ fun CategoryScreen(routeAction: RouteAction) {
             readCategory(response = { response ->
                 categoryList.clear()
                 response?.data?.let { data ->
-                    val readCategoryResponse = ReadCategoryResponse(response.resultCode, data)
-                    categoryList.add(readCategoryResponse)
+                    categoryList.add(ReadCategoryResponse(response.resultCode, data))
                 }
             })
         }
@@ -109,15 +108,14 @@ fun CategoryItem(Category: ReadCategoryResponse) {
                 )
             }
         }
-
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 19.dp, bottom = 19.dp),
-            color = Color(0xffe9e9e9),
-            thickness = 1.dp
-        )
     }
+    Divider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 19.dp, bottom = 19.dp),
+        color = Color(0xffe9e9e9),
+        thickness = 1.dp
+    )
 }
 
 
