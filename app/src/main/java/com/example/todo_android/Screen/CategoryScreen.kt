@@ -1,6 +1,7 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,9 +31,11 @@ fun CategoryScreen(routeAction: RouteAction) {
         key1 = Unit,
         block = {
             readCategory(response = { response ->
-                categoryList.clear()
                 response?.data?.let { data ->
-                    categoryList.add(ReadCategoryResponse(response.resultCode, data))
+                    categoryList.clear()
+                    data.forEach { (key, value) ->
+                        categoryList.add(ReadCategoryResponse(response.resultCode, mapOf(key to value)))
+                    }
                 }
             })
         }
@@ -71,15 +74,21 @@ fun CategoryScreen(routeAction: RouteAction) {
 
 @Composable
 fun CategoryItem(Category: ReadCategoryResponse) {
-    Card(modifier = Modifier.fillMaxSize()) {
+    Card(
+        modifier = Modifier.fillMaxSize(),
+        colors = CardDefaults.cardColors(Color.White)
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
                 modifier = Modifier.size(23.dp),
+                onClick = {},
+                enabled = false,
+                content = {},
                 colors = ButtonDefaults.buttonColors(
-                    when(Category.data.values.toString()) {
+                    disabledContentColor = when(Category.data.values.first()) {
                         "1" -> Color(0xffFFB4B4)
                         "2" -> Color(0xffFFDCA8)
                         "3" -> Color(0xffB1E0CF)
@@ -87,17 +96,15 @@ fun CategoryItem(Category: ReadCategoryResponse) {
                         "5" -> Color(0xffFFB8EB)
                         "6" -> Color(0xffB6B1EC)
                         else -> Color.Black
-                    }),
-                onClick = {},
-                content = {}
+                    })
             )
 
             Text(
-                text = Category.data.values.toString(),
+                text = Category.data.values.first().toString(), // 수정된 부분
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
                 lineHeight = 18.sp,
-                modifier = Modifier.padding(start = 16.dp, end = 239.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 250.dp)
             )
 
             IconButton(onClick = {}) {
@@ -122,7 +129,7 @@ fun CategoryItem(Category: ReadCategoryResponse) {
 @Composable
 fun CategoryItemList(categoryList: List<ReadCategoryResponse>) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        items(items = categoryList, key = { item -> item.data }) { item ->
+        items(items = categoryList, key = { item -> item.data.values }) { item ->
             CategoryItem(Category = item)
         }
     }
