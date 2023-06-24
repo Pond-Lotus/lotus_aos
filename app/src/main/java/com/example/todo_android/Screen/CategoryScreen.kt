@@ -76,7 +76,7 @@ fun CategoryScreen(routeAction: RouteAction) {
 fun CategoryItem(Category: ReadCategoryResponse) {
     Card(
         modifier = Modifier.fillMaxSize(),
-        colors = CardDefaults.cardColors(Color.White)
+        colors = CardDefaults.cardColors(Color.Transparent)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -85,10 +85,9 @@ fun CategoryItem(Category: ReadCategoryResponse) {
             Button(
                 modifier = Modifier.size(23.dp),
                 onClick = {},
-                enabled = false,
                 content = {},
                 colors = ButtonDefaults.buttonColors(
-                    disabledContentColor = when(Category.data.values.first()) {
+                    when(Category.data.keys.first()) {
                         "1" -> Color(0xffFFB4B4)
                         "2" -> Color(0xffFFDCA8)
                         "3" -> Color(0xffB1E0CF)
@@ -96,15 +95,14 @@ fun CategoryItem(Category: ReadCategoryResponse) {
                         "5" -> Color(0xffFFB8EB)
                         "6" -> Color(0xffB6B1EC)
                         else -> Color.Black
-                    })
-            )
+                    }))
 
             Text(
                 text = Category.data.values.first().toString(), // 수정된 부분
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
                 lineHeight = 18.sp,
-                modifier = Modifier.padding(start = 16.dp, end = 250.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 275.dp)
             )
 
             IconButton(onClick = {}) {
@@ -119,7 +117,7 @@ fun CategoryItem(Category: ReadCategoryResponse) {
     Divider(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 19.dp, bottom = 19.dp),
+            .padding(top = 10.dp, bottom = 10.dp),
         color = Color(0xffe9e9e9),
         thickness = 1.dp
     )
@@ -128,7 +126,7 @@ fun CategoryItem(Category: ReadCategoryResponse) {
 
 @Composable
 fun CategoryItemList(categoryList: List<ReadCategoryResponse>) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    LazyColumn() {
         items(items = categoryList, key = { item -> item.data.values }) { item ->
             CategoryItem(Category = item)
         }
