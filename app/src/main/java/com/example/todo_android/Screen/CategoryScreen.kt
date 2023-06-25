@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Navigation.Action.RouteAction
+import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
 
@@ -67,13 +68,13 @@ fun CategoryScreen(routeAction: RouteAction) {
 
             Spacer(modifier = Modifier.padding(vertical = 41.dp))
 
-            CategoryItemList(categoryList)
+            CategoryItemList(categoryList, routeAction)
         }
     }
 }
 
 @Composable
-fun CategoryItem(Category: ReadCategoryResponse) {
+fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
     Card(
         modifier = Modifier.fillMaxSize(),
         colors = CardDefaults.cardColors(Color.Transparent)
@@ -102,10 +103,12 @@ fun CategoryItem(Category: ReadCategoryResponse) {
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
                 lineHeight = 18.sp,
-                modifier = Modifier.padding(start = 16.dp, end = 275.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 270.dp)
             )
 
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                routeAction.navTo(NAV_ROUTE.CHANGECATEGORY)
+            }) {
                 Icon(
                     modifier = Modifier.size(24.dp),
                     painter = painterResource(id = R.drawable.selectgroup),
@@ -125,10 +128,10 @@ fun CategoryItem(Category: ReadCategoryResponse) {
 
 
 @Composable
-fun CategoryItemList(categoryList: List<ReadCategoryResponse>) {
+fun CategoryItemList(categoryList: List<ReadCategoryResponse>, routeAction: RouteAction) {
     LazyColumn() {
         items(items = categoryList, key = { item -> item.data.values }) { item ->
-            CategoryItem(Category = item)
+            CategoryItem(Category = item, routeAction)
         }
     }
 }
