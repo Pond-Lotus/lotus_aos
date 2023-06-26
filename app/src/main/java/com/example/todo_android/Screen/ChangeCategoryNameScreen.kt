@@ -18,10 +18,10 @@ import com.example.todo_android.Navigation.Action.RouteAction
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
 @Composable
-fun ChangeCategoryNameScreen(routeAction: RouteAction) {
+fun ChangeCategoryNameScreen(routeAction: RouteAction, categoryValue: String?) {
 
     var categoryName by remember {
-        mutableStateOf("")
+        mutableStateOf(categoryValue ?: "")
     }
 
     Scaffold(modifier = Modifier
