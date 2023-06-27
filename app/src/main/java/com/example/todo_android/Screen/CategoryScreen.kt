@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -75,6 +76,17 @@ fun CategoryScreen(routeAction: RouteAction) {
 
 @Composable
 fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
+
+    val colors = when(Category.data.keys.first()) {
+        "1" -> Color(0xffFFB4B4)
+        "2" -> Color(0xffFFDCA8)
+        "3" -> Color(0xffB1E0CF)
+        "4" -> Color(0xffB7D7F5)
+        "5" -> Color(0xffFFB8EB)
+        "6" -> Color(0xffB6B1EC)
+        else -> Color.Black
+    }
+
     Card(
         modifier = Modifier.fillMaxSize(),
         colors = CardDefaults.cardColors(Color.Transparent)
@@ -87,16 +99,7 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
                 modifier = Modifier.size(23.dp),
                 onClick = {},
                 content = {},
-                colors = ButtonDefaults.buttonColors(
-                    when(Category.data.keys.first()) {
-                        "1" -> Color(0xffFFB4B4)
-                        "2" -> Color(0xffFFDCA8)
-                        "3" -> Color(0xffB1E0CF)
-                        "4" -> Color(0xffB7D7F5)
-                        "5" -> Color(0xffFFB8EB)
-                        "6" -> Color(0xffB6B1EC)
-                        else -> Color.Black
-                    }))
+                colors = ButtonDefaults.buttonColors(colors))
 
             Text(
                 text = Category.data.values.first().toString(), // 수정된 부분
@@ -107,7 +110,8 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
             )
 
             IconButton(onClick = {
-                routeAction.navTo(NAV_ROUTE.CHANGECATEGORY)
+//                routeAction.navTo(NAV_ROUTE.CHANGECATEGORY)
+                routeAction.customNavto(NAV_ROUTE.CHANGECATEGORY, Category.data.values.first().toString())
             }) {
                 Icon(
                     modifier = Modifier.size(24.dp),

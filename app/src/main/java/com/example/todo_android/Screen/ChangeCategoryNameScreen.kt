@@ -18,10 +18,10 @@ import com.example.todo_android.Navigation.Action.RouteAction
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
 @Composable
-fun ChangeCategoryNameScreen(routeAction: RouteAction, categoryValue: String?) {
+fun ChangeCategoryNameScreen(routeAction: RouteAction, categoryName: String?) {
 
     var categoryName by remember {
-        mutableStateOf(categoryValue ?: "")
+        mutableStateOf(categoryName ?: "")
     }
 
     Scaffold(modifier = Modifier
@@ -68,13 +68,14 @@ fun ChangeCategoryNameScreen(routeAction: RouteAction, categoryValue: String?) {
 
                 Button(modifier = Modifier.size(28.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
+//                    colors = ButtonDefaults.buttonColors(categoryColor),
                     onClick = {},
                     content = {})
 
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
+                        .height(54.dp)
                         .padding(start = 10.dp),
                     value = categoryName,
                     onValueChange = {

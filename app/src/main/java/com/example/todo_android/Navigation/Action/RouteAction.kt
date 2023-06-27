@@ -1,5 +1,6 @@
 package com.example.todo_android.Navigation.Action
 
+import android.graphics.Color
 import androidx.navigation.NavHostController
 import com.example.todo_android.Navigation.NAV_ROUTE
 
@@ -16,5 +17,9 @@ class RouteAction(navHostController: NavHostController) {
     // 뒤로가기 이동
     val goBack: () -> Unit = {
         navHostController.navigateUp()
+    }
+
+    val customNavto: (NAV_ROUTE, String) -> Unit = { route, name ->
+        navHostController.navigate("${route.routeName}/$name")
     }
 }

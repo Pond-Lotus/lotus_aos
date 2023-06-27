@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.core.graphics.toColor
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,7 +29,7 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
     SEARCHPASSWORD("SEARCHPASSWORD", "비밀번호 찾기 화면"),
     SPLASH("SPLASH", "실행 로딩 화면"),
     SELECTCATEGORY("SELECTGROUP", "그룹 설정 화면"),
-    CHANGECATEGORY("CHANGECATEGORY", "그룹 이름 변경 화면")
+    CHANGECATEGORY("CHANGECATEGORY/{categoryValue}", "그룹 이름 변경 화면")
 }
 
 @ExperimentalFoundationApi
@@ -135,11 +136,19 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SELECTCATEGORY) {
         //라우트 이름 = 화면의 키
         //그룹 설정 화면
         composable(
-            NAV_ROUTE.CHANGECATEGORY.routeName,
-            arguments = listOf(navArgument("categoryValue") { type = NavType.StringType })) {
+//            NAV_ROUTE.CHANGECATEGORY.routeName,
+//            "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}/{categoryColor}",
+            "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}",
+            arguments =
+            listOf(navArgument("categoryName") { type = NavType.StringType },
+//                navArgument("categoryColor") {type = NavType.IntType}
+            )
+        ) { backStackEntry ->
             // 화면이 들어가는 부분 = 값
-            val categoryValue = it.arguments?.getString("categoryValue")
-            ChangeCategoryNameScreen(routeAction, categoryValue)
+            val categoryName = backStackEntry.arguments?.getString("categoryName")
+            ChangeCategoryNameScreen(routeAction, categoryName)
+//            val categoryColor = backStackEntry.arguments?.getInt("categoryColor")
+//            ChangeCategoryNameScreen(routeAction, categoryName, categoryColor!!.toColor())
         }
     }
 }
