@@ -14,15 +14,39 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Navigation.Action.RouteAction
+import com.example.todo_android.Request.CategoryRequest.UpdateCategoryRequest
+import com.example.todo_android.Response.CategoryResponse.UpdateCategoryResponse
+import com.example.todo_android.Util.MyApplication
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+fun updateCategory(
+    token: String,
+    categoryName: String?,
+    routeAction: RouteAction,
+    response: (UpdateCategoryResponse?) -> Unit
+){
+    var updateCategoryResponse: UpdateCategoryResponse? = null
+
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
+
+    var updateCategoryRequest: UpdateCategoryRequest = retrofit.create(UpdateCategoryRequest::class.java)
+
+    //updateCategoryRequest.requestUpdateCategory(token, categoryName)
+}
+
+
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
 @Composable
 fun ChangeCategoryNameScreen(routeAction: RouteAction, categoryName: String?, categoryColor: Int?) {
 
-    var categoryName by remember {
-        mutableStateOf(categoryName ?: "")
-    }
+    var categoryName by remember { mutableStateOf(categoryName ?: "") }
+
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
     Scaffold(modifier = Modifier
         .fillMaxWidth()
