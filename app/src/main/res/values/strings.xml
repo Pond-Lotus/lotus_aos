@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TODORI</string>
+    <string name="app_name">토도리</string>
 
     <!-- Button -->
     <string name="Login">로그인</string>
