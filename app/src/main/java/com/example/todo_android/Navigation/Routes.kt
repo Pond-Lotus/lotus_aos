@@ -6,7 +6,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.core.graphics.toColor
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -137,18 +136,18 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SELECTCATEGORY) {
         //그룹 설정 화면
         composable(
 //            NAV_ROUTE.CHANGECATEGORY.routeName,
-//            "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}/{categoryColor}",
-            "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}",
+            "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}/{categoryColor}",
+//            "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}",
             arguments =
             listOf(navArgument("categoryName") { type = NavType.StringType },
-//                navArgument("categoryColor") {type = NavType.IntType}
+                navArgument("categoryColor") {type = NavType.IntType}
             )
         ) { backStackEntry ->
             // 화면이 들어가는 부분 = 값
             val categoryName = backStackEntry.arguments?.getString("categoryName")
-            ChangeCategoryNameScreen(routeAction, categoryName)
-//            val categoryColor = backStackEntry.arguments?.getInt("categoryColor")
-//            ChangeCategoryNameScreen(routeAction, categoryName, categoryColor!!.toColor())
+            val categoryColor = backStackEntry.arguments?.getInt("categoryColor")
+//            ChangeCategoryNameScreen(routeAction, categoryName)
+            ChangeCategoryNameScreen(routeAction, categoryName, categoryColor)
         }
     }
 }

@@ -19,7 +19,7 @@ class RouteAction(navHostController: NavHostController) {
         navHostController.navigateUp()
     }
 
-    val customNavto: (NAV_ROUTE, String) -> Unit = { route, name ->
-        navHostController.navigate("${route.routeName}/$name")
+    val customNavto: (NAV_ROUTE, String, Int) -> Unit = { route, name, color ->
+        navHostController.navigate("${route.routeName}/$name/$color")
     }
 }

@@ -18,7 +18,7 @@ import com.example.todo_android.Navigation.Action.RouteAction
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
 @Composable
-fun ChangeCategoryNameScreen(routeAction: RouteAction, categoryName: String?) {
+fun ChangeCategoryNameScreen(routeAction: RouteAction, categoryName: String?, categoryColor: Int?) {
 
     var categoryName by remember {
         mutableStateOf(categoryName ?: "")
@@ -67,8 +67,8 @@ fun ChangeCategoryNameScreen(routeAction: RouteAction, categoryName: String?) {
                 Spacer(modifier = Modifier.padding(vertical = 110.dp))
 
                 Button(modifier = Modifier.size(28.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
-//                    colors = ButtonDefaults.buttonColors(categoryColor),
+//                    colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
+                    colors = ButtonDefaults.buttonColors(Color(categoryColor!!)),
                     onClick = {},
                     content = {})
 
