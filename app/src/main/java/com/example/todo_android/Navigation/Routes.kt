@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.todo_android.Navigation.Action.RouteAction
+import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.Screen.*
 
 // 컴포즈 네비게이션 이넘(값을 가지는 이넘)
@@ -28,7 +29,7 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
     SEARCHPASSWORD("SEARCHPASSWORD", "비밀번호 찾기 화면"),
     SPLASH("SPLASH", "실행 로딩 화면"),
     SELECTCATEGORY("SELECTGROUP", "그룹 설정 화면"),
-    CHANGECATEGORY("CHANGECATEGORY/{categoryValue}", "그룹 이름 변경 화면")
+    CHANGECATEGORY("CHANGECATEGORY", "그룹 이름 변경 화면")
 }
 
 @ExperimentalFoundationApi
@@ -135,16 +136,19 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
         //라우트 이름 = 화면의 키
         //그룹 설정 화면
         composable(
-            "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}/{categoryColor}",
+            "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}/{categoryId}/{categoryColor}",
             arguments =
-            listOf(navArgument("categoryName") { type = NavType.StringType },
-                navArgument("categoryColor") {type = NavType.IntType}
+            listOf(
+                navArgument("categoryName") { type = NavType.StringType },
+                navArgument("categoryId") { type = NavType.StringType },
+                navArgument("categoryColor") { type = NavType.IntType }
             )
         ) { backStackEntry ->
             // 화면이 들어가는 부분 = 값
             val categoryName = backStackEntry.arguments?.getString("categoryName")
+            val categoryId = backStackEntry.arguments?.getString("categoryId")
             val categoryColor = backStackEntry.arguments?.getInt("categoryColor")
-            ChangeCategoryNameScreen(routeAction, categoryName, categoryColor)
+            ChangeCategoryNameScreen(routeAction, categoryName, categoryId, categoryColor)
         }
     }
 }

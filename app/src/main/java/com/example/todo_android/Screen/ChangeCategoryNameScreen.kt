@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Request.CategoryRequest.UpdateCategoryRequest
+import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.Response.CategoryResponse.UpdateCategoryResponse
 import com.example.todo_android.Util.MyApplication
 import retrofit2.Retrofit
@@ -42,10 +43,16 @@ fun updateCategory(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
 @Composable
-fun ChangeCategoryNameScreen(routeAction: RouteAction, categoryName: String?, categoryColor: Int?) {
+fun ChangeCategoryNameScreen(
+    routeAction: RouteAction,
+    categoryName: String?,
+    categoryId: String?,
+    categoryColor: Int?
+) {
 
+    var categoryId by remember { mutableStateOf(categoryId ?: "") }
     var categoryName by remember { mutableStateOf(categoryName ?: "") }
-
+    var categoryData = remember { mutableStateListOf<ReadCategoryResponse>() }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
     Scaffold(modifier = Modifier
@@ -100,7 +107,7 @@ fun ChangeCategoryNameScreen(routeAction: RouteAction, categoryName: String?, ca
                         .fillMaxWidth()
                         .height(54.dp)
                         .padding(start = 10.dp),
-                    value = categoryName,
+                    value = categoryName + categoryId,
                     onValueChange = {
                         categoryName = it
                     },

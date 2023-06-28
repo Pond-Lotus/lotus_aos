@@ -110,7 +110,11 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
             )
 
             IconButton(onClick = {
-                routeAction.customNavto(NAV_ROUTE.CHANGECATEGORY, Category.data.values.first().toString(), colors.toArgb())
+                routeAction.customNavto(
+                    NAV_ROUTE.CHANGECATEGORY,
+                    Category.data.values.first().toString(),
+                    Category.data.keys.first().toString(),
+                    colors.toArgb())
             }) {
                 Icon(
                     modifier = Modifier.size(24.dp),
