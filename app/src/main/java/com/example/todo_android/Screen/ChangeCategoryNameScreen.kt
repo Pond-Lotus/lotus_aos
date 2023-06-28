@@ -91,7 +91,6 @@ fun ChangeCategoryNameScreen(routeAction: RouteAction, categoryName: String?, ca
                 Spacer(modifier = Modifier.padding(vertical = 110.dp))
 
                 Button(modifier = Modifier.size(28.dp),
-//                    colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
                     colors = ButtonDefaults.buttonColors(Color(categoryColor!!)),
                     onClick = {},
                     content = {})

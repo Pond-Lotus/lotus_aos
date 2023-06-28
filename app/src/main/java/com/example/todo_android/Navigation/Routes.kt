@@ -135,9 +135,7 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SELECTCATEGORY) {
         //라우트 이름 = 화면의 키
         //그룹 설정 화면
         composable(
-//            NAV_ROUTE.CHANGECATEGORY.routeName,
             "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}/{categoryColor}",
-//            "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}",
             arguments =
             listOf(navArgument("categoryName") { type = NavType.StringType },
                 navArgument("categoryColor") {type = NavType.IntType}
@@ -146,7 +144,6 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SELECTCATEGORY) {
             // 화면이 들어가는 부분 = 값
             val categoryName = backStackEntry.arguments?.getString("categoryName")
             val categoryColor = backStackEntry.arguments?.getInt("categoryColor")
-//            ChangeCategoryNameScreen(routeAction, categoryName)
             ChangeCategoryNameScreen(routeAction, categoryName, categoryColor)
         }
     }
