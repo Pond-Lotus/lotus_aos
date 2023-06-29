@@ -28,7 +28,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 fun updateCategory(
-    token: String, test: Map<String?, String?>, response: (UpdateCategoryResponse?) -> Unit
+    token: String,
+    test: Map<String?, String?>,
+    response: (UpdateCategoryResponse?) -> Unit
 ) {
     var updateCategoryResponse: UpdateCategoryResponse? = null
 
