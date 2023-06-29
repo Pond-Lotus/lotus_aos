@@ -114,7 +114,8 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
                     NAV_ROUTE.CHANGECATEGORY,
                     Category.data.values.first().toString(),
                     Category.data.keys.first().toString(),
-                    colors.toArgb())
+                    colors.toArgb()
+                )
             }) {
                 Icon(
                     modifier = Modifier.size(24.dp),
