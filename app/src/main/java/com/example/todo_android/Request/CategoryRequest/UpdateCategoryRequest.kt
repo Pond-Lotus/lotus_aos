@@ -8,7 +8,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface UpdateCategoryRequest {
-    @POST("/todo/name/priority")
+    @POST("/todo/name/priority/")
     fun requestUpdateCategory(
         @Header("Authorization") token: String,
         @Body updateCategory: UpdateCategory

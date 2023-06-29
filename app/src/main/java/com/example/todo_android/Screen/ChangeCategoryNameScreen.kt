@@ -29,7 +29,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 fun updateCategory(
     token: String,
-    test: Map<String, String?>,
+    categorySet: Map<String, String?>,
     response: (UpdateCategoryResponse?) -> Unit
 ) {
     var updateCategoryResponse: UpdateCategoryResponse? = null
@@ -40,7 +40,7 @@ fun updateCategory(
     var updateCategoryRequest: UpdateCategoryRequest =
         retrofit.create(UpdateCategoryRequest::class.java)
 
-    updateCategoryRequest.requestUpdateCategory(token, UpdateCategory(test)).enqueue(object : Callback<UpdateCategoryResponse> {
+    updateCategoryRequest.requestUpdateCategory(token, UpdateCategory(categorySet)).enqueue(object : Callback<UpdateCategoryResponse> {
             override fun onResponse(call: Call<UpdateCategoryResponse>, response: Response<UpdateCategoryResponse>) {
                 updateCategoryResponse = response.body()
 
@@ -93,7 +93,7 @@ fun ChangeCategoryNameScreen(
     Log.d("testList", "${testList[categoryId]?.get(1).toString()}")
 
 
-    val test = when (categoryId) {
+    val categorySet = when (categoryId) {
         "1" -> mapOf(
             categoryId to categoryName,
             "2" to testList["2"],
@@ -163,7 +163,7 @@ fun ChangeCategoryNameScreen(
             }
         }, actions = {
             TextButton(onClick = {
-                updateCategory(token, test) {
+                updateCategory(token, categorySet) {
                     routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
                 }
             }) {
