@@ -314,9 +314,9 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
-    var year by remember { mutableStateOf("") }
-    var month by remember { mutableStateOf("") }
-    var day by remember { mutableStateOf("") }
+    var year by remember { mutableStateOf(LocalDate.now().year.toString()) }
+    var month by remember { mutableStateOf(LocalDate.now().monthValue.toString()) }
+    var day by remember { mutableStateOf(LocalDate.now().dayOfMonth.toString()) }
     var title by remember { mutableStateOf("") }
     var color by remember { mutableStateOf("") }
     var groupColors by remember {
