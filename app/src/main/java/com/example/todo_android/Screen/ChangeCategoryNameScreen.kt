@@ -29,7 +29,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 fun updateCategory(
     token: String,
-    test: Map<String?, String?>,
+    test: Map<String, String?>,
     response: (UpdateCategoryResponse?) -> Unit
 ) {
     var updateCategoryResponse: UpdateCategoryResponse? = null
@@ -40,11 +40,8 @@ fun updateCategory(
     var updateCategoryRequest: UpdateCategoryRequest =
         retrofit.create(UpdateCategoryRequest::class.java)
 
-    updateCategoryRequest.requestUpdateCategory(token, UpdateCategory(test))
-        .enqueue(object : Callback<UpdateCategoryResponse> {
-            override fun onResponse(
-                call: Call<UpdateCategoryResponse>, response: Response<UpdateCategoryResponse>
-            ) {
+    updateCategoryRequest.requestUpdateCategory(token, UpdateCategory(test)).enqueue(object : Callback<UpdateCategoryResponse> {
+            override fun onResponse(call: Call<UpdateCategoryResponse>, response: Response<UpdateCategoryResponse>) {
                 updateCategoryResponse = response.body()
 
                 when (updateCategoryResponse?.resultCode) {
@@ -98,52 +95,52 @@ fun ChangeCategoryNameScreen(
 
     val test = when (categoryId) {
         "1" -> mapOf(
-            testList[categoryId] to categoryName,
-            testList["2"] to testList["2"],
-            testList["3"] to testList["3"],
-            testList["4"] to testList["4"],
-            testList["5"] to testList["5"],
-            testList["6"] to testList["6"]
+            categoryId to categoryName,
+            "2" to testList["2"],
+            "3" to testList["3"],
+            "4" to testList["4"],
+            "5" to testList["5"],
+            "6" to testList["6"]
         )
         "2" -> mapOf(
-            testList["1"] to testList["1"],
-            testList[categoryId] to categoryName,
-            testList["3"] to testList["3"],
-            testList["4"] to testList["4"],
-            testList["5"] to testList["5"],
-            testList["6"] to testList["6"]
+            "1" to testList["1"],
+            categoryId to categoryName,
+            "3" to testList["3"],
+            "4" to testList["4"],
+            "5" to testList["5"],
+            "6" to testList["6"]
         )
         "3" -> mapOf(
-            testList["1"] to testList["2"],
-            testList["2"] to testList["3"],
-            testList[categoryId] to categoryName,
-            testList["4"] to testList["4"],
-            testList["5"] to testList["5"],
-            testList["6"] to testList["6"]
+            "1" to testList["2"],
+            "2" to testList["3"],
+            categoryId to categoryName,
+            "4" to testList["4"],
+            "5" to testList["5"],
+            "6" to testList["6"]
         )
         "4" -> mapOf(
-            testList["1"] to testList["2"],
-            testList["2"] to testList["3"],
-            testList["3"] to testList["4"],
-            testList[categoryId] to categoryName,
-            testList["5"] to testList["5"],
-            testList["6"] to testList["6"]
+            "1" to testList["2"],
+            "2" to testList["3"],
+            "3" to testList["4"],
+            categoryId to categoryName,
+            "5" to testList["5"],
+            "6" to testList["6"]
         )
         "5" -> mapOf(
-            testList["1"] to testList["2"],
-            testList["2"] to testList["3"],
-            testList["3"] to testList["4"],
-            testList["4"] to testList["5"],
-            testList[categoryId] to categoryName,
-            testList["6"] to testList["6"]
+            "1" to testList["2"],
+            "2" to testList["3"],
+            "3" to testList["4"],
+            "4" to testList["5"],
+            categoryId to categoryName,
+            "6" to testList["6"]
         )
         "6" -> mapOf(
-            testList["1"] to testList["2"],
-            testList["2"] to testList["3"],
-            testList["3"] to testList["4"],
-            testList["4"] to testList["5"],
-            testList["5"] to testList["6"],
-            testList[categoryId] to categoryName
+            "1" to testList["2"],
+            "2" to testList["3"],
+            "3" to testList["4"],
+            "4" to testList["5"],
+            "5" to testList["6"],
+            categoryId to categoryName
         )
         else -> return
     }
