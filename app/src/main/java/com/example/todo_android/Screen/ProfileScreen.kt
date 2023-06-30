@@ -1,12 +1,8 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Base64
 import android.util.Log
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -22,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -30,17 +25,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Util.MyApplication
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
-import java.io.FileOutputStream
 
 fun goChangePassword(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
@@ -110,14 +99,25 @@ fun ProfileScreen(routeAction: RouteAction) {
     var nickname by remember { mutableStateOf(MyApplication.prefs.getData("nickname", "")) }
     var openDialog by remember { mutableStateOf(false) }
     var imdel by remember { mutableStateOf(true) }
-    var defaultImage: Int by remember { mutableStateOf(R.drawable.defaultprofile) }
+    var imageUri = rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
 
-//    val imageResource = if(MyApplication.prefs.getData("image", "")  == null) {
-//        painterResource(id = R.drawable.defaultprofile)
-//    } else{
-//
-//    }
+    if (openDialog) {
+        setImageDialog(
+            onDismissRequest = { openDialog = false},
+            imageUri = imageUri
+        )
+    }
+
+    val imageResource = rememberImagePainter(
+        data = if(
+//            MyApplication.prefs.getData("image", "")  == null ||
+            imageUri.value.isEmpty()
+        ) {
+            R.drawable.defaultprofile
+    } else {
+        imageUri.value
+    })
 
 
 //    val responseDefaultProfileImage = MyApplication.prefs.getData("defaultProfileImage", "")
@@ -150,13 +150,6 @@ fun ProfileScreen(routeAction: RouteAction) {
 //        }
 //    })
 //
-//    val launcher =
-//        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-//            uri?.let {
-//                imageUri.value = it
-//                Log.v("image", "image: ${uri}")
-//            }
-//        }
 //
 //    val file = imageUri.value?.let { uri ->
 //        val contentResolver = context.contentResolver
@@ -172,13 +165,6 @@ fun ProfileScreen(routeAction: RouteAction) {
 //    val body = requestFile?.let {
 //        MultipartBody.Part.createFormData("image", file.name, requestFile)
 //    }
-
-    if (openDialog) {
-        setImageDialog(
-            onDismissRequest = { openDialog = false },
-//            defaultImage = defaultImage
-        )
-    }
 
     Scaffold(modifier = Modifier
         .fillMaxWidth()
@@ -218,7 +204,7 @@ fun ProfileScreen(routeAction: RouteAction) {
             
             Box(modifier = Modifier.padding(8.dp)) {
                 Image(
-                    painter = painterResource(id = defaultImage),
+                    painter = imageResource,
                     contentDescription = "profileImage",
                     modifier = Modifier
                         .size(90.dp)
@@ -358,8 +344,17 @@ fun ProfileScreen(routeAction: RouteAction) {
 @Composable
 fun setImageDialog(
     onDismissRequest: () -> Unit,
-//    defaultImage: MutableState<Int>
+    imageUri: MutableState<String>,
 ) {
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                imageUri.value = it.toString()
+                Log.v("setImage", "image: ${uri}")
+            }
+        }
+
+
     Dialog(onDismissRequest = { onDismissRequest }) {
         Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
             Column(
@@ -377,6 +372,7 @@ fun setImageDialog(
                         .padding(start = 55.dp, end = 55.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFDAB9)),
                     onClick = {
+                        launcher.launch("image/*")
                         onDismissRequest()
                     },
                     shape = RoundedCornerShape(10.dp)
