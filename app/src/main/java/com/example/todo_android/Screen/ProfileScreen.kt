@@ -11,6 +11,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -19,7 +20,9 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -101,74 +104,80 @@ fun goChangePassword(route: NAV_ROUTE, routeAction: RouteAction) {
 @Composable
 fun ProfileScreen(routeAction: RouteAction) {
 
-    var email: String = MyApplication.prefs.getData("email", "")
-
-    var nickname by remember { mutableStateOf(MyApplication.prefs.getData("nickname", "")) }
-
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
+    var email: String = MyApplication.prefs.getData("email", "")
+    var nickname by remember { mutableStateOf(MyApplication.prefs.getData("nickname", "")) }
     var openDialog by remember { mutableStateOf(false) }
-
     var imdel by remember { mutableStateOf(true) }
-
+    var defaultImage: Int by remember { mutableStateOf(R.drawable.defaultprofile) }
     val context = LocalContext.current
 
+//    val imageResource = if(MyApplication.prefs.getData("image", "")  == null) {
+//        painterResource(id = R.drawable.defaultprofile)
+//    } else{
+//
+//    }
 
-    val responseDefaultProfileImage = MyApplication.prefs.getData("defaultProfileImage", "")
-    val defaultProfileImageDecodedBytes = Base64.decode(responseDefaultProfileImage, Base64.DEFAULT)
-    val defaultProfileImageBitmap = BitmapFactory.decodeByteArray(
-        defaultProfileImageDecodedBytes, 0, defaultProfileImageDecodedBytes.size
-    )
 
-    val decodeDefaultImageFile: File? = File.createTempFile("temp", null, context.cacheDir)
-    val defaultOutPutStream = FileOutputStream(decodeDefaultImageFile)
-    defaultProfileImageBitmap?.compress(Bitmap.CompressFormat.PNG, 100, defaultOutPutStream)
-    defaultOutPutStream.close()
+//    val responseDefaultProfileImage = MyApplication.prefs.getData("defaultProfileImage", "")
+//    val defaultProfileImageDecodedBytes = Base64.decode(responseDefaultProfileImage, Base64.DEFAULT)
+//    val defaultProfileImageBitmap = BitmapFactory.decodeByteArray(
+//        defaultProfileImageDecodedBytes, 0, defaultProfileImageDecodedBytes.size
+//    )
+//
+//    val decodeDefaultImageFile: File? = File.createTempFile("temp", null, context.cacheDir)
+//    val defaultOutPutStream = FileOutputStream(decodeDefaultImageFile)
+//    defaultProfileImageBitmap?.compress(Bitmap.CompressFormat.PNG, 100, defaultOutPutStream)
+//    defaultOutPutStream.close()
+//
+//    val responseImage = MyApplication.prefs.getData("image", "")
+//    val decodedBytes = Base64.decode(responseImage, Base64.DEFAULT)
+//    val decodedImage = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+//
+//    val decodeFile: File? = File.createTempFile("temp", null, context.cacheDir)
+//    val outputStream = FileOutputStream(decodeFile)
+//    decodedImage?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+//    outputStream.close()
+//
+//    val imageUri = rememberSaveable {
+//        mutableStateOf(decodeFile?.toUri())
+//    }
 
-    val responseImage = MyApplication.prefs.getData("image", "")
-    val decodedBytes = Base64.decode(responseImage, Base64.DEFAULT)
-    val decodedImage = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-
-    val decodeFile: File? = File.createTempFile("temp", null, context.cacheDir)
-    val outputStream = FileOutputStream(decodeFile)
-    decodedImage?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-    outputStream.close()
-
-    val imageUri = rememberSaveable {
-        mutableStateOf(decodeFile?.toUri())
-    }
-
-    var painter = rememberImagePainter(data = imageUri.value, builder = {
-        if (imageUri.value != null) {
-            placeholder(R.drawable.defaultprofile)
-        }
-    })
-
-    val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                imageUri.value = it
-                Log.v("image", "image: ${uri}")
-            }
-        }
-
-    val file = imageUri.value?.let { uri ->
-        val contentResolver = context.contentResolver
-        val inputStream = contentResolver.openInputStream(uri)
-        val tempFile = File.createTempFile("image", null, context.cacheDir)
-        tempFile.outputStream().use { outputStream ->
-            inputStream?.copyTo(outputStream)
-        }
-        tempFile
-    }
-
-    val requestFile = file?.asRequestBody("image/jpeg".toMediaTypeOrNull())
-    val body = requestFile?.let {
-        MultipartBody.Part.createFormData("image", file.name, requestFile)
-    }
+//    var painter = rememberImagePainter(data = imageUri.value, builder = {
+//        if (imageUri.value != null) {
+//            placeholder(R.drawable.defaultprofile)
+//        }
+//    })
+//
+//    val launcher =
+//        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+//            uri?.let {
+//                imageUri.value = it
+//                Log.v("image", "image: ${uri}")
+//            }
+//        }
+//
+//    val file = imageUri.value?.let { uri ->
+//        val contentResolver = context.contentResolver
+//        val inputStream = contentResolver.openInputStream(uri)
+//        val tempFile = File.createTempFile("image", null, context.cacheDir)
+//        tempFile.outputStream().use { outputStream ->
+//            inputStream?.copyTo(outputStream)
+//        }
+//        tempFile
+//    }
+//
+//    val requestFile = file?.asRequestBody("image/jpeg".toMediaTypeOrNull())
+//    val body = requestFile?.let {
+//        MultipartBody.Part.createFormData("image", file.name, requestFile)
+//    }
 
     if (openDialog) {
-        setImageDialog(onDismissRequest = { openDialog = false })
+        setImageDialog(
+            onDismissRequest = { openDialog = false },
+//            defaultImage = defaultImage
+        )
     }
 
     Scaffold(modifier = Modifier
@@ -206,17 +215,41 @@ fun ProfileScreen(routeAction: RouteAction) {
         ) {
 
             Spacer(modifier = Modifier.padding(vertical = 36.dp))
+            
+            Box(modifier = Modifier.padding(8.dp)) {
+                Image(
+                    painter = painterResource(id = defaultImage),
+                    contentDescription = "profileImage",
+                    modifier = Modifier
+                        .size(90.dp)
+                        .clickable {
+                            openDialog = true
+                        }
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+                Row(modifier = Modifier.padding(2.dp)) {
+//                    Text(text = "", modifier = Modifier.width(28.dp))
+                    Image(
+                        painter = painterResource(R.drawable.profile_bottom_icon),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(start = 60.dp, top = 60.dp)
+                            .clip(CircleShape)
+                    )
+                }
+            }
 
-            Image(
-                painter = painterResource(id = R.drawable.defaultprofile),
-                contentDescription = "profileImage",
-                modifier = Modifier
-                    .size(90.dp)
-                    .clickable {
-                        openDialog = true
-                    },
-                contentScale = ContentScale.Crop
-            )
+//            Image(
+//                painter = painterResource(id = defaultImage),
+//                contentDescription = "profileImage",
+//                modifier = Modifier
+//                    .size(90.dp)
+//                    .clickable {
+//                        openDialog = true
+//                    },
+//                contentScale = ContentScale.Crop
+//            )
 
             Spacer(modifier = Modifier.padding(vertical = 26.dp))
 
@@ -324,7 +357,9 @@ fun ProfileScreen(routeAction: RouteAction) {
 
 @Composable
 fun setImageDialog(
-    onDismissRequest: () -> Unit) {
+    onDismissRequest: () -> Unit,
+//    defaultImage: MutableState<Int>
+) {
     Dialog(onDismissRequest = { onDismissRequest }) {
         Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
             Column(
@@ -341,7 +376,9 @@ fun setImageDialog(
                         .height(45.dp)
                         .padding(start = 55.dp, end = 55.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFDAB9)),
-                    onClick = {},
+                    onClick = {
+                        onDismissRequest()
+                    },
                     shape = RoundedCornerShape(10.dp)
                 ) {
                     Text(
@@ -360,7 +397,10 @@ fun setImageDialog(
                         .height(45.dp)
                         .padding(start = 55.dp, end = 55.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffE9E9E9)),
-                    onClick = {},
+                    onClick = {
+//                        defaultImage.value = R.drawable.defaultprofile
+                        onDismissRequest()
+                    },
                     shape = RoundedCornerShape(10.dp)
                 ) {
                     Text(
