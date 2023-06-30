@@ -13,6 +13,7 @@ interface ChangeNicknameAndProfileRequest {
     @POST("/account/edit1/")
     fun requestChangeNicknameAndProfile(
         @Header("Authorization") token: String,
+        @Header("imdel") imdel: Boolean,
         @Part ("nickname") nickname: String,
         @Part image : MultipartBody.Part
     ) : Call<ChangeNicknameAndProfileResponse>

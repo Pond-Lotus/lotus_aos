@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class ChangeNicknameAndProfileResponse(
     @SerializedName("resultCode")
-    val resultCode: String,
+    val resultCode: Int,
     @SerializedName("data")
     val data: CNAPResponse
 )

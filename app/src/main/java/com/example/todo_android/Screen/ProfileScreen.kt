@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -25,22 +26,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
-import com.example.todo_android.Request.ModifyRequest.ChangeNicknameAndProfileRequest
-import com.example.todo_android.Response.ModifyResponse.ChangeNicknameAndProfileResponse
 import com.example.todo_android.Util.MyApplication
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.FileOutputStream
 
@@ -48,58 +43,58 @@ fun goChangePassword(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
 }
 
-fun changeNicknameAndProfile(
-    token: String,
-    nickname: String,
-    body: MultipartBody.Part,
-    routeAction: RouteAction,
-) {
-
-    var changeNicknameAndProfileResponse: ChangeNicknameAndProfileResponse? = null
-
-
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
-
-    var changeNicknameAndProfileRequest: ChangeNicknameAndProfileRequest =
-        retrofit.create(ChangeNicknameAndProfileRequest::class.java)
-
-    changeNicknameAndProfileRequest.requestChangeNicknameAndProfile(token, nickname, body)
-        .enqueue(object : Callback<ChangeNicknameAndProfileResponse> {
-
-            // 성공 했을때
-            override fun onResponse(
-                call: Call<ChangeNicknameAndProfileResponse>,
-                response: Response<ChangeNicknameAndProfileResponse>,
-            ) {
-                changeNicknameAndProfileResponse = response.body()
-
-                when (changeNicknameAndProfileResponse?.resultCode) {
-                    "200" -> {
-
-                        MyApplication.prefs.setData("nickname", nickname)
-                        MyApplication.prefs.setData("image",
-                            changeNicknameAndProfileResponse!!.data.image)
-                        routeAction.goBack()
-
-                        Log.d("changeNickname&Profile",
-                            "resultCode : " + changeNicknameAndProfileResponse?.resultCode)
-                        Log.d("changeNickname&Profile",
-                            "resultCode : " + changeNicknameAndProfileResponse?.data)
-                    }
-                    "500" -> {
-                        Log.d("changeNickname&Profile",
-                            "resultCode : " + changeNicknameAndProfileResponse?.resultCode)
-                    }
-                }
-            }
-
-            // 실패 했을때
-            override fun onFailure(call: Call<ChangeNicknameAndProfileResponse>, t: Throwable) {
-                Log.e("changeNickname&Profile", t.message.toString())
-            }
-        })
-}
+//fun changeNicknameAndProfile(
+//    token: String,
+//    nickname: String,
+//    body: MultipartBody.Part,
+//    routeAction: RouteAction,
+//) {
+//
+//    var changeNicknameAndProfileResponse: ChangeNicknameAndProfileResponse? = null
+//
+//
+//    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+//        .addConverterFactory(GsonConverterFactory.create()).build()
+//
+//    var changeNicknameAndProfileRequest: ChangeNicknameAndProfileRequest =
+//        retrofit.create(ChangeNicknameAndProfileRequest::class.java)
+//
+//    changeNicknameAndProfileRequest.requestChangeNicknameAndProfile(token, nickname, body)
+//        .enqueue(object : Callback<ChangeNicknameAndProfileResponse> {
+//
+//            // 성공 했을때
+//            override fun onResponse(
+//                call: Call<ChangeNicknameAndProfileResponse>,
+//                response: Response<ChangeNicknameAndProfileResponse>,
+//            ) {
+//                changeNicknameAndProfileResponse = response.body()
+//
+//                when (changeNicknameAndProfileResponse?.resultCode) {
+//                    "200" -> {
+//
+//                        MyApplication.prefs.setData("nickname", nickname)
+//                        MyApplication.prefs.setData("image",
+//                            changeNicknameAndProfileResponse!!.data.image)
+//                        routeAction.goBack()
+//
+//                        Log.d("changeNickname&Profile",
+//                            "resultCode : " + changeNicknameAndProfileResponse?.resultCode)
+//                        Log.d("changeNickname&Profile",
+//                            "resultCode : " + changeNicknameAndProfileResponse?.data)
+//                    }
+//                    "500" -> {
+//                        Log.d("changeNickname&Profile",
+//                            "resultCode : " + changeNicknameAndProfileResponse?.resultCode)
+//                    }
+//                }
+//            }
+//
+//            // 실패 했을때
+//            override fun onFailure(call: Call<ChangeNicknameAndProfileResponse>, t: Throwable) {
+//                Log.e("changeNickname&Profile", t.message.toString())
+//            }
+//        })
+//}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
@@ -114,16 +109,16 @@ fun ProfileScreen(routeAction: RouteAction) {
 
     var openDialog by remember { mutableStateOf(false) }
 
-    var imdel by remember { mutableStateOf(false) }
+    var imdel by remember { mutableStateOf(true) }
 
     val context = LocalContext.current
 
 
     val responseDefaultProfileImage = MyApplication.prefs.getData("defaultProfileImage", "")
     val defaultProfileImageDecodedBytes = Base64.decode(responseDefaultProfileImage, Base64.DEFAULT)
-    val defaultProfileImageBitmap = BitmapFactory.decodeByteArray(defaultProfileImageDecodedBytes,
-        0,
-        defaultProfileImageDecodedBytes.size)
+    val defaultProfileImageBitmap = BitmapFactory.decodeByteArray(
+        defaultProfileImageDecodedBytes, 0, defaultProfileImageDecodedBytes.size
+    )
 
     val decodeDefaultImageFile: File? = File.createTempFile("temp", null, context.cacheDir)
     val defaultOutPutStream = FileOutputStream(decodeDefaultImageFile)
@@ -172,14 +167,20 @@ fun ProfileScreen(routeAction: RouteAction) {
         MultipartBody.Part.createFormData("image", file.name, requestFile)
     }
 
+    if (openDialog) {
+        setImageDialog(onDismissRequest = { openDialog = false })
+    }
+
     Scaffold(modifier = Modifier
         .fillMaxWidth()
         .imePadding(), topBar = {
         CenterAlignedTopAppBar(title = {
-            Text(text = "프로필 수정",
+            Text(
+                text = "프로필 수정",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                lineHeight = 24.sp)
+                lineHeight = 24.sp
+            )
         }, navigationIcon = {
             IconButton(onClick = {
                 routeAction.goBack()
@@ -190,28 +191,32 @@ fun ProfileScreen(routeAction: RouteAction) {
             Text(text = "완료", modifier = Modifier
                 .padding(30.dp)
                 .clickable {
-                    val currenNickname = MyApplication.prefs.getData("nickname", nickname)
-                    if ((body != null) || !(nickname.equals(currenNickname))) {
-                        changeNicknameAndProfile(token, nickname, body!!, routeAction)
-                    }
+//                    val currenNickname = MyApplication.prefs.getData("nickname", nickname)
+//                    if ((body != null) || !(nickname.equals(currenNickname))) {
+//                        changeNicknameAndProfile(token, nickname, body!!, routeAction)
+//                    }
                 })
         })
     }) {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
             Spacer(modifier = Modifier.padding(vertical = 36.dp))
 
-            Image(painter = painterResource(id = R.drawable.defaultprofile),
+            Image(
+                painter = painterResource(id = R.drawable.defaultprofile),
                 contentDescription = "profileImage",
                 modifier = Modifier
                     .size(90.dp)
                     .clickable {
-                        openDialog = !openDialog
+                        openDialog = true
                     },
-                contentScale = ContentScale.Crop)
+                contentScale = ContentScale.Crop
+            )
 
             Spacer(modifier = Modifier.padding(vertical = 26.dp))
 
@@ -226,80 +231,165 @@ fun ProfileScreen(routeAction: RouteAction) {
 
             Spacer(modifier = Modifier.padding(vertical = 7.dp))
 
-            OutlinedTextField(modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp),
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(54.dp),
                 value = nickname,
                 onValueChange = {
                     nickname = it
                 },
-                colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffffffff),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color(0xffffffff),
                     disabledLabelColor = Color(0xffffffff),
                     focusedIndicatorColor = Color(0xffD0D0D0),
-                    unfocusedIndicatorColor = Color(0xffD0D0D0)))
+                    unfocusedIndicatorColor = Color(0xffD0D0D0)
+                )
+            )
 
             Spacer(modifier = Modifier.padding(vertical = 14.dp))
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-                Text(text = "이메일",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    lineHeight = 21.sp)
+                Text(
+                    text = "이메일", fontWeight = FontWeight.Bold, fontSize = 14.sp, lineHeight = 21.sp
+                )
             }
 
             Spacer(modifier = Modifier.padding(vertical = 7.dp))
 
-            OutlinedTextField(modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp)
-                .focusable(false),
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(54.dp)
+                    .focusable(false),
                 value = email,
                 onValueChange = {
                     email = it
                 },
                 singleLine = true,
                 readOnly = true,
-                colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF1F1F1),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color(0xffF1F1F1),
                     disabledLabelColor = Color(0xffF1F1F1),
                     focusedIndicatorColor = Color(0xffD0D0D0),
-                    unfocusedIndicatorColor = Color(0xffD0D0D0)))
+                    unfocusedIndicatorColor = Color(0xffD0D0D0)
+                )
+            )
 
             Spacer(modifier = Modifier.padding(vertical = 25.dp))
 
-            Button(modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .border(
-                    width = 0.5.dp,
-                    color = Color(0xff424242),
-                    shape = RoundedCornerShape(percent = 8)
-                ),
-                colors = ButtonDefaults.buttonColors(Color.White),
-                onClick = {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .border(
+                        width = 0.5.dp,
+                        color = Color(0xff424242),
+                        shape = RoundedCornerShape(percent = 8)
+                    ), colors = ButtonDefaults.buttonColors(Color.White), onClick = {
                     goChangePassword(NAV_ROUTE.CHANGEPASSWORD, routeAction)
-                },
-                shape = RoundedCornerShape(8.dp)) {
-                Text(text = "비밀번호 변경",
+                }, shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = "비밀번호 변경",
                     color = Color.Black,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    lineHeight = 22.sp)
+                    lineHeight = 22.sp
+                )
             }
 
             Spacer(modifier = Modifier.padding(vertical = 115.dp))
 
-            Button(modifier = Modifier
-                .width(130.dp)
-                .height(40.dp),
+            Button(
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffE9E9E9)),
                 onClick = {
-                          routeAction.navTo(NAV_ROUTE.DELETEACCOUNT)
+                    routeAction.navTo(NAV_ROUTE.DELETEACCOUNT)
                 },
-                shape = RoundedCornerShape(10.dp)) {
-                Text(text = "계정 탈퇴하기",
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text(
+                    text = "계정 탈퇴하기",
                     color = Color(0xff8D8D8D),
                     fontSize = 12.sp,
-                    lineHeight = 22.sp)
+                    lineHeight = 22.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun setImageDialog(
+    onDismissRequest: () -> Unit) {
+    Dialog(onDismissRequest = { onDismissRequest }) {
+        Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
+            Column(
+                modifier = Modifier.width(285.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                Spacer(modifier = Modifier.padding(vertical = 15.dp))
+
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .padding(start = 55.dp, end = 55.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffFFDAB9)),
+                    onClick = {},
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(
+                        text = "앨범에서 선택",
+                        color = Color.Black,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+
+                Spacer(modifier = Modifier.padding(vertical = 10.dp))
+
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .padding(start = 55.dp, end = 55.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffE9E9E9)),
+                    onClick = {},
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(
+                        text = "기본 이미지로 변경",
+                        color = Color.Black,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+
+                Spacer(modifier = Modifier.padding(vertical = 15.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    androidx.compose.material.TextButton(modifier = Modifier
+                        .background(
+                            Color(
+                                0xffE9E9E9
+                            )
+                        )
+                        .weight(1f), onClick = {
+                        onDismissRequest()
+                    }) {
+                        Text(text = "닫기", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
             }
         }
     }

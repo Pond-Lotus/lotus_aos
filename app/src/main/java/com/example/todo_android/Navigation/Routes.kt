@@ -37,7 +37,7 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
-fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
+fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.PROFILE) {
 
     // 네비게이션 컨트롤러 가져오기
     val navController = rememberNavController()
@@ -135,21 +135,15 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
 
         //라우트 이름 = 화면의 키
         //그룹 설정 화면
-        composable(
-            "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}/{categoryId}/{categoryColor}",
-//            "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}/{categoryColor}",
-            arguments =
-            listOf(
+        composable("${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}/{categoryId}/{categoryColor}",
+            arguments = listOf(
                 navArgument("categoryName") { type = NavType.StringType },
                 navArgument("categoryId") { type = NavType.StringType },
-                navArgument("categoryColor") { type = NavType.IntType },
-            )
-        ) { backStackEntry ->
+                navArgument("categoryColor") { type = NavType.IntType })) { backStackEntry ->
             // 화면이 들어가는 부분 = 값
             val categoryName = backStackEntry.arguments?.getString("categoryName")
             val categoryId = backStackEntry.arguments?.getString("categoryId")
             val categoryColor = backStackEntry.arguments?.getInt("categoryColor")
-//            ChangeCategoryNameScreen(routeAction, categoryName, categoryColor)
             ChangeCategoryNameScreen(routeAction, categoryName, categoryId, categoryColor)
         }
     }
