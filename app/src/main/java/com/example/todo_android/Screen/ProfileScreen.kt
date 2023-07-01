@@ -1,7 +1,9 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.net.Uri
+import android.util.Base64
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -98,26 +100,28 @@ fun ProfileScreen(routeAction: RouteAction) {
     var email: String = MyApplication.prefs.getData("email", "")
     var nickname by remember { mutableStateOf(MyApplication.prefs.getData("nickname", "")) }
     var openDialog by remember { mutableStateOf(false) }
-    var imdel by remember { mutableStateOf(true) }
-    var imageUri = rememberSaveable { mutableStateOf("") }
+    var imdel = remember { mutableStateOf(true) }
+    var image = rememberSaveable { mutableStateOf("") }
+    var encodePicture = rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
 
     if (openDialog) {
         setImageDialog(
-            onDismissRequest = { openDialog = false},
-            imageUri = imageUri
+            onDismissRequest = { openDialog = false },
+            image = image,
+            encodePicture = encodePicture,
+            context = context,
+            imdel = imdel
         )
     }
 
     val imageResource = rememberImagePainter(
-        data = if(
-//            MyApplication.prefs.getData("image", "")  == null ||
-            imageUri.value.isEmpty()
-        ) {
+        data = if (MyApplication.prefs.getData("image", "") == null || image.value.isEmpty()) {
             R.drawable.defaultprofile
-    } else {
-        imageUri.value
-    })
+        } else {
+            image.value
+        }
+    )
 
 
 //    val responseDefaultProfileImage = MyApplication.prefs.getData("defaultProfileImage", "")
@@ -201,10 +205,9 @@ fun ProfileScreen(routeAction: RouteAction) {
         ) {
 
             Spacer(modifier = Modifier.padding(vertical = 36.dp))
-            
+
             Box(modifier = Modifier.padding(8.dp)) {
-                Image(
-                    painter = imageResource,
+                Image(painter = imageResource,
                     contentDescription = "profileImage",
                     modifier = Modifier
                         .size(90.dp)
@@ -212,8 +215,7 @@ fun ProfileScreen(routeAction: RouteAction) {
                             openDialog = true
                         }
                         .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
+                    contentScale = ContentScale.Crop)
                 Row(modifier = Modifier.padding(2.dp)) {
 //                    Text(text = "", modifier = Modifier.width(28.dp))
                     Image(
@@ -344,16 +346,22 @@ fun ProfileScreen(routeAction: RouteAction) {
 @Composable
 fun setImageDialog(
     onDismissRequest: () -> Unit,
-    imageUri: MutableState<String>,
+    image: MutableState<String>,
+    encodePicture: MutableState<String>,
+    context: Context,
+    imdel: MutableState<Boolean>,
 ) {
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
-                imageUri.value = it.toString()
+                image.value = it.toString()
+                val inputStream = context.contentResolver.openInputStream(it)
+                val imageBytes = inputStream?.buffered()?.use { it.readBytes() }
+                encodePicture.value = Base64.encodeToString(imageBytes, Base64.DEFAULT)
                 Log.v("setImage", "image: ${uri}")
+                Log.v("setImage", "image: ${encodePicture.value}")
             }
         }
-
 
     Dialog(onDismissRequest = { onDismissRequest }) {
         Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
@@ -372,8 +380,8 @@ fun setImageDialog(
                         .padding(start = 55.dp, end = 55.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFDAB9)),
                     onClick = {
-                        launcher.launch("image/*")
-                        onDismissRequest()
+                        launcher.launch("image/*").let { image.value = it.toString() }
+                        imdel.value = false
                     },
                     shape = RoundedCornerShape(10.dp)
                 ) {
@@ -394,7 +402,10 @@ fun setImageDialog(
                         .padding(start = 55.dp, end = 55.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffE9E9E9)),
                     onClick = {
-//                        defaultImage.value = R.drawable.defaultprofile
+                        imdel.value = true
+                        image.value =
+                            Uri.parse("android.resource://com.example.todo_android/drawable/defaultprofile")
+                                .toString()
                         onDismissRequest()
                     },
                     shape = RoundedCornerShape(10.dp)
@@ -430,76 +441,3 @@ fun setImageDialog(
         }
     }
 }
-
-//@Composable
-//fun setImageDialog() {
-//
-//    val imageUri = rememberSaveable { mutableStateOf("") }
-//    val painter = rememberImagePainter(
-//        if (imageUri.value.isEmpty()) {
-//            R.drawable.defaultprofile
-//        } else {
-//            imageUri.value
-//        }
-//    )
-//
-//    val launcher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.GetContent(),
-//    ) { uri: Uri? ->
-//        uri?.let {
-//            imageUri.value = it.toString()
-//        }
-//    }
-//
-//    var openDialog by remember { mutableStateOf(true) }
-//
-//    if (openDialog) {
-//        Dialog(
-//            onDismissRequest = {
-//                openDialog = false
-//            }) {
-//            Surface(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(400.dp),
-//                shape = RoundedCornerShape(12.dp),
-//                color = Color.White
-//            ) {
-//                Column(
-//                    modifier = Modifier.fillMaxSize(),
-//                    verticalArrangement = Arrangement.Center,
-//                    horizontalAlignment = Alignment.CenterHorizontally
-//                ) {
-//                    Button(
-//                        onClick = {
-//                            launcher.launch("image/*")
-//                            openDialog = false
-//                        },
-//                        shape = RoundedCornerShape(10.dp),
-//                        modifier = Modifier
-//                            .width(250.dp)
-//                            .height(45.dp)
-//                            .background(Color.White))
-//                    {
-//                        Text(text = "앨범에서 선택")
-//                    }
-//
-//                    Spacer(modifier = Modifier.height(15.dp))
-//
-//                    Button(
-//                        onClick = {
-//                            openDialog = false
-//                        },
-//                        shape = RoundedCornerShape(10.dp),
-//                        modifier = Modifier
-//                            .width(250.dp)
-//                            .height(45.dp)
-//                            .background(Color.White))
-//                    {
-//                        Text(text = "기본 이미지로 변경")
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
