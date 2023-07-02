@@ -1,5 +1,6 @@
 package com.example.todo_android.Request.ModifyRequest
 
+import androidx.compose.runtime.MutableState
 import com.example.todo_android.Response.ModifyResponse.ChangeNicknameAndProfileResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -15,6 +16,6 @@ interface ChangeNicknameAndProfileRequest {
         @Header("Authorization") token: String,
         @Header("imdel") imdel: Boolean,
         @Part ("nickname") nickname: String,
-        @Part image : MultipartBody.Part
+        @Part image:  MultipartBody.Part
     ) : Call<ChangeNicknameAndProfileResponse>
 }
