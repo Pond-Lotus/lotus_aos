@@ -101,6 +101,7 @@ fun ProfileScreen(routeAction: RouteAction) {
     var nickname by remember { mutableStateOf(MyApplication.prefs.getData("nickname", "")) }
     var openDialog by remember { mutableStateOf(false) }
     var imdel = remember { mutableStateOf(true) }
+    var imageUri = rememberSaveable { mutableStateOf("") }
     var image = rememberSaveable { mutableStateOf("") }
     var encodePicture = rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
@@ -108,6 +109,7 @@ fun ProfileScreen(routeAction: RouteAction) {
     if (openDialog) {
         setImageDialog(
             onDismissRequest = { openDialog = false },
+            imageUri = imageUri,
             image = image,
             encodePicture = encodePicture,
             context = context,
@@ -116,10 +118,10 @@ fun ProfileScreen(routeAction: RouteAction) {
     }
 
     val imageResource = rememberImagePainter(
-        data = if (MyApplication.prefs.getData("image", "") == null || image.value.isEmpty()) {
+        data = if (MyApplication.prefs.getData("image", "") == null || imageUri.value.isEmpty()) {
             R.drawable.defaultprofile
         } else {
-            image.value
+            imageUri.value
         }
     )
 
@@ -346,6 +348,7 @@ fun ProfileScreen(routeAction: RouteAction) {
 @Composable
 fun setImageDialog(
     onDismissRequest: () -> Unit,
+    imageUri: MutableState<String>,
     image: MutableState<String>,
     encodePicture: MutableState<String>,
     context: Context,
@@ -354,12 +357,13 @@ fun setImageDialog(
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
-                image.value = it.toString()
+                imageUri.value = it.toString()
                 val inputStream = context.contentResolver.openInputStream(it)
                 val imageBytes = inputStream?.buffered()?.use { it.readBytes() }
                 encodePicture.value = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+                image.value = encodePicture.value
                 Log.v("setImage", "image: ${uri}")
-                Log.v("setImage", "image: ${encodePicture.value}")
+                Log.v("setImage", "image: ${image.value}")
             }
         }
 
@@ -380,7 +384,7 @@ fun setImageDialog(
                         .padding(start = 55.dp, end = 55.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFDAB9)),
                     onClick = {
-                        launcher.launch("image/*").let { image.value = it.toString() }
+                        launcher.launch("image/*").let { imageUri.value = it.toString() }
                         imdel.value = false
                     },
                     shape = RoundedCornerShape(10.dp)
@@ -403,9 +407,11 @@ fun setImageDialog(
                     colors = ButtonDefaults.buttonColors(Color(0xffE9E9E9)),
                     onClick = {
                         imdel.value = true
-                        image.value =
+                        imageUri.value =
                             Uri.parse("android.resource://com.example.todo_android/drawable/defaultprofile")
                                 .toString()
+                        image.value = null.toString()
+                        Log.v("setImage", "image: ${image.value}")
                         onDismissRequest()
                     },
                     shape = RoundedCornerShape(10.dp)
