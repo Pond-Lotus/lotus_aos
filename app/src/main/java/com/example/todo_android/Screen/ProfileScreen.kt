@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -34,14 +35,17 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ModifyRequest.ChangeProfileRequest
 import com.example.todo_android.Response.ModifyResponse.ChangeProfileResponse
 import com.example.todo_android.Util.MyApplication
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 
 fun changeProfile(
     token: String,
@@ -351,12 +355,21 @@ fun setImageDialog(
                 val inputStream = context.contentResolver.openInputStream(it)
                 val imageBytes = inputStream?.buffered()?.use { it.readBytes() }
                 val encodePicture = Base64.encodeToString(imageBytes, Base64.DEFAULT)
-                val requestBody = encodePicture.toRequestBody("image/*".toMediaTypeOrNull())
-                image.value = MultipartBody.Part.createFormData("image", "imageFile", requestBody)
-                Log.v("setImage", "image: ${encodePicture}")
+                val file = encodePicture?.let { base64String ->
+                    val tempFile = File.createTempFile("image", null, context.cacheDir)
+                    tempFile.outputStream().use { outputStream ->
+                        outputStream.write(Base64.decode(base64String, Base64.DEFAULT))
+                    }
+                    tempFile
+                }
+                val requestBody = RequestBody.create("image/*".toMediaTypeOrNull(), file!!)
+                val result = MultipartBody.Part.createFormData("image", file.name, requestBody)
+                image.value = result
+
+                Log.v("setImage", "image: ${result}")
 
 
-
+//                image.value = result
 //                val file = encodePicture?.let { uri ->
 //                    val contentResolver = context.contentResolver
 //                    val inputStream = contentResolver.openInputStream(uri)
@@ -366,8 +379,17 @@ fun setImageDialog(
 //                    }
 //                    tempFile
 //                }
-//                val part = MultipartBody.Part.createFormData("image", file?.name, requestBody)
-//                image.value = part
+//                val requestBody = encodePicture.toRequestBody("image/*".toMediaType())
+//                val result = MultipartBody.Part.createFormData("image", file?.name, requestBody)
+//                image.value = result
+
+
+
+//                val requestBody = encodePicture.toRequestBody("image/*".toMediaTypeOrNull())
+//                image.value = MultipartBody.Part.createFormData("image", "imageFile", requestBody)
+
+
+
             }
         }
 
