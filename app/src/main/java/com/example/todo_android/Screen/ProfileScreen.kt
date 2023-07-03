@@ -362,8 +362,8 @@ fun setImageDialog(
                     }
                     tempFile
                 }
-                val requestBody = RequestBody.create("image/*".toMediaTypeOrNull(), file!!)
-                val result = MultipartBody.Part.createFormData("image", file.name, requestBody)
+                val requestBody = RequestBody.create("image/*".toMediaType(), file!!)
+                val result = MultipartBody.Part.createFormData("images", file.name, requestBody)
                 image.value = result
 
                 Log.v("setImage", "image: ${result}")
