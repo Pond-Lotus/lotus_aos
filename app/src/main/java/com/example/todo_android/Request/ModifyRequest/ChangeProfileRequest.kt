@@ -13,7 +13,7 @@ interface ChangeProfileRequest {
     @POST("/account/edit1/")
     fun requestChangeProfile(
         @Header("Authorization") token: String,
-        @Header("imdel") imdel: Boolean,
+        @Part ("imdel") imdel: Boolean,
         @Part ("nickname") nickname: String,
         @Part image: MultipartBody.Part
     ) : Call<ChangeProfileResponse>

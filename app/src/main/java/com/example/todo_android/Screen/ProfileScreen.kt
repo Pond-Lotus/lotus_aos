@@ -38,8 +38,10 @@ import com.example.todo_android.Util.MyApplication
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -57,14 +59,20 @@ fun changeProfile(
 
     var changeProfileResponse: ChangeProfileResponse? = null
 
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
 
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
+
+    var retrofit =
+        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()
 
     var changeProfileRequest: ChangeProfileRequest =
         retrofit.create(ChangeProfileRequest::class.java)
 
-    changeProfileRequest.requestChangeProfile(token, imdel, nickname, image).enqueue(object : Callback<ChangeProfileResponse> {
+    changeProfileRequest.requestChangeProfile(token, imdel, nickname, image)
+        .enqueue(object : Callback<ChangeProfileResponse> {
 
             // 성공 했을때
             override fun onResponse(
@@ -301,12 +309,9 @@ fun ProfileScreen(routeAction: RouteAction) {
                         width = 0.5.dp,
                         color = Color(0xff424242),
                         shape = RoundedCornerShape(percent = 8)
-                    ),
-                colors = ButtonDefaults.buttonColors(Color.White),
-                onClick = {
+                    ), colors = ButtonDefaults.buttonColors(Color.White), onClick = {
                     routeAction.navTo(NAV_ROUTE.CHANGEPASSWORD)
-                },
-                shape = RoundedCornerShape(8.dp)
+                }, shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
                     text = "비밀번호 변경",
@@ -384,10 +389,8 @@ fun setImageDialog(
 //                image.value = result
 
 
-
 //                val requestBody = encodePicture.toRequestBody("image/*".toMediaTypeOrNull())
 //                image.value = MultipartBody.Part.createFormData("image", "imageFile", requestBody)
-
 
 
             }

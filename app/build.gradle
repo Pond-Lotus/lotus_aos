@@ -90,4 +90,8 @@ dependencies {
 
     // statusBar 없애기
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
+
+    // okhttp3
+    implementation "com.squareup.okhttp3:okhttp:4.9.3"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.9.3"
 }

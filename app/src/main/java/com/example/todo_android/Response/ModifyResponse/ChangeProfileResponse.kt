@@ -6,11 +6,11 @@ data class ChangeProfileResponse(
     @SerializedName("resultCode")
     val resultCode: Int,
     @SerializedName("data")
-    val data: CNAPResponse
+    val data: CPResponse
 )
 
 // 응답값으로 data의 디테일한 값들
-data class CNAPResponse(
+data class CPResponse(
     val nickname: String,
     val image: String
 )
