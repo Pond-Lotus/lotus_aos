@@ -1,7 +1,9 @@
 package com.example.todo_android.Data.Modify
 
-data class ChangeNicknameAndProfile(
+import okhttp3.MultipartBody
+
+data class ChangeProfile(
     val imdel: Boolean,
     val nickname: String,
-    val image: String
+    val image: MultipartBody.Part
 )

@@ -12,7 +12,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.todo_android.Navigation.Action.RouteAction
-import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.Screen.*
 
 // 컴포즈 네비게이션 이넘(값을 가지는 이넘)

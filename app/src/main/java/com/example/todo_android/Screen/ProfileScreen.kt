@@ -27,82 +27,69 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
-import com.example.todo_android.Request.ModifyRequest.ChangeNicknameAndProfileRequest
-import com.example.todo_android.Response.ModifyResponse.ChangeNicknameAndProfileResponse
+import com.example.todo_android.Request.ModifyRequest.ChangeProfileRequest
+import com.example.todo_android.Response.ModifyResponse.ChangeProfileResponse
 import com.example.todo_android.Util.MyApplication
-import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Multipart
-import java.io.File
 
-fun goChangePassword(route: NAV_ROUTE, routeAction: RouteAction) {
-    routeAction.navTo(route)
+fun changeProfile(
+    token: String,
+    imdel: Boolean,
+    nickname: String,
+    image: MultipartBody.Part,
+    routeAction: RouteAction,
+) {
+
+    var changeProfileResponse: ChangeProfileResponse? = null
+
+
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+        .addConverterFactory(GsonConverterFactory.create()).build()
+
+    var changeProfileRequest: ChangeProfileRequest =
+        retrofit.create(ChangeProfileRequest::class.java)
+
+    changeProfileRequest.requestChangeProfile(token, imdel, nickname, image).enqueue(object : Callback<ChangeProfileResponse> {
+
+            // 성공 했을때
+            override fun onResponse(
+                call: Call<ChangeProfileResponse>,
+                response: Response<ChangeProfileResponse>,
+            ) {
+                changeProfileResponse = response.body()
+
+                when (changeProfileResponse?.resultCode) {
+                    200 -> {
+                        MyApplication.prefs.setData("nickname", nickname)
+                        MyApplication.prefs.setData("image", changeProfileResponse!!.data.image)
+                        routeAction.goBack()
+
+                        Log.d("changeProfile", "resultCode : " + changeProfileResponse?.resultCode)
+                        Log.d("changeProfile", "resultCode : " + changeProfileResponse?.data)
+                    }
+                    500 -> {
+                        Log.d("changeProfile", "resultCode : " + changeProfileResponse?.resultCode)
+                    }
+                }
+            }
+
+            // 실패 했을때
+            override fun onFailure(call: Call<ChangeProfileResponse>, t: Throwable) {
+                Log.e("changeProfile", t.message.toString())
+            }
+        })
 }
-
-//fun changeProfile(
-//    token: String,
-//    imdel: MutableState<Boolean>,
-//    nickname: String,
-//    image: MultipartBody.Part,
-//    routeAction: RouteAction,
-//) {
-//
-//    var changeNicknameAndProfileResponse: ChangeNicknameAndProfileResponse? = null
-//
-//
-//    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-//        .addConverterFactory(GsonConverterFactory.create()).build()
-//
-//    var changeNicknameAndProfileRequest: ChangeNicknameAndProfileRequest =
-//        retrofit.create(ChangeNicknameAndProfileRequest::class.java)
-//
-//    changeNicknameAndProfileRequest.requestChangeNicknameAndProfile(token, imdel, nickname, image)
-//        .enqueue(object : Callback<ChangeNicknameAndProfileResponse> {
-//
-//            // 성공 했을때
-//            override fun onResponse(
-//                call: Call<ChangeNicknameAndProfileResponse>,
-//                response: Response<ChangeNicknameAndProfileResponse>,
-//            ) {
-//                changeNicknameAndProfileResponse = response.body()
-//
-//                when (changeNicknameAndProfileResponse?.resultCode) {
-//                    200 -> {
-//
-//                        MyApplication.prefs.setData("nickname", nickname)
-//                        MyApplication.prefs.setData("image",
-//                            changeNicknameAndProfileResponse!!.data.image)
-//                        routeAction.goBack()
-//
-//                        Log.d("changeProfile",
-//                            "resultCode : " + changeNicknameAndProfileResponse?.resultCode)
-//                        Log.d("changeProfile",
-//                            "resultCode : " + changeNicknameAndProfileResponse?.data)
-//                    }
-//                    500 -> {
-//                        Log.d("changeProfile",
-//                            "resultCode : " + changeNicknameAndProfileResponse?.resultCode)
-//                    }
-//                }
-//            }
-//
-//            // 실패 했을때
-//            override fun onFailure(call: Call<ChangeNicknameAndProfileResponse>, t: Throwable) {
-//                Log.e("changeNickname&Profile", t.message.toString())
-//            }
-//        })
-//}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
@@ -115,15 +102,15 @@ fun ProfileScreen(routeAction: RouteAction) {
     var nickname by remember { mutableStateOf(MyApplication.prefs.getData("nickname", "")) }
     var openDialog by remember { mutableStateOf(false) }
     var imdel = remember { mutableStateOf(true) }
+    var image = remember { mutableStateOf<MultipartBody.Part?>(null) }
     var imageUri = rememberSaveable { mutableStateOf("") }
-    var data = rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
 
     if (openDialog) {
         setImageDialog(
             onDismissRequest = { openDialog = false },
+            image = image,
             imageUri = imageUri,
-            data = data,
             context = context,
             imdel = imdel
         )
@@ -208,7 +195,7 @@ fun ProfileScreen(routeAction: RouteAction) {
 //                    if ((body != null) || !(nickname.equals(currenNickname))) {
 //                        changeNicknameAndProfile(token, nickname, body!!, routeAction)
 //                    }
-//                    changeProfile(token, imdel, nickname, image.value, routeAction)
+                    changeProfile(token, imdel.value, nickname, image.value!!, routeAction)
                 })
         })
     }) {
@@ -232,7 +219,6 @@ fun ProfileScreen(routeAction: RouteAction) {
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop)
                 Row(modifier = Modifier.padding(2.dp)) {
-//                    Text(text = "", modifier = Modifier.width(28.dp))
                     Image(
                         painter = painterResource(R.drawable.profile_bottom_icon),
                         contentDescription = "",
@@ -242,17 +228,6 @@ fun ProfileScreen(routeAction: RouteAction) {
                     )
                 }
             }
-
-//            Image(
-//                painter = painterResource(id = defaultImage),
-//                contentDescription = "profileImage",
-//                modifier = Modifier
-//                    .size(90.dp)
-//                    .clickable {
-//                        openDialog = true
-//                    },
-//                contentScale = ContentScale.Crop
-//            )
 
             Spacer(modifier = Modifier.padding(vertical = 26.dp))
 
@@ -322,9 +297,12 @@ fun ProfileScreen(routeAction: RouteAction) {
                         width = 0.5.dp,
                         color = Color(0xff424242),
                         shape = RoundedCornerShape(percent = 8)
-                    ), colors = ButtonDefaults.buttonColors(Color.White), onClick = {
-                    goChangePassword(NAV_ROUTE.CHANGEPASSWORD, routeAction)
-                }, shape = RoundedCornerShape(8.dp)
+                    ),
+                colors = ButtonDefaults.buttonColors(Color.White),
+                onClick = {
+                    routeAction.navTo(NAV_ROUTE.CHANGEPASSWORD)
+                },
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
                     text = "비밀번호 변경",
@@ -361,8 +339,8 @@ fun ProfileScreen(routeAction: RouteAction) {
 @Composable
 fun setImageDialog(
     onDismissRequest: () -> Unit,
+    image: MutableState<MultipartBody.Part?>,
     imageUri: MutableState<String>,
-    data: MutableState<String>,
     context: Context,
     imdel: MutableState<Boolean>,
 ) {
@@ -373,31 +351,23 @@ fun setImageDialog(
                 val inputStream = context.contentResolver.openInputStream(it)
                 val imageBytes = inputStream?.buffered()?.use { it.readBytes() }
                 val encodePicture = Base64.encodeToString(imageBytes, Base64.DEFAULT)
-                data.value = encodePicture
+                val requestBody = encodePicture.toRequestBody("image/*".toMediaTypeOrNull())
+                image.value = MultipartBody.Part.createFormData("image", "imageFile", requestBody)
+                Log.v("setImage", "image: ${encodePicture}")
 
-//                val file = encodePicture.value?.let { uri ->
+
+
+//                val file = encodePicture?.let { uri ->
 //                    val contentResolver = context.contentResolver
-//                    val inputStream = contentResolver.openInputStream(uri.toUri())
+//                    val inputStream = contentResolver.openInputStream(uri)
 //                    val tempFile = File.createTempFile("image", null, context.cacheDir)
 //                    tempFile.outputStream().use { outputStream ->
 //                       inputStream?.copyTo(outputStream)
 //                    }
 //                    tempFile
 //                }
-//
-//                val requestFile = file?.asRequestBody("image/jpeg".toMediaType())
-//                image.value = requestFile?.let {
-//                    MultipartBody.Part.createFormData("image", file.name, requestFile)
-//                }.toString()
-
-
-
-//                val requestBody = encodePicture.value.toRequestBody("image/jpeg".toMediaType())
-//                val part = MultipartBody.Part.createFormData("image", "image.jpg", requestBody)
-//                imageUri.value = part
-////                Log.v("setImage", "image: ${uri}")
-                Log.v("setImage", "image: ${data.value}")
-//                Log.v("setImage", "image: ${image}")
+//                val part = MultipartBody.Part.createFormData("image", file?.name, requestBody)
+//                image.value = part
             }
         }
 
@@ -444,8 +414,8 @@ fun setImageDialog(
                         imageUri.value =
                             Uri.parse("android.resource://com.example.todo_android/drawable/defaultprofile")
                                 .toString()
-                        data.value = null.toString()
-                        Log.v("setImage", "image: ${data.value}")
+                        image.value = null
+                        Log.v("setImage", "image: ${image.value}")
                         onDismissRequest()
                     },
                     shape = RoundedCornerShape(10.dp)
