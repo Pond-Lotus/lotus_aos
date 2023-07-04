@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -35,7 +34,6 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ModifyRequest.ChangeProfileRequest
 import com.example.todo_android.Response.ModifyResponse.ChangeProfileResponse
 import com.example.todo_android.Util.MyApplication
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -52,7 +50,7 @@ import java.io.File
 fun changeProfile(
     token: String,
     imdel: Boolean,
-    nickname: String,
+    nickname: RequestBody,
     image: MultipartBody.Part,
     routeAction: RouteAction,
 ) {
@@ -65,7 +63,8 @@ fun changeProfile(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()
+        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create()).build()
 
     var changeProfileRequest: ChangeProfileRequest =
         retrofit.create(ChangeProfileRequest::class.java)
@@ -82,8 +81,12 @@ fun changeProfile(
 
                 when (changeProfileResponse?.resultCode) {
                     200 -> {
-                        MyApplication.prefs.setData("nickname", nickname)
-                        MyApplication.prefs.setData("image", changeProfileResponse?.data?.image.toString())
+                        MyApplication.prefs.setData(
+                            "nickname", changeProfileResponse?.data?.nickname.toString()
+                        )
+                        MyApplication.prefs.setData(
+                            "image", changeProfileResponse?.data?.image.toString()
+                        )
                         routeAction.goBack()
 
                         Log.d("changeProfile", "resultCode : " + changeProfileResponse?.resultCode)
@@ -202,8 +205,13 @@ fun ProfileScreen(routeAction: RouteAction) {
             Text(text = "완료", modifier = Modifier
                 .padding(30.dp)
                 .clickable {
-                    nickname.toRequestBody()
-                    changeProfile(token, imdel.value, nickname, image.value!!, routeAction)
+                    changeProfile(
+                        token,
+                        imdel.value,
+                        nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
+                        image.value!!,
+                        routeAction
+                    )
                 })
         })
     }) {
