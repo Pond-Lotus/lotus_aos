@@ -64,7 +64,6 @@ fun changeProfile(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-
     var retrofit =
         Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()
 
@@ -84,7 +83,7 @@ fun changeProfile(
                 when (changeProfileResponse?.resultCode) {
                     200 -> {
                         MyApplication.prefs.setData("nickname", nickname)
-                        MyApplication.prefs.setData("image", changeProfileResponse!!.data.image)
+                        MyApplication.prefs.setData("image", changeProfileResponse?.data?.image.toString())
                         routeAction.goBack()
 
                         Log.d("changeProfile", "resultCode : " + changeProfileResponse?.resultCode)
@@ -203,10 +202,7 @@ fun ProfileScreen(routeAction: RouteAction) {
             Text(text = "완료", modifier = Modifier
                 .padding(30.dp)
                 .clickable {
-//                    val currenNickname = MyApplication.prefs.getData("nickname", nickname)
-//                    if ((body != null) || !(nickname.equals(currenNickname))) {
-//                        changeNicknameAndProfile(token, nickname, body!!, routeAction)
-//                    }
+                    nickname.toRequestBody()
                     changeProfile(token, imdel.value, nickname, image.value!!, routeAction)
                 })
         })
@@ -367,32 +363,11 @@ fun setImageDialog(
                     }
                     tempFile
                 }
-                val requestBody = RequestBody.create("image/*".toMediaType(), file!!)
-                val result = MultipartBody.Part.createFormData("images", file.name, requestBody)
+                val requestBody = RequestBody.create("image/*".toMediaTypeOrNull(), file!!)
+                val result = MultipartBody.Part.createFormData("image", file.name, requestBody)
                 image.value = result
 
                 Log.v("setImage", "image: ${result}")
-
-
-//                image.value = result
-//                val file = encodePicture?.let { uri ->
-//                    val contentResolver = context.contentResolver
-//                    val inputStream = contentResolver.openInputStream(uri)
-//                    val tempFile = File.createTempFile("image", null, context.cacheDir)
-//                    tempFile.outputStream().use { outputStream ->
-//                       inputStream?.copyTo(outputStream)
-//                    }
-//                    tempFile
-//                }
-//                val requestBody = encodePicture.toRequestBody("image/*".toMediaType())
-//                val result = MultipartBody.Part.createFormData("image", file?.name, requestBody)
-//                image.value = result
-
-
-//                val requestBody = encodePicture.toRequestBody("image/*".toMediaTypeOrNull())
-//                image.value = MultipartBody.Part.createFormData("image", "imageFile", requestBody)
-
-
             }
         }
 

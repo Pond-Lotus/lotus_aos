@@ -1,10 +1,14 @@
 package com.example.todo_android.Component
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material3.Button
@@ -12,15 +16,22 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import coil.compose.rememberImagePainter
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
@@ -29,19 +40,29 @@ import com.example.todo_android.Response.ProfileResponse.LogoutResponse
 import com.example.todo_android.Util.MyApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
+import java.io.FileOutputStream
 
 fun Logout(
     token: String, response: (LogoutResponse?) -> Unit
 ) {
     var logoutResponse: LogoutResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
+
+    var retrofit =
+        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create()).build()
 
     var logoutRequest: LogoutRequest = retrofit.create(LogoutRequest::class.java)
 
@@ -78,13 +99,26 @@ fun ProfileModalDrawer(
 
     val nickname: String = MyApplication.prefs.getData("nickname", "")
     val email: String = MyApplication.prefs.getData("email", "")
+    val context = LocalContext.current
 
     var openDialog by remember { mutableStateOf(false) }
+
+    val imageResource = if (MyApplication.prefs.getData("image", "") == "null") {
+        BitmapFactory
+            .decodeResource(context.resources, R.drawable.defaultprofile)
+            .asImageBitmap()
+    } else {
+        val base64EncodedImage = MyApplication.prefs.getData("image", "")
+        val DecodedBytes = Base64.decode(base64EncodedImage, Base64.DEFAULT)
+        val ImageBitmap = BitmapFactory.decodeByteArray(DecodedBytes, 0, DecodedBytes.size)
+
+        ImageBitmap.asImageBitmap()
+    }
+
 
     if (openDialog) {
         showLogOutDialog(onDismissRequest = { openDialog = false }, routeAction)
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -98,8 +132,10 @@ fun ProfileModalDrawer(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Image(
-                modifier = Modifier.size(41.dp),
-                painter = painterResource(id = R.drawable.defaultprofile),
+                modifier = Modifier
+                    .size(41.dp)
+                    .clip(CircleShape),
+                bitmap = imageResource,
                 contentDescription = "profile",
                 contentScale = ContentScale.Crop
             )
@@ -191,7 +227,8 @@ fun ProfileModalDrawer(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 2.dp, bottom = 22.dp)
-                .clickable {}, verticalAlignment = Alignment.CenterVertically
+                .clickable {},
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
             Image(
