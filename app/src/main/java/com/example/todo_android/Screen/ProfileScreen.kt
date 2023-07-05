@@ -2,6 +2,7 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
@@ -20,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -113,7 +116,7 @@ fun deleteProfileImage(
     nickname: RequestBody,
     routeAction: RouteAction,
 ) {
-    var deleteProfileImageResponse : DeleteProfileImageResponse? = null
+    var deleteProfileImageResponse: DeleteProfileImageResponse? = null
 
     val okHttpClient: OkHttpClient by lazy {
         val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -127,40 +130,49 @@ fun deleteProfileImage(
     var deleteProfileImageRequest: DeleteProfileImageRequest =
         retrofit.create(DeleteProfileImageRequest::class.java)
 
-    deleteProfileImageRequest.requestDeleteProfileImage(token, nickname, imdel).enqueue(object : Callback<DeleteProfileImageResponse> {
+    deleteProfileImageRequest.requestDeleteProfileImage(token, nickname, imdel)
+        .enqueue(object : Callback<DeleteProfileImageResponse> {
 
-        // 성공 했을때
-        override fun onResponse(
-            call: Call<DeleteProfileImageResponse>,
-            response: Response<DeleteProfileImageResponse>
-        ) {
-            deleteProfileImageResponse = response.body()
+            // 성공 했을때
+            override fun onResponse(
+                call: Call<DeleteProfileImageResponse>,
+                response: Response<DeleteProfileImageResponse>
+            ) {
+                deleteProfileImageResponse = response.body()
 
-            when (deleteProfileImageResponse?.resultCode) {
-                200 -> {
-                    MyApplication.prefs.setData(
-                        "nickname", deleteProfileImageResponse?.data?.nickname.toString()
-                    )
-                    MyApplication.prefs.setData(
-                        "image", deleteProfileImageResponse?.data?.image.toString()
-                    )
-                    routeAction.goBack()
+                when (deleteProfileImageResponse?.resultCode) {
+                    200 -> {
+                        MyApplication.prefs.setData(
+                            "nickname", deleteProfileImageResponse?.data?.nickname.toString()
+                        )
+                        MyApplication.prefs.setData(
+                            "image", deleteProfileImageResponse?.data?.image.toString()
+                        )
+                        routeAction.goBack()
 
-                    Log.d("deleteProfileImage", "resultCode : " + deleteProfileImageResponse?.resultCode)
-                    Log.d("deleteProfileImage", "resultCode : " + deleteProfileImageResponse?.data)
-                }
-                500 -> {
-                    Log.d("deleteProfileImage", "resultCode : " + deleteProfileImageResponse?.resultCode)
+                        Log.d(
+                            "deleteProfileImage",
+                            "resultCode : " + deleteProfileImageResponse?.resultCode
+                        )
+                        Log.d(
+                            "deleteProfileImage", "resultCode : " + deleteProfileImageResponse?.data
+                        )
+                    }
+                    500 -> {
+                        Log.d(
+                            "deleteProfileImage",
+                            "resultCode : " + deleteProfileImageResponse?.resultCode
+                        )
+                    }
                 }
             }
-        }
 
-        // 실패 했을때
-        override fun onFailure(call: Call<DeleteProfileImageResponse>, t: Throwable) {
-            Log.e("deleteProfileImage", t.message.toString())
-        }
+            // 실패 했을때
+            override fun onFailure(call: Call<DeleteProfileImageResponse>, t: Throwable) {
+                Log.e("deleteProfileImage", t.message.toString())
+            }
 
-    })
+        })
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -264,7 +276,7 @@ fun ProfileScreen(routeAction: RouteAction) {
                 .padding(30.dp)
                 .clickable {
 
-                    if(image.value != null){
+                    if (image.value != null) {
                         changeProfile(
                             token,
                             imdel.value,
@@ -293,7 +305,8 @@ fun ProfileScreen(routeAction: RouteAction) {
             Spacer(modifier = Modifier.padding(vertical = 36.dp))
 
             Box(modifier = Modifier.padding(8.dp)) {
-                Image(painter = imageResource,
+                Image(
+                    bitmap = imageResource as ImageBitmap,
                     contentDescription = "profileImage",
                     modifier = Modifier
                         .size(90.dp)
@@ -301,7 +314,8 @@ fun ProfileScreen(routeAction: RouteAction) {
                             openDialog = true
                         }
                         .clip(CircleShape),
-                    contentScale = ContentScale.Crop)
+                    contentScale = ContentScale.Crop
+                )
                 Row(modifier = Modifier.padding(2.dp)) {
                     Image(
                         painter = painterResource(R.drawable.profile_bottom_icon),
