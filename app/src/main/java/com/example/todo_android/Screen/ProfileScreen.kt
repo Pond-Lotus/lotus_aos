@@ -32,7 +32,9 @@ import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ModifyRequest.ChangeProfileRequest
+import com.example.todo_android.Request.ModifyRequest.DeleteProfileImageRequest
 import com.example.todo_android.Response.ModifyResponse.ChangeProfileResponse
+import com.example.todo_android.Response.ModifyResponse.DeleteProfileImageResponse
 import com.example.todo_android.Util.MyApplication
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -103,6 +105,62 @@ fun changeProfile(
                 Log.e("changeProfile", t.message.toString())
             }
         })
+}
+
+fun deleteProfileImage(
+    token: String,
+    imdel: Boolean,
+    nickname: RequestBody,
+    routeAction: RouteAction,
+) {
+    var deleteProfileImageResponse : DeleteProfileImageResponse? = null
+
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
+
+    var retrofit =
+        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create()).build()
+
+    var deleteProfileImageRequest: DeleteProfileImageRequest =
+        retrofit.create(DeleteProfileImageRequest::class.java)
+
+    deleteProfileImageRequest.requestDeleteProfileImage(token, nickname, imdel).enqueue(object : Callback<DeleteProfileImageResponse> {
+
+        // 성공 했을때
+        override fun onResponse(
+            call: Call<DeleteProfileImageResponse>,
+            response: Response<DeleteProfileImageResponse>
+        ) {
+            deleteProfileImageResponse = response.body()
+
+            when (deleteProfileImageResponse?.resultCode) {
+                200 -> {
+                    MyApplication.prefs.setData(
+                        "nickname", deleteProfileImageResponse?.data?.nickname.toString()
+                    )
+                    MyApplication.prefs.setData(
+                        "image", deleteProfileImageResponse?.data?.image.toString()
+                    )
+                    routeAction.goBack()
+
+                    Log.d("deleteProfileImage", "resultCode : " + deleteProfileImageResponse?.resultCode)
+                    Log.d("deleteProfileImage", "resultCode : " + deleteProfileImageResponse?.data)
+                }
+                500 -> {
+                    Log.d("deleteProfileImage", "resultCode : " + deleteProfileImageResponse?.resultCode)
+                }
+            }
+        }
+
+        // 실패 했을때
+        override fun onFailure(call: Call<DeleteProfileImageResponse>, t: Throwable) {
+            Log.e("deleteProfileImage", t.message.toString())
+        }
+
+    })
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -205,13 +263,23 @@ fun ProfileScreen(routeAction: RouteAction) {
             Text(text = "완료", modifier = Modifier
                 .padding(30.dp)
                 .clickable {
-                    changeProfile(
-                        token,
-                        imdel.value,
-                        nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
-                        image.value!!,
-                        routeAction
-                    )
+
+                    if(image.value != null){
+                        changeProfile(
+                            token,
+                            imdel.value,
+                            nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
+                            image.value!!,
+                            routeAction
+                        )
+                    } else {
+                        deleteProfileImage(
+                            token,
+                            imdel.value,
+                            nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
+                            routeAction
+                        )
+                    }
                 })
         })
     }) {
