@@ -306,7 +306,7 @@ fun ProfileScreen(routeAction: RouteAction) {
 
             Box(modifier = Modifier.padding(8.dp)) {
                 Image(
-                    bitmap = imageResource as ImageBitmap,
+                    painter = imageResource,
                     contentDescription = "profileImage",
                     modifier = Modifier
                         .size(90.dp)
@@ -502,10 +502,7 @@ fun setImageDialog(
                     onClick = {
                         imdel.value = true
                         imageUri.value =
-                            Uri.parse("android.resource://com.example.todo_android/drawable/defaultprofile")
-                                .toString()
-                        image.value = null
-                        Log.v("setImage", "image: ${image.value}")
+                            Uri.parse("android.resource://com.example.todo_android/drawable/defaultprofile").toString()
                         onDismissRequest()
                     },
                     shape = RoundedCornerShape(10.dp)
