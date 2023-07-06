@@ -220,7 +220,7 @@ fun ProfileScreen(routeAction: RouteAction) {
 //        }
 //    )
 
-    val imageResource = if (MyApplication.prefs.getData("image", "") == "null") {
+    bitmap.value = if (MyApplication.prefs.getData("image", "") == "null") {
         BitmapFactory.decodeResource(context.resources, R.drawable.defaultprofile).asImageBitmap()
     } else {
         val base64EncodedImage = MyApplication.prefs.getData("image", "")
@@ -229,53 +229,6 @@ fun ProfileScreen(routeAction: RouteAction) {
 
         ImageBitmap.asImageBitmap()
     }
-
-
-//    val responseDefaultProfileImage = MyApplication.prefs.getData("defaultProfileImage", "")
-//    val defaultProfileImageDecodedBytes = Base64.decode(responseDefaultProfileImage, Base64.DEFAULT)
-//    val defaultProfileImageBitmap = BitmapFactory.decodeByteArray(
-//        defaultProfileImageDecodedBytes, 0, defaultProfileImageDecodedBytes.size
-//    )
-//
-//    val decodeDefaultImageFile: File? = File.createTempFile("temp", null, context.cacheDir)
-//    val defaultOutPutStream = FileOutputStream(decodeDefaultImageFile)
-//    defaultProfileImageBitmap?.compress(Bitmap.CompressFormat.PNG, 100, defaultOutPutStream)
-//    defaultOutPutStream.close()
-//
-//    val responseImage = MyApplication.prefs.getData("image", "")
-//    val decodedBytes = Base64.decode(responseImage, Base64.DEFAULT)
-//    val decodedImage = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-//
-//    val decodeFile: File? = File.createTempFile("temp", null, context.cacheDir)
-//    val outputStream = FileOutputStream(decodeFile)
-//    decodedImage?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-//    outputStream.close()
-//
-//    val imageUri = rememberSaveable {
-//        mutableStateOf(decodeFile?.toUri())
-//    }
-
-//    var painter = rememberImagePainter(data = imageUri.value, builder = {
-//        if (imageUri.value != null) {
-//            placeholder(R.drawable.defaultprofile)
-//        }
-//    })
-//
-//
-//    val file = imageUri.value?.let { uri ->
-//        val contentResolver = context.contentResolver
-//        val inputStream = contentResolver.openInputStream(uri)
-//        val tempFile = File.createTempFile("image", null, context.cacheDir)
-//        tempFile.outputStream().use { outputStream ->
-//            inputStream?.copyTo(outputStream)
-//        }
-//        tempFile
-//    }
-//
-//    val requestFile = file?.asRequestBody("image/jpeg".toMediaTypeOrNull())
-//    val body = requestFile?.let {
-//        MultipartBody.Part.createFormData("image", file.name, requestFile)
-//    }
 
     Scaffold(modifier = Modifier
         .fillMaxWidth()
@@ -297,7 +250,6 @@ fun ProfileScreen(routeAction: RouteAction) {
             Text(text = "완료", modifier = Modifier
                 .padding(30.dp)
                 .clickable {
-
                     if (image.value != null) {
                         changeProfile(
                             token,
@@ -328,16 +280,17 @@ fun ProfileScreen(routeAction: RouteAction) {
 
             Box(modifier = Modifier.padding(8.dp)) {
                 Image(
-                    painter = if (MyApplication.prefs.getData("image", "") == "null") {
-                        painterResource(id = R.drawable.defaultprofile) }
-                    else {
-                        val base64EncodedImage = MyApplication.prefs.getData("image", "")
-                        val DecodedBytes = Base64.decode(base64EncodedImage, Base64.DEFAULT)
-                        val ImageBitmap =
-                            BitmapFactory.decodeByteArray(DecodedBytes, 0, DecodedBytes.size)
-
-                        BitmapPainter(ImageBitmap.asImageBitmap())
-                },
+//                    painter = if (MyApplication.prefs.getData("image", "") == "null") {
+//                        painterResource(id = R.drawable.defaultprofile) }
+//                    else {
+//                        val base64EncodedImage = MyApplication.prefs.getData("image", "")
+//                        val DecodedBytes = Base64.decode(base64EncodedImage, Base64.DEFAULT)
+//                        val ImageBitmap =
+//                            BitmapFactory.decodeByteArray(DecodedBytes, 0, DecodedBytes.size)
+//
+//                        BitmapPainter(ImageBitmap.asImageBitmap())
+//                },
+                    bitmap = bitmap.value!!,
                     contentDescription = "profileImage",
                     modifier = Modifier
                         .size(90.dp)
@@ -472,19 +425,19 @@ fun setImageDialog(
 ) {
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
+            uri.let {
 //                imageUri.value = it.toString()
 
                 if (Build.VERSION.SDK_INT < 28) {
                     bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
                         .asImageBitmap()
                 } else {
-                    val source = ImageDecoder.createSource(context.contentResolver, it)
+                    val source = ImageDecoder.createSource(context.contentResolver, it!!)
                     bitmap.value = ImageDecoder.decodeBitmap(source).asImageBitmap()
                 }
 
 
-                val inputStream = context.contentResolver.openInputStream(it)
+                val inputStream = context.contentResolver.openInputStream(it!!)
                 val imageBytes = inputStream?.buffered()?.use { it.readBytes() }
                 val encodePicture = Base64.encodeToString(imageBytes, Base64.DEFAULT)
                 val file = encodePicture?.let { base64String ->
@@ -519,9 +472,10 @@ fun setImageDialog(
                         .padding(start = 55.dp, end = 55.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFDAB9)),
                     onClick = {
-                        launcher.launch("image/*").let {
-                            imageUri.value = it.toString()
-                        }
+//                        launcher.launch("image/*").let {
+//                            imageUri.value = it.toString()
+//                        }
+                        launcher.launch("image/*")
                         imdel.value = false
                     },
                     shape = RoundedCornerShape(10.dp)
@@ -549,12 +503,10 @@ fun setImageDialog(
 
 
                         bitmap.value = BitmapFactory.decodeResource(
-                            context.resources, R.drawable.defaultprofile
+                            context.resources,
+                            R.drawable.defaultprofile
                         ).asImageBitmap()
-
-
-
-                        onDismissRequest()
+                        //onDismissRequest()
                     },
                     shape = RoundedCornerShape(10.dp)
                 ) {
