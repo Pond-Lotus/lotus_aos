@@ -2,12 +2,18 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.media.Image
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -22,7 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -30,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -190,23 +199,36 @@ fun ProfileScreen(routeAction: RouteAction) {
     var imageUri = rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
 
+    var bitmap = remember { mutableStateOf<ImageBitmap?>(null) }
+
     if (openDialog) {
         setImageDialog(
             onDismissRequest = { openDialog = false },
             image = image,
             imageUri = imageUri,
             context = context,
-            imdel = imdel
+            imdel = imdel,
+            bitmap = bitmap
         )
     }
 
-    val imageResource = rememberImagePainter(
-        data = if (MyApplication.prefs.getData("image", "") == null || imageUri.value.isEmpty()) {
-            R.drawable.defaultprofile
-        } else {
-            imageUri.value
-        }
-    )
+//    val imageResource = rememberImagePainter(
+//        data = if (MyApplication.prefs.getData("image", "") == null || imageUri.value.isEmpty()) {
+//            R.drawable.defaultprofile
+//        } else {
+//            imageUri.value
+//        }
+//    )
+
+    val imageResource = if (MyApplication.prefs.getData("image", "") == "null") {
+        BitmapFactory.decodeResource(context.resources, R.drawable.defaultprofile).asImageBitmap()
+    } else {
+        val base64EncodedImage = MyApplication.prefs.getData("image", "")
+        val DecodedBytes = Base64.decode(base64EncodedImage, Base64.DEFAULT)
+        val ImageBitmap = BitmapFactory.decodeByteArray(DecodedBytes, 0, DecodedBytes.size)
+
+        ImageBitmap.asImageBitmap()
+    }
 
 
 //    val responseDefaultProfileImage = MyApplication.prefs.getData("defaultProfileImage", "")
@@ -306,7 +328,16 @@ fun ProfileScreen(routeAction: RouteAction) {
 
             Box(modifier = Modifier.padding(8.dp)) {
                 Image(
-                    painter = imageResource,
+                    painter = if (MyApplication.prefs.getData("image", "") == "null") {
+                        painterResource(id = R.drawable.defaultprofile) }
+                    else {
+                        val base64EncodedImage = MyApplication.prefs.getData("image", "")
+                        val DecodedBytes = Base64.decode(base64EncodedImage, Base64.DEFAULT)
+                        val ImageBitmap =
+                            BitmapFactory.decodeByteArray(DecodedBytes, 0, DecodedBytes.size)
+
+                        BitmapPainter(ImageBitmap.asImageBitmap())
+                },
                     contentDescription = "profileImage",
                     modifier = Modifier
                         .size(90.dp)
@@ -314,8 +345,7 @@ fun ProfileScreen(routeAction: RouteAction) {
                             openDialog = true
                         }
                         .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
+                    contentScale = ContentScale.Crop)
                 Row(modifier = Modifier.padding(2.dp)) {
                     Image(
                         painter = painterResource(R.drawable.profile_bottom_icon),
@@ -438,11 +468,22 @@ fun setImageDialog(
     imageUri: MutableState<String>,
     context: Context,
     imdel: MutableState<Boolean>,
+    bitmap: MutableState<ImageBitmap?>,
 ) {
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
-                imageUri.value = it.toString()
+//                imageUri.value = it.toString()
+
+                if (Build.VERSION.SDK_INT < 28) {
+                    bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                        .asImageBitmap()
+                } else {
+                    val source = ImageDecoder.createSource(context.contentResolver, it)
+                    bitmap.value = ImageDecoder.decodeBitmap(source).asImageBitmap()
+                }
+
+
                 val inputStream = context.contentResolver.openInputStream(it)
                 val imageBytes = inputStream?.buffered()?.use { it.readBytes() }
                 val encodePicture = Base64.encodeToString(imageBytes, Base64.DEFAULT)
@@ -478,7 +519,9 @@ fun setImageDialog(
                         .padding(start = 55.dp, end = 55.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xffFFDAB9)),
                     onClick = {
-                        launcher.launch("image/*").let { imageUri.value = it.toString() }
+                        launcher.launch("image/*").let {
+                            imageUri.value = it.toString()
+                        }
                         imdel.value = false
                     },
                     shape = RoundedCornerShape(10.dp)
@@ -501,8 +544,16 @@ fun setImageDialog(
                     colors = ButtonDefaults.buttonColors(Color(0xffE9E9E9)),
                     onClick = {
                         imdel.value = true
-                        imageUri.value =
-                            Uri.parse("android.resource://com.example.todo_android/drawable/defaultprofile").toString()
+//                        imageUri.value =
+//                            Uri.parse("android.resource://com.example.todo_android/drawable/defaultprofile").toString()
+
+
+                        bitmap.value = BitmapFactory.decodeResource(
+                            context.resources, R.drawable.defaultprofile
+                        ).asImageBitmap()
+
+
+
                         onDismissRequest()
                     },
                     shape = RoundedCornerShape(10.dp)
