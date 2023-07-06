@@ -205,10 +205,20 @@ fun ProfileScreen(routeAction: RouteAction) {
         setImageDialog(
             onDismissRequest = { openDialog = false },
             image = image,
-            imageUri = imageUri,
             context = context,
             imdel = imdel,
-            bitmap = bitmap
+            onBitmapResult = { imageBitmap ->
+                bitmap.value = imageBitmap
+            },
+            onDefaultImageResult = {
+                bitmap.value = BitmapFactory
+                                    .decodeResource(
+                                        context.resources,
+                                        R.drawable.defaultprofile)
+                                    .asImageBitmap()
+            },
+//            imageUri = imageUri
+//            bitmap = bitmap
         )
     }
 
@@ -220,15 +230,15 @@ fun ProfileScreen(routeAction: RouteAction) {
 //        }
 //    )
 
-    bitmap.value = if (MyApplication.prefs.getData("image", "") == "null") {
-        BitmapFactory.decodeResource(context.resources, R.drawable.defaultprofile).asImageBitmap()
-    } else {
-        val base64EncodedImage = MyApplication.prefs.getData("image", "")
-        val DecodedBytes = Base64.decode(base64EncodedImage, Base64.DEFAULT)
-        val ImageBitmap = BitmapFactory.decodeByteArray(DecodedBytes, 0, DecodedBytes.size)
-
-        ImageBitmap.asImageBitmap()
-    }
+//    bitmap.value = if (MyApplication.prefs.getData("image", "") == "null") {
+//        BitmapFactory.decodeResource(context.resources, R.drawable.defaultprofile).asImageBitmap()
+//    } else {
+//        val base64EncodedImage = MyApplication.prefs.getData("image", "")
+//        val DecodedBytes = Base64.decode(base64EncodedImage, Base64.DEFAULT)
+//        val ImageBitmap = BitmapFactory.decodeByteArray(DecodedBytes, 0, DecodedBytes.size)
+//
+//        ImageBitmap.asImageBitmap()
+//    }
 
     Scaffold(modifier = Modifier
         .fillMaxWidth()
@@ -418,10 +428,12 @@ fun ProfileScreen(routeAction: RouteAction) {
 fun setImageDialog(
     onDismissRequest: () -> Unit,
     image: MutableState<MultipartBody.Part?>,
-    imageUri: MutableState<String>,
     context: Context,
     imdel: MutableState<Boolean>,
-    bitmap: MutableState<ImageBitmap?>,
+    onBitmapResult: (ImageBitmap) -> Unit,
+    onDefaultImageResult: () -> Unit
+//    imageUri: MutableState<String>,
+//    bitmap: MutableState<ImageBitmap?>,
 ) {
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -429,11 +441,13 @@ fun setImageDialog(
 //                imageUri.value = it.toString()
 
                 if (Build.VERSION.SDK_INT < 28) {
-                    bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                    val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
                         .asImageBitmap()
+                    onBitmapResult(bitmap)
                 } else {
                     val source = ImageDecoder.createSource(context.contentResolver, it!!)
-                    bitmap.value = ImageDecoder.decodeBitmap(source).asImageBitmap()
+                    val bitmap = ImageDecoder.decodeBitmap(source).asImageBitmap()
+                    onBitmapResult(bitmap)
                 }
 
 
@@ -498,14 +512,14 @@ fun setImageDialog(
                     colors = ButtonDefaults.buttonColors(Color(0xffE9E9E9)),
                     onClick = {
                         imdel.value = true
+                        onDefaultImageResult()
+
 //                        imageUri.value =
 //                            Uri.parse("android.resource://com.example.todo_android/drawable/defaultprofile").toString()
-
-
-                        bitmap.value = BitmapFactory.decodeResource(
-                            context.resources,
-                            R.drawable.defaultprofile
-                        ).asImageBitmap()
+//                        bitmap.value = BitmapFactory.decodeResource(
+//                            context.resources,
+//                            R.drawable.defaultprofile
+//                        ).asImageBitmap()
                         //onDismissRequest()
                     },
                     shape = RoundedCornerShape(10.dp)
