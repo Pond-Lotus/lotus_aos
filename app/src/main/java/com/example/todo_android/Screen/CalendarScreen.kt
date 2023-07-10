@@ -75,12 +75,14 @@ import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import okio.utf8Size
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
+import kotlin.math.sign
 
 fun createTodo(
     token: String,
@@ -1015,10 +1017,12 @@ fun TodoItemList(
                                 todoList.removeAll { it.id == item.id }
                                 todoList.add(item)
                             }, onUnCheckedUpdateTodo = {
-                                    todoList.removeAll { it.id == item.id }
-                                    todoList.add(
-                                        todoList.indexOfFirst { !it.done || it.id == item.id },
-                                        item.copy(done = false))
+                                todoList.removeAll { it.id == item.id }
+                                todoList.add(item.id.toInt(), item)
+//                                    todoList.add(
+//                                        todoList.indexOfFirst { !it.done || it.id == item.id },
+//                                        item.copy(done = false)
+//                                    )
                             })
                     },
                     dismissThresholds = {
