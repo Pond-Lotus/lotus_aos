@@ -8,6 +8,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -1017,13 +1018,40 @@ fun TodoItemList(
                                 todoList.removeAll { it.id == item.id }
                                 todoList.add(item)
                             }, onUnCheckedUpdateTodo = {
-                                todoList.removeAll { it.id == item.id }
-                                todoList.add(item.id.toInt(), item)
-//                                    todoList.add(
-//                                        todoList.indexOfFirst { !it.done || it.id == item.id },
-//                                        item.copy(done = false)
-//                                    )
-                            })
+                                val index = todoList.indexOfFirst { it.id == item.id }
+                                if (index != -1) {
+                                    val stickyHeader = todoList[index]
+                                    val headerIndex = todoList.indexOfFirst { it.color == item.color }
+                                    if (headerIndex != -1 && headerIndex < index) {
+                                        todoList.removeAll { it.id == item.id }
+                                        todoList.add(headerIndex + 1, stickyHeader)
+                                    }
+                                }
+//                                val originalIndex = todoList.indexOfFirst { it.id == item.id }
+//                                if (originalIndex >= 0) {
+//                                    todoList.removeAt(originalIndex)
+//                                    // sticky header 그룹 내에서 원래 위치로 아이템을 삽입
+//                                    val groupColor = item.color
+//                                    val groupItems = todoList.filter { it.color == groupColor }
+//                                    val insertIndex = groupItems.indexOfLast { it.id < item.id } + 1
+//                                    todoList.addAll(insertIndex, listOf(item))
+//                                }
+//                                todoList.removeAll { it.id == item.id }
+//                                todoList.add(item.id.toInt(), item)
+//                                val sortedList = todoList.sortedWith(Comparator { o1, o2 ->
+//                                    when{
+//                                        o1.done == o2.done -> 0
+//                                        o1.done -> 1
+//                                        else -> -1
+//                                    }
+//                                })
+//                                for(data in sortedList){
+//                                    todoList.add(index, data)
+//                                }
+//                                todoList.add(index, item)
+//                                    todoList.add(todoList.indexOfFirst { !it.done || it.id == item.id }, item)
+                            }
+                        )
                     },
                     dismissThresholds = {
                         androidx.compose.material.FractionalThreshold(fraction = 0.2f)
