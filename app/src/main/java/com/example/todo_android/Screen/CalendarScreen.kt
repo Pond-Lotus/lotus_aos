@@ -1018,15 +1018,24 @@ fun TodoItemList(
                                 todoList.removeAll { it.id == item.id }
                                 todoList.add(item)
                             }, onUnCheckedUpdateTodo = {
-                                val index = todoList.indexOfFirst { it.id == item.id }
-                                if (index != -1) {
-                                    val stickyHeader = todoList[index]
-                                    val headerIndex = todoList.indexOfFirst { it.color == item.color }
-                                    if (headerIndex != -1 && headerIndex < index) {
-                                        todoList.removeAll { it.id == item.id }
-                                        todoList.add(headerIndex + 1, stickyHeader)
+                                readTodo(token, year = item.year, month = item.month, day = item.day) {
+                                    todoList.clear()
+                                    for (i in it!!.data) {
+                                        todoList.add(i)
                                     }
+                                }.also {
+                                    todoList.removeAll { it.id == item.id }
+                                    todoList.add(item)
                                 }
+//                                val index = todoList.indexOfFirst { it.id == item.id }
+//                                if (index != -1) {
+//                                    val stickyHeader = todoList[index]
+//                                    val headerIndex = todoList.indexOfFirst { it.color == item.color }
+//                                    if (headerIndex != -1 && headerIndex < index) {
+//                                        todoList.removeAll { it.id == item.id }
+//                                        todoList.add(headerIndex + 1, stickyHeader)
+//                                    }
+//                                }
 //                                val originalIndex = todoList.indexOfFirst { it.id == item.id }
 //                                if (originalIndex >= 0) {
 //                                    todoList.removeAt(originalIndex)
