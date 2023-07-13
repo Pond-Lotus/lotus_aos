@@ -908,7 +908,31 @@ fun TodoItem(
                             Todo.time,
                             Todo.id,
                             response = {
-                                onUnCheckedUpdateTodo()
+                                onUnCheckedUpdateTodo().let {
+                                    done = Todo.done
+                                    if (checked) {
+                                        done = true
+                                        checked = true
+                                        updateTodo(token,
+                                            Todo.year,
+                                            Todo.month,
+                                            Todo.day,
+                                            Todo.title,
+                                            done,
+                                            Todo.description,
+                                            Todo.color.toString(),
+                                            Todo.time,
+                                            Todo.id,
+                                            response = {
+                                                onCheckedUpdateTodo()
+                                            })
+                                    }
+                                }
+//                                onUnCheckedUpdateTodo().also {
+//                                    if (checked) {
+//                                        onCheckedUpdateTodo()
+//                                    }
+//                                }
                             })
                     }
                 }, colors = CheckboxDefaults.colors(
@@ -1023,10 +1047,11 @@ fun TodoItemList(
                                     for (i in it!!.data) {
                                         todoList.add(i)
                                     }
-                                }.also {
-                                    todoList.removeAll { it.id == item.id }
-                                    todoList.add(item)
                                 }
+//                                    .also {
+//                                    todoList.removeAll { it.id == item.id }
+//                                    todoList.add(item)
+//                                }
 //                                val index = todoList.indexOfFirst { it.id == item.id }
 //                                if (index != -1) {
 //                                    val stickyHeader = todoList[index]
