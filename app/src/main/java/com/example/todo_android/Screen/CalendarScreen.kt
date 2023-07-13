@@ -223,11 +223,8 @@ fun updateTodo(
     var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
 
     updateTodoRequest.requestUpdateTodo(
-        token,
-        id,
-        UpdateTodo(year, month, day, title, done, description, color, time)
-    )
-        .enqueue(object : Callback<UpdateTodoResponse> {
+        token, id, UpdateTodo(year, month, day, title, done, description, color, time)
+    ).enqueue(object : Callback<UpdateTodoResponse> {
 
             // 실패 했을때
             override fun onFailure(call: Call<UpdateTodoResponse>, t: Throwable) {
@@ -260,7 +257,7 @@ fun readCategory(
 ) {
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
-    var readCategoryResponse: ReadCategoryResponse ?= null
+    var readCategoryResponse: ReadCategoryResponse? = null
 
     var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
         .addConverterFactory(GsonConverterFactory.create()).build()
@@ -269,8 +266,7 @@ fun readCategory(
 
     readCategoryRequest.requestReadCategory(token).enqueue(object : Callback<ReadCategoryResponse> {
         override fun onResponse(
-            call: Call<ReadCategoryResponse>,
-            response: Response<ReadCategoryResponse>
+            call: Call<ReadCategoryResponse>, response: Response<ReadCategoryResponse>
         ) {
             readCategoryResponse = response.body()
             response(readCategoryResponse)
@@ -288,9 +284,7 @@ fun readCategory(
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @SuppressLint(
-    "UnusedMaterial3ScaffoldPaddingParameter",
-    "UnusedMaterialScaffoldPaddingParameter",
-    "NewApi"
+    "UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter", "NewApi"
 )
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
@@ -384,119 +378,104 @@ fun CalendarScreen(routeAction: RouteAction) {
         }
     }
 
-    LaunchedEffect(
-        key1 = Unit,
-        block = {
-            readTodo(
-                token,
-                LocalDate.now().year.toString(),
-                LocalDate.now().monthValue.toString(),
-                LocalDate.now().dayOfMonth.toString()
-            ) {
-                todoList.clear()
-                for (i in it!!.data) {
-                    todoList.add(i)
-                }
-            }
-
-            day = LocalDate.now().dayOfMonth.toString()
-
-            val selectedDate = LocalDate.of(
-                LocalDate.now().year,
-                LocalDate.now().monthValue,
-                LocalDate.now().dayOfMonth
-            )
-            val dayOfWeek = selectedDate.dayOfWeek
-
-            dayString = when (dayOfWeek.value) {
-                1 -> "월요일"
-                2 -> "화요일"
-                3 -> "수요일"
-                4 -> "목요일"
-                5 -> "금요일"
-                6 -> "토요일"
-                7 -> "일요일"
-                else -> ""
+    LaunchedEffect(key1 = Unit, block = {
+        readTodo(
+            token,
+            LocalDate.now().year.toString(),
+            LocalDate.now().monthValue.toString(),
+            LocalDate.now().dayOfMonth.toString()
+        ) {
+            todoList.clear()
+            for (i in it!!.data) {
+                todoList.add(i)
             }
         }
-    )
+
+        day = LocalDate.now().dayOfMonth.toString()
+
+        val selectedDate = LocalDate.of(
+            LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth
+        )
+        val dayOfWeek = selectedDate.dayOfWeek
+
+        dayString = when (dayOfWeek.value) {
+            1 -> "월요일"
+            2 -> "화요일"
+            3 -> "수요일"
+            4 -> "목요일"
+            5 -> "금요일"
+            6 -> "토요일"
+            7 -> "일요일"
+            else -> ""
+        }
+    })
 
 
-    BottomSheetScaffold(
-        scaffoldState = bottomScaffoldState,
+    BottomSheetScaffold(scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
-                scope = scope,
-                bottomScaffoldState = bottomScaffoldState,
-                routeAction = routeAction
+                scope = scope, bottomScaffoldState = bottomScaffoldState, routeAction = routeAction
             )
         },
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        Row(
-                            modifier = Modifier
-                                .width(120.dp)
-                                .height(35.dp)
-                                .clip(shape = RoundedCornerShape(24.dp))
-                                .background(Color(0xffe9e9ed))
-                                .padding(start = 8.dp, end = 8.dp, top = 5.dp, bottom = 5.dp)
-                        ) {
-                            states.forEach { text ->
-                                Text(text = text,
-                                    fontSize = 10.sp,
-                                    lineHeight = 14.sp,
-                                    color = if (text == selectedOption) {
-                                        Color.Black
-                                    } else {
-                                        Color.Gray
-                                    },
-                                    fontWeight = FontWeight.Medium,
-                                    modifier = Modifier
-                                        .clip(shape = RoundedCornerShape(24.dp))
-                                        .clickable {
-                                            onSelectionChange(text)
-                                            selectCalendar = (text == states[1])
+            CenterAlignedTopAppBar(title = {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Row(
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(35.dp)
+                            .clip(shape = RoundedCornerShape(24.dp))
+                            .background(Color(0xffe9e9ed))
+                            .padding(start = 8.dp, end = 8.dp, top = 5.dp, bottom = 5.dp)
+                    ) {
+                        states.forEach { text ->
+                            Text(text = text,
+                                fontSize = 10.sp,
+                                lineHeight = 14.sp,
+                                color = if (text == selectedOption) {
+                                    Color.Black
+                                } else {
+                                    Color.Gray
+                                },
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier
+                                    .clip(shape = RoundedCornerShape(24.dp))
+                                    .clickable {
+                                        onSelectionChange(text)
+                                        selectCalendar = (text == states[1])
+                                    }
+                                    .background(
+                                        if (text == selectedOption) {
+                                            Color.White
+                                        } else {
+                                            Color(0xffe9e9ed)
                                         }
-                                        .background(
-                                            if (text == selectedOption) {
-                                                Color.White
-                                            } else {
-                                                Color(0xffe9e9ed)
-                                            }
-                                        )
-                                        .padding(
-                                            vertical = 6.dp,
-                                            horizontal = 16.dp,
-                                        ))
-                            }
+                                    )
+                                    .padding(
+                                        vertical = 6.dp,
+                                        horizontal = 16.dp,
+                                    ))
                         }
                     }
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        scope.launch {
-                            bottomScaffoldState.drawerState.open()
-                        }
-                    }) {
-                        Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
+                }
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    scope.launch {
+                        bottomScaffoldState.drawerState.open()
                     }
-                },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color.Black
-                )
+                }) {
+                    Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
+                }
+            }, colors = TopAppBarDefaults.smallTopAppBarColors(
+                containerColor = Color.White, titleContentColor = Color.Black
+            )
             )
         },
         floatingActionButton = {
             AddTodoFloatingButton(
-                multiFloatingState = multiFloatingState,
-                onMultiFloatingStateChange = {
+                multiFloatingState = multiFloatingState, onMultiFloatingStateChange = {
                     multiFloatingState = it
-                },
-                backgroundColor = colorFAB,
-                onButtonClick = onButtonClick
+                }, backgroundColor = colorFAB, onButtonClick = onButtonClick
             )
         },
         floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
@@ -674,8 +653,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                             title = it
                         },
                         keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done
+                            keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
                         ),
                         keyboardActions = KeyboardActions(onDone = {
                             createTodo(token, year, month, day, title, color) {
@@ -836,30 +814,27 @@ fun TodoItem(
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
     var done by remember { mutableStateOf(false) }
 
-    LaunchedEffect(
-        key1 = Unit,
-        block = {
-            done = Todo.done
+    LaunchedEffect(key1 = Unit, block = {
+        done = Todo.done
 
-            if (checked) {
-                done = true
-                checked = true
-                updateTodo(token,
-                    Todo.year,
-                    Todo.month,
-                    Todo.day,
-                    Todo.title,
-                    done,
-                    Todo.description,
-                    Todo.color.toString(),
-                    Todo.time,
-                    Todo.id,
-                    response = {
-                        onCheckedUpdateTodo()
-                    })
-            }
+        if (checked) {
+            done = true
+            checked = true
+            updateTodo(token,
+                Todo.year,
+                Todo.month,
+                Todo.day,
+                Todo.title,
+                done,
+                Todo.description,
+                Todo.color.toString(),
+                Todo.time,
+                Todo.id,
+                response = {
+                    onCheckedUpdateTodo()
+                })
         }
-    )
+    })
 
     Card(colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
@@ -875,8 +850,7 @@ fun TodoItem(
             horizontalArrangement = Arrangement.Center
         ) {
             Checkbox(
-                checked = checked,
-                onCheckedChange = {
+                checked = checked, onCheckedChange = {
                     checked = it
                     if (checked) {
                         done = true
@@ -928,11 +902,6 @@ fun TodoItem(
                                             })
                                     }
                                 }
-//                                onUnCheckedUpdateTodo().also {
-//                                    if (checked) {
-//                                        onCheckedUpdateTodo()
-//                                    }
-//                                }
                             })
                     }
                 }, colors = CheckboxDefaults.colors(
@@ -987,8 +956,7 @@ fun TodoItemList(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Button(
-                        modifier = Modifier.size(9.dp),
+                    Button(modifier = Modifier.size(9.dp),
                         onClick = { /*TODO*/ },
                         enabled = false,
                         content = {},
@@ -1041,14 +1009,17 @@ fun TodoItemList(
                             onCheckedUpdateTodo = {
                                 todoList.removeAll { it.id == item.id }
                                 todoList.add(item)
-                            }, onUnCheckedUpdateTodo = {
-                                readTodo(token, year = item.year, month = item.month, day = item.day) {
+                            },
+                            onUnCheckedUpdateTodo = {
+                                readTodo(
+                                    token, year = item.year, month = item.month, day = item.day
+                                ) {
                                     todoList.clear()
                                     for (i in it!!.data) {
                                         todoList.add(i)
                                     }
                                 }.let {
-                                    if(item.done) {
+                                    if (item.done) {
                                         todoList.removeAll { it.id == item.id }
                                         todoList.add(item)
                                     }
@@ -1085,8 +1056,7 @@ fun TodoItemList(
 //                                }
 //                                todoList.add(index, item)
 //                                    todoList.add(todoList.indexOfFirst { !it.done || it.id == item.id }, item)
-                            }
-                        )
+                            })
                     },
                     dismissThresholds = {
                         androidx.compose.material.FractionalThreshold(fraction = 0.2f)
