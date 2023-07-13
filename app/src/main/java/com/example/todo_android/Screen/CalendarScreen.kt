@@ -1047,11 +1047,12 @@ fun TodoItemList(
                                     for (i in it!!.data) {
                                         todoList.add(i)
                                     }
+                                }.let {
+                                    if(item.done) {
+                                        todoList.removeAll { it.id == item.id }
+                                        todoList.add(item)
+                                    }
                                 }
-//                                    .also {
-//                                    todoList.removeAll { it.id == item.id }
-//                                    todoList.add(item)
-//                                }
 //                                val index = todoList.indexOfFirst { it.id == item.id }
 //                                if (index != -1) {
 //                                    val stickyHeader = todoList[index]
