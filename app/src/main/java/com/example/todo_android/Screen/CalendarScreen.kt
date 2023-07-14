@@ -226,30 +226,30 @@ fun updateTodo(
         token, id, UpdateTodo(year, month, day, title, done, description, color, time)
     ).enqueue(object : Callback<UpdateTodoResponse> {
 
-            // 실패 했을때
-            override fun onFailure(call: Call<UpdateTodoResponse>, t: Throwable) {
-                Log.e("updateTodo", t.message.toString())
+        // 실패 했을때
+        override fun onFailure(call: Call<UpdateTodoResponse>, t: Throwable) {
+            Log.e("updateTodo", t.message.toString())
+        }
+
+        // 성공 했을때
+        override fun onResponse(
+            call: Call<UpdateTodoResponse>,
+            response: Response<UpdateTodoResponse>,
+        ) {
+
+            if (response.isSuccessful) {
+                updateTodoResponse = response.body()
+
+                response(updateTodoResponse)
+
+                Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
+                Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
+            } else {
+                Log.e("updateTodo", "resultCode : " + response.body())
+                Log.e("updateTodo", "code : " + response.code())
             }
-
-            // 성공 했을때
-            override fun onResponse(
-                call: Call<UpdateTodoResponse>,
-                response: Response<UpdateTodoResponse>,
-            ) {
-
-                if (response.isSuccessful) {
-                    updateTodoResponse = response.body()
-
-                    response(updateTodoResponse)
-
-                    Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
-                    Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
-                } else {
-                    Log.e("updateTodo", "resultCode : " + response.body())
-                    Log.e("updateTodo", "code : " + response.code())
-                }
-            }
-        })
+        }
+    })
 }
 
 fun readCategory(
@@ -671,12 +671,16 @@ fun CalendarScreen(routeAction: RouteAction) {
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                 }
-                TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = {
-                    selectedTodo = it
-                    scope.launch {
-                        bottomScaffoldState.bottomSheetState.expand()
+                TodoItemList(
+                    Todo = todoList,
+                    todoList = todoList,
+                    onTodoItemClick = {
+                        selectedTodo = it
+                        scope.launch {
+                            bottomScaffoldState.bottomSheetState.expand()
+                        }
                     }
-                })
+                )
             }
         }
     }
@@ -814,27 +818,36 @@ fun TodoItem(
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
     var done by remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = Unit, block = {
-        done = Todo.done
+    LaunchedEffect(
+        key1 = checked,
+        block = {
+            done = Todo.done
 
-        if (checked) {
-            done = true
-            checked = true
-            updateTodo(token,
-                Todo.year,
-                Todo.month,
-                Todo.day,
-                Todo.title,
-                done,
-                Todo.description,
-                Todo.color.toString(),
-                Todo.time,
-                Todo.id,
-                response = {
-                    onCheckedUpdateTodo()
-                })
+            if (checked) {
+                done = true
+                checked = true
+                updateTodo(token,
+                    Todo.year,
+                    Todo.month,
+                    Todo.day,
+                    Todo.title,
+                    done,
+                    Todo.description,
+                    Todo.color.toString(),
+                    Todo.time,
+                    Todo.id,
+                    response = {
+                        onCheckedUpdateTodo()
+//                            .also {
+//                            if(done) {
+//                                onCheckedUpdateTodo()
+//                            }
+//                        }
+                    }
+                )
+            }
         }
-    })
+    )
 
     Card(colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
@@ -850,59 +863,25 @@ fun TodoItem(
             horizontalArrangement = Arrangement.Center
         ) {
             Checkbox(
-                checked = checked, onCheckedChange = {
-                    checked = it
-                    if (checked) {
-                        done = true
-                        checked = true
-                        updateTodo(token,
-                            Todo.year,
-                            Todo.month,
-                            Todo.day,
-                            Todo.title,
-                            done,
-                            Todo.description,
-                            Todo.color.toString(),
-                            Todo.time,
-                            Todo.id,
-                            response = {
-                                onCheckedUpdateTodo()
-                            })
-                    } else {
-                        done = false
-                        checked = false
-                        updateTodo(token,
-                            Todo.year,
-                            Todo.month,
-                            Todo.day,
-                            Todo.title,
-                            done,
-                            Todo.description,
-                            Todo.color.toString(),
-                            Todo.time,
-                            Todo.id,
-                            response = {
-                                onUnCheckedUpdateTodo().let {
-                                    done = Todo.done
-                                    if (checked) {
-                                        done = true
-                                        checked = true
-                                        updateTodo(token,
-                                            Todo.year,
-                                            Todo.month,
-                                            Todo.day,
-                                            Todo.title,
-                                            done,
-                                            Todo.description,
-                                            Todo.color.toString(),
-                                            Todo.time,
-                                            Todo.id,
-                                            response = {
-                                                onCheckedUpdateTodo()
-                                            })
-                                    }
-                                }
-                            })
+                checked = checked, onCheckedChange = { isChecked ->
+                    checked = isChecked
+                    done = isChecked
+                    updateTodo(
+                        token,
+                        Todo.year,
+                        Todo.month,
+                        Todo.day,
+                        Todo.title,
+                        done,
+                        Todo.description,
+                        Todo.color.toString(),
+                        Todo.time,
+                        Todo.id
+                    ) {
+                        when (isChecked) {
+                            true -> onCheckedUpdateTodo()
+                            false -> onUnCheckedUpdateTodo()
+                        }
                     }
                 }, colors = CheckboxDefaults.colors(
                     when (Todo.color) {
@@ -1018,12 +997,13 @@ fun TodoItemList(
                                     for (i in it!!.data) {
                                         todoList.add(i)
                                     }
-                                }.let {
-                                    if (item.done) {
-                                        todoList.removeAll { it.id == item.id }
-                                        todoList.add(item)
-                                    }
                                 }
+//                                    .let {
+//                                    if (item.done) {
+//                                        todoList.removeAll { it.id == item.id }
+//                                        todoList.add(item)
+//                                    }
+//                                }
 //                                val index = todoList.indexOfFirst { it.id == item.id }
 //                                if (index != -1) {
 //                                    val stickyHeader = todoList[index]
