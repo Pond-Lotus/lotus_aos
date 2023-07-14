@@ -1,7 +1,9 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
@@ -822,7 +824,6 @@ fun TodoItem(
         key1 = checked,
         block = {
             done = Todo.done
-
             if (checked) {
                 done = true
                 checked = true
@@ -838,11 +839,6 @@ fun TodoItem(
                     Todo.id,
                     response = {
                         onCheckedUpdateTodo()
-//                            .also {
-//                            if(done) {
-//                                onCheckedUpdateTodo()
-//                            }
-//                        }
                     }
                 )
             }
@@ -901,6 +897,7 @@ fun TodoItem(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.N)
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
@@ -997,46 +994,12 @@ fun TodoItemList(
                                     for (i in it!!.data) {
                                         todoList.add(i)
                                     }
+                                }.also {
+                                    todoList.removeIf { it.done != item.done }
+                                    todoList.add(item)
                                 }
-//                                    .let {
-//                                    if (item.done) {
-//                                        todoList.removeAll { it.id == item.id }
-//                                        todoList.add(item)
-//                                    }
-//                                }
-//                                val index = todoList.indexOfFirst { it.id == item.id }
-//                                if (index != -1) {
-//                                    val stickyHeader = todoList[index]
-//                                    val headerIndex = todoList.indexOfFirst { it.color == item.color }
-//                                    if (headerIndex != -1 && headerIndex < index) {
-//                                        todoList.removeAll { it.id == item.id }
-//                                        todoList.add(headerIndex + 1, stickyHeader)
-//                                    }
-//                                }
-//                                val originalIndex = todoList.indexOfFirst { it.id == item.id }
-//                                if (originalIndex >= 0) {
-//                                    todoList.removeAt(originalIndex)
-//                                    // sticky header 그룹 내에서 원래 위치로 아이템을 삽입
-//                                    val groupColor = item.color
-//                                    val groupItems = todoList.filter { it.color == groupColor }
-//                                    val insertIndex = groupItems.indexOfLast { it.id < item.id } + 1
-//                                    todoList.addAll(insertIndex, listOf(item))
-//                                }
-//                                todoList.removeAll { it.id == item.id }
-//                                todoList.add(item.id.toInt(), item)
-//                                val sortedList = todoList.sortedWith(Comparator { o1, o2 ->
-//                                    when{
-//                                        o1.done == o2.done -> 0
-//                                        o1.done -> 1
-//                                        else -> -1
-//                                    }
-//                                })
-//                                for(data in sortedList){
-//                                    todoList.add(index, data)
-//                                }
-//                                todoList.add(index, item)
-//                                    todoList.add(todoList.indexOfFirst { !it.done || it.id == item.id }, item)
-                            })
+                            }
+                        )
                     },
                     dismissThresholds = {
                         androidx.compose.material.FractionalThreshold(fraction = 0.2f)
