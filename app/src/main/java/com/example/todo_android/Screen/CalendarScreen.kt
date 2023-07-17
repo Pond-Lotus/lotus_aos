@@ -987,16 +987,21 @@ fun TodoItemList(
                                 todoList.add(item)
                             },
                             onUnCheckedUpdateTodo = {
-                                readTodo(
-                                    token, year = item.year, month = item.month, day = item.day
-                                ) {
+                                readTodo(token, year = item.year, month = item.month, day = item.day) {
                                     todoList.clear()
                                     for (i in it!!.data) {
                                         todoList.add(i)
                                     }
                                 }.also {
-                                    todoList.removeIf { it.done != item.done }
-                                    todoList.add(item)
+                                    readTodo(token, year = item.year, month = item.month, day = item.day) {
+                                        todoList.clear()
+                                        for (i in it!!.data) {
+                                            if(i.done) {
+                                                todoList.removeAll { it.done == item.done }
+                                                todoList.add(item)
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         )
