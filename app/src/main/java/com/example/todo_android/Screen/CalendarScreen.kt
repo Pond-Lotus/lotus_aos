@@ -413,7 +413,8 @@ fun CalendarScreen(routeAction: RouteAction) {
     })
 
 
-    BottomSheetScaffold(scaffoldState = bottomScaffoldState,
+    BottomSheetScaffold(
+        scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
                 scope = scope, bottomScaffoldState = bottomScaffoldState, routeAction = routeAction
@@ -932,7 +933,8 @@ fun TodoItemList(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Button(modifier = Modifier.size(9.dp),
+                    Button(
+                        modifier = Modifier.size(9.dp),
                         onClick = { /*TODO*/ },
                         enabled = false,
                         content = {},
@@ -987,19 +989,31 @@ fun TodoItemList(
                                 todoList.add(item)
                             },
                             onUnCheckedUpdateTodo = {
-                                readTodo(token, year = item.year, month = item.month, day = item.day) {
+                                todoList.removeAll { it.id == item.id }
+                                readTodo(
+                                    token,
+                                    year = item.year,
+                                    month = item.month,
+                                    day = item.day
+                                ) {
                                     todoList.clear()
                                     for (i in it!!.data) {
                                         todoList.add(i)
                                     }
-                                }.also {
-                                    readTodo(token, year = item.year, month = item.month, day = item.day) {
-                                        todoList.clear()
-                                        for (i in it!!.data) {
-                                            if(i.done) {
-                                                todoList.removeAll { it.done == item.done }
-                                                todoList.add(item)
-                                            }
+                                }
+
+                                readTodo(
+                                    token,
+                                    year = item.year,
+                                    month = item.month,
+                                    day = item.day
+                                ) {
+                                    todoList.clear()
+                                    for (i in it!!.data) {
+                                        todoList.add(i)
+                                        if (i.done) {
+                                            todoList.removeAll { it.done == item.done }
+                                            todoList.add(item)
                                         }
                                     }
                                 }
