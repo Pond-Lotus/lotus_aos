@@ -1,8 +1,10 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
+import android.app.TimePickerDialog
 import android.os.Build
 import android.util.Log
+import android.widget.TimePicker
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
@@ -42,6 +44,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -85,6 +88,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
+import java.time.LocalTime
+import java.util.*
 import kotlin.math.sign
 
 fun createTodo(
@@ -339,6 +344,7 @@ fun CalendarScreen(routeAction: RouteAction) {
     val scrollState = rememberScrollState()
 
     var selectedTodo by remember { mutableStateOf<RToDoResponse?>(null) }
+
     LaunchedEffect(isVisibility) {
         if (isVisibility) {
             focusRequester.requestFocus()
@@ -674,16 +680,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                 }
-                TodoItemList(
-                    Todo = todoList,
-                    todoList = todoList,
-                    onTodoItemClick = {
-                        selectedTodo = it
-                        scope.launch {
-                            bottomScaffoldState.bottomSheetState.expand()
-                        }
+                TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = {
+                    selectedTodo = it
+                    scope.launch {
+                        bottomScaffoldState.bottomSheetState.expand()
                     }
-                )
+                })
             }
         }
     }
@@ -821,30 +823,26 @@ fun TodoItem(
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
     var done by remember { mutableStateOf(false) }
 
-    LaunchedEffect(
-        key1 = checked,
-        block = {
-            done = Todo.done
-            if (checked) {
-                done = true
-                checked = true
-                updateTodo(token,
-                    Todo.year,
-                    Todo.month,
-                    Todo.day,
-                    Todo.title,
-                    done,
-                    Todo.description,
-                    Todo.color.toString(),
-                    Todo.time,
-                    Todo.id,
-                    response = {
-                        onCheckedUpdateTodo()
-                    }
-                )
-            }
+    LaunchedEffect(key1 = checked, block = {
+        done = Todo.done
+        if (checked) {
+            done = true
+            checked = true
+            updateTodo(token,
+                Todo.year,
+                Todo.month,
+                Todo.day,
+                Todo.title,
+                done,
+                Todo.description,
+                Todo.color.toString(),
+                Todo.time,
+                Todo.id,
+                response = {
+                    onCheckedUpdateTodo()
+                })
         }
-    )
+    })
 
     Card(colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(8.dp),
@@ -933,8 +931,7 @@ fun TodoItemList(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Button(
-                        modifier = Modifier.size(9.dp),
+                    Button(modifier = Modifier.size(9.dp),
                         onClick = { /*TODO*/ },
                         enabled = false,
                         content = {},
@@ -991,10 +988,7 @@ fun TodoItemList(
                             onUnCheckedUpdateTodo = {
                                 todoList.removeAll { it.id == item.id }
                                 readTodo(
-                                    token,
-                                    year = item.year,
-                                    month = item.month,
-                                    day = item.day
+                                    token, year = item.year, month = item.month, day = item.day
                                 ) {
                                     todoList.clear()
                                     for (i in it!!.data) {
@@ -1002,10 +996,7 @@ fun TodoItemList(
                                     }
                                 }.also {
                                     readTodo(
-                                        token,
-                                        year = item.year,
-                                        month = item.month,
-                                        day = item.day
+                                        token, year = item.year, month = item.month, day = item.day
                                     ) {
                                         todoList.clear()
                                         for (i in it!!.data) {
@@ -1017,10 +1008,7 @@ fun TodoItemList(
                                     }
                                 }.also {
                                     readTodo(
-                                        token,
-                                        year = item.year,
-                                        month = item.month,
-                                        day = item.day
+                                        token, year = item.year, month = item.month, day = item.day
                                     ) {
                                         todoList.clear()
                                         for (i in it!!.data) {
@@ -1028,8 +1016,7 @@ fun TodoItemList(
                                         }
                                     }
                                 }
-                            }
-                        )
+                            })
                     },
                     dismissThresholds = {
                         androidx.compose.material.FractionalThreshold(fraction = 0.2f)
@@ -1054,6 +1041,7 @@ fun DeleteBackground() {
     }
 }
 
+@SuppressLint("NewApi")
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
@@ -1066,16 +1054,29 @@ fun TodoUpdateBottomSheet(
 
     var title by remember { mutableStateOf(Todo.title) }
     var description by remember { mutableStateOf(Todo.description) }
+    var time by remember { mutableStateOf(Todo.time) }
+    var color by remember { mutableStateOf("") }
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
+    var isTimePickerVisible by remember { mutableStateOf(false) }
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    var context = LocalContext.current
 
 
-    LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
-        title = Todo.title
-        description = Todo.description
+    LaunchedEffect(
+        key1 = Todo.title,
+        key2 = Todo.description,
+        key3 = Todo.color,
+        block = {
+            title = Todo.title
+            description = Todo.description
     })
 
-    var color by remember { mutableStateOf("") }
+    LaunchedEffect(key1 = Todo.time, block = {
+        time = Todo.time
+    })
 
-    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
 
     val onButtonClick: (String) -> Unit = { id ->
         when (id) {
@@ -1288,7 +1289,22 @@ fun TodoUpdateBottomSheet(
                 lineHeight = 19.sp,
                 fontSize = 19.sp
             )
-            Text(text = Todo?.time.toString(), lineHeight = 19.sp, fontSize = 19.sp)
+            Text(
+                modifier = Modifier.clickable {
+                    isTimePickerVisible = true
+                },
+                text = if (Todo?.time.toString() == "9999") {
+                    "미지정"
+                } else {
+                    Todo?.time.toString()
+                },
+//                else if (selectedTime.hour.and(selectedTime.minute) != null){
+//                    "${selectedTime.hour} : ${selectedTime.minute}"
+//                 }
+                lineHeight = 19.sp,
+                fontSize = 19.sp,
+                color = Color(0xff9E9E9E)
+            )
         }
 
         Divider(
@@ -1340,5 +1356,18 @@ fun TodoUpdateBottomSheet(
                 },
                 content = {})
         }
+
+//        if (isTimePickerVisible) {
+//            TimePickerDialog(
+//                context,
+//                { _, hourOfDay, minute ->
+//                    selectedTime = LocalTime.of(hourOfDay, minute)
+//                    isTimePickerVisible = false
+//                },
+//                selectedTime.hour,
+//                selectedTime.minute,
+//                false
+//            ).show()
+//        }
     }
 }
