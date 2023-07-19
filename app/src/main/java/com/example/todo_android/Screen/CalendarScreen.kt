@@ -1010,7 +1010,6 @@ fun TodoItemList(
                                 ) {
                                     todoList.clear()
                                     for (i in it!!.data) {
-                                        todoList.add(i)
                                         if (i.done) {
                                             todoList.removeAll { it.done == item.done }
                                             todoList.add(item)
