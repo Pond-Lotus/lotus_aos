@@ -67,10 +67,14 @@ fun SetAlarmScreen(routeAction: RouteAction) {
                 )
 
                 androidx.compose.material.Switch(
-                    checked = checkAlarmState.value, onCheckedChange = {
+                    checked = checkAlarmState.value,
+                    onCheckedChange = {
                         checkAlarmState.value = it
-                    }, colors = androidx.compose.material.SwitchDefaults.colors(
-                        checkedThumbColor = Color(0xffFFC56D), checkedTrackColor = Color(0xFFFFDAB9)
+                    },
+                    colors = androidx.compose.material.SwitchDefaults.colors(
+                        uncheckedTrackColor = Color(0xffD4D4D4),
+                        checkedThumbColor = Color(0xffFFC56D),
+                        checkedTrackColor = Color(0xFFFFDAB9)
                     )
                 )
             }
