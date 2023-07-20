@@ -2,9 +2,9 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
+import android.content.Context
 import android.os.Build
 import android.util.Log
-import android.widget.TimePicker
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
@@ -12,7 +12,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -81,7 +80,6 @@ import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import okio.utf8Size
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -90,7 +88,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.*
-import kotlin.math.sign
 
 fun createTodo(
     token: String,
@@ -1058,9 +1055,10 @@ fun TodoUpdateBottomSheet(
     var color by remember { mutableStateOf("") }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
-    var isTimePickerVisible by remember { mutableStateOf(false) }
-    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     var context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val hour = calendar[Calendar.HOUR_OF_DAY]
+    val minute = calendar[Calendar.MINUTE]
 
 
     LaunchedEffect(
@@ -1070,11 +1068,22 @@ fun TodoUpdateBottomSheet(
         block = {
             title = Todo.title
             description = Todo.description
+            color = Todo.color.toString()
     })
 
-    LaunchedEffect(key1 = Todo.time, block = {
-        time = Todo.time
+    LaunchedEffect(
+        key1 = Todo.time,
+        block = {
+            time = Todo.time
     })
+
+    val timePickerDialog = TimePickerDialog(
+        context,
+        { _, hour: Int, minute: Int ->
+            val amPm = if (hour < 12) "am" else "pm"
+            time = "$hour:$minute $amPm"
+        }, hour, minute, false
+    )
 
 
 
@@ -1172,7 +1181,8 @@ fun TodoUpdateBottomSheet(
                         Todo?.done!!,
                         description,
                         color,
-                        Todo?.time.toString(),
+//                        Todo?.time.toString(),
+                        time,
                         Todo?.id.toString(),
                         response = {
                             readTodo(
@@ -1291,16 +1301,16 @@ fun TodoUpdateBottomSheet(
             )
             Text(
                 modifier = Modifier.clickable {
-                    isTimePickerVisible = true
+                    timePickerDialog.show()
                 },
                 text = if (Todo?.time.toString() == "9999") {
                     "미지정"
-                } else {
-                    Todo?.time.toString()
+                } else if(Todo?.time.toString() != "9999" && time.isNotEmpty()) {
+                    time
+                }
+                else {
+                       Todo.time
                 },
-//                else if (selectedTime.hour.and(selectedTime.minute) != null){
-//                    "${selectedTime.hour} : ${selectedTime.minute}"
-//                 }
                 lineHeight = 19.sp,
                 fontSize = 19.sp,
                 color = Color(0xff9E9E9E)
@@ -1356,18 +1366,5 @@ fun TodoUpdateBottomSheet(
                 },
                 content = {})
         }
-
-//        if (isTimePickerVisible) {
-//            TimePickerDialog(
-//                context,
-//                { _, hourOfDay, minute ->
-//                    selectedTime = LocalTime.of(hourOfDay, minute)
-//                    isTimePickerVisible = false
-//                },
-//                selectedTime.hour,
-//                selectedTime.minute,
-//                false
-//            ).show()
-//        }
     }
 }
