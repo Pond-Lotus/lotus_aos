@@ -97,9 +97,7 @@ fun ProfileModalDrawer(
     var openDialog by remember { mutableStateOf(false) }
 
     val imageResource = if (MyApplication.prefs.getData("image", "") == "null") {
-        BitmapFactory
-            .decodeResource(context.resources, R.drawable.defaultprofile)
-            .asImageBitmap()
+        BitmapFactory.decodeResource(context.resources, R.drawable.defaultprofile).asImageBitmap()
     } else {
         val base64EncodedImage = MyApplication.prefs.getData("image", "")
         val DecodedBytes = Base64.decode(base64EncodedImage, Base64.DEFAULT)
@@ -220,8 +218,9 @@ fun ProfileModalDrawer(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 2.dp, bottom = 22.dp)
-                .clickable {},
-            verticalAlignment = Alignment.CenterVertically
+                .clickable {
+                    routeAction.navTo(NAV_ROUTE.SETALARM)
+                }, verticalAlignment = Alignment.CenterVertically
         ) {
 
             Image(
@@ -379,19 +378,17 @@ fun showLogOutDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    TextButton(
-                        modifier = Modifier
-                            .background(Color(0xffE9E9E9))
-                            .weight(1f),
+                    TextButton(modifier = Modifier
+                        .background(Color(0xffE9E9E9))
+                        .weight(1f),
                         onClick = {
                             onDismissRequest()
                         }) {
                         Text(text = "취소", fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }
-                    TextButton(
-                        modifier = Modifier
-                            .background(Color(0xffFFDAB9))
-                            .weight(1f),
+                    TextButton(modifier = Modifier
+                        .background(Color(0xffFFDAB9))
+                        .weight(1f),
                         onClick = {
                             Logout(token, response = {
                                 onDismissRequest()
