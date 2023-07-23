@@ -135,16 +135,19 @@ fun LoginScreen(routeAction: RouteAction) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
 
-        Image(modifier = Modifier.size(117.dp),
-            painter = painterResource(id = R.drawable.apptitle),
+        Image(modifier = Modifier.size(70.dp),
+            painter = painterResource(id = R.drawable.appmainlogo),
             contentDescription = null,
-            contentScale = ContentScale.Crop)
+            contentScale = ContentScale.Fit
+        )
         Image(
             modifier = Modifier
-                .width(94.dp)
-                .height(28.dp),
-            painter = painterResource(id = R.drawable.appname),
+                .width(100.dp)
+                .height(30.dp)
+                .padding(top = 15.dp),
+            painter = painterResource(id = R.drawable.apptitle),
             contentDescription = null,
+//            contentScale = ContentScale.Fit
         )
 
         Spacer(modifier = Modifier.height(61.dp))

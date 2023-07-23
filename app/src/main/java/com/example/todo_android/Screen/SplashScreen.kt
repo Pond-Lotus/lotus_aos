@@ -27,9 +27,11 @@ fun SplashScreen(routeAction: RouteAction) {
     LaunchedEffect(Unit) {
         delay(3000) // 3초 동안 딜레이 설정
 
-        if(MyApplication.prefs.getData("email", "").isNotEmpty() && MyApplication.prefs.getData("password1", "").isNotEmpty()){
+        if (MyApplication.prefs.getData("email", "")
+                .isNotEmpty() && MyApplication.prefs.getData("password1", "").isNotEmpty()
+        ) {
             routeAction.navTo(NAV_ROUTE.CALENDAR)
-        } else{
+        } else {
             // 로그인 화면으로 전환
             routeAction.navTo(NAV_ROUTE.LOGIN)
         }
@@ -38,27 +40,19 @@ fun SplashScreen(routeAction: RouteAction) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = Brush.linearGradient(colors = backgroundColor,
-                start = Offset.Zero,
-                end = Offset.Infinite),
-                shape = RectangleShape,
-                alpha = 1.0f
-                ),
+            .background(
+                brush = Brush.linearGradient(
+                    colors = backgroundColor, start = Offset.Zero, end = Offset.Infinite
+                ), shape = RectangleShape, alpha = 1.0f
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            modifier = Modifier.size(107.dp),
-            painter = painterResource(id = R.drawable.whiteapptitle),
-            contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
-        Image(
-            modifier = Modifier
-                .width(103.dp)
-                .height(40.dp),
-            painter = painterResource(id = R.drawable.whiteapplogo),
-            contentDescription = null
+            modifier = Modifier.size(90.dp),
+            painter = painterResource(id = R.drawable.applogo),
+            contentDescription = "앱 로고",
+            contentScale = ContentScale.Fit
         )
     }
 }
