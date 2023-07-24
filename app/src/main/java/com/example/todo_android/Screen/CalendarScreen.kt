@@ -2,7 +2,6 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
-import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -43,7 +42,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -89,7 +87,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
-import java.time.LocalTime
 import java.util.*
 
 fun createTodo(
@@ -416,8 +413,6 @@ fun CalendarScreen(routeAction: RouteAction) {
         }
     }
 
-    val BlankTodoItem = BlankTodoItem()
-
     LaunchedEffect(key1 = Unit, block = {
 
         day = LocalDate.now().dayOfMonth.toString()
@@ -445,9 +440,9 @@ fun CalendarScreen(routeAction: RouteAction) {
             LocalDate.now().dayOfMonth.toString()
         ) {
             todoList.clear()
-            if (it!!.data.isEmpty()) {
-                BlankTodoItem
-            }
+//            if (it!!.data.isEmpty()) {
+//                BlankTodoItem
+//            }
             for (i in it!!.data) {
                 todoList.add(i)
             }
@@ -587,9 +582,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                         readTodo(token, year.toString(), month.toString(), day.toString()) {
 
                             todoList.clear()
-                            if (it!!.data.isEmpty()) {
-                                BlankTodoItem
-                            }
+//                            if(it!!.data.size < 0) {
+//                                BlankTodoItem()
+//                            }
                             for (i in it!!.data) {
                                 todoList.add(i)
                             }
@@ -647,9 +642,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                         readTodo(token, year, month, day) {
 
                             todoList.clear()
-                            if (it!!.data.isEmpty()) {
-                                BlankTodoItem
-                            }
+//                            if(it!!.data.size < 0) {
+//                                BlankTodoItem()
+//                            }
                             for (i in it!!.data) {
                                 todoList.add(i)
                             }
@@ -728,6 +723,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                 }
+
+                if(todoList.isEmpty()) {
+                    BlankTodoItem()
+                }
+
                 TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = {
                     selectedTodo = it
                     scope.launch {
@@ -1418,7 +1418,7 @@ fun BlankTodoItem() {
             .height(50.dp)
     ) {
         Row(
-            modifier = Modifier.padding(start = 7.dp, top = 15.dp, bottom = 15.dp),
+            modifier = Modifier.padding(start = 20.dp, top = 15.dp, bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
