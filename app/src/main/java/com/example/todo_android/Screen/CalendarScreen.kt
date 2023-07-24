@@ -416,18 +416,9 @@ fun CalendarScreen(routeAction: RouteAction) {
         }
     }
 
+    val BlankTodoItem = BlankTodoItem()
+
     LaunchedEffect(key1 = Unit, block = {
-        readTodo(
-            token,
-            LocalDate.now().year.toString(),
-            LocalDate.now().monthValue.toString(),
-            LocalDate.now().dayOfMonth.toString()
-        ) {
-            todoList.clear()
-            for (i in it!!.data) {
-                todoList.add(i)
-            }
-        }
 
         day = LocalDate.now().dayOfMonth.toString()
 
@@ -446,8 +437,24 @@ fun CalendarScreen(routeAction: RouteAction) {
             7 -> "일요일"
             else -> ""
         }
+
+        readTodo(
+            token,
+            LocalDate.now().year.toString(),
+            LocalDate.now().monthValue.toString(),
+            LocalDate.now().dayOfMonth.toString()
+        ) {
+            todoList.clear()
+            if (it!!.data.isEmpty()) {
+                BlankTodoItem
+            }
+            for (i in it!!.data) {
+                todoList.add(i)
+            }
+        }
     })
-    BottomSheetScaffold(scaffoldState = bottomScaffoldState,
+    BottomSheetScaffold(
+        scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
                 scope = scope, bottomScaffoldState = bottomScaffoldState, routeAction = routeAction
@@ -532,7 +539,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             AnimatedVisibility(
                 visible = selectCalendar,
                 enter = slideInVertically(animationSpec = tween(300)),
-                exit =  shrinkVertically(animationSpec = tween(300))
+                exit = shrinkVertically(animationSpec = tween(300))
             ) {
                 Kalendar(modifier = Modifier
                     .fillMaxWidth()
@@ -580,6 +587,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                         readTodo(token, year.toString(), month.toString(), day.toString()) {
 
                             todoList.clear()
+                            if (it!!.data.isEmpty()) {
+                                BlankTodoItem
+                            }
                             for (i in it!!.data) {
                                 todoList.add(i)
                             }
@@ -637,6 +647,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                         readTodo(token, year, month, day) {
 
                             todoList.clear()
+                            if (it!!.data.isEmpty()) {
+                                BlankTodoItem
+                            }
                             for (i in it!!.data) {
                                 todoList.add(i)
                             }
@@ -966,7 +979,8 @@ fun TodoItemList(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Button(modifier = Modifier.size(9.dp),
+                    Button(
+                        modifier = Modifier.size(9.dp),
                         onClick = { /*TODO*/ },
                         enabled = false,
                         content = {},
@@ -1390,6 +1404,29 @@ fun TodoUpdateBottomSheet(
                     onButtonClick("6")
                 },
                 content = {})
+        }
+    }
+}
+
+@Composable
+fun BlankTodoItem() {
+    Card(
+        colors = CardDefaults.cardColors(Color.White),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 7.dp, top = 15.dp, bottom = 15.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "등록된 토도리스트가 없습니다.",
+                fontSize = 13.sp,
+                fontStyle = FontStyle.Normal
+            )
         }
     }
 }
