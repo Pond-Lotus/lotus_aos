@@ -80,6 +80,8 @@ import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -101,8 +103,14 @@ fun createTodo(
 
     var createTodoResponse: CreateTodoResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
+
+    var retrofit =
+        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create()).build()
 
     var createTodoRequest: CreateTodoRequest = retrofit.create(CreateTodoRequest::class.java)
 
@@ -141,8 +149,14 @@ fun readTodo(
 
     var readTodoResponse: ReadTodoResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
+
+    var retrofit =
+        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create()).build()
 
     var readTodoRequest: ReadTodoRequest = retrofit.create(ReadTodoRequest::class.java)
 
@@ -177,8 +191,14 @@ fun deleteTodo(
 ) {
     var deleteTodoResponse: DeleteTodoResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
+
+    var retrofit =
+        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create()).build()
 
     var deleteTodoRequest: DeleteTodoRequest = retrofit.create(DeleteTodoRequest::class.java)
 
@@ -221,8 +241,14 @@ fun updateTodo(
 
     var updateTodoResponse: UpdateTodoResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
+
+    var retrofit =
+        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create()).build()
 
     var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
 
@@ -263,8 +289,14 @@ fun readCategory(
 
     var readCategoryResponse: ReadCategoryResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
+
+    var retrofit =
+        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create()).build()
 
     var readCategoryRequest: ReadCategoryRequest = retrofit.create(ReadCategoryRequest::class.java)
 

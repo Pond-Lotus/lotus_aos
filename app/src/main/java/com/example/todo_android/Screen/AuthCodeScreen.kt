@@ -28,7 +28,9 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.AuthCodeRequest
 import com.example.todo_android.Response.ProfileResponse.AuthCodeResponse
 import com.example.todo_android.Util.MyApplication
-import com.example.todo_android.ui.theme.nextButtonColor
+import com.example.todo_android.ui.theme.buttonColor
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -46,9 +48,14 @@ fun authCode(
 
     var authCodeResponse: AuthCodeResponse? = null
 
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
 
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
+    var retrofit =
+        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create()).build()
 
     var authCodeRequest: AuthCodeRequest = retrofit.create(AuthCodeRequest::class.java)
 
@@ -210,7 +217,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                 Text(text = "")
 
                 IconButton(modifier = Modifier.size(43.dp),
-                    colors = IconButtonDefaults.iconButtonColors(nextButtonColor),
+                    colors = IconButtonDefaults.iconButtonColors(buttonColor),
                     onClick = {
                         authCode(authEmail, code, routeAction, response = {
                             showErrorText = true

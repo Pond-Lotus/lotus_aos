@@ -24,7 +24,7 @@ import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Util.MyApplication
-import com.example.todo_android.ui.theme.nextButtonColor
+import com.example.todo_android.ui.theme.buttonColor
 
 fun goMain(route: NAV_ROUTE, routeAction: RouteAction) {
     routeAction.navTo(route)
@@ -92,7 +92,7 @@ fun LottieScreen(routeAction: RouteAction) {
                 .width(135.dp)
                 .height(39.dp),
             shape = RoundedCornerShape(18.dp),
-            colors = ButtonDefaults.buttonColors(nextButtonColor),
+            colors = ButtonDefaults.buttonColors(buttonColor),
             onClick = {
                 goMain(NAV_ROUTE.LOGIN, routeAction)
             }) {

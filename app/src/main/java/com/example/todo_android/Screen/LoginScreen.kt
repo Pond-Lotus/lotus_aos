@@ -31,19 +31,13 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.LoginRequest
 import com.example.todo_android.Response.ProfileResponse.LoginResponse
 import com.example.todo_android.Util.MyApplication
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
-fun goCalendar(route: NAV_ROUTE, routeAction: RouteAction) {
-    routeAction.navTo(route)
-}
-
-fun goAuthEmail(route: NAV_ROUTE, routeAction: RouteAction) {
-    routeAction.navTo(route)
-}
 
 @ExperimentalMaterial3Api
 fun sendLogin(
@@ -55,8 +49,14 @@ fun sendLogin(
 
     var loginResponse: LoginResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
-        .addConverterFactory(GsonConverterFactory.create()).build()
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
+
+    var retrofit =
+        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create()).build()
 
     var loginRequest: LoginRequest = retrofit.create(LoginRequest::class.java)
 
@@ -73,7 +73,7 @@ fun sendLogin(
 
             when (loginResponse?.resultCode) {
                 "200" -> {
-                    goCalendar(NAV_ROUTE.CALENDAR, routeAction)
+                    routeAction.navTo(NAV_ROUTE.CALENDAR)
                     MyApplication.prefs.setData("token", loginResponse?.token.toString())
                     MyApplication.prefs.setData("nickname", loginResponse?.nickname.toString())
                     MyApplication.prefs.setData("image", loginResponse?.image.toString())
@@ -285,7 +285,7 @@ fun LoginScreen(routeAction: RouteAction) {
                 modifier = Modifier
                     .padding(start = 7.dp)
                     .clickable {
-                        goAuthEmail(NAV_ROUTE.AUTHEMAIL, routeAction)
+                        routeAction.navTo(NAV_ROUTE.AUTHEMAIL)
                     })
         }
     }

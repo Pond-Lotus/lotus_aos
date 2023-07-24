@@ -25,7 +25,7 @@ import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.SearchEmailRequest
 import com.example.todo_android.Response.ProfileResponse.SearchEmailResponse
-import com.example.todo_android.ui.theme.nextButtonColor
+import com.example.todo_android.ui.theme.buttonColor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -258,7 +258,7 @@ fun showDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround) {
                     androidx.compose.material.TextButton(modifier = Modifier
-                        .background(nextButtonColor)
+                        .background(buttonColor)
                         .weight(1f),
                         onClick = {
                             onDismissRequest()
