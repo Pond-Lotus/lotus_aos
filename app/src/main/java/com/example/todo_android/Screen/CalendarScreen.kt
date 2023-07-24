@@ -6,8 +6,8 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -446,10 +447,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             else -> ""
         }
     })
-
-
-    BottomSheetScaffold(
-        scaffoldState = bottomScaffoldState,
+    BottomSheetScaffold(scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
                 scope = scope, bottomScaffoldState = bottomScaffoldState, routeAction = routeAction
@@ -462,9 +460,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                         modifier = Modifier
                             .width(120.dp)
                             .height(35.dp)
-                            .clip(shape = RoundedCornerShape(24.dp))
+                            .clip(shape = RoundedCornerShape(7.dp))
                             .background(Color(0xffe9e9ed))
-                            .padding(start = 8.dp, end = 8.dp, top = 5.dp, bottom = 5.dp)
+                            .padding(start = 4.dp, end = 4.dp, top = 4.dp, bottom = 4.dp)
                     ) {
                         states.forEach { text ->
                             Text(text = text,
@@ -477,7 +475,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 },
                                 fontWeight = FontWeight.Medium,
                                 modifier = Modifier
-                                    .clip(shape = RoundedCornerShape(24.dp))
+                                    .clip(shape = RoundedCornerShape(5.dp))
                                     .clickable {
                                         onSelectionChange(text)
                                         selectCalendar = (text == states[1])
@@ -491,7 +489,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                                     )
                                     .padding(
                                         vertical = 6.dp,
-                                        horizontal = 16.dp,
+                                        horizontal = (18.5).dp,
                                     ))
                         }
                     }
@@ -531,7 +529,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                 .background(Color(0xfff0f0f0))
                 .imePadding()
         ) {
-            if (selectCalendar) {
+            AnimatedVisibility(
+                visible = selectCalendar,
+                enter = slideInVertically(animationSpec = tween(300)),
+                exit =  shrinkVertically(animationSpec = tween(300))
+            ) {
                 Kalendar(modifier = Modifier
                     .fillMaxWidth()
                     .shadow(
@@ -583,7 +585,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                             }
                         }
                     })
-            } else {
+            }
+
+            AnimatedVisibility(
+                visible = !selectCalendar,
+                exit = shrinkVertically(animationSpec = tween(300))
+            ) {
                 Kalendar(modifier = Modifier
                     .fillMaxWidth()
                     .shadow(
@@ -661,8 +668,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 6.dp),
-                    color = Color(0xffD8D8D8)
+                        .padding(start = 6.dp), color = Color(0xffD8D8D8)
                 )
             }
 
@@ -1093,30 +1099,22 @@ fun TodoUpdateBottomSheet(
     val minute = calendar[Calendar.MINUTE]
 
 
-    LaunchedEffect(
-        key1 = Todo.title,
-        key2 = Todo.description,
-        key3 = Todo.color,
-        block = {
-            title = Todo.title
-            description = Todo.description
-            color = Todo.color.toString()
+    LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
+        title = Todo.title
+        description = Todo.description
+        color = Todo.color.toString()
     })
 
-    LaunchedEffect(
-        key1 = Todo.time,
-        block = {
-            time = Todo.time
+    LaunchedEffect(key1 = Todo.time, block = {
+        time = Todo.time
     })
 
     val timePickerDialog = TimePickerDialog(
-        context,
-        { _, hour: Int, minute: Int ->
+        context, { _, hour: Int, minute: Int ->
             val amPm = if (hour < 12) "am" else "pm"
             time = "$hour:$minute $amPm"
         }, hour, minute, false
     )
-
 
 
     val onButtonClick: (String) -> Unit = { id ->
@@ -1334,18 +1332,13 @@ fun TodoUpdateBottomSheet(
             Text(
                 modifier = Modifier.clickable {
                     timePickerDialog.show()
-                },
-                text = if (Todo?.time.toString() == "9999") {
+                }, text = if (Todo?.time.toString() == "9999") {
                     "미지정"
-                } else if(Todo?.time.toString() != "9999" && time.isNotEmpty()) {
+                } else if (Todo?.time.toString() != "9999" && time.isNotEmpty()) {
                     time
-                }
-                else {
-                       Todo.time
-                },
-                lineHeight = 19.sp,
-                fontSize = 19.sp,
-                color = Color(0xff9E9E9E)
+                } else {
+                    Todo.time
+                }, lineHeight = 19.sp, fontSize = 19.sp, color = Color(0xff9E9E9E)
             )
         }
 

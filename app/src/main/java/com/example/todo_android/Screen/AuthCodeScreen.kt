@@ -37,11 +37,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
-fun goProfile(route: NAV_ROUTE, routeAction: RouteAction) {
-    routeAction.navTo(route)
-}
-
 fun authCode(
     authEmail: String, code: String, routeAction: RouteAction, response: (AuthCodeResponse?) -> Unit
 ) {
@@ -78,7 +73,7 @@ fun authCode(
                     "200" -> {
                         Log.d("AUTHCODE", "resultCode : " + authCodeResponse?.resultCode)
                         Log.d("AUTHCODE", "프로필 작성 화면으로 갑니다.")
-                        goProfile(NAV_ROUTE.REGISTER, routeAction)
+                        routeAction.navTo(NAV_ROUTE.REGISTER)
                     }
                     "500" -> {
                         response(authCodeResponse)
@@ -96,7 +91,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
 
 
     Scaffold(modifier = Modifier
-        .fillMaxWidth()
+        .fillMaxSize()
         .imePadding(), topBar = {
         CenterAlignedTopAppBar(title = {}, navigationIcon = {
             IconButton(onClick = {

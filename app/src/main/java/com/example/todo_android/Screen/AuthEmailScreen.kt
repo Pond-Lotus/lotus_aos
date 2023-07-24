@@ -97,7 +97,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
 
 
     Scaffold(modifier = Modifier
-        .fillMaxWidth()
+        .fillMaxSize()
         .imePadding(), topBar = {
         CenterAlignedTopAppBar(title = {}, navigationIcon = {
             IconButton(onClick = {
@@ -191,9 +191,10 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                         Box(modifier = Modifier.weight(1f)) {
                             innerTextField()
                         }
-                        Spacer(modifier = Modifier.padding(vertical = 12.dp))
+                        Spacer(modifier = Modifier.padding(vertical = 14.dp))
                         if (emailPattern.matches(email)) {
                             Icon(
+                                modifier = Modifier.padding(vertical = 4.dp),
                                 painter = painterResource(id = R.drawable.checkemail),
                                 contentDescription = null,
                                 tint = Color(0xffFF9D4D)

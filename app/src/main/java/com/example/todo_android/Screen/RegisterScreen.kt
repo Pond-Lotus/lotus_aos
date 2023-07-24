@@ -144,7 +144,7 @@ fun RegisterScreen(routeAction: RouteAction) {
     var showMatchPassword by remember { mutableStateOf(false) }
 
     Scaffold(modifier = Modifier
-        .fillMaxWidth()
+        .fillMaxSize()
         .imePadding(), topBar = {
         CenterAlignedTopAppBar(title = {}, navigationIcon = {
             IconButton(onClick = {
