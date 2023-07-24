@@ -1191,7 +1191,8 @@ fun TodoUpdateBottomSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(400.dp)
+//            .height(400.dp)
+            .wrapContentHeight()
             .padding(start = 25.dp, end = 25.dp, top = 35.dp)
     ) {
         Row(
@@ -1307,7 +1308,7 @@ fun TodoUpdateBottomSheet(
 
         TextField(modifier = Modifier
             .fillMaxWidth()
-            .height(75.dp)
+//            .height(75.dp)
             .padding(bottom = 22.dp),
             value = description,
             colors = TextFieldDefaults.textFieldColors(
@@ -1316,12 +1317,13 @@ fun TodoUpdateBottomSheet(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
-            singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             shape = RoundedCornerShape(10.dp),
             onValueChange = {
                 description = it
-            })
+            },
+            maxLines = 4
+        )
 
         Row(
             modifier = Modifier
