@@ -1109,8 +1109,9 @@ fun TodoUpdateBottomSheet(
 
     var context = LocalContext.current
     val calendar = Calendar.getInstance()
-    val hour = calendar[Calendar.HOUR_OF_DAY]
-    val minute = calendar[Calendar.MINUTE]
+    val hour by remember { mutableStateOf(calendar[Calendar.HOUR_OF_DAY]) }
+    val minute by remember { mutableStateOf(calendar[Calendar.MINUTE]) }
+    var amPm by remember { mutableStateOf("") }
 
 
     LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
@@ -1125,8 +1126,8 @@ fun TodoUpdateBottomSheet(
 
     val timePickerDialog = TimePickerDialog(
         context, { _, hour: Int, minute: Int ->
-            val amPm = if (hour < 12) "am" else "pm"
-            time = "$hour:$minute $amPm"
+            amPm = if (hour < 12) "am" else "pm"
+            time = "$hour$minute"
         }, hour, minute, false
     )
 
@@ -1350,8 +1351,9 @@ fun TodoUpdateBottomSheet(
                     timePickerDialog.show()
                 }, text = if (Todo?.time.toString() == "9999") {
                     "미지정"
-                } else if (Todo?.time.toString() != "9999" && time.isNotEmpty()) {
-                    time
+                } else if (time.isNotEmpty()) {
+//                    amPm = if (hour < 12) "am" else "pm"
+                    "$time $amPm"
                 } else {
                     Todo.time
                 }, lineHeight = 19.sp, fontSize = 19.sp, color = Color(0xff9E9E9E)
