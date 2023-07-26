@@ -724,7 +724,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     Spacer(modifier = Modifier.height(6.dp))
                 }
 
-                if(todoList.isEmpty()) {
+                if (todoList.isEmpty()) {
                     BlankTodoItem()
                 }
 
@@ -1109,8 +1109,8 @@ fun TodoUpdateBottomSheet(
 
     var context = LocalContext.current
     val calendar = Calendar.getInstance()
-    val hour by remember { mutableStateOf(calendar[Calendar.HOUR_OF_DAY]) }
-    val minute by remember { mutableStateOf(calendar[Calendar.MINUTE]) }
+    val hour = calendar[Calendar.HOUR_OF_DAY]
+    val minute = calendar[Calendar.MINUTE]
     var amPm by remember { mutableStateOf("") }
 
 
@@ -1121,7 +1121,11 @@ fun TodoUpdateBottomSheet(
     })
 
     LaunchedEffect(key1 = Todo.time, block = {
-        time = Todo.time
+        time = if (Todo.time == "9999") {
+            "미지정"
+        } else{
+            Todo.time
+        }
     })
 
     val timePickerDialog = TimePickerDialog(
@@ -1227,7 +1231,6 @@ fun TodoUpdateBottomSheet(
                         Todo?.done!!,
                         description,
                         color,
-//                        Todo?.time.toString(),
                         time,
                         Todo?.id.toString(),
                         response = {
@@ -1307,10 +1310,11 @@ fun TodoUpdateBottomSheet(
             }
         }
 
-        TextField(modifier = Modifier
-            .fillMaxWidth()
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
 //            .height(75.dp)
-            .padding(bottom = 22.dp),
+                .padding(bottom = 22.dp),
             value = description,
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color(0xffF2F2F2),
@@ -1349,14 +1353,9 @@ fun TodoUpdateBottomSheet(
             Text(
                 modifier = Modifier.clickable {
                     timePickerDialog.show()
-                }, text = if (Todo?.time.toString() == "9999") {
-                    "미지정"
-                } else if (time.isNotEmpty()) {
-//                    amPm = if (hour < 12) "am" else "pm"
-                    "$time $amPm"
-                } else {
-                    Todo.time
-                }, lineHeight = 19.sp, fontSize = 19.sp, color = Color(0xff9E9E9E)
+                },
+                text = time,
+                lineHeight = 19.sp, fontSize = 19.sp, color = Color(0xff9E9E9E)
             )
         }
 
