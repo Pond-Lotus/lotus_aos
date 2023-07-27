@@ -3,6 +3,7 @@ package com.example.todo_android.Screen
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
 import android.os.Build
+import android.text.method.SingleLineTransformationMethod
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
@@ -50,6 +51,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Component.FloatingStateType
@@ -448,7 +451,8 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }
     })
-    BottomSheetScaffold(scaffoldState = bottomScaffoldState,
+    BottomSheetScaffold(
+        scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
                 scope = scope, bottomScaffoldState = bottomScaffoldState, routeAction = routeAction
@@ -978,7 +982,8 @@ fun TodoItemList(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Button(modifier = Modifier.size(9.dp),
+                    Button(
+                        modifier = Modifier.size(9.dp),
                         onClick = { /*TODO*/ },
                         enabled = false,
                         content = {},
@@ -1298,10 +1303,9 @@ fun TodoUpdateBottomSheet(
                     fontWeight = FontWeight.Bold,
                     color = categoryColor(Todo?.color)
                 )
-                BasicTextField(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .wrapContentHeight(),
+                BasicTextField(modifier = Modifier
+                    .wrapContentWidth()
+                    .wrapContentHeight(),
                     value = title,
                     onValueChange = { title = it },
                     textStyle = TextStyle(
@@ -1310,17 +1314,30 @@ fun TodoUpdateBottomSheet(
                         fontWeight = FontWeight.Bold,
                         lineHeight = 31.sp
                     ),
-                    singleLine = true
-                )
+                    singleLine = true,
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            if (title.isEmpty()) {
+                                Text(
+                                    text = "토도리스트 입력",
+                                    fontSize = 24.sp,
+                                    lineHeight = 31.2.sp,
+                                    fontWeight = FontWeight(700),
+                                    color = Color(0xFFC8C8C8),
+                                )
+                            }
+                            innerTextField()
+                        }
+                    })
 
             }
         }
 
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-//            .height(75.dp)
-                .padding(bottom = 22.dp),
+        TextField(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 22.dp),
             value = description,
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color(0xffF2F2F2),
@@ -1331,7 +1348,9 @@ fun TodoUpdateBottomSheet(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             shape = RoundedCornerShape(10.dp),
             onValueChange = {
-                description = it
+                if (it.count { it == '\n' } < 4) {
+                    description = it
+                }
             },
             maxLines = 4,
             placeholder = {
