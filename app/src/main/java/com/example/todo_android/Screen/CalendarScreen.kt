@@ -448,8 +448,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }
     })
-    BottomSheetScaffold(
-        scaffoldState = bottomScaffoldState,
+    BottomSheetScaffold(scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
                 scope = scope, bottomScaffoldState = bottomScaffoldState, routeAction = routeAction
@@ -593,8 +592,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
 
             AnimatedVisibility(
-                visible = !selectCalendar,
-                exit = shrinkVertically(animationSpec = tween(300))
+                visible = !selectCalendar, exit = shrinkVertically(animationSpec = tween(300))
             ) {
                 Kalendar(modifier = Modifier
                     .fillMaxWidth()
@@ -676,7 +674,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 6.dp), color = Color(0xffD8D8D8)
+                        .padding(start = 6.dp),
+                    color = Color(0xffD8D8D8)
                 )
             }
 
@@ -979,8 +978,7 @@ fun TodoItemList(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Button(
-                        modifier = Modifier.size(9.dp),
+                    Button(modifier = Modifier.size(9.dp),
                         onClick = { /*TODO*/ },
                         enabled = false,
                         content = {},
@@ -1123,15 +1121,23 @@ fun TodoUpdateBottomSheet(
     LaunchedEffect(key1 = Todo.time, block = {
         time = if (Todo.time == "9999") {
             "미지정"
-        } else{
+        } else {
             Todo.time
+        }
+
+        amPm = if (Todo.time == "9999") {
+            ""
+        } else if (Todo.time.length == 4) {
+            if (Todo.time.substring(0, 2).toInt() < 12) "오전" else "오후"
+        } else {
+            if (Todo.time.substring(0, 1).toInt() < 12) "오전" else "오후"
         }
     })
 
     val timePickerDialog = TimePickerDialog(
         context, { _, hour: Int, minute: Int ->
-            amPm = if (hour < 12) "am" else "pm"
-            time = "$hour$minute"
+            amPm = if (hour < 12) "오전" else "오후"
+            time = String.format("%02d%02d", hour, minute)
         }, hour, minute, false
     )
 
@@ -1327,7 +1333,16 @@ fun TodoUpdateBottomSheet(
             onValueChange = {
                 description = it
             },
-            maxLines = 4
+            maxLines = 4,
+            placeholder = {
+                Text(
+                    text = "+  메모하고 싶은 내용이 있나요?",
+                    fontSize = 14.sp,
+                    lineHeight = 19.6.sp,
+                    fontWeight = FontWeight(300),
+                    color = Color(0xFF9E9E9E)
+                )
+            }
         )
 
         Row(
@@ -1354,8 +1369,10 @@ fun TodoUpdateBottomSheet(
                 modifier = Modifier.clickable {
                     timePickerDialog.show()
                 },
-                text = time,
-                lineHeight = 19.sp, fontSize = 19.sp, color = Color(0xff9E9E9E)
+                text = "$amPm ${convertToLayoutTimeFormat(time)}",
+                lineHeight = 19.sp,
+                fontSize = 19.sp,
+                color = Color(0xff9E9E9E)
             )
         }
 
@@ -1426,10 +1443,18 @@ fun BlankTodoItem() {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "등록된 토도리스트가 없습니다.",
-                fontSize = 13.sp,
-                fontStyle = FontStyle.Normal
+                text = "등록된 토도리스트가 없습니다.", fontSize = 13.sp, fontStyle = FontStyle.Normal
             )
         }
+    }
+}
+
+fun convertToLayoutTimeFormat(time: String): String {
+    return if (time == "미지정") {
+        "미지정"
+    } else if (time.length == 4) {
+        "${time.substring(0, 2)}:${time.substring(2)}"
+    } else {
+        "${time.substring(0, 1)}:${time.substring(1)}"
     }
 }
