@@ -31,6 +31,9 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.LoginRequest
 import com.example.todo_android.Response.ProfileResponse.LoginResponse
 import com.example.todo_android.Util.MyApplication
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -252,9 +255,11 @@ fun LoginScreen(routeAction: RouteAction) {
                 if (email == "" || password == "") {
                     openDialog = true
                 } else {
-                    sendLogin(email, password, routeAction, response = {
-                        openDialog = true
-                    })
+                    CoroutineScope(Dispatchers.IO).launch {
+                        sendLogin(email, password, routeAction, response = {
+                            openDialog = true
+                        })
+                    }
                 }
             },
             shape = RoundedCornerShape(18.dp)) {

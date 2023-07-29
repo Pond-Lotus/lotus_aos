@@ -29,6 +29,9 @@ import com.example.todo_android.Request.ProfileRequest.AuthCodeRequest
 import com.example.todo_android.Response.ProfileResponse.AuthCodeResponse
 import com.example.todo_android.Util.MyApplication
 import com.example.todo_android.ui.theme.buttonColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -214,9 +217,11 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                 IconButton(modifier = Modifier.size(43.dp),
                     colors = IconButtonDefaults.iconButtonColors(buttonColor),
                     onClick = {
-                        authCode(authEmail, code, routeAction, response = {
-                            showErrorText = true
-                        })
+                        CoroutineScope(Dispatchers.IO).launch {
+                            authCode(authEmail, code, routeAction, response = {
+                                showErrorText = true
+                            })
+                        }
                     }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_right_24),

@@ -81,6 +81,7 @@ import com.himanshoe.kalendar.model.KalendarDay
 import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -436,18 +437,17 @@ fun CalendarScreen(routeAction: RouteAction) {
             else -> ""
         }
 
-        readTodo(
-            token,
-            LocalDate.now().year.toString(),
-            LocalDate.now().monthValue.toString(),
-            LocalDate.now().dayOfMonth.toString()
-        ) {
-            todoList.clear()
-//            if (it!!.data.isEmpty()) {
-//                BlankTodoItem
-//            }
-            for (i in it!!.data) {
-                todoList.add(i)
+        CoroutineScope(Dispatchers.IO).launch {
+            readTodo(
+                token,
+                LocalDate.now().year.toString(),
+                LocalDate.now().monthValue.toString(),
+                LocalDate.now().dayOfMonth.toString()
+            ) {
+                todoList.clear()
+                for (i in it!!.data) {
+                    todoList.add(i)
+                }
             }
         }
     })
@@ -582,14 +582,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                             else -> ""
                         }
 
-                        readTodo(token, year.toString(), month.toString(), day.toString()) {
-
-                            todoList.clear()
-//                            if(it!!.data.size < 0) {
-//                                BlankTodoItem()
-//                            }
-                            for (i in it!!.data) {
-                                todoList.add(i)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            readTodo(token, year, month, day) {
+                                todoList.clear()
+                                for (i in it!!.data) {
+                                    todoList.add(i)
+                                }
                             }
                         }
                     })
@@ -641,14 +639,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                             else -> ""
                         }
 
-                        readTodo(token, year, month, day) {
-
-                            todoList.clear()
-//                            if(it!!.data.size < 0) {
-//                                BlankTodoItem()
-//                            }
-                            for (i in it!!.data) {
-                                todoList.add(i)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            readTodo(token, year, month, day) {
+                                todoList.clear()
+                                for (i in it!!.data) {
+                                    todoList.add(i)
+                                }
                             }
                         }
                     })
@@ -711,17 +707,19 @@ fun CalendarScreen(routeAction: RouteAction) {
                             keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
                         ),
                         keyboardActions = KeyboardActions(onDone = {
-                            createTodo(token, year, month, day, title, color) {
-                                readTodo(token, year = year, month = month, day = day) {
-                                    todoList.clear()
-                                    for (i in it!!.data) {
-                                        todoList.add(i)
+                            CoroutineScope(Dispatchers.IO).launch {
+                                createTodo(token, year, month, day, title, color) {
+                                    readTodo(token, year = year, month = month, day = day) {
+                                        todoList.clear()
+                                        for (i in it!!.data) {
+                                            todoList.add(i)
+                                        }
                                     }
                                 }
+                                keyboardController?.hide()
+                                title = ""
+                                isVisibility = !isVisibility
                             }
-                            keyboardController?.hide()
-                            title = ""
-                            isVisibility = !isVisibility
                         })
                     )
                     Spacer(modifier = Modifier.height(6.dp))
@@ -912,21 +910,23 @@ fun TodoItem(
                 checked = checked, onCheckedChange = { isChecked ->
                     checked = isChecked
                     done = isChecked
-                    updateTodo(
-                        token,
-                        Todo.year,
-                        Todo.month,
-                        Todo.day,
-                        Todo.title,
-                        done,
-                        Todo.description,
-                        Todo.color.toString(),
-                        Todo.time,
-                        Todo.id
-                    ) {
-                        when (isChecked) {
-                            true -> onCheckedUpdateTodo()
-                            false -> onUnCheckedUpdateTodo()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        updateTodo(
+                            token,
+                            Todo.year,
+                            Todo.month,
+                            Todo.day,
+                            Todo.title,
+                            done,
+                            Todo.description,
+                            Todo.color.toString(),
+                            Todo.time,
+                            Todo.id
+                        ) {
+                            when (isChecked) {
+                                true -> onCheckedUpdateTodo()
+                                false -> onUnCheckedUpdateTodo()
+                            }
                         }
                     }
                 }, colors = CheckboxDefaults.colors(
@@ -947,6 +947,7 @@ fun TodoItem(
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @RequiresApi(Build.VERSION_CODES.N)
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
@@ -965,10 +966,13 @@ fun TodoItemList(
 
     // 카테고리를 요청하는 함수를 호출하고, 응답을 categoryResponse에 저장합니다.
 
-    readCategory(response = {
-        categoryName = it
+    LaunchedEffect(key1 = Unit, block = {
+        CoroutineScope(Dispatchers.IO).launch {
+            readCategory(response = {
+                categoryName = it
+            })
+        }
     })
-
 
     LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
@@ -1016,15 +1020,18 @@ fun TodoItemList(
                 val dismissDirection = dismissState.dismissDirection
                 val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
                 if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-                    deleteTodo(token, item.id, response = {
-                        todoList.remove(item)
-                        readTodo(token, year = item.year, month = item.month, day = item.day) {
-                            todoList.clear()
-                            for (i in it!!.data) {
-                                todoList.add(i)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        deleteTodo(token, item.id, response = {
+                            todoList.remove(item)
+                            readTodo(token, year = item.year, month = item.month, day = item.day) {
+                                todoList.clear()
+                                for (i in it!!.data) {
+                                    todoList.add(i)
+                                }
                             }
-                        }
-                    })
+                        })
+                    }
+
                 }
 
                 androidx.compose.material.SwipeToDismiss(state = dismissState,
@@ -1034,37 +1041,41 @@ fun TodoItemList(
                         TodoItem(Todo = item,
                             onTodoItemClick = { onTodoItemClick(it) },
                             onCheckedUpdateTodo = {
-                                todoList.removeAll { it.id == item.id }
-                                todoList.add(item)
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    todoList.removeAll { it.id == item.id }
+                                    todoList.add(item)
+                                }
                             },
                             onUnCheckedUpdateTodo = {
-                                todoList.removeAll { it.id == item.id }
-                                readTodo(
-                                    token, year = item.year, month = item.month, day = item.day
-                                ) {
-                                    todoList.clear()
-                                    for (i in it!!.data) {
-                                        todoList.add(i)
-                                    }
-                                }.also {
-                                    readTodo(
-                                        token, year = item.year, month = item.month, day = item.day
-                                    ) {
-                                        todoList.clear()
-                                        for (i in it!!.data) {
-                                            if (i.done) {
-                                                todoList.removeAll { it.done == item.done }
-                                                todoList.add(item)
-                                            }
-                                        }
-                                    }
-                                }.also {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    todoList.removeAll { it.id == item.id }
                                     readTodo(
                                         token, year = item.year, month = item.month, day = item.day
                                     ) {
                                         todoList.clear()
                                         for (i in it!!.data) {
                                             todoList.add(i)
+                                        }
+                                    }.also {
+                                        readTodo(
+                                            token, year = item.year, month = item.month, day = item.day
+                                        ) {
+                                            todoList.clear()
+                                            for (i in it!!.data) {
+                                                if (i.done) {
+                                                    todoList.removeAll { it.done == item.done }
+                                                    todoList.add(item)
+                                                }
+                                            }
+                                        }
+                                    }.also {
+                                        readTodo(
+                                            token, year = item.year, month = item.month, day = item.day
+                                        ) {
+                                            todoList.clear()
+                                            for (i in it!!.data) {
+                                                todoList.add(i)
+                                            }
                                         }
                                     }
                                 }
@@ -1207,7 +1218,6 @@ fun TodoUpdateBottomSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-//            .height(400.dp)
             .wrapContentHeight()
             .padding(start = 25.dp, end = 25.dp, top = 35.dp)
     ) {
@@ -1233,31 +1243,31 @@ fun TodoUpdateBottomSheet(
                     .height(30.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
                 onClick = {
-
-                    updateTodo(token,
-                        Todo?.year.toString(),
-                        Todo?.month.toString(),
-                        Todo?.day.toString(),
-                        title.toString(),
-                        Todo?.done!!,
-                        description,
-                        color,
-                        time,
-                        Todo?.id.toString(),
-                        response = {
-                            readTodo(
-                                token,
-                                Todo?.year.toString(),
-                                Todo?.month.toString(),
-                                Todo?.day.toString()
-                            ) {
-                                todoList.clear()
-                                for (i in it!!.data) {
-                                    todoList.add(i)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        updateTodo(token,
+                            Todo?.year.toString(),
+                            Todo?.month.toString(),
+                            Todo?.day.toString(),
+                            title.toString(),
+                            Todo?.done!!,
+                            description,
+                            color,
+                            time,
+                            Todo?.id.toString(),
+                            response = {
+                                readTodo(
+                                    token,
+                                    Todo?.year.toString(),
+                                    Todo?.month.toString(),
+                                    Todo?.day.toString()
+                                ) {
+                                    todoList.clear()
+                                    for (i in it!!.data) {
+                                        todoList.add(i)
+                                    }
                                 }
-                            }
-                        })
-
+                            })
+                    }
                     scope.launch {
                         bottomSheetScaffoldState.bottomSheetState.collapse()
                     }

@@ -26,6 +26,9 @@ import com.example.todo_android.Request.ProfileRequest.AuthEmailRequest
 import com.example.todo_android.Response.ProfileResponse.AuthEmailResponse
 import com.example.todo_android.Util.MyApplication
 import com.example.todo_android.ui.theme.buttonColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -232,9 +235,11 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                     colors = IconButtonDefaults.iconButtonColors(buttonColor),
                     onClick = {
                         if (email != "") {
-                            authEmail(email, routeAction, response = {
-                                showErrorText = true
-                            })
+                            CoroutineScope(Dispatchers.IO).launch {
+                                authEmail(email, routeAction, response = {
+                                    showErrorText = true
+                                })
+                            }
                         }
                     }) {
                     Icon(

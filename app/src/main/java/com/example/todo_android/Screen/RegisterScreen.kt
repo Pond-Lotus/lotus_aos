@@ -32,6 +32,9 @@ import com.example.todo_android.Request.ProfileRequest.RegisterRequest
 import com.example.todo_android.Response.ProfileResponse.RegisterResponse
 import com.example.todo_android.Util.MyApplication
 import com.example.todo_android.ui.theme.buttonColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -420,9 +423,11 @@ fun RegisterScreen(routeAction: RouteAction) {
                     IconButton(modifier = Modifier.size(43.dp),
                         colors = IconButtonDefaults.iconButtonColors(buttonColor),
                         onClick = {
-                            Register(
-                                authEmail, nickname, password1, password2, routeAction, context
-                            )
+                            CoroutineScope(Dispatchers.IO).launch {
+                                Register(
+                                    authEmail, nickname, password1, password2, routeAction, context
+                                )
+                            }
                         }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_right_24),
