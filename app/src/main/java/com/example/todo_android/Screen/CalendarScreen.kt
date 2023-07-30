@@ -367,12 +367,9 @@ fun CalendarScreen(routeAction: RouteAction) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
     val bottomScaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
-    val scrollState = rememberScrollState()
 
     var selectedTodo by remember { mutableStateOf<RToDoResponse?>(null) }
 
@@ -437,7 +434,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             else -> ""
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch {
             readTodo(
                 token,
                 LocalDate.now().year.toString(),
@@ -582,7 +579,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                             else -> ""
                         }
 
-                        CoroutineScope(Dispatchers.IO).launch {
+                        scope.launch {
                             readTodo(token, year, month, day) {
                                 todoList.clear()
                                 for (i in it!!.data) {
@@ -639,7 +636,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                             else -> ""
                         }
 
-                        CoroutineScope(Dispatchers.IO).launch {
+                        scope.launch {
                             readTodo(token, year, month, day) {
                                 todoList.clear()
                                 for (i in it!!.data) {
@@ -707,7 +704,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                             keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
                         ),
                         keyboardActions = KeyboardActions(onDone = {
-                            CoroutineScope(Dispatchers.IO).launch {
+                            scope.launch {
                                 createTodo(token, year, month, day, title, color) {
                                     readTodo(token, year = year, month = month, day = day) {
                                         todoList.clear()
@@ -716,10 +713,10 @@ fun CalendarScreen(routeAction: RouteAction) {
                                         }
                                     }
                                 }
-                                keyboardController?.hide()
-                                title = ""
-                                isVisibility = !isVisibility
                             }
+                            keyboardController?.hide()
+                            title = ""
+                            isVisibility = !isVisibility
                         })
                     )
                     Spacer(modifier = Modifier.height(6.dp))
@@ -871,25 +868,28 @@ fun TodoItem(
     var checked by rememberSaveable { mutableStateOf(Todo.done) }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
     var done by remember { mutableStateOf(false) }
+    var scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = checked, block = {
-        done = Todo.done
-        if (checked) {
-            done = true
-            checked = true
-            updateTodo(token,
-                Todo.year,
-                Todo.month,
-                Todo.day,
-                Todo.title,
-                done,
-                Todo.description,
-                Todo.color.toString(),
-                Todo.time,
-                Todo.id,
-                response = {
-                    onCheckedUpdateTodo()
-                })
+        scope.launch {
+            done = Todo.done
+            if (checked) {
+                done = true
+                checked = true
+                updateTodo(token,
+                    Todo.year,
+                    Todo.month,
+                    Todo.day,
+                    Todo.title,
+                    done,
+                    Todo.description,
+                    Todo.color.toString(),
+                    Todo.time,
+                    Todo.id,
+                    response = {
+                        onCheckedUpdateTodo()
+                    })
+            }
         }
     })
 
@@ -910,7 +910,7 @@ fun TodoItem(
                 checked = checked, onCheckedChange = { isChecked ->
                     checked = isChecked
                     done = isChecked
-                    CoroutineScope(Dispatchers.IO).launch {
+                    scope.launch {
                         updateTodo(
                             token,
                             Todo.year,
@@ -964,10 +964,12 @@ fun TodoItemList(
 
     var categoryName by remember { mutableStateOf<ReadCategoryResponse?>(null) }
 
+    var scope = rememberCoroutineScope()
+
     // 카테고리를 요청하는 함수를 호출하고, 응답을 categoryResponse에 저장합니다.
 
     LaunchedEffect(key1 = Unit, block = {
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch {
             readCategory(response = {
                 categoryName = it
             })
@@ -1020,7 +1022,7 @@ fun TodoItemList(
                 val dismissDirection = dismissState.dismissDirection
                 val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
                 if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-                    CoroutineScope(Dispatchers.IO).launch {
+                    scope.launch {
                         deleteTodo(token, item.id, response = {
                             todoList.remove(item)
                             readTodo(token, year = item.year, month = item.month, day = item.day) {
@@ -1031,7 +1033,6 @@ fun TodoItemList(
                             }
                         })
                     }
-
                 }
 
                 androidx.compose.material.SwipeToDismiss(state = dismissState,
@@ -1041,13 +1042,13 @@ fun TodoItemList(
                         TodoItem(Todo = item,
                             onTodoItemClick = { onTodoItemClick(it) },
                             onCheckedUpdateTodo = {
-                                CoroutineScope(Dispatchers.IO).launch {
+                                scope.launch {
                                     todoList.removeAll { it.id == item.id }
                                     todoList.add(item)
                                 }
                             },
                             onUnCheckedUpdateTodo = {
-                                CoroutineScope(Dispatchers.IO).launch {
+                                scope.launch {
                                     todoList.removeAll { it.id == item.id }
                                     readTodo(
                                         token, year = item.year, month = item.month, day = item.day
@@ -1129,24 +1130,29 @@ fun TodoUpdateBottomSheet(
 
 
     LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
-        title = Todo.title
-        description = Todo.description
-        color = Todo.color.toString()
+        scope.launch {
+            title = Todo.title
+            description = Todo.description
+            color = Todo.color.toString()
+        }
+
     })
 
     LaunchedEffect(key1 = Todo.time, block = {
-        time = if (Todo.time == "9999") {
-            "미지정"
-        } else {
-            Todo.time
-        }
+        scope.launch {
+            time = if (Todo.time == "9999") {
+                "미지정"
+            } else {
+                Todo.time
+            }
 
-        amPm = if (Todo.time == "9999") {
-            ""
-        } else if (Todo.time.length == 4) {
-            if (Todo.time.substring(0, 2).toInt() < 12) "오전" else "오후"
-        } else {
-            if (Todo.time.substring(0, 1).toInt() < 12) "오전" else "오후"
+            amPm = if (Todo.time == "9999") {
+                ""
+            } else if (Todo.time.length == 4) {
+                if (Todo.time.substring(0, 2).toInt() < 12) "오전" else "오후"
+            } else {
+                if (Todo.time.substring(0, 1).toInt() < 12) "오전" else "오후"
+            }
         }
     })
 
@@ -1243,7 +1249,7 @@ fun TodoUpdateBottomSheet(
                     .height(30.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
                 onClick = {
-                    CoroutineScope(Dispatchers.IO).launch {
+                    scope.launch {
                         updateTodo(token,
                             Todo?.year.toString(),
                             Todo?.month.toString(),
@@ -1266,10 +1272,9 @@ fun TodoUpdateBottomSheet(
                                         todoList.add(i)
                                     }
                                 }
-                            })
-                    }
-                    scope.launch {
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                            }).let {
+                            bottomSheetScaffoldState.bottomSheetState.collapse()
+                        }
                     }
                 },
                 shape = RoundedCornerShape(20.dp)

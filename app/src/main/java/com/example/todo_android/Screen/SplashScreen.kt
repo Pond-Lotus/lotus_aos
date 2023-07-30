@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -17,24 +18,27 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.todo_android.Navigation.Action.RouteAction
+import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
+import com.example.todo_android.Util.MyApplication
+import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(routeAction: RouteAction) {
     val backgroundColor = listOf(Color(0xffFFDAB9), Color(0xffFF9D4D))
 
-//    LaunchedEffect(Unit) {
-//        delay(3000) // 3초 동안 딜레이 설정
-//
-//        if (MyApplication.prefs.getData("email", "")
-//                .isNotEmpty() && MyApplication.prefs.getData("password1", "").isNotEmpty()
-//        ) {
-//            routeAction.navTo(NAV_ROUTE.CALENDAR)
-//        } else {
-//            // 로그인 화면으로 전환
-//            routeAction.navTo(NAV_ROUTE.LOGIN)
-//        }
-//    }
+    LaunchedEffect(Unit) {
+        delay(3000) // 3초 동안 딜레이 설정
+
+        if (MyApplication.prefs.getData("email", "")
+                .isNotEmpty() && MyApplication.prefs.getData("password1", "").isNotEmpty()
+        ) {
+            routeAction.navTo(NAV_ROUTE.CALENDAR)
+        } else {
+            // 로그인 화면으로 전환
+            routeAction.navTo(NAV_ROUTE.LOGIN)
+        }
+    }
 
     Column(
         modifier = Modifier

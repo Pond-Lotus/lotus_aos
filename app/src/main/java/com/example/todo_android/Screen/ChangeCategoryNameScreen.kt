@@ -21,6 +21,7 @@ import com.example.todo_android.Request.CategoryRequest.UpdateCategoryRequest
 import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.Response.CategoryResponse.UpdateCategoryResponse
 import com.example.todo_android.Util.MyApplication
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -67,7 +68,7 @@ fun updateCategory(
 }
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @ExperimentalMaterial3Api
 @Composable
 fun ChangeCategoryNameScreen(
@@ -79,19 +80,19 @@ fun ChangeCategoryNameScreen(
     var categoryId by remember { mutableStateOf(categoryId ?: "") }
     var categoryData = remember { mutableStateListOf<ReadCategoryResponse>() }
     var testList = remember { mutableStateMapOf<String, String>() }
+    var scope = rememberCoroutineScope()
 
-    readCategory(response = { response ->
-        response?.data?.let { data ->
-            categoryData.clear()
-            data.forEach { (key, value) ->
-                categoryData.add(ReadCategoryResponse(response.resultCode, mapOf(key to value)))
-                testList[key] = value
+    scope.launch {
+        readCategory(response = { response ->
+            response?.data?.let { data ->
+                categoryData.clear()
+                data.forEach { (key, value) ->
+                    categoryData.add(ReadCategoryResponse(response.resultCode, mapOf(key to value)))
+                    testList[key] = value
+                }
             }
-        }
-    })
-
-    Log.d("testList", "${testList[categoryId]?.get(1).toString()}")
-
+        })
+    }
 
     val categorySet = when (categoryId) {
         "1" -> mapOf(
@@ -163,8 +164,10 @@ fun ChangeCategoryNameScreen(
             }
         }, actions = {
             TextButton(onClick = {
-                updateCategory(token, categorySet) {
-                    routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
+                scope.launch {
+                    updateCategory(token, categorySet) {
+                        routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
+                    }
                 }
             }) {
                 Text(

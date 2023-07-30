@@ -146,6 +146,8 @@ fun RegisterScreen(routeAction: RouteAction) {
     var showErrorPassword1 by remember { mutableStateOf(false) }
     var showMatchPassword by remember { mutableStateOf(false) }
 
+    var scope = rememberCoroutineScope()
+
     Scaffold(modifier = Modifier
         .fillMaxSize()
         .imePadding(), topBar = {
@@ -423,7 +425,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                     IconButton(modifier = Modifier.size(43.dp),
                         colors = IconButtonDefaults.iconButtonColors(buttonColor),
                         onClick = {
-                            CoroutineScope(Dispatchers.IO).launch {
+                            scope.launch {
                                 Register(
                                     authEmail, nickname, password1, password2, routeAction, context
                                 )

@@ -26,6 +26,7 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.SearchEmailRequest
 import com.example.todo_android.Response.ProfileResponse.SearchEmailResponse
 import com.example.todo_android.ui.theme.buttonColor
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -94,6 +95,8 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
 
     var openDialog by remember { mutableStateOf(false) }
 
+    var scope = rememberCoroutineScope()
+
     if (openDialog) {
         showDialog(onDismissRequest = { openDialog = false }, routeAction)
     }
@@ -127,12 +130,15 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
 
             Spacer(modifier = Modifier.padding(vertical = 41.dp))
 
-            Row(modifier = Modifier.fillMaxWidth().padding(bottom = 13.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 13.dp), verticalAlignment = Alignment.CenterVertically) {
 
                 Image(painter = painterResource(id = R.drawable.sms), contentDescription = null)
 
                 Text(modifier = Modifier
-                    .fillMaxWidth().padding(start = 5.dp),
+                    .fillMaxWidth()
+                    .padding(start = 5.dp),
                     text = "안내드려요",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
@@ -208,13 +214,15 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
                 colors = ButtonDefaults.buttonColors(color),
                 onClick = {
                           if(isButtonClickable == true){
-                              SearchPassword(email, routeAction, response = {
-                                  if(it?.resultCode == "200"){
-                                      openDialog = true
-                                  } else{
-                                      showErrorText = true
-                                  }
-                              })
+                              scope.launch {
+                                  SearchPassword(email, routeAction, response = {
+                                      if(it?.resultCode == "200"){
+                                          openDialog = true
+                                      } else{
+                                          showErrorText = true
+                                      }
+                                  })
+                              }
                           }
                 },
                 enabled = isButtonClickable,

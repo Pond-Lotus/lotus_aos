@@ -109,6 +109,8 @@ fun LoginScreen(routeAction: RouteAction) {
 
     var openDialog by remember { mutableStateOf(false) }
 
+    var scope = rememberCoroutineScope()
+
     if (openDialog) {
         FailureLoginDialog(onDismissRequest = { openDialog = false })
     }
@@ -255,7 +257,7 @@ fun LoginScreen(routeAction: RouteAction) {
                 if (email == "" || password == "") {
                     openDialog = true
                 } else {
-                    CoroutineScope(Dispatchers.IO).launch {
+                    scope.launch {
                         sendLogin(email, password, routeAction, response = {
                             openDialog = true
                         })

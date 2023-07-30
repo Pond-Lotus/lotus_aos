@@ -98,6 +98,8 @@ fun AuthEmailScreen(routeAction: RouteAction) {
 
     var showErrorText by remember { mutableStateOf(false) }
 
+    var scope = rememberCoroutineScope()
+
 
     Scaffold(modifier = Modifier
         .fillMaxSize()
@@ -235,7 +237,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                     colors = IconButtonDefaults.iconButtonColors(buttonColor),
                     onClick = {
                         if (email != "") {
-                            CoroutineScope(Dispatchers.IO).launch {
+                            scope.launch {
                                 authEmail(email, routeAction, response = {
                                     showErrorText = true
                                 })

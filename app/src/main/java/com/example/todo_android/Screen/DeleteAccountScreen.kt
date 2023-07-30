@@ -26,6 +26,7 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.DeleteAccountRequest
 import com.example.todo_android.Response.ProfileResponse.DeleteAccountResponse
 import com.example.todo_android.Util.MyApplication
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -74,6 +75,8 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
     var checked by remember { mutableStateOf(false) }
 
     var isButtonClickable by remember { mutableStateOf(false) }
+
+    var scope = rememberCoroutineScope()
 
     val onCheck = if (checked) {
         isButtonClickable = true
@@ -188,7 +191,9 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
                 )
 
                 Text(
-                    modifier = Modifier.fillMaxWidth().padding(start = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 3.dp),
                     text = "탈퇴 전 안내드려요",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.ExtraBold,
@@ -242,7 +247,6 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
                 onClick = {
                     if (isButtonClickable == true) {
                         openDialog = true
-//                              deleteAccount(token, routeAction)
                     }
                 },
                 enabled = isButtonClickable,

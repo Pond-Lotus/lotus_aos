@@ -25,6 +25,7 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ModifyRequest.ChangePasswordRequest
 import com.example.todo_android.Response.ModifyResponse.ChangePasswordResponse
 import com.example.todo_android.Util.MyApplication
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -118,6 +119,8 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
     }
 
     val passwordVisualTransformation = PasswordVisualTransformation()
+
+    var scope = rememberCoroutineScope()
 
     Scaffold(modifier = Modifier
         .fillMaxWidth()
@@ -288,13 +291,15 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                 colors = ButtonDefaults.buttonColors(color),
                 onClick = {
                     if (isButtonClickable == true) {
-                        changePassword(token, password1, password3, response = {
-                            if(it?.resultCode == "200"){
-                                routeAction.goBack()
-                            } else{
-                                showErrorPassword1 = true
-                            }
-                        })
+                        scope.launch {
+                            changePassword(token, password1, password3, response = {
+                                if(it?.resultCode == "200"){
+                                    routeAction.goBack()
+                                } else{
+                                    showErrorPassword1 = true
+                                }
+                            })
+                        }
                     }
                 },
                 enabled = isButtonClickable,

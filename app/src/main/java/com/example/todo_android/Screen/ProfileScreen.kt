@@ -40,6 +40,7 @@ import com.example.todo_android.Request.ModifyRequest.DeleteProfileImageRequest
 import com.example.todo_android.Response.ModifyResponse.ChangeProfileResponse
 import com.example.todo_android.Response.ModifyResponse.DeleteProfileImageResponse
 import com.example.todo_android.Util.MyApplication
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -192,6 +193,8 @@ fun ProfileScreen(routeAction: RouteAction) {
 
     val initializeComposition = remember { mutableStateOf(true) }
 
+    var scope = rememberCoroutineScope()
+
     var bitmap = remember {
         mutableStateOf<ImageBitmap?>(
             BitmapFactory.decodeResource(
@@ -210,17 +213,19 @@ fun ProfileScreen(routeAction: RouteAction) {
 
     LaunchedEffect(key1 = initializeComposition) {
 
-        bitmap.value = if (MyApplication.prefs.getData("image", "") == "null") {
-            BitmapFactory.decodeResource(context.resources, R.drawable.defaultprofile)
-                .asImageBitmap()
-        } else {
-            val base64EncodedImage = MyApplication.prefs.getData("image", "")
-            val DecodedBytes = Base64.decode(base64EncodedImage, Base64.DEFAULT)
-            val ImageBitmap = BitmapFactory.decodeByteArray(DecodedBytes, 0, DecodedBytes.size)
+        scope.launch {
+            bitmap.value = if (MyApplication.prefs.getData("image", "") == "null") {
+                BitmapFactory.decodeResource(context.resources, R.drawable.defaultprofile)
+                    .asImageBitmap()
+            } else {
+                val base64EncodedImage = MyApplication.prefs.getData("image", "")
+                val DecodedBytes = Base64.decode(base64EncodedImage, Base64.DEFAULT)
+                val ImageBitmap = BitmapFactory.decodeByteArray(DecodedBytes, 0, DecodedBytes.size)
 
-            ImageBitmap.asImageBitmap()
+                ImageBitmap.asImageBitmap()
+            }
+            initializeComposition.value = !initializeComposition.value
         }
-        initializeComposition.value = !initializeComposition.value
     }
 
     Scaffold(modifier = Modifier
@@ -244,20 +249,24 @@ fun ProfileScreen(routeAction: RouteAction) {
                 .padding(30.dp)
                 .clickable {
                     if (image.value != null) {
-                        changeProfile(
-                            token,
-                            imdel.value,
-                            nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
-                            image.value!!,
-                            routeAction
-                        )
+                        scope.launch {
+                            changeProfile(
+                                token,
+                                imdel.value,
+                                nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
+                                image.value!!,
+                                routeAction
+                            )
+                        }
                     } else {
-                        deleteProfileImage(
-                            token,
-                            imdel.value,
-                            nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
-                            routeAction
-                        )
+                        scope.launch {
+                            deleteProfileImage(
+                                token,
+                                imdel.value,
+                                nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
+                                routeAction
+                            )
+                        }
                     }
                 })
         })

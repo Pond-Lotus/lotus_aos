@@ -92,6 +92,13 @@ fun authCode(
 @Composable
 fun AuthCodeScreen(routeAction: RouteAction) {
 
+    var email by remember { mutableStateOf("") }
+    var authEmail = MyApplication.prefs.getData("email", email)
+    var code by remember { mutableStateOf("") }
+
+    var showErrorText by remember { mutableStateOf(false) }
+    var scope = rememberCoroutineScope()
+
 
     Scaffold(modifier = Modifier
         .fillMaxSize()
@@ -113,11 +120,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            var email by remember { mutableStateOf("") }
-            var authEmail = MyApplication.prefs.getData("email", email)
-            var code by remember { mutableStateOf("") }
 
-            var showErrorText by remember { mutableStateOf(false) }
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -217,7 +220,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                 IconButton(modifier = Modifier.size(43.dp),
                     colors = IconButtonDefaults.iconButtonColors(buttonColor),
                     onClick = {
-                        CoroutineScope(Dispatchers.IO).launch {
+                        scope.launch {
                             authCode(authEmail, code, routeAction, response = {
                                 showErrorText = true
                             })

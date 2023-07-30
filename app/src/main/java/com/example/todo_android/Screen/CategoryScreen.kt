@@ -20,6 +20,7 @@ import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
@@ -27,18 +28,21 @@ import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
 fun CategoryScreen(routeAction: RouteAction) {
 
     var categoryList = remember { mutableStateListOf<ReadCategoryResponse>() }
+    var scope = rememberCoroutineScope()
 
     LaunchedEffect(
         key1 = Unit,
         block = {
-            readCategory(response = { response ->
-                response?.data?.let { data ->
-                    categoryList.clear()
-                    data.forEach { (key, value) ->
-                        categoryList.add(ReadCategoryResponse(response.resultCode, mapOf(key to value)))
+            scope.launch {
+                readCategory(response = { response ->
+                    response?.data?.let { data ->
+                        categoryList.clear()
+                        data.forEach { (key, value) ->
+                            categoryList.add(ReadCategoryResponse(response.resultCode, mapOf(key to value)))
+                        }
                     }
-                }
-            })
+                })
+            }
         }
     )
 
