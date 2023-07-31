@@ -713,10 +713,10 @@ fun CalendarScreen(routeAction: RouteAction) {
                                         }
                                     }
                                 }
+                                keyboardController?.hide()
+                                title = ""
+                                isVisibility = !isVisibility
                             }
-                            keyboardController?.hide()
-                            title = ""
-                            isVisibility = !isVisibility
                         })
                     )
                     Spacer(modifier = Modifier.height(6.dp))
@@ -1021,8 +1021,8 @@ fun TodoItemList(
                 val dismissState = androidx.compose.material.rememberDismissState()
                 val dismissDirection = dismissState.dismissDirection
                 val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
-                if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-                    scope.launch {
+                scope.launch {
+                    if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
                         deleteTodo(token, item.id, response = {
                             todoList.remove(item)
                             readTodo(token, year = item.year, month = item.month, day = item.day) {
@@ -1034,6 +1034,19 @@ fun TodoItemList(
                         })
                     }
                 }
+//                if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+//                    scope.launch {
+//                        deleteTodo(token, item.id, response = {
+//                            todoList.remove(item)
+//                            readTodo(token, year = item.year, month = item.month, day = item.day) {
+//                                todoList.clear()
+//                                for (i in it!!.data) {
+//                                    todoList.add(i)
+//                                }
+//                            }
+//                        })
+//                    }
+//                }
 
                 androidx.compose.material.SwipeToDismiss(state = dismissState,
                     background = { DeleteBackground() },
