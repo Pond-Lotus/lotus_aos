@@ -41,7 +41,7 @@ fun changePassword(
 
     var changePasswordResponse: ChangePasswordResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("https://34.22.73.14:8000/")
+    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/")
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var changePasswordRequest: ChangePasswordRequest =

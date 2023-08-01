@@ -111,7 +111,7 @@ fun createTodo(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://34.22.73.14:8000/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var createTodoRequest: CreateTodoRequest = retrofit.create(CreateTodoRequest::class.java)
@@ -157,7 +157,7 @@ fun readTodo(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://34.22.73.14:8000/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var readTodoRequest: ReadTodoRequest = retrofit.create(ReadTodoRequest::class.java)
@@ -199,7 +199,7 @@ fun deleteTodo(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://34.22.73.14:8000/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var deleteTodoRequest: DeleteTodoRequest = retrofit.create(DeleteTodoRequest::class.java)
@@ -249,7 +249,7 @@ fun updateTodo(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://34.22.73.14:8000/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
@@ -297,7 +297,7 @@ fun readCategory(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://34.22.73.14:8000/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var readCategoryRequest: ReadCategoryRequest = retrofit.create(ReadCategoryRequest::class.java)
@@ -1226,66 +1226,66 @@ fun TodoUpdateBottomSheet(
             .wrapContentHeight()
             .padding(start = 25.dp, end = 25.dp, top = 35.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 17.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            androidx.compose.material.IconButton(onClick = {
-                scope.launch {
-                    bottomSheetScaffoldState.bottomSheetState.collapse()
-                    title = Todo.title
-                    description = Todo.description
-                }
-            }) {
-                Icon(imageVector = Icons.Filled.Close, contentDescription = null)
-            }
-            Button(
-                modifier = Modifier
-                    .width(70.dp)
-                    .height(30.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-                onClick = {
-                    scope.launch {
-                        updateTodo(token,
-                            Todo?.year.toString(),
-                            Todo?.month.toString(),
-                            Todo?.day.toString(),
-                            title.toString(),
-                            Todo?.done!!,
-                            description,
-                            color,
-                            time,
-                            Todo?.id.toString(),
-                            response = {
-                                readTodo(
-                                    token,
-                                    Todo?.year.toString(),
-                                    Todo?.month.toString(),
-                                    Todo?.day.toString()
-                                ) {
-                                    todoList.clear()
-                                    for (i in it!!.data) {
-                                        todoList.add(i)
-                                    }
-                                }
-                            }).let {
-                            bottomSheetScaffoldState.bottomSheetState.collapse()
-                        }
-                    }
-                },
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Text(
-                    text = "저장",
-                    color = Color.Black,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Normal
-                )
-            }
-        }
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(bottom = 17.dp),
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            androidx.compose.material.IconButton(onClick = {
+//                scope.launch {
+//                    bottomSheetScaffoldState.bottomSheetState.collapse()
+//                    title = Todo.title
+//                    description = Todo.description
+//                }
+//            }) {
+//                Icon(imageVector = Icons.Filled.Close, contentDescription = null)
+//            }
+//            Button(
+//                modifier = Modifier
+//                    .width(70.dp)
+//                    .height(30.dp),
+//                colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
+//                onClick = {
+//                    scope.launch {
+//                        updateTodo(token,
+//                            Todo?.year.toString(),
+//                            Todo?.month.toString(),
+//                            Todo?.day.toString(),
+//                            title.toString(),
+//                            Todo?.done!!,
+//                            description,
+//                            color,
+//                            time,
+//                            Todo?.id.toString(),
+//                            response = {
+//                                readTodo(
+//                                    token,
+//                                    Todo?.year.toString(),
+//                                    Todo?.month.toString(),
+//                                    Todo?.day.toString()
+//                                ) {
+//                                    todoList.clear()
+//                                    for (i in it!!.data) {
+//                                        todoList.add(i)
+//                                    }
+//                                }
+//                            }).let {
+//                            bottomSheetScaffoldState.bottomSheetState.collapse()
+//                        }
+//                    }
+//                },
+//                shape = RoundedCornerShape(20.dp)
+//            ) {
+//                Text(
+//                    text = "저장",
+//                    color = Color.Black,
+//                    fontSize = 11.sp,
+//                    fontWeight = FontWeight.Normal
+//                )
+//            }
+//        }
 
         Row(
             modifier = Modifier

@@ -51,7 +51,7 @@ fun authEmail(email: String, routeAction: RouteAction, response: (AuthEmailRespo
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://34.22.73.14:8000/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var authEmailRequest: AuthEmailRequest = retrofit.create(AuthEmailRequest::class.java)
