@@ -158,7 +158,7 @@ fun ChangeCategoryNameScreen(
             )
         }, navigationIcon = {
             IconButton(onClick = {
-                routeAction.navTo(NAV_ROUTE.CHANGECATEGORY)
+                routeAction.goBack()
             }) {
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
             }

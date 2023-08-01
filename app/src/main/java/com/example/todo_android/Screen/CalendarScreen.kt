@@ -111,7 +111,7 @@ fun createTodo(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("https://34.22.73.14:8000/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var createTodoRequest: CreateTodoRequest = retrofit.create(CreateTodoRequest::class.java)
@@ -157,7 +157,7 @@ fun readTodo(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("https://34.22.73.14:8000/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var readTodoRequest: ReadTodoRequest = retrofit.create(ReadTodoRequest::class.java)
@@ -199,7 +199,7 @@ fun deleteTodo(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("https://34.22.73.14:8000/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var deleteTodoRequest: DeleteTodoRequest = retrofit.create(DeleteTodoRequest::class.java)
@@ -249,7 +249,7 @@ fun updateTodo(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("https://34.22.73.14:8000/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
@@ -297,7 +297,7 @@ fun readCategory(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("https://34.22.73.14:8000/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var readCategoryRequest: ReadCategoryRequest = retrofit.create(ReadCategoryRequest::class.java)
@@ -1034,20 +1034,6 @@ fun TodoItemList(
                         })
                     }
                 }
-//                if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-//                    scope.launch {
-//                        deleteTodo(token, item.id, response = {
-//                            todoList.remove(item)
-//                            readTodo(token, year = item.year, month = item.month, day = item.day) {
-//                                todoList.clear()
-//                                for (i in it!!.data) {
-//                                    todoList.add(i)
-//                                }
-//                            }
-//                        })
-//                    }
-//                }
-
                 androidx.compose.material.SwipeToDismiss(state = dismissState,
                     background = { DeleteBackground() },
                     directions = setOf(DismissDirection.EndToStart),

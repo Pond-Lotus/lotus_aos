@@ -36,7 +36,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 fun deleteAccount(token: String, response: (DeleteAccountResponse?) -> Unit) {
     var deleteAccountResponse: DeleteAccountResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/")
+    var retrofit = Retrofit.Builder().baseUrl("https://34.22.73.14:8000/")
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var deleteAccountRequest: DeleteAccountRequest =

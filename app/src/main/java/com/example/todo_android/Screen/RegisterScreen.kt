@@ -44,10 +44,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
 
-fun goLottie(route: NAV_ROUTE, routeAction: RouteAction) {
-    routeAction.navTo(route)
-}
-
 fun Register(
     authEmail: String,
     nickname: String,
@@ -73,7 +69,7 @@ fun Register(
         }
 
         var retrofit =
-            Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+            Retrofit.Builder().baseUrl("https://34.22.73.14:8000/").client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create()).build()
 
         var registerRequest: RegisterRequest = retrofit.create(RegisterRequest::class.java)
@@ -114,7 +110,7 @@ fun Register(
                         MyApplication.prefs.setData("password2", password2)
                         MyApplication.prefs.setData("image", encodedImage)
 
-                        goLottie(NAV_ROUTE.LOTTIE, routeAction)
+                        routeAction.navTo(NAV_ROUTE.LOTTIE)
                         Log.d("REGISTER", "메인 화면으로 갑니다.")
                         Log.d("REGISTER", "resultCode : " + registerResponse?.resultCode)
                     }
