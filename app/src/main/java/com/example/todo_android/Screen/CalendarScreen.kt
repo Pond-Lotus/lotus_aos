@@ -1118,6 +1118,7 @@ fun TodoUpdateBottomSheet(
     var title by remember { mutableStateOf(Todo.title) }
     var description by remember { mutableStateOf(Todo.description) }
     var time by remember { mutableStateOf(Todo.time) }
+    var done by remember { mutableStateOf(Todo.done) }
     var color by remember { mutableStateOf("") }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
@@ -1128,17 +1129,22 @@ fun TodoUpdateBottomSheet(
     var amPm by remember { mutableStateOf("") }
 
 
-    LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
-        scope.launch {
-            title = Todo.title
-            description = Todo.description
-            color = Todo.color.toString()
-        }
-
+    LaunchedEffect(
+        key1 = Todo.title,
+        key2 = Todo.description,
+        key3 = Todo.color,
+        block = {
+            scope.launch {
+                title = Todo.title
+                description = Todo.description
+                color = Todo.color.toString()
+            }
     })
 
-    LaunchedEffect(key1 = Todo.time, block = {
-        scope.launch {
+    LaunchedEffect(
+        key1 = Todo.time,
+        key2 = Todo.done,
+        block = {
             time = if (Todo.time == "9999") {
                 "미지정"
             } else {
@@ -1152,7 +1158,10 @@ fun TodoUpdateBottomSheet(
             } else {
                 if (Todo.time.substring(0, 1).toInt() < 12) "오전" else "오후"
             }
-        }
+
+            scope.launch {
+                done = Todo.done
+            }
     })
 
     val timePickerDialog = TimePickerDialog(
@@ -1226,66 +1235,6 @@ fun TodoUpdateBottomSheet(
             .wrapContentHeight()
             .padding(start = 25.dp, end = 25.dp, top = 35.dp)
     ) {
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(bottom = 17.dp),
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            androidx.compose.material.IconButton(onClick = {
-//                scope.launch {
-//                    bottomSheetScaffoldState.bottomSheetState.collapse()
-//                    title = Todo.title
-//                    description = Todo.description
-//                }
-//            }) {
-//                Icon(imageVector = Icons.Filled.Close, contentDescription = null)
-//            }
-//            Button(
-//                modifier = Modifier
-//                    .width(70.dp)
-//                    .height(30.dp),
-//                colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-//                onClick = {
-//                    scope.launch {
-//                        updateTodo(token,
-//                            Todo?.year.toString(),
-//                            Todo?.month.toString(),
-//                            Todo?.day.toString(),
-//                            title.toString(),
-//                            Todo?.done!!,
-//                            description,
-//                            color,
-//                            time,
-//                            Todo?.id.toString(),
-//                            response = {
-//                                readTodo(
-//                                    token,
-//                                    Todo?.year.toString(),
-//                                    Todo?.month.toString(),
-//                                    Todo?.day.toString()
-//                                ) {
-//                                    todoList.clear()
-//                                    for (i in it!!.data) {
-//                                        todoList.add(i)
-//                                    }
-//                                }
-//                            }).let {
-//                            bottomSheetScaffoldState.bottomSheetState.collapse()
-//                        }
-//                    }
-//                },
-//                shape = RoundedCornerShape(20.dp)
-//            ) {
-//                Text(
-//                    text = "저장",
-//                    color = Color.Black,
-//                    fontSize = 11.sp,
-//                    fontWeight = FontWeight.Normal
-//                )
-//            }
-//        }
 
         Row(
             modifier = Modifier
@@ -1359,7 +1308,38 @@ fun TodoUpdateBottomSheet(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {
+                scope.launch {
+                    updateTodo(
+                        token,
+                        Todo?.year.toString(),
+                        Todo?.month.toString(),
+                        Todo?.day.toString(),
+                        title,
+                        done,
+                        description,
+                        color,
+                        time,
+                        Todo?.id.toString(),
+                        response = {
+                            readTodo(
+                                token,
+                                Todo?.year.toString(),
+                                Todo?.month.toString(),
+                                Todo?.day.toString(),
+                                response = {
+                                    todoList.clear()
+                                    for(i in it!!.data) {
+                                        todoList.add(i)
+                                    }
+                                }
+                            )
+                        }
+                    )
+                    bottomSheetScaffoldState.bottomSheetState.collapse()
+                }
+            }),
             shape = RoundedCornerShape(10.dp),
             onValueChange = {
                 if (it.count { it == '\n' } < 4) {
