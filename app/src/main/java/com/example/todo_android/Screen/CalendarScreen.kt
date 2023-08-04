@@ -3,7 +3,6 @@ package com.example.todo_android.Screen
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
 import android.os.Build
-import android.text.method.SingleLineTransformationMethod
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
@@ -20,10 +19,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.DismissDirection
-import androidx.compose.material.DrawerValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults
@@ -51,8 +48,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Component.FloatingStateType
@@ -81,7 +76,6 @@ import com.himanshoe.kalendar.model.KalendarDay
 import com.himanshoe.kalendar.model.KalendarEvent
 import com.himanshoe.kalendar.model.KalendarType
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -330,12 +324,11 @@ fun readCategory(
 fun CalendarScreen(routeAction: RouteAction) {
 
     val states = listOf("월간", "주간")
-    var selectedOption by remember { mutableStateOf(states[1]) }
+    var selectedOption by remember { mutableStateOf(states[0]) }
 
     val onSelectionChange = { text: String -> selectedOption = text }
 
-    var selectCalendar by remember { mutableStateOf(true) }
-    var showTodoInput by remember { mutableStateOf(false) }
+    var selectCalendar by remember { mutableStateOf(false) }
     var isVisibility by remember { mutableStateOf(false) }
 
     var multiFloatingState by remember { mutableStateOf(FloatingStateType.Collapsed) }
@@ -354,9 +347,6 @@ fun CalendarScreen(routeAction: RouteAction) {
     var day by remember { mutableStateOf(LocalDate.now().dayOfMonth.toString()) }
     var title by remember { mutableStateOf("") }
     var color by remember { mutableStateOf("") }
-    var groupColors by remember {
-        mutableStateOf(Color)
-    }
 
     var dayString by remember {
         mutableStateOf("")
@@ -457,7 +447,10 @@ fun CalendarScreen(routeAction: RouteAction) {
         },
         topBar = {
             CenterAlignedTopAppBar(title = {
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
                     Row(
                         modifier = Modifier
                             .width(120.dp)
@@ -511,9 +504,12 @@ fun CalendarScreen(routeAction: RouteAction) {
         },
         floatingActionButton = {
             AddTodoFloatingButton(
-                multiFloatingState = multiFloatingState, onMultiFloatingStateChange = {
+                multiFloatingState = multiFloatingState,
+                onMultiFloatingStateChange = {
                     multiFloatingState = it
-                }, backgroundColor = colorFAB, onButtonClick = onButtonClick
+                },
+                backgroundColor = colorFAB,
+                onButtonClick = onButtonClick
             )
         },
         floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
@@ -521,8 +517,10 @@ fun CalendarScreen(routeAction: RouteAction) {
             selectedTodo?.let { TodoUpdateBottomSheet(scope, bottomScaffoldState, it, todoList) }
         },
         sheetPeekHeight = 0.dp,
-        sheetShape = RoundedCornerShape(20.dp)
-
+        sheetShape = RoundedCornerShape(
+            topStart = 20.dp,
+            topEnd = 20.dp
+        )
     ) {
 
         Column(
@@ -533,118 +531,119 @@ fun CalendarScreen(routeAction: RouteAction) {
         ) {
             AnimatedVisibility(
                 visible = selectCalendar,
-                enter = slideInVertically(animationSpec = tween(300)),
-                exit = shrinkVertically(animationSpec = tween(300))
-            ) {
-                Kalendar(modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(
-                        shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
-                        elevation = 3.dp
-                    ),
-                    kalendarHeaderConfig = KalendarHeaderConfig(
-                        kalendarTextConfig = KalendarTextConfig(
-                            kalendarTextColor = KalendarTextColor(Color.Black),
-                            kalendarTextSize = KalendarTextSize.SubTitle
-                        )
-                    ),
-                    kalendarType = KalendarType.Oceanic(),
-                    kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                    kalendarThemeColor = KalendarThemeColor(
-                        backgroundColor = Color.White,
-                        dayBackgroundColor = Color(0xffFBE3C7),
-                        headerTextColor = Color.Black
-                    ),
-                    onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically()
+                ) {
+                    when(selectCalendar) {
+                        true -> {
+                            Kalendar(modifier = Modifier
+                                .fillMaxWidth()
+                                .shadow(
+                                    shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
+                                    elevation = 3.dp
+                                ),
+                                kalendarHeaderConfig = KalendarHeaderConfig(
+                                    kalendarTextConfig = KalendarTextConfig(
+                                        kalendarTextColor = KalendarTextColor(Color.Black),
+                                        kalendarTextSize = KalendarTextSize.SubTitle
+                                    )
+                                ),
+                                kalendarType = KalendarType.Oceanic(),
+                                kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
+                                kalendarThemeColor = KalendarThemeColor(
+                                    backgroundColor = Color.White,
+                                    dayBackgroundColor = Color(0xffFBE3C7),
+                                    headerTextColor = Color.Black
+                                ),
+                                onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
-                        year = kalendarDay.localDate.year.toString()
-                        month = kalendarDay.localDate.monthNumber.toString()
-                        day = kalendarDay.localDate.dayOfMonth.toString()
+                                    year = kalendarDay.localDate.year.toString()
+                                    month = kalendarDay.localDate.monthNumber.toString()
+                                    day = kalendarDay.localDate.dayOfMonth.toString()
 
-                        val selectedDate = LocalDate.of(
-                            kalendarDay.localDate.year,
-                            kalendarDay.localDate.monthNumber,
-                            kalendarDay.localDate.dayOfMonth
-                        )
-                        val dayOfWeek = selectedDate.dayOfWeek
+                                    val selectedDate = LocalDate.of(
+                                        kalendarDay.localDate.year,
+                                        kalendarDay.localDate.monthNumber,
+                                        kalendarDay.localDate.dayOfMonth
+                                    )
+                                    val dayOfWeek = selectedDate.dayOfWeek
 
-                        dayString = when (dayOfWeek.value) {
-                            1 -> "월요일"
-                            2 -> "화요일"
-                            3 -> "수요일"
-                            4 -> "목요일"
-                            5 -> "금요일"
-                            6 -> "토요일"
-                            7 -> "일요일"
-                            else -> ""
+                                    dayString = when (dayOfWeek.value) {
+                                        1 -> "월요일"
+                                        2 -> "화요일"
+                                        3 -> "수요일"
+                                        4 -> "목요일"
+                                        5 -> "금요일"
+                                        6 -> "토요일"
+                                        7 -> "일요일"
+                                        else -> ""
+                                    }
+
+                                    scope.launch {
+                                        readTodo(token, year, month, day) {
+                                            todoList.clear()
+                                            for (i in it!!.data) {
+                                                todoList.add(i)
+                                            }
+                                        }
+                                    }
+                                })
                         }
+                        false -> {
+                            Kalendar(modifier = Modifier
+                                .fillMaxWidth()
+                                .shadow(
+                                    shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
+                                    elevation = 3.dp
+                                ),
+                                kalendarHeaderConfig = KalendarHeaderConfig(
+                                    kalendarTextConfig = KalendarTextConfig(
+                                        kalendarTextColor = KalendarTextColor(Color.Black),
+                                        kalendarTextSize = KalendarTextSize.SubTitle
+                                    )
+                                ),
+                                kalendarType = KalendarType.Firey,
+                                kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
+                                kalendarThemeColor = KalendarThemeColor(
+                                    backgroundColor = Color.White,
+                                    dayBackgroundColor = Color(0xffFBE3C7),
+                                    headerTextColor = Color.Black
+                                ),
+                                onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
 
-                        scope.launch {
-                            readTodo(token, year, month, day) {
-                                todoList.clear()
-                                for (i in it!!.data) {
-                                    todoList.add(i)
-                                }
-                            }
+                                    year = kalendarDay.localDate.year.toString()
+                                    month = kalendarDay.localDate.monthNumber.toString()
+                                    day = kalendarDay.localDate.dayOfMonth.toString()
+
+                                    val selectedDate = LocalDate.of(
+                                        kalendarDay.localDate.year,
+                                        kalendarDay.localDate.monthNumber,
+                                        kalendarDay.localDate.dayOfMonth
+                                    )
+                                    val dayOfWeek = selectedDate.dayOfWeek
+
+                                    dayString = when (dayOfWeek.value) {
+                                        1 -> "월요일"
+                                        2 -> "화요일"
+                                        3 -> "수요일"
+                                        4 -> "목요일"
+                                        5 -> "금요일"
+                                        6 -> "토요일"
+                                        7 -> "일요일"
+                                        else -> ""
+                                    }
+
+                                    scope.launch {
+                                        readTodo(token, year, month, day) {
+                                            todoList.clear()
+                                            for (i in it!!.data) {
+                                                todoList.add(i)
+                                            }
+                                        }
+                                    }
+                                })
                         }
-                    })
-            }
-
-            AnimatedVisibility(
-                visible = !selectCalendar, exit = shrinkVertically(animationSpec = tween(300))
-            ) {
-                Kalendar(modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(
-                        shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
-                        elevation = 3.dp
-                    ),
-                    kalendarHeaderConfig = KalendarHeaderConfig(
-                        kalendarTextConfig = KalendarTextConfig(
-                            kalendarTextColor = KalendarTextColor(Color.Black),
-                            kalendarTextSize = KalendarTextSize.SubTitle
-                        )
-                    ),
-                    kalendarType = KalendarType.Firey,
-                    kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                    kalendarThemeColor = KalendarThemeColor(
-                        backgroundColor = Color.White,
-                        dayBackgroundColor = Color(0xffFBE3C7),
-                        headerTextColor = Color.Black
-                    ),
-                    onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
-
-                        year = kalendarDay.localDate.year.toString()
-                        month = kalendarDay.localDate.monthNumber.toString()
-                        day = kalendarDay.localDate.dayOfMonth.toString()
-
-                        val selectedDate = LocalDate.of(
-                            kalendarDay.localDate.year,
-                            kalendarDay.localDate.monthNumber,
-                            kalendarDay.localDate.dayOfMonth
-                        )
-                        val dayOfWeek = selectedDate.dayOfWeek
-
-                        dayString = when (dayOfWeek.value) {
-                            1 -> "월요일"
-                            2 -> "화요일"
-                            3 -> "수요일"
-                            4 -> "목요일"
-                            5 -> "금요일"
-                            6 -> "토요일"
-                            7 -> "일요일"
-                            else -> ""
-                        }
-
-                        scope.launch {
-                            readTodo(token, year, month, day) {
-                                todoList.clear()
-                                for (i in it!!.data) {
-                                    todoList.add(i)
-                                }
-                            }
-                        }
-                    })
+                    }
             }
             Row(
                 modifier = Modifier
@@ -753,7 +752,12 @@ fun AddTodoFloatingButton(
         }
     }
     Column(horizontalAlignment = Alignment.End) {
-        if (transition.currentState == FloatingStateType.Expanded) {
+
+        AnimatedVisibility(
+            visible = (multiFloatingState == FloatingStateType.Expanded),
+            enter = fadeIn(animationSpec = tween(300)),
+            exit = fadeOut(animationSpec = tween(300))
+        ) {
             FloatingActionButtonMenus(onMultiFloatingStateChange, onButtonClick)
         }
 
@@ -1151,13 +1155,20 @@ fun TodoUpdateBottomSheet(
                 Todo.time
             }
 
-            amPm = if (Todo.time == "9999") {
-                ""
-            } else if (Todo.time.length == 4) {
-                if (Todo.time.substring(0, 2).toInt() < 12) "오전" else "오후"
+//            amPm = if (Todo.time == "9999") {
+//                ""
+//            } else if (Todo.time.length == 4) {
+//                if (Todo.time.substring(0, 2) < "12") "오전" else "오후"
+//            } else {
+//                if (Todo.time.substring(0, 2) < "12") "오전" else "오후"
+//            }
+            amPm = if(Todo.time.length == 4) {
+                "오전"
+            } else (if (Todo.time.length == 3){
+                "오후"
             } else {
-                if (Todo.time.substring(0, 1).toInt() < 12) "오전" else "오후"
-            }
+                null
+            }).toString()
 
             scope.launch {
                 done = Todo.done
@@ -1231,8 +1242,9 @@ fun TodoUpdateBottomSheet(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
+//            .fillMaxWidth()
+//            .wrapContentHeight()
+            .wrapContentSize()
             .padding(start = 25.dp, end = 25.dp, top = 35.dp)
     ) {
 

@@ -113,7 +113,7 @@ fun ProfileModalDrawer(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 17.dp, end = 17.dp, top = 73.dp),
+            .padding(start = 17.dp, end = 17.dp, top = 70.dp),
     ) {
         Row(
             modifier = Modifier
@@ -318,7 +318,12 @@ fun ProfileModalDrawer(
             thickness = 1.dp
         )
 
-        Divider(modifier = Modifier.fillMaxWidth(), color = Color(0xffe9e9e9), thickness = 1.dp)
+        Divider(
+            modifier = Modifier.fillMaxWidth(),
+            color = Color(0xffe9e9e9),
+            thickness = 1.dp
+        )
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
