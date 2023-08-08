@@ -54,7 +54,7 @@ fun Logout(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var logoutRequest: LogoutRequest = retrofit.create(LogoutRequest::class.java)
