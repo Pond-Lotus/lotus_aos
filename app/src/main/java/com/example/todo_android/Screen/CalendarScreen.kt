@@ -105,9 +105,8 @@ fun createTodo(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit =
-        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create()).build()
+    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var createTodoRequest: CreateTodoRequest = retrofit.create(CreateTodoRequest::class.java)
 
@@ -151,9 +150,8 @@ fun readTodo(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit =
-        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create()).build()
+    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var readTodoRequest: ReadTodoRequest = retrofit.create(ReadTodoRequest::class.java)
 
@@ -193,9 +191,8 @@ fun deleteTodo(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit =
-        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create()).build()
+    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var deleteTodoRequest: DeleteTodoRequest = retrofit.create(DeleteTodoRequest::class.java)
 
@@ -243,9 +240,8 @@ fun updateTodo(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit =
-        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create()).build()
+    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
 
@@ -291,9 +287,8 @@ fun readCategory(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit =
-        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create()).build()
+    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var readCategoryRequest: ReadCategoryRequest = retrofit.create(ReadCategoryRequest::class.java)
 
@@ -439,8 +434,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }
     })
-    BottomSheetScaffold(
-        scaffoldState = bottomScaffoldState,
+    BottomSheetScaffold(scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
                 scope = scope, bottomScaffoldState = bottomScaffoldState, routeAction = routeAction
@@ -449,8 +443,7 @@ fun CalendarScreen(routeAction: RouteAction) {
         topBar = {
             CenterAlignedTopAppBar(title = {
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+                    modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
                 ) {
                     Row(
                         modifier = Modifier
@@ -505,12 +498,9 @@ fun CalendarScreen(routeAction: RouteAction) {
         },
         floatingActionButton = {
             AddTodoFloatingButton(
-                multiFloatingState = multiFloatingState,
-                onMultiFloatingStateChange = {
+                multiFloatingState = multiFloatingState, onMultiFloatingStateChange = {
                     multiFloatingState = it
-                },
-                backgroundColor = colorFAB,
-                onButtonClick = onButtonClick
+                }, backgroundColor = colorFAB, onButtonClick = onButtonClick
             )
         },
         floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
@@ -519,8 +509,7 @@ fun CalendarScreen(routeAction: RouteAction) {
         },
         sheetPeekHeight = 0.dp,
         sheetShape = RoundedCornerShape(
-            topStart = 20.dp,
-            topEnd = 20.dp
+            topStart = 20.dp, topEnd = 20.dp
         )
     ) {
         Column(
@@ -531,19 +520,18 @@ fun CalendarScreen(routeAction: RouteAction) {
         ) {
             Column(
                 modifier = Modifier
+                    .shadow(
+                        shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
+                        elevation = 3.dp
+                    )
                     .animateContentSize(
                         animationSpec = tween(
-                            durationMillis = 600
+                            durationMillis = 300
                         )
                     )
             ) {
-                if(selectCalendar) {
-                    Kalendar(modifier = Modifier
-                        .fillMaxWidth()
-                        .shadow(
-                            shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
-                            elevation = 3.dp
-                        ),
+                if (selectCalendar) {
+                    Kalendar(modifier = Modifier.fillMaxWidth(),
                         kalendarHeaderConfig = KalendarHeaderConfig(
                             kalendarTextConfig = KalendarTextConfig(
                                 kalendarTextColor = KalendarTextColor(Color.Black),
@@ -589,13 +577,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 }
                             }
                         })
-                } else{
-                    Kalendar(modifier = Modifier
-                        .fillMaxWidth()
-                        .shadow(
-                            shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
-                            elevation = 3.dp
-                        ),
+                } else {
+                    Kalendar(modifier = Modifier.fillMaxWidth(),
                         kalendarHeaderConfig = KalendarHeaderConfig(
                             kalendarTextConfig = KalendarTextConfig(
                                 kalendarTextColor = KalendarTextColor(Color.Black),
@@ -950,7 +933,7 @@ fun TodoItem(
     }
 }
 
-@SuppressLint("CoroutineCreationDuringComposition")
+@SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.N)
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
@@ -991,8 +974,7 @@ fun TodoItemList(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Button(
-                        modifier = Modifier.size(9.dp),
+                    Button(modifier = Modifier.size(9.dp),
                         onClick = { /*TODO*/ },
                         enabled = false,
                         content = {},
@@ -1024,17 +1006,17 @@ fun TodoItemList(
                 val dismissState = androidx.compose.material.rememberDismissState()
                 val dismissDirection = dismissState.dismissDirection
                 val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
-                    if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-                        scope.launch {
-                            deleteTodo(token, item.id, response = {
-                                todoList.remove(item)
-                                readTodo(token, year = item.year, month = item.month, day = item.day) {
-                                    todoList.clear()
-                                    for (i in it!!.data) {
-                                        todoList.add(i)
-                                    }
+                if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+                    scope.launch {
+                        deleteTodo(token, item.id, response = {
+                            todoList.remove(item)
+                            readTodo(token, year = item.year, month = item.month, day = item.day) {
+                                todoList.clear()
+                                for (i in it!!.data) {
+                                    todoList.add(i)
                                 }
-                            })
+                            }
+                        })
                     }
                 }
                 androidx.compose.material.SwipeToDismiss(state = dismissState,
@@ -1061,7 +1043,10 @@ fun TodoItemList(
                                         }
                                     }.also {
                                         readTodo(
-                                            token, year = item.year, month = item.month, day = item.day
+                                            token,
+                                            year = item.year,
+                                            month = item.month,
+                                            day = item.day
                                         ) {
                                             todoList.clear()
                                             for (i in it!!.data) {
@@ -1073,7 +1058,10 @@ fun TodoItemList(
                                         }
                                     }.also {
                                         readTodo(
-                                            token, year = item.year, month = item.month, day = item.day
+                                            token,
+                                            year = item.year,
+                                            month = item.month,
+                                            day = item.day
                                         ) {
                                             todoList.clear()
                                             for (i in it!!.data) {
@@ -1107,6 +1095,7 @@ fun DeleteBackground() {
     }
 }
 
+@ExperimentalComposeUiApi
 @SuppressLint("NewApi")
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
@@ -1131,28 +1120,20 @@ fun TodoUpdateBottomSheet(
     val minute = calendar[Calendar.MINUTE]
     var amPm by remember { mutableStateOf("") }
 
-
-    LaunchedEffect(
-        key1 = Todo.title,
-        key2 = Todo.description,
-        key3 = Todo.color,
-        block = {
-            scope.launch {
-                title = Todo.title
-                description = Todo.description
-                color = Todo.color.toString()
-            }
+    LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
+        scope.launch {
+            title = Todo.title
+            description = Todo.description
+            color = Todo.color.toString()
+        }
     })
 
-    LaunchedEffect(
-        key1 = Todo.time,
-        key2 = Todo.done,
-        block = {
-            time = if (Todo.time == "9999") {
-                "미지정"
-            } else {
-                Todo.time
-            }
+    LaunchedEffect(key1 = Todo.time, key2 = Todo.done, block = {
+        time = if (Todo.time == "9999") {
+            "미지정"
+        } else {
+            Todo.time
+        }
 
 //            amPm = if (Todo.time == "9999") {
 //                ""
@@ -1161,17 +1142,17 @@ fun TodoUpdateBottomSheet(
 //            } else {
 //                if (Todo.time.substring(0, 2) < "12") "오전" else "오후"
 //            }
-            amPm = if(Todo.time.length == 4) {
-                "오전"
-            } else (if (Todo.time.length == 3){
-                "오후"
-            } else {
-                null
-            }).toString()
+        amPm = if (Todo.time.length == 4) {
+            "오전"
+        } else (if (Todo.time.length == 3) {
+            "오후"
+        } else {
+            null
+        }).toString()
 
-            scope.launch {
-                done = Todo.done
-            }
+        scope.launch {
+            done = Todo.done
+        }
     })
 
     val timePickerDialog = TimePickerDialog(
@@ -1245,6 +1226,7 @@ fun TodoUpdateBottomSheet(
 //            .wrapContentHeight()
             .wrapContentSize()
             .padding(start = 25.dp, end = 25.dp, top = 35.dp)
+            .imePadding()
     ) {
 
         Row(
@@ -1319,11 +1301,12 @@ fun TodoUpdateBottomSheet(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
+            ),
             keyboardActions = KeyboardActions(onDone = {
                 scope.launch {
-                    updateTodo(
-                        token,
+                    updateTodo(token,
                         Todo?.year.toString(),
                         Todo?.month.toString(),
                         Todo?.day.toString(),
@@ -1334,20 +1317,17 @@ fun TodoUpdateBottomSheet(
                         time,
                         Todo?.id.toString(),
                         response = {
-                            readTodo(
-                                token,
+                            readTodo(token,
                                 Todo?.year.toString(),
                                 Todo?.month.toString(),
                                 Todo?.day.toString(),
                                 response = {
                                     todoList.clear()
-                                    for(i in it!!.data) {
+                                    for (i in it!!.data) {
                                         todoList.add(i)
                                     }
-                                }
-                            )
-                        }
-                    )
+                                })
+                        })
                     bottomSheetScaffoldState.bottomSheetState.collapse()
                 }
             }),
@@ -1366,8 +1346,7 @@ fun TodoUpdateBottomSheet(
                     fontWeight = FontWeight(300),
                     color = Color(0xFF9E9E9E)
                 )
-            }
-        )
+            })
 
         Row(
             modifier = Modifier
