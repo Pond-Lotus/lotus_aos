@@ -312,11 +312,12 @@ fun ProfileModalDrawer(
 
         Divider(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 320.dp),
+                .fillMaxWidth(),
             color = Color(0xffe9e9e9),
             thickness = 1.dp
         )
+
+        Spacer(modifier = Modifier.weight(1f))
 
         Divider(
             modifier = Modifier.fillMaxWidth(),
@@ -327,7 +328,7 @@ fun ProfileModalDrawer(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 18.dp)
+                .padding(top = 21.dp, bottom = 21.dp)
                 .clickable {
                     openDialog = true
                 }, verticalAlignment = Alignment.CenterVertically
