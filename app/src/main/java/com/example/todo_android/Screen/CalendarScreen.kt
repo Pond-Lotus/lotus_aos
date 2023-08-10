@@ -1142,20 +1142,17 @@ fun TodoUpdateBottomSheet(
             Todo.time
         }
 
-//            amPm = if (Todo.time == "9999") {
-//                ""
-//            } else if (Todo.time.length == 4) {
-//                if (Todo.time.substring(0, 2) < "12") "오전" else "오후"
-//            } else {
-//                if (Todo.time.substring(0, 2) < "12") "오전" else "오후"
-//            }
-        amPm = if (Todo.time.length == 4) {
-            "오전"
-        } else (if (Todo.time.length == 3) {
-            "오후"
-        } else {
-            null
-        }).toString()
+        // 24 시간이 넘어가면 다른 숫자로 파악하여 빈값처리
+        amPm = if(Todo.time.substring(0, 2).toInt() < 24){
+            //  12시간 미만이면 오전 아니면 오후
+            if (Todo.time.substring(0, 2).toInt() <= 12){
+                "오전"
+            }else{
+                "오후"
+            }
+        }else{
+            ""
+        }
 
         scope.launch {
             done = Todo.done
