@@ -2,7 +2,9 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -14,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -103,7 +106,8 @@ fun AuthEmailScreen(routeAction: RouteAction) {
 
     Scaffold(modifier = Modifier
         .fillMaxSize()
-        .imePadding(), topBar = {
+        .imePadding(),
+        topBar = {
         CenterAlignedTopAppBar(title = {}, navigationIcon = {
             IconButton(onClick = {
                 routeAction.goBack()
@@ -127,7 +131,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                     text = stringResource(id = R.string.FirstPageNumber),
                     fontSize = 20.sp,
                     lineHeight = 29.sp,
-                    fontWeight = FontWeight.Light,
+                    fontWeight = FontWeight.Medium,
                     color = Color(0xff9E9E9E)
                 )
 
@@ -137,13 +141,13 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                     text = stringResource(id = R.string.FirstAuthEmailText),
                     fontSize = 28.sp,
                     lineHeight = 36.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Black,
                 )
                 Text(
                     text = stringResource(id = R.string.SecondAuthEmailText),
                     fontSize = 28.sp,
                     lineHeight = 36.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Black,
                 )
             }
 
@@ -156,7 +160,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(id = R.string.ShowEmailText),
-                    fontSize = 13.sp,
+                    fontSize = 14.sp,
                     lineHeight = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xff808080)
@@ -165,16 +169,22 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                 Spacer(modifier = Modifier.height(10.dp))
 
 
-                BasicTextField(modifier = Modifier.fillMaxWidth(), value = email, onValueChange = {
-                    email = it
-                    showErrorText = false
-                }, singleLine = true, textStyle = LocalTextStyle.current.copy(
-                    fontSize = 16.sp, lineHeight = 23.sp, fontWeight = FontWeight.Light
+                BasicTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = email,
+                    onValueChange = {
+                        email = it
+                        showErrorText = false },
+                    singleLine = true,
+                    textStyle = LocalTextStyle.current.copy(
+                    fontSize = 16.sp,
+                    lineHeight = 23.sp,
+                    fontWeight = FontWeight.Light
                 ), decorationBox = { innerTextField ->
                     if (email.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.ShowEmailPlaceholder),
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             lineHeight = 23.sp,
                             fontWeight = FontWeight.Light,
                             color = Color(0xffD3D3D3),
@@ -199,7 +209,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                         Spacer(modifier = Modifier.padding(vertical = 14.dp))
                         if (emailPattern.matches(email)) {
                             Icon(
-                                modifier = Modifier.padding(vertical = 4.dp),
+//                                modifier = Modifier.padding(vertical = 4.dp),
                                 painter = painterResource(id = R.drawable.checkemail),
                                 contentDescription = null,
                                 tint = Color(0xffFF9D4D)
@@ -233,22 +243,55 @@ fun AuthEmailScreen(routeAction: RouteAction) {
 
                 Text(text = "")
 
-                IconButton(modifier = Modifier.size(43.dp),
-                    colors = IconButtonDefaults.iconButtonColors(buttonColor),
-                    onClick = {
-                        if (email != "") {
-                            scope.launch {
-                                authEmail(email, routeAction, response = {
-                                    showErrorText = true
-                                })
+                Image(
+                    modifier = Modifier.size(60.dp)
+                        .clickable {
+                            if (email != "") {
+                                scope.launch {
+                                    authEmail(email, routeAction, response = {
+                                        showErrorText = true
+                                    })
+                                }
                             }
-                        }
-                    }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_right_24),
-                        contentDescription = null
-                    )
-                }
+                        },
+                    painter = painterResource(id = R.drawable.authbutton),
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit
+                )
+
+//                IconButton(
+//                    modifier = Modifier.size(60.dp),
+//                    onClick = {
+//                    if (email != "") {
+//                        scope.launch {
+//                            authEmail(email, routeAction, response = {
+//                                showErrorText = true
+//                            })
+//                        }
+//                    }
+//                }) {
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.authbutton),
+//                        contentDescription = null,)
+//                }
+
+//                IconButton(modifier = Modifier.size(60.dp),
+//                    colors = IconButtonDefaults.iconButtonColors(buttonColor),
+//                    onClick = {
+//                        if (email != "") {
+//                            scope.launch {
+//                                authEmail(email, routeAction, response = {
+//                                    showErrorText = true
+//                                })
+//                            }
+//                        }
+//                    }) {
+//                    Icon(
+//                        modifier = Modifier.size(48.dp),
+//                        painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_right_24),
+//                        contentDescription = null
+//                    )
+//                }
             }
         }
     }

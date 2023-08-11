@@ -60,7 +60,7 @@ fun LottieScreen(routeAction: RouteAction) {
             composition = composition,
             progress = progress,
             contentScale = ContentScale.FillHeight,
-            modifier = Modifier.size(250.dp)
+            modifier = Modifier.size(300.dp)
         )
 
 
@@ -85,7 +85,7 @@ fun LottieScreen(routeAction: RouteAction) {
             )
         )
 
-        Spacer(modifier = Modifier.height(33.dp))
+        Spacer(modifier = Modifier.height(25.dp))
 
         Button(
             modifier = Modifier
@@ -98,7 +98,9 @@ fun LottieScreen(routeAction: RouteAction) {
             }) {
             Text(
                 color = Color.Black,
-                text = stringResource(id = R.string.goLogin)
+                text = stringResource(id = R.string.goLogin),
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
             )
         }
     }

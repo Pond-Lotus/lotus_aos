@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -435,7 +436,8 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }
     })
-    BottomSheetScaffold(scaffoldState = bottomScaffoldState,
+    BottomSheetScaffold(
+        scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
                 scope = scope, bottomScaffoldState = bottomScaffoldState, routeAction = routeAction
@@ -463,7 +465,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 } else {
                                     Color.Gray
                                 },
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.Bold,
                                 modifier = Modifier
                                     .clip(shape = RoundedCornerShape(5.dp))
                                     .clickable {
@@ -485,13 +487,24 @@ fun CalendarScreen(routeAction: RouteAction) {
                     }
                 }
             }, navigationIcon = {
-                IconButton(onClick = {
-                    scope.launch {
-                        bottomScaffoldState.drawerState.open()
-                    }
-                }) {
-                    Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
-                }
+//                IconButton(onClick = {
+//                    scope.launch {
+//                        bottomScaffoldState.drawerState.open()
+//                    }
+//                }) {
+//                    Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
+//                }
+                Image(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .padding(start = 21.dp)
+                        .clickable {
+                        scope.launch {
+                            bottomScaffoldState.drawerState.open()
+                        }
+                    },
+                    painter = painterResource (id = R.drawable.menubar),
+                    contentDescription = "menubar")
             }, colors = TopAppBarDefaults.smallTopAppBarColors(
                 containerColor = Color.White, titleContentColor = Color.Black
             )
@@ -654,8 +667,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 6.dp),
-                    color = Color(0xffD8D8D8)
+                        .padding(start = 6.dp, top = 1.dp),
+                    color = Color(0xffdddbdb)
                 )
             }
 
@@ -746,19 +759,25 @@ fun AddTodoFloatingButton(
 
         Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
-        FloatingActionButton(containerColor = backgroundColor, shape = CircleShape, onClick = {
-            onMultiFloatingStateChange(
-                if (transition.currentState == FloatingStateType.Expanded) {
-                    FloatingStateType.Collapsed
-                } else {
-                    FloatingStateType.Expanded
-                }
-            )
-        }) {
+        FloatingActionButton(
+            modifier = Modifier.size(63.dp),
+            containerColor = backgroundColor,
+            shape = CircleShape,
+            onClick = {
+                onMultiFloatingStateChange(
+                    if (transition.currentState == FloatingStateType.Expanded) {
+                        FloatingStateType.Collapsed
+                    } else {
+                        FloatingStateType.Expanded
+                    }
+                )
+            }) {
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "todolist 추가",
-                modifier = Modifier.rotate(rotate),
+                modifier = Modifier
+                    .rotate(rotate)
+                    .size(30.dp),
             )
         }
     }
@@ -771,9 +790,9 @@ fun FloatingActionButtonMenus(
 ) {
     Surface(
         modifier = Modifier
-            .width(150.dp)
+            .width(155.dp)
             .height(110.dp)
-            .shadow(shape = RoundedCornerShape(20.dp), elevation = 15.dp)
+            .shadow(shape = RoundedCornerShape(20.dp), elevation = 5.dp)
             .background(Color.White)
     ) {
         Column(
@@ -884,12 +903,12 @@ fun TodoItem(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)
+            .height(45.dp)
             .clickable {
                 onTodoItemClick(Todo)
             }) {
         Row(
-            modifier = Modifier.padding(start = 7.dp, top = 15.dp, bottom = 15.dp),
+            modifier = Modifier.padding(start = 4.dp, top = 15.dp, bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -929,7 +948,7 @@ fun TodoItem(
                 )
 
             )
-            Text(text = Todo.title, fontSize = 13.sp, fontStyle = FontStyle.Normal)
+            Text(text = Todo.title, fontSize = 14.sp, fontStyle = FontStyle.Normal)
         }
     }
 }
@@ -975,7 +994,8 @@ fun TodoItemList(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Button(modifier = Modifier.size(9.dp),
+                    Button(
+                        modifier = Modifier.size(9.dp),
                         onClick = { /*TODO*/ },
                         enabled = false,
                         content = {},
@@ -992,12 +1012,12 @@ fun TodoItemList(
                         )
                     )
 
-                    Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                    Spacer(modifier = Modifier.padding(horizontal = 4.dp))
 
                     Text(
                         text = categoryName?.data?.get(header.toString()) ?: "",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
+                        fontSize = 14.sp,
                         lineHeight = 17.sp
                     )
                 }
@@ -1133,7 +1153,7 @@ fun TodoUpdateBottomSheet(
                 description = Todo.description
                 color = Todo.color
             }
-    })
+        })
 
     LaunchedEffect(key1 = Todo.time, key2 = Todo.done, block = {
         time = if (Todo.time == "9999") {
@@ -1143,14 +1163,14 @@ fun TodoUpdateBottomSheet(
         }
 
         // 24 시간이 넘어가면 다른 숫자로 파악하여 빈값처리
-        amPm = if(Todo.time.substring(0, 2).toInt() < 24){
+        amPm = if (Todo.time.substring(0, 2).toInt() < 24) {
             //  12시간 미만이면 오전 아니면 오후
-            if (Todo.time.substring(0, 2).toInt() <= 12){
+            if (Todo.time.substring(0, 2).toInt() <= 12) {
                 "오전"
-            }else{
+            } else {
                 "오후"
             }
-        }else{
+        } else {
             ""
         }
 
@@ -1223,14 +1243,14 @@ fun TodoUpdateBottomSheet(
 //            .fillMaxWidth()
 //            .wrapContentHeight()
             .wrapContentSize()
-            .padding(start = 25.dp, end = 25.dp, top = 35.dp)
+            .padding(start = 25.dp, end = 25.dp, top = 20.dp)
             .imePadding()
     ) {
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 17.dp),
+                .padding(bottom = 5.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -1247,7 +1267,7 @@ fun TodoUpdateBottomSheet(
             }
             Button(
                 modifier = Modifier
-                    .width(70.dp)
+                    .width(60.dp)
                     .height(30.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
                 onClick = {
@@ -1284,8 +1304,8 @@ fun TodoUpdateBottomSheet(
                 Text(
                     text = "저장",
                     color = Color.Black,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Normal
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -1352,9 +1372,10 @@ fun TodoUpdateBottomSheet(
             }
         }
 
-        TextField(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 22.dp),
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 22.dp),
             value = description,
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color(0xffF2F2F2),
@@ -1380,7 +1401,9 @@ fun TodoUpdateBottomSheet(
                     fontWeight = FontWeight(300),
                     color = Color(0xFF9E9E9E)
                 )
-            })
+            },
+            textStyle = TextStyle(fontSize = 14.sp)
+        )
 
         Row(
             modifier = Modifier
@@ -1392,15 +1415,15 @@ fun TodoUpdateBottomSheet(
                 painter = painterResource(id = R.drawable.clock),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(30.dp)
-                    .padding(end = 11.dp)
+                    .size(24.dp)
+                    .padding(end = 5.dp)
             )
             Text(
                 text = "시간",
-                modifier = Modifier.padding(end = 10.dp),
+                modifier = Modifier.padding(end = 8.dp),
                 fontWeight = FontWeight.Bold,
                 lineHeight = 19.sp,
-                fontSize = 19.sp
+                fontSize = 15.sp
             )
             Text(
                 modifier = Modifier.clickable {
@@ -1408,7 +1431,7 @@ fun TodoUpdateBottomSheet(
                 },
                 text = "$amPm ${convertToLayoutTimeFormat(time)}",
                 lineHeight = 19.sp,
-                fontSize = 19.sp,
+                fontSize = 15.sp,
                 color = Color(0xff9E9E9E)
             )
         }
@@ -1425,6 +1448,55 @@ fun TodoUpdateBottomSheet(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
+//            IconButton(
+//                onClick = { onButtonClick("1") }
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.redbutton),
+//                    contentDescription = "redbutton")
+//            }
+//
+//            IconButton(
+//                onClick = { onButtonClick("2") }
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.yellowbutton),
+//                    contentDescription = "yellowbutton")
+//            }
+//
+//            IconButton(
+//                onClick = { onButtonClick("3") }
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.greenbutton),
+//                    contentDescription = "greenbutton")
+//            }
+//
+//            IconButton(
+//                onClick = { onButtonClick("4") }
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.bluebutton),
+//                    contentDescription = "bluebutton")
+//            }
+//
+//            IconButton(
+//                onClick = { onButtonClick("5") }
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.pinkbutton),
+//                    contentDescription = "pinkbutton")
+//            }
+//
+//            IconButton(
+//                onClick = { onButtonClick("6") }
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.purplebutton),
+//                    contentDescription = "purplebutton")
+//            }
+
+
             Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
                 onClick = {
@@ -1472,7 +1544,7 @@ fun BlankTodoItem() {
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)
+            .height(45.dp)
     ) {
         Row(
             modifier = Modifier.padding(start = 20.dp, top = 15.dp, bottom = 15.dp),
@@ -1480,7 +1552,10 @@ fun BlankTodoItem() {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "등록된 토도리스트가 없습니다.", fontSize = 13.sp, fontStyle = FontStyle.Normal
+                text = "등록된 토도리스트가 없습니다.",
+                fontSize = 13.sp,
+                fontStyle = FontStyle.Normal,
+                color = Color(0xff9e9e9e)
             )
         }
     }

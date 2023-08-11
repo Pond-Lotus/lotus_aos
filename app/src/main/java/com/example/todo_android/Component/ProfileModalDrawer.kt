@@ -113,7 +113,7 @@ fun ProfileModalDrawer(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 17.dp, end = 17.dp, top = 70.dp),
+            .padding(start = 22.dp, end = 22.dp, top = 70.dp),
     ) {
         Row(
             modifier = Modifier
@@ -140,7 +140,7 @@ fun ProfileModalDrawer(
             ) {
                 Text(
                     text = nickname,
-                    fontSize = 14.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 21.sp
                 )
@@ -162,7 +162,7 @@ fun ProfileModalDrawer(
                 Icon(
                     modifier = Modifier
                         .background(Color.White)
-                        .size(24.dp)
+                        .size(30.dp)
                         .padding(start = 5.dp),
                     painter = painterResource(id = R.drawable.ic_pen),
                     contentDescription = null
@@ -173,7 +173,7 @@ fun ProfileModalDrawer(
         Divider(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 21.dp),
+                .padding(bottom = 22.dp),
             color = Color(0xffe9e9e9),
             thickness = 1.dp
         )
@@ -181,10 +181,10 @@ fun ProfileModalDrawer(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 2.dp, bottom = 20.dp),
+                .padding(start = 2.dp, bottom = 18.dp),
             text = "환경 설정",
             fontWeight = FontWeight.Bold,
-            fontSize = 13.sp,
+            fontSize = 15.sp,
             lineHeight = 17.sp
         )
 
@@ -199,7 +199,7 @@ fun ProfileModalDrawer(
 
             Image(
                 modifier = Modifier
-                    .size(22.dp)
+                    .size(24.dp)
                     .padding(start = 2.dp, end = 6.dp),
                 painter = painterResource(id = R.drawable.setting),
                 contentDescription = null
@@ -209,7 +209,7 @@ fun ProfileModalDrawer(
                 modifier = Modifier.wrapContentWidth(),
                 text = "비밀번호 변경",
                 fontWeight = FontWeight.Medium,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 lineHeight = 17.sp
             )
         }
@@ -225,9 +225,9 @@ fun ProfileModalDrawer(
 
             Image(
                 modifier = Modifier
-                    .size(22.dp)
+                    .size(24.dp)
                     .padding(start = 2.dp, end = 6.dp),
-                painter = painterResource(id = R.drawable.setting),
+                painter = painterResource(id = R.drawable.notification),
                 contentDescription = null
             )
 
@@ -235,7 +235,7 @@ fun ProfileModalDrawer(
                 modifier = Modifier.wrapContentWidth(),
                 text = "알림 설정",
                 fontWeight = FontWeight.Medium,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 lineHeight = 17.sp
             )
         }
@@ -243,7 +243,7 @@ fun ProfileModalDrawer(
         Divider(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 15.dp),
+                .padding(bottom = 22.dp),
             color = Color(0xffe9e9e9),
             thickness = 1.dp
         )
@@ -251,7 +251,7 @@ fun ProfileModalDrawer(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 19.dp),
+                .padding(bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -262,7 +262,7 @@ fun ProfileModalDrawer(
                     .padding(start = 2.dp),
                 text = "그룹 설정",
                 fontWeight = FontWeight.Bold,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 lineHeight = 17.sp
             )
 
@@ -270,7 +270,7 @@ fun ProfileModalDrawer(
                 routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
             }) {
                 Icon(
-                    modifier = Modifier.size(14.dp),
+                    modifier = Modifier.size(20.dp),
                     painter = painterResource(id = R.drawable.ic_arrow),
                     contentDescription = null
                 )
@@ -280,31 +280,31 @@ fun ProfileModalDrawer(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 28.dp),
+                .padding(bottom = 22.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+            Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
                 onClick = {},
                 content = {})
-            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+            Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
                 onClick = {},
                 content = {})
-            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+            Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
                 onClick = {},
                 content = {})
-            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+            Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
                 onClick = {},
                 content = {})
-            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+            Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
                 onClick = {},
                 content = {})
-            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
+            Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
                 onClick = {},
                 content = {})
@@ -335,7 +335,7 @@ fun ProfileModalDrawer(
         ) {
 
             Icon(
-                modifier = Modifier.size(14.dp),
+                modifier = Modifier.size(16.dp),
                 painter = painterResource(id = R.drawable.logout),
                 contentDescription = null
             )
@@ -346,7 +346,7 @@ fun ProfileModalDrawer(
                     .padding(start = 6.dp),
                 text = "로그아웃",
                 fontWeight = FontWeight.Medium,
-                fontSize = 13.sp,
+                fontSize = 14.sp,
                 lineHeight = 17.sp
             )
         }
@@ -366,16 +366,16 @@ fun showLogOutDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    modifier = Modifier.padding(top = 35.dp, bottom = 12.dp),
+                    modifier = Modifier.padding(top = 35.dp, bottom = 10.dp),
                     text = "로그아웃",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.ExtraBold
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Black
                 )
 
                 Text(
                     modifier = Modifier.padding(bottom = 38.dp),
                     text = "로그아웃 하시겠습니까?",
-                    fontSize = 12.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Light
                 )
 

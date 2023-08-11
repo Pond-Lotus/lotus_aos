@@ -2,8 +2,10 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -15,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -128,7 +131,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                     text = stringResource(id = R.string.SecondPageNumber),
                     fontSize = 20.sp,
                     lineHeight = 29.sp,
-                    fontWeight = FontWeight.Light,
+                    fontWeight = FontWeight.Medium,
                     color = Color(0xff9E9E9E)
                 )
 
@@ -138,13 +141,13 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                     text = stringResource(id = R.string.FirstAuthCodeText),
                     fontSize = 28.sp,
                     lineHeight = 36.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Black,
                 )
                 Text(
                     text = stringResource(id = R.string.SecondAuthCodeText),
                     fontSize = 28.sp,
                     lineHeight = 36.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Black,
                 )
             }
 
@@ -158,7 +161,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(id = R.string.ShowCodeText),
-                    fontSize = 13.sp,
+                    fontSize = 14.sp,
                     lineHeight = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xff808080)
@@ -217,20 +220,36 @@ fun AuthCodeScreen(routeAction: RouteAction) {
 
                 Text(text = "")
 
-                IconButton(modifier = Modifier.size(43.dp),
-                    colors = IconButtonDefaults.iconButtonColors(buttonColor),
-                    onClick = {
-                        scope.launch {
-                            authCode(authEmail, code, routeAction, response = {
-                                showErrorText = true
-                            })
-                        }
-                    }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_right_24),
-                        contentDescription = null
-                    )
-                }
+                Image(
+                    modifier = Modifier.size(60.dp)
+                        .clickable {
+                            if (email != "") {
+                                scope.launch {
+                                    authCode(authEmail, code, routeAction, response = {
+                                        showErrorText = true
+                                    })
+                                }
+                            }
+                        },
+                    painter = painterResource(id = R.drawable.authbutton),
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit
+                )
+
+//                IconButton(modifier = Modifier.size(43.dp),
+//                    colors = IconButtonDefaults.iconButtonColors(buttonColor),
+//                    onClick = {
+//                        scope.launch {
+//                            authCode(authEmail, code, routeAction, response = {
+//                                showErrorText = true
+//                            })
+//                        }
+//                    }) {
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_right_24),
+//                        contentDescription = null
+//                    )
+//                }
             }
         }
     }
@@ -253,6 +272,10 @@ fun EachTextFieldContainer(
                 }
             }, contentAlignment = Alignment.Center
     ) {
-        Text(text = text)
+        Text(
+            text = text,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Medium
+        )
     }
 }

@@ -1,5 +1,6 @@
 package com.example.todo_android.Screen
 
+import android.graphics.fonts.FontStyle
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -140,7 +141,8 @@ fun LoginScreen(routeAction: RouteAction) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
 
-        Image(modifier = Modifier.size(70.dp),
+        Image(
+            modifier = Modifier.size(90.dp),
             painter = painterResource(id = R.drawable.appmainlogo),
             contentDescription = null,
             contentScale = ContentScale.Fit
@@ -148,11 +150,10 @@ fun LoginScreen(routeAction: RouteAction) {
         Image(
             modifier = Modifier
                 .width(100.dp)
-                .height(30.dp)
-                .padding(top = 15.dp),
+                .height(40.dp)
+                .padding(top = 8.dp),
             painter = painterResource(id = R.drawable.apptitle),
             contentDescription = null,
-//            contentScale = ContentScale.Fit
         )
 
         Spacer(modifier = Modifier.height(61.dp))
@@ -306,19 +307,19 @@ fun FailureLoginDialog(onDismissRequest: () -> Unit) {
             Column(modifier = Modifier.width(265.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center) {
-                Text(modifier = Modifier.padding(top = 27.dp, bottom = 11.dp),
+                Text(modifier = Modifier.padding(top = 28.dp, bottom = 10.dp),
                     text = "로그인 실패",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold)
+                    fontWeight = FontWeight.Black)
 
                 Text(
                     text = "이메일 혹은 비밀번호를",
-                    fontSize = 12.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Light)
 
-                Text(modifier = Modifier.padding(bottom = 29.dp),
+                Text(modifier = Modifier.padding(bottom = 28.dp),
                     text = "다시 확인해 주세요.",
-                    fontSize = 12.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Light)
 
                 Row(modifier = Modifier.fillMaxWidth(),

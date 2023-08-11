@@ -37,7 +37,7 @@ fun SearchPassword(email: String, routeAction: RouteAction ,response: (SearchEma
 
     var authEmailResponse: SearchEmailResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("`http://34.22.73.14:8000/")
+    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/")
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var searchEmailRequest: SearchEmailRequest = retrofit.create(SearchEmailRequest::class.java)
@@ -134,13 +134,17 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
                 .fillMaxWidth()
                 .padding(bottom = 13.dp), verticalAlignment = Alignment.CenterVertically) {
 
-                Image(painter = painterResource(id = R.drawable.sms), contentDescription = null)
+                Image(
+                    modifier = Modifier.size(17.dp),
+                    painter = painterResource(id = R.drawable.sms),
+                    contentDescription = null
+                )
 
                 Text(modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 5.dp),
                     text = "안내드려요",
-                    fontSize = 14.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 18.sp)
             }
@@ -150,14 +154,14 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
             Text(modifier = Modifier.fillMaxWidth(),
                 text = "가입한 이메일 주소를 입력해주세요.",
                 fontWeight = FontWeight.Light,
-                fontSize = 13.sp,
+                fontSize = 14.sp,
                 lineHeight = 18.sp)
             Text(modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 27.dp),
+                .padding(bottom = 14.dp),
                 text = "해당 이메일로 비밀번호 재설정을 위한 링크를 보내드립니다.",
                 fontWeight = FontWeight.Light,
-                fontSize = 13.sp,
+                fontSize = 14.sp,
                 lineHeight = 18.sp)
 
             Divider(modifier = Modifier
@@ -168,15 +172,15 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
 
             Text(modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 7.dp),
+                .padding(bottom = 10.dp),
                 text = "이메일",
-                fontSize = 14.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 21.sp)
 
             BasicTextField(modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp),
+                .padding(bottom = 45.dp),
                 value = email,
                 onValueChange = {
                     email = it
@@ -210,7 +214,7 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(54.dp),
+                    .height(50.dp),
                 colors = ButtonDefaults.buttonColors(color),
                 onClick = {
                           if(isButtonClickable == true){
@@ -247,19 +251,19 @@ fun showDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
             Column(modifier = Modifier.width(265.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center) {
-                Text(modifier = Modifier.padding(top = 27.dp, bottom = 11.dp),
+                Text(modifier = Modifier.padding(top = 28.dp, bottom = 11.dp),
                     text = "메일 발송 완료",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold)
+                    fontWeight = FontWeight.Black)
 
                 Text(
                     text = "재설정한 비밀번호로",
-                    fontSize = 12.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Light)
 
-                Text(modifier = Modifier.padding(bottom = 29.dp),
+                Text(modifier = Modifier.padding(bottom = 28.dp),
                     text = "로그인 해주세요.",
-                    fontSize = 12.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Light)
 
                 Row(modifier = Modifier.fillMaxWidth(),
