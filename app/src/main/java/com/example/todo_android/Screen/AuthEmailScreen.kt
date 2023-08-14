@@ -174,50 +174,51 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                     value = email,
                     onValueChange = {
                         email = it
-                        showErrorText = false },
+                        showErrorText = false
+                    },
                     singleLine = true,
                     textStyle = LocalTextStyle.current.copy(
-                    fontSize = 16.sp,
-                    lineHeight = 23.sp,
-                    fontWeight = FontWeight.Light
-                ), decorationBox = { innerTextField ->
-                    if (email.isEmpty()) {
-                        Text(
-                            text = stringResource(id = R.string.ShowEmailPlaceholder),
-                            fontSize = 18.sp,
-                            lineHeight = 23.sp,
-                            fontWeight = FontWeight.Light,
-                            color = Color(0xffD3D3D3),
-                        )
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .drawWithContent {
-                                drawContent()
-                                drawLine(
-                                    color = Color(0xffE9E9E9),
-                                    start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
-                                    end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
-                                    strokeWidth = 1.dp.toPx()
-                                )
-                            }, verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(modifier = Modifier.weight(1f)) {
-                            innerTextField()
-                        }
-                        Spacer(modifier = Modifier.padding(vertical = 14.dp))
-                        if (emailPattern.matches(email)) {
-                            Icon(
-//                                modifier = Modifier.padding(vertical = 4.dp),
-                                painter = painterResource(id = R.drawable.checkemail),
-                                contentDescription = null,
-                                tint = Color(0xffFF9D4D)
+                        fontSize = 16.sp,
+                        lineHeight = 23.sp,
+                        fontWeight = FontWeight.Light),
+                    decorationBox = { innerTextField ->
+                        if (email.isEmpty()) {
+                            Text(
+                                text = stringResource(id = R.string.ShowEmailPlaceholder),
+                                fontSize = 18.sp,
+                                lineHeight = 23.sp,
+                                fontWeight = FontWeight.Light,
+                                color = Color(0xffD3D3D3),
                             )
                         }
-                    }
-
-                })
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp)
+                                .drawWithContent {
+                                    drawContent()
+                                    drawLine(
+                                        color = Color(0xffE9E9E9),
+                                        start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                                        end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                                        strokeWidth = 1.dp.toPx()
+                                    )
+                                }, verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(modifier = Modifier.weight(1f)) {
+                                innerTextField()
+                            }
+                            Spacer(modifier = Modifier.padding(vertical = 14.dp))
+                            if (emailPattern.matches(email)) {
+                                Icon(
+//                                modifier = Modifier.padding(vertical = 4.dp),
+                                    painter = painterResource(id = R.drawable.checkemail),
+                                    contentDescription = null,
+                                    tint = Color(0xffFF9D4D)
+                                )
+                            }
+                        }
+                    })
 
                 Spacer(modifier = Modifier.height(8.dp))
 

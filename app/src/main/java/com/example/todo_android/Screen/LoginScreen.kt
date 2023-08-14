@@ -1,6 +1,5 @@
 package com.example.todo_android.Screen
 
-import android.graphics.fonts.FontStyle
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,8 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,8 +29,6 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.LoginRequest
 import com.example.todo_android.Response.ProfileResponse.LoginResponse
 import com.example.todo_android.Util.MyApplication
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -180,11 +175,13 @@ fun LoginScreen(routeAction: RouteAction) {
             },
             trailingIcon = {
                 if (email.isNotEmpty()) {
-                    IconButton(onClick = {
-                        email = ""
-                    }) {
-                        Icon(imageVector = Icons.Default.Clear, contentDescription = null)
-                    }
+                    Image(
+                        modifier = Modifier.clickable {
+                            email = ""
+                        },
+                        painter = painterResource(id = R.drawable.deleteemail),
+                        contentDescription = null
+                    )
                 }
             })
 

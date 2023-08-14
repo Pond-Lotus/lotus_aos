@@ -1131,6 +1131,8 @@ fun TodoUpdateBottomSheet(
     var title by remember { mutableStateOf(Todo.title) }
     var description by remember { mutableStateOf(Todo.description) }
     var time by remember { mutableStateOf(Todo.time) }
+    var timeValue by remember { mutableStateOf(Todo.time) }
+
     var done by remember { mutableStateOf(Todo.done) }
     var color by remember { mutableStateOf(Todo.color) }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
@@ -1156,23 +1158,28 @@ fun TodoUpdateBottomSheet(
         })
 
     LaunchedEffect(key1 = Todo.time, key2 = Todo.done, block = {
-        time = if (Todo.time == "9999") {
-            "미지정"
+//        timeValue = Todo.time
+
+        if (Todo.time == "9999") {
+           time = "미지정"
         } else {
-            Todo.time
+            time = Todo.time
         }
 
         // 24 시간이 넘어가면 다른 숫자로 파악하여 빈값처리
-        amPm = if (Todo.time.substring(0, 2).toInt() < 24) {
-            //  12시간 미만이면 오전 아니면 오후
-            if (Todo.time.substring(0, 2).toInt() <= 12) {
-                "오전"
+        if(Todo.time != "미지정"){
+            amPm = if (Todo.time.substring(0, 2).toInt() < 24) {
+                //  12시간 미만이면 오전 아니면 오후
+                if (Todo.time.substring(0, 2).toInt() <= 12) {
+                    "오전"
+                } else {
+                    "오후"
+                }
             } else {
-                "오후"
+               ""
             }
-        } else {
-            ""
         }
+
 
         scope.launch {
             done = Todo.done
@@ -1183,6 +1190,7 @@ fun TodoUpdateBottomSheet(
         context, { _, hour: Int, minute: Int ->
             amPm = if (hour < 12) "오전" else "오후"
             time = String.format("%02d%02d", hour, minute)
+            timeValue = String.format("%02d%02d", hour, minute)
         }, hour, minute, false
     )
 
@@ -1280,7 +1288,7 @@ fun TodoUpdateBottomSheet(
                             Todo?.done!!,
                             description,
                             color.toString(),
-                            time,
+                            timeValue,
                             Todo?.id.toString(),
                             response = {
                                 readTodo(
