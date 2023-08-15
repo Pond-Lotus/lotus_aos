@@ -499,10 +499,10 @@ fun CalendarScreen(routeAction: RouteAction) {
                         .size(50.dp)
                         .padding(start = 21.dp)
                         .clickable {
-                        scope.launch {
-                            bottomScaffoldState.drawerState.open()
-                        }
-                    },
+                            scope.launch {
+                                bottomScaffoldState.drawerState.open()
+                            }
+                        },
                     painter = painterResource (id = R.drawable.menubar),
                     contentDescription = "menubar")
             }, colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -1130,8 +1130,8 @@ fun TodoUpdateBottomSheet(
 
     var title by remember { mutableStateOf(Todo.title) }
     var description by remember { mutableStateOf(Todo.description) }
+    var timeString by remember { mutableStateOf(Todo.time) }
     var time by remember { mutableStateOf(Todo.time) }
-    var timeValue by remember { mutableStateOf(Todo.time) }
 
     var done by remember { mutableStateOf(Todo.done) }
     var color by remember { mutableStateOf(Todo.color) }
@@ -1161,9 +1161,9 @@ fun TodoUpdateBottomSheet(
 //        timeValue = Todo.time
 
         if (Todo.time == "9999") {
-           time = "미지정"
+            timeString = "미지정"
         } else {
-            time = Todo.time
+            timeString = Todo.time
         }
 
         // 24 시간이 넘어가면 다른 숫자로 파악하여 빈값처리
@@ -1189,8 +1189,8 @@ fun TodoUpdateBottomSheet(
     val timePickerDialog = TimePickerDialog(
         context, { _, hour: Int, minute: Int ->
             amPm = if (hour < 12) "오전" else "오후"
+            timeString = String.format("%02d%02d", hour, minute)
             time = String.format("%02d%02d", hour, minute)
-            timeValue = String.format("%02d%02d", hour, minute)
         }, hour, minute, false
     )
 
@@ -1244,8 +1244,6 @@ fun TodoUpdateBottomSheet(
         }
     }
 
-
-
     Column(
         modifier = Modifier
 //            .fillMaxWidth()
@@ -1268,7 +1266,11 @@ fun TodoUpdateBottomSheet(
                     title = Todo.title
                     description = Todo.description
                     color = Todo.color
-                    time = Todo.time
+                    timeString = if(Todo.time == "9999") {
+                        "미지정"
+                    } else{
+                        Todo.time
+                    }
                 }
             }) {
                 Icon(imageVector = Icons.Filled.Close, contentDescription = null)
@@ -1288,7 +1290,7 @@ fun TodoUpdateBottomSheet(
                             Todo?.done!!,
                             description,
                             color.toString(),
-                            timeValue,
+                            time,
                             Todo?.id.toString(),
                             response = {
                                 readTodo(
@@ -1437,7 +1439,7 @@ fun TodoUpdateBottomSheet(
                 modifier = Modifier.clickable {
                     timePickerDialog.show()
                 },
-                text = "$amPm ${convertToLayoutTimeFormat(time)}",
+                text = "$amPm ${convertToLayoutTimeFormat(timeString)}",
                 lineHeight = 19.sp,
                 fontSize = 15.sp,
                 color = Color(0xff9E9E9E)
@@ -1456,91 +1458,89 @@ fun TodoUpdateBottomSheet(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-//            IconButton(
-//                onClick = { onButtonClick("1") }
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.redbutton),
-//                    contentDescription = "redbutton")
-//            }
-//
-//            IconButton(
-//                onClick = { onButtonClick("2") }
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.yellowbutton),
-//                    contentDescription = "yellowbutton")
-//            }
-//
-//            IconButton(
-//                onClick = { onButtonClick("3") }
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.greenbutton),
-//                    contentDescription = "greenbutton")
-//            }
-//
-//            IconButton(
-//                onClick = { onButtonClick("4") }
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.bluebutton),
-//                    contentDescription = "bluebutton")
-//            }
-//
-//            IconButton(
-//                onClick = { onButtonClick("5") }
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.pinkbutton),
-//                    contentDescription = "pinkbutton")
-//            }
-//
-//            IconButton(
-//                onClick = { onButtonClick("6") }
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.purplebutton),
-//                    contentDescription = "purplebutton")
-//            }
+            Image(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clickable {
+                        onButtonClick("1")
+                    },
+                painter = if (color == 1) {
+                    painterResource(id = R.drawable.redselecbutton)
+                                          } else {
+                    painterResource(id = R.drawable.redbutton)
+                                                 },
+                contentDescription = null
+            )
 
+            Image(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clickable {
+                        onButtonClick("2")
+                    },
+                painter = if(color == 2) {
+                    painterResource(id = R.drawable.yellowselecbutton)
+                                         } else{
+                    painterResource(id = R.drawable.yellowbutton)
+                                               },
+                contentDescription = null
+            )
 
-            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
-                onClick = {
-                    onButtonClick("1")
-                },
-                content = {})
-            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
-                onClick = {
-                    onButtonClick("2")
-                },
-                content = {})
-            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
-                onClick = {
-                    onButtonClick("3")
-                },
-                content = {})
-            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
-                onClick = {
-                    onButtonClick("4")
-                },
-                content = {})
-            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
-                onClick = {
-                    onButtonClick("5")
-                },
-                content = {})
-            Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
-                onClick = {
-                    onButtonClick("6")
-                },
-                content = {})
+            Image(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clickable {
+                        onButtonClick("3")
+                    },
+                painter = if(color == 3) {
+                    painterResource(id = R.drawable.greenselecbutton)
+                                         } else{
+                    painterResource(id = R.drawable.greenbutton)
+                                               },
+                contentDescription = null
+            )
+
+            Image(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clickable {
+                        onButtonClick("4")
+                    },
+                painter = if(color == 4) {
+                                         painterResource(id = R.drawable.blueselecbutton)
+                                         } else{
+                    painterResource(id = R.drawable.bluebutton)
+                                               },
+                contentDescription = null
+            )
+
+            Image(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clickable {
+                        onButtonClick("5")
+                    },
+                painter = if(color == 5) {
+                                         painterResource(id = R.drawable.pinkselecbutton)
+                                         } else{
+                    painterResource(id = R.drawable.pinkbutton)
+                                               },
+                contentDescription = null
+            )
+
+            Image(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clickable {
+                        onButtonClick("6")
+                    },
+                painter = if(color == 6){
+                                        painterResource(id = R.drawable.purpleselecbutton)
+                                        } else{
+                    painterResource(id = R.drawable.purplebutton)
+                                              },
+                contentDescription = null
+            )
         }
     }
 }
