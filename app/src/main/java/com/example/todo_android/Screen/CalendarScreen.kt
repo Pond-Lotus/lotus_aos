@@ -52,7 +52,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ExperimentalMotionApi
 import com.example.todo_android.Component.FloatingStateType
+import com.example.todo_android.Component.MonthWeekToggleSwitch
 import com.example.todo_android.Component.ProfileModalDrawer
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
@@ -311,6 +313,7 @@ fun readCategory(
     })
 }
 
+@ExperimentalMotionApi
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @SuppressLint(
@@ -330,6 +333,8 @@ fun CalendarScreen(routeAction: RouteAction) {
     var isVisibility by remember { mutableStateOf(false) }
 
     var multiFloatingState by remember { mutableStateOf(FloatingStateType.Collapsed) }
+
+    val animateState = remember { mutableStateOf(false) }
 
     val colorFAB = if (multiFloatingState == FloatingStateType.Expanded) {
         Color(0xff9E9E9E)
@@ -444,48 +449,54 @@ fun CalendarScreen(routeAction: RouteAction) {
             )
         },
         topBar = {
-            CenterAlignedTopAppBar(title = {
-                Box(
-                    modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .width(120.dp)
-                            .height(35.dp)
-                            .clip(shape = RoundedCornerShape(7.dp))
-                            .background(Color(0xffe9e9ed))
-                            .padding(start = 4.dp, end = 4.dp, top = 4.dp, bottom = 4.dp)
-                    ) {
-                        states.forEach { text ->
-                            Text(text = text,
-                                fontSize = 10.sp,
-                                lineHeight = 14.sp,
-                                color = if (text == selectedOption) {
-                                    Color.Black
-                                } else {
-                                    Color.Gray
-                                },
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .clip(shape = RoundedCornerShape(5.dp))
-                                    .clickable {
-                                        onSelectionChange(text)
-                                        selectCalendar = (text == states[1])
-                                    }
-                                    .background(
-                                        if (text == selectedOption) {
-                                            Color.White
-                                        } else {
-                                            Color(0xffe9e9ed)
-                                        }
-                                    )
-                                    .padding(
-                                        vertical = 6.dp,
-                                        horizontal = (18.5).dp,
-                                    ))
-                        }
-                    }
-                }
+            CenterAlignedTopAppBar(
+                title = {
+                    MonthWeekToggleSwitch(
+                        width = 115,
+                        height = 35,
+                        animateState = animateState
+                    )
+//                Box(
+//                    modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
+//                ) {
+//                    Row(
+//                        modifier = Modifier
+//                            .width(120.dp)
+//                            .height(35.dp)
+//                            .clip(shape = RoundedCornerShape(7.dp))
+//                            .background(Color(0xffe9e9ed))
+//                            .padding(start = 4.dp, end = 4.dp, top = 4.dp, bottom = 4.dp)
+//                    ) {
+//                        states.forEach { text ->
+//                            Text(text = text,
+//                                fontSize = 10.sp,
+//                                lineHeight = 14.sp,
+//                                color = if (text == selectedOption) {
+//                                    Color.Black
+//                                } else {
+//                                    Color.Gray
+//                                },
+//                                fontWeight = FontWeight.Bold,
+//                                modifier = Modifier
+//                                    .clip(shape = RoundedCornerShape(5.dp))
+//                                    .clickable {
+//                                        onSelectionChange(text)
+//                                        selectCalendar = (text == states[1])
+//                                    }
+//                                    .background(
+//                                        if (text == selectedOption) {
+//                                            Color.White
+//                                        } else {
+//                                            Color(0xffe9e9ed)
+//                                        }
+//                                    )
+//                                    .padding(
+//                                        vertical = 6.dp,
+//                                        horizontal = (18.5).dp,
+//                                    ))
+//                        }
+//                    }
+//                }
             }, navigationIcon = {
 //                IconButton(onClick = {
 //                    scope.launch {

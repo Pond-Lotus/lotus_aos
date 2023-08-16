@@ -26,10 +26,6 @@ import com.example.todo_android.R
 import com.example.todo_android.Util.MyApplication
 import com.example.todo_android.ui.theme.buttonColor
 
-fun goMain(route: NAV_ROUTE, routeAction: RouteAction) {
-    routeAction.navTo(route)
-}
-
 @Composable
 fun LottieScreen(routeAction: RouteAction) {
 
@@ -56,23 +52,30 @@ fun LottieScreen(routeAction: RouteAction) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        LottieAnimation(
-            composition = composition,
-            progress = progress,
-            contentScale = ContentScale.FillHeight,
-            modifier = Modifier.size(300.dp)
-        )
 
-
-        Text(
-            text = stringResource(id = R.string.SucessRegister),
-            style = TextStyle(
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color(0xff9E9E9E),
-                fontFamily = FontFamily.SansSerif
+        Box(modifier = Modifier.size(300.dp)) {
+            LottieAnimation(
+                composition = composition,
+                progress = progress,
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier.fillMaxSize()
             )
-        )
+
+
+            Text(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                text = stringResource(id = R.string.SucessRegister),
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xff9E9E9E),
+                    fontFamily = FontFamily.SansSerif
+                )
+            )
+        }
+
+
+
 
         Spacer(modifier = Modifier.height(4.dp))
 
@@ -94,7 +97,7 @@ fun LottieScreen(routeAction: RouteAction) {
             shape = RoundedCornerShape(18.dp),
             colors = ButtonDefaults.buttonColors(buttonColor),
             onClick = {
-                goMain(NAV_ROUTE.LOGIN, routeAction)
+                routeAction.navTo(NAV_ROUTE.LOGIN)
             }) {
             Text(
                 color = Color.Black,

@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,12 +33,13 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
     SETALARM("SETALARM", "알림 설정 화면")
 }
 
+@ExperimentalMotionApi
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
-fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
+fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.LOTTIE) {
 
     // 네비게이션 컨트롤러 가져오기
     val navController = rememberNavController()
