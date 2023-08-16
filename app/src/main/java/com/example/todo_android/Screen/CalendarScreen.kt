@@ -325,11 +325,11 @@ fun readCategory(
 fun CalendarScreen(routeAction: RouteAction) {
 
     val states = listOf("월간", "주간")
-    var selectedOption by remember { mutableStateOf(states[0]) }
+//    var selectedOption by remember { mutableStateOf(states[0]) }
 
-    val onSelectionChange = { text: String -> selectedOption = text }
+//    val onSelectionChange = { text: String -> selectedOption = text }
 
-    var selectCalendar by remember { mutableStateOf(false) }
+//    var selectCalendar by remember { mutableStateOf(false) }
     var isVisibility by remember { mutableStateOf(false) }
 
     var multiFloatingState by remember { mutableStateOf(FloatingStateType.Collapsed) }
@@ -456,55 +456,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         height = 35,
                         animateState = animateState
                     )
-//                Box(
-//                    modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
-//                ) {
-//                    Row(
-//                        modifier = Modifier
-//                            .width(120.dp)
-//                            .height(35.dp)
-//                            .clip(shape = RoundedCornerShape(7.dp))
-//                            .background(Color(0xffe9e9ed))
-//                            .padding(start = 4.dp, end = 4.dp, top = 4.dp, bottom = 4.dp)
-//                    ) {
-//                        states.forEach { text ->
-//                            Text(text = text,
-//                                fontSize = 10.sp,
-//                                lineHeight = 14.sp,
-//                                color = if (text == selectedOption) {
-//                                    Color.Black
-//                                } else {
-//                                    Color.Gray
-//                                },
-//                                fontWeight = FontWeight.Bold,
-//                                modifier = Modifier
-//                                    .clip(shape = RoundedCornerShape(5.dp))
-//                                    .clickable {
-//                                        onSelectionChange(text)
-//                                        selectCalendar = (text == states[1])
-//                                    }
-//                                    .background(
-//                                        if (text == selectedOption) {
-//                                            Color.White
-//                                        } else {
-//                                            Color(0xffe9e9ed)
-//                                        }
-//                                    )
-//                                    .padding(
-//                                        vertical = 6.dp,
-//                                        horizontal = (18.5).dp,
-//                                    ))
-//                        }
-//                    }
-//                }
             }, navigationIcon = {
-//                IconButton(onClick = {
-//                    scope.launch {
-//                        bottomScaffoldState.drawerState.open()
-//                    }
-//                }) {
-//                    Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
-//                }
                 Image(
                     modifier = Modifier
                         .size(50.dp)
@@ -518,8 +470,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     contentDescription = "menubar")
             }, colors = TopAppBarDefaults.smallTopAppBarColors(
                 containerColor = Color.White, titleContentColor = Color.Black
-            )
-            )
+            ))
         },
         floatingActionButton = {
             AddTodoFloatingButton(
@@ -555,7 +506,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         )
                     )
             ) {
-                if (selectCalendar) {
+                if (animateState.value) {
                     Kalendar(modifier = Modifier.fillMaxWidth(),
                         kalendarHeaderConfig = KalendarHeaderConfig(
                             kalendarTextConfig = KalendarTextConfig(
