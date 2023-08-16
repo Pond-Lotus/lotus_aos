@@ -48,13 +48,20 @@ fun MonthWeekToggleSwitch(
         }
     )
 
-    val toggleSwitchText by animateColorAsState(
+    val toggleSwitchMonthText by animateColorAsState(
         targetValue = if (animateState.value) {
             Color(0xFF9E9E9E) // when on
         } else {
-            Color.Black// when off
+            Color.Black // when off
         },
-        animationSpec = tween(600)
+    )
+
+    val toggleSwitchWeekText by animateColorAsState(
+        targetValue = if (animateState.value) {
+            Color.Black // when on
+        } else {
+            Color(0xFF9E9E9E) // when off
+        },
     )
 
     MotionLayout(
@@ -91,7 +98,7 @@ fun MonthWeekToggleSwitch(
         ) {
             Text(
                 text = "월간",
-                color = toggleSwitchText,
+                color = toggleSwitchMonthText,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Black
             )
@@ -104,7 +111,7 @@ fun MonthWeekToggleSwitch(
         ) {
             Text(
                 text = "주간",
-                color = toggleSwitchText,
+                color = toggleSwitchWeekText,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Black
             )
