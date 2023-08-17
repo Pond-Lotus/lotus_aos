@@ -499,7 +499,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                     )
             ) {
                 if (animateState.value) {
-                    Kalendar(currentDay = null,
+                    Kalendar(
+                        currentDay = null,
                         kalendarType = KalendarType.Oceanic,
                         kalendarHeaderTextKonfig = KalendarTextKonfig(
                             kalendarTextColor = Color.Black, kalendarTextSize = 22.sp
@@ -550,7 +551,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         },
                         headerContent = { month, year ->
                             Row(
-                                modifier = Modifier.padding(start = 18.dp, bottom = 16.dp),
+                                modifier = Modifier.padding(start = 20.dp, bottom = 16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Start
                             ) {
@@ -578,7 +579,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                     )
 
                 } else {
-                    Kalendar(currentDay = null,
+                    Kalendar(
+                        currentDay = null,
                         kalendarType = KalendarType.Firey,
                         kalendarHeaderTextKonfig = KalendarTextKonfig(
                             kalendarTextColor = Color.Black, kalendarTextSize = 22.sp
@@ -629,7 +631,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         },
                         headerContent = { month, year ->
                             Row(
-                                modifier = Modifier.padding(start = 18.dp, bottom = 16.dp),
+                                modifier = Modifier.padding(start = 20.dp, bottom = 16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Start) {
                                 Image(
