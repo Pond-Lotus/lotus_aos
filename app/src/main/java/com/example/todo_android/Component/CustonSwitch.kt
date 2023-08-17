@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -79,8 +80,10 @@ fun MonthWeekToggleSwitch(
                 .clip(RoundedCornerShape(7.dp))
                 .layoutId("ToggleSwitchBackground")
                 .background(Color(0xffe9e9e9))
-                .clickable {
-                    animateState.value = !animateState.value
+                .pointerInput(Unit) {
+                    detectTapGestures(onPress = {
+                        animateState.value = !animateState.value
+                    })
                 }
         )
 
