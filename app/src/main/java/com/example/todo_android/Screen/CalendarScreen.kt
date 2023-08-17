@@ -22,11 +22,9 @@ import androidx.compose.material.DismissDirection
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -44,7 +42,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -70,17 +67,18 @@ import com.example.todo_android.Response.TodoResponse.*
 import com.example.todo_android.Util.MyApplication
 import com.example.todo_android.ui.theme.deleteBackground
 import com.himanshoe.kalendar.Kalendar
-import com.himanshoe.kalendar.color.KalendarThemeColor
-import com.himanshoe.kalendar.component.day.config.KalendarDayColors
-import com.himanshoe.kalendar.component.header.config.KalendarHeaderConfig
-import com.himanshoe.kalendar.component.text.config.KalendarTextColor
-import com.himanshoe.kalendar.component.text.config.KalendarTextConfig
-import com.himanshoe.kalendar.component.text.config.KalendarTextSize
-import com.himanshoe.kalendar.model.KalendarDay
-import com.himanshoe.kalendar.model.KalendarEvent
-import com.himanshoe.kalendar.model.KalendarType
+import com.himanshoe.kalendar.KalendarEvent
+import com.himanshoe.kalendar.KalendarEvents
+import com.himanshoe.kalendar.KalendarType
+import com.himanshoe.kalendar.color.KalendarColor
+import com.himanshoe.kalendar.color.KalendarColors
+import com.himanshoe.kalendar.ui.component.day.KalendarDayKonfig
+import com.himanshoe.kalendar.ui.component.header.KalendarTextKonfig
+import com.himanshoe.kalendar.ui.firey.DaySelectionMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
+import kotlinx.datetime.number
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -88,8 +86,11 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.sql.Time
+import java.time.Clock
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
+import java.time.Year
 import java.util.*
 
 fun createTodo(
@@ -324,12 +325,6 @@ fun readCategory(
 @Composable
 fun CalendarScreen(routeAction: RouteAction) {
 
-    val states = listOf("월간", "주간")
-//    var selectedOption by remember { mutableStateOf(states[0]) }
-
-//    val onSelectionChange = { text: String -> selectedOption = text }
-
-//    var selectCalendar by remember { mutableStateOf(false) }
     var isVisibility by remember { mutableStateOf(false) }
 
     var multiFloatingState by remember { mutableStateOf(FloatingStateType.Collapsed) }
@@ -354,7 +349,6 @@ fun CalendarScreen(routeAction: RouteAction) {
     var dayString by remember {
         mutableStateOf("")
     }
-
     var todoList = remember { mutableStateListOf<RToDoResponse>() }
 
     val focusRequester = remember { FocusRequester() }
@@ -441,21 +435,17 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }
     })
-    BottomSheetScaffold(
-        scaffoldState = bottomScaffoldState,
+    BottomSheetScaffold(scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
                 scope = scope, bottomScaffoldState = bottomScaffoldState, routeAction = routeAction
             )
         },
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    MonthWeekToggleSwitch(
-                        width = 115,
-                        height = 35,
-                        animateState = animateState
-                    )
+            CenterAlignedTopAppBar(title = {
+                MonthWeekToggleSwitch(
+                    width = 115, height = 35, animateState = animateState
+                )
             }, navigationIcon = {
                 Image(
                     modifier = Modifier
@@ -466,11 +456,13 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 bottomScaffoldState.drawerState.open()
                             }
                         },
-                    painter = painterResource (id = R.drawable.menubar),
-                    contentDescription = "menubar")
+                    painter = painterResource(id = R.drawable.menubar),
+                    contentDescription = "menubar"
+                )
             }, colors = TopAppBarDefaults.smallTopAppBarColors(
                 containerColor = Color.White, titleContentColor = Color.Black
-            ))
+            )
+            )
         },
         floatingActionButton = {
             AddTodoFloatingButton(
@@ -507,30 +499,33 @@ fun CalendarScreen(routeAction: RouteAction) {
                     )
             ) {
                 if (animateState.value) {
-                    Kalendar(modifier = Modifier.fillMaxWidth(),
-                        kalendarHeaderConfig = KalendarHeaderConfig(
-                            kalendarTextConfig = KalendarTextConfig(
-                                kalendarTextColor = KalendarTextColor(Color.Black),
-                                kalendarTextSize = KalendarTextSize.SubTitle
+                    Kalendar(currentDay = null,
+                        kalendarType = KalendarType.Oceanic,
+                        kalendarHeaderTextKonfig = KalendarTextKonfig(
+                            kalendarTextColor = Color.Black, kalendarTextSize = 22.sp
+                        ),
+                        kalendarColors = KalendarColors(color = List(12) {
+                            KalendarColor(
+                                backgroundColor = Color.White,
+                                dayBackgroundColor = Color(0xFFFFDAB9),
+                                headerTextColor = Color.Black
                             )
+                        }),
+                        kalendarDayKonfig = KalendarDayKonfig(
+                            size = 56.dp,
+                            textSize = 13.sp,
+                            textColor = Color.Black,
+                            selectedTextColor = Color.Black,
+                            borderColor = Color.Transparent
                         ),
-                        kalendarType = KalendarType.Oceanic(),
-                        kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                        kalendarThemeColor = KalendarThemeColor(
-                            backgroundColor = Color.White,
-                            dayBackgroundColor = Color(0xffFBE3C7),
-                            headerTextColor = Color.Black
-                        ),
-                        onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
-
-                            year = kalendarDay.localDate.year.toString()
-                            month = kalendarDay.localDate.monthNumber.toString()
-                            day = kalendarDay.localDate.dayOfMonth.toString()
+                        daySelectionMode = DaySelectionMode.Single,
+                        onDayClick = { localDate: kotlinx.datetime.LocalDate, kalendarEvents: List<KalendarEvent> ->
+                            year = localDate.year.toString()
+                            month = localDate.monthNumber.toString()
+                            day = localDate.dayOfMonth.toString()
 
                             val selectedDate = LocalDate.of(
-                                kalendarDay.localDate.year,
-                                kalendarDay.localDate.monthNumber,
-                                kalendarDay.localDate.dayOfMonth
+                                localDate.year, localDate.monthNumber, localDate.dayOfMonth
                             )
                             val dayOfWeek = selectedDate.dayOfWeek
 
@@ -552,32 +547,64 @@ fun CalendarScreen(routeAction: RouteAction) {
                                     }
                                 }
                             }
-                        })
+                        },
+                        headerContent = { month, year ->
+                            Row(
+                                modifier = Modifier.padding(start = 18.dp, bottom = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                Image(
+                                    modifier = Modifier
+                                        .size(22.dp),
+                                    painter = painterResource(
+                                        id = R.drawable.headertextemogi
+                                    ),
+                                    contentDescription = null
+                                )
+
+                                Spacer(modifier = Modifier.width(4.dp))
+
+                                Text(
+                                    text = "${year}년 ${month.number}월",
+                                    fontSize = 22.sp,
+                                    lineHeight = 28.6.sp,
+                                    fontWeight = FontWeight(700),
+                                    color = Color(0xFF000000)
+                                )
+                            }
+                        },
+                        showLabel = true
+                    )
+
                 } else {
-                    Kalendar(modifier = Modifier.fillMaxWidth(),
-                        kalendarHeaderConfig = KalendarHeaderConfig(
-                            kalendarTextConfig = KalendarTextConfig(
-                                kalendarTextColor = KalendarTextColor(Color.Black),
-                                kalendarTextSize = KalendarTextSize.SubTitle
-                            )
-                        ),
+                    Kalendar(currentDay = null,
                         kalendarType = KalendarType.Firey,
-                        kalendarDayColors = KalendarDayColors(Color.Black, Color.Black),
-                        kalendarThemeColor = KalendarThemeColor(
-                            backgroundColor = Color.White,
-                            dayBackgroundColor = Color(0xffFBE3C7),
-                            headerTextColor = Color.Black
+                        kalendarHeaderTextKonfig = KalendarTextKonfig(
+                            kalendarTextColor = Color.Black, kalendarTextSize = 22.sp
                         ),
-                        onCurrentDayClick = { kalendarDay: KalendarDay, kalendarEvents: List<KalendarEvent> ->
-
-                            year = kalendarDay.localDate.year.toString()
-                            month = kalendarDay.localDate.monthNumber.toString()
-                            day = kalendarDay.localDate.dayOfMonth.toString()
+                        kalendarColors = KalendarColors(color = List(12) {
+                            KalendarColor(
+                                backgroundColor = Color.White,
+                                dayBackgroundColor = Color(0xFFFFDAB9),
+                                headerTextColor = Color.Black
+                            )
+                        }),
+                        kalendarDayKonfig = KalendarDayKonfig(
+                            size = 56.dp,
+                            textSize = 13.sp,
+                            textColor = Color.Black,
+                            selectedTextColor = Color.Black,
+                            borderColor = Color.Transparent
+                        ),
+                        daySelectionMode = DaySelectionMode.Single,
+                        onDayClick = { localDate: kotlinx.datetime.LocalDate, kalendarEvents: List<KalendarEvent> ->
+                            year = localDate.year.toString()
+                            month = localDate.monthNumber.toString()
+                            day = localDate.dayOfMonth.toString()
 
                             val selectedDate = LocalDate.of(
-                                kalendarDay.localDate.year,
-                                kalendarDay.localDate.monthNumber,
-                                kalendarDay.localDate.dayOfMonth
+                                localDate.year, localDate.monthNumber, localDate.dayOfMonth
                             )
                             val dayOfWeek = selectedDate.dayOfWeek
 
@@ -591,7 +618,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 7 -> "일요일"
                                 else -> ""
                             }
-
                             scope.launch {
                                 readTodo(token, year, month, day) {
                                     todoList.clear()
@@ -600,7 +626,34 @@ fun CalendarScreen(routeAction: RouteAction) {
                                     }
                                 }
                             }
-                        })
+                        },
+                        headerContent = { month, year ->
+                            Row(
+                                modifier = Modifier.padding(start = 18.dp, bottom = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start) {
+                                Image(
+                                    modifier = Modifier
+                                        .size(22.dp),
+                                    painter = painterResource(
+                                        id = R.drawable.headertextemogi
+                                    ),
+                                    contentDescription = null
+                                )
+
+                                Spacer(modifier = Modifier.width(4.dp))
+
+                                Text(
+                                    text = "${year}년 ${month.number}월",
+                                    fontSize = 22.sp,
+                                    lineHeight = 28.6.sp,
+                                    fontWeight = FontWeight(700),
+                                    color = Color(0xFF000000)
+                                )
+                            }
+                        },
+                        showLabel = true
+                    )
                 }
             }
 
@@ -721,8 +774,7 @@ fun AddTodoFloatingButton(
 
         Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
-        FloatingActionButton(
-            modifier = Modifier.size(63.dp),
+        FloatingActionButton(modifier = Modifier.size(63.dp),
             containerColor = backgroundColor,
             shape = CircleShape,
             onClick = {
@@ -956,8 +1008,7 @@ fun TodoItemList(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Button(
-                        modifier = Modifier.size(9.dp),
+                    Button(modifier = Modifier.size(9.dp),
                         onClick = { /*TODO*/ },
                         enabled = false,
                         content = {},
@@ -1085,7 +1136,7 @@ fun DeleteBackground() {
 @Composable
 fun TodoUpdateBottomSheet(
     scope: CoroutineScope,
-    bottomSheetScaffoldState: BottomSheetScaffoldState,
+    bottomSheetScaffoldState: androidx.compose.material.BottomSheetScaffoldState,
     Todo: RToDoResponse,
     todoList: MutableList<RToDoResponse>,
 ) {
@@ -1107,17 +1158,13 @@ fun TodoUpdateBottomSheet(
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(
-        key1 = Todo.title,
-        key2 = Todo.description,
-        key3 = Todo.color,
-        block = {
-            scope.launch {
-                title = Todo.title
-                description = Todo.description
-                color = Todo.color
-            }
-        })
+    LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
+        scope.launch {
+            title = Todo.title
+            description = Todo.description
+            color = Todo.color
+        }
+    })
 
     LaunchedEffect(key1 = Todo.time, key2 = Todo.done, block = {
 //        timeValue = Todo.time
@@ -1129,7 +1176,7 @@ fun TodoUpdateBottomSheet(
         }
 
         // 24 시간이 넘어가면 다른 숫자로 파악하여 빈값처리
-        if(Todo.time != "미지정"){
+        if (Todo.time != "미지정") {
             amPm = if (Todo.time.substring(0, 2).toInt() < 24) {
                 //  12시간 미만이면 오전 아니면 오후
                 if (Todo.time.substring(0, 2).toInt() <= 12) {
@@ -1138,7 +1185,7 @@ fun TodoUpdateBottomSheet(
                     "오후"
                 }
             } else {
-               ""
+                ""
             }
         }
 
@@ -1224,15 +1271,15 @@ fun TodoUpdateBottomSheet(
         ) {
             androidx.compose.material.IconButton(onClick = {
                 scope.launch {
-                    bottomSheetScaffoldState.bottomSheetState.collapse()
                     title = Todo.title
                     description = Todo.description
                     color = Todo.color
-                    timeString = if(Todo.time == "9999") {
+                    timeString = if (Todo.time == "9999") {
                         "미지정"
-                    } else{
+                    } else {
                         Todo.time
                     }
+                    bottomSheetScaffoldState.bottomSheetState.collapse()
                 }
             }) {
                 Icon(imageVector = Icons.Filled.Close, contentDescription = null)
@@ -1274,10 +1321,7 @@ fun TodoUpdateBottomSheet(
                 shape = RoundedCornerShape(20.dp)
             ) {
                 Text(
-                    text = "저장",
-                    color = Color.Black,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold
+                    text = "저장", color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -1425,13 +1469,11 @@ fun TodoUpdateBottomSheet(
                     .size(26.dp)
                     .clickable {
                         onButtonClick("1")
-                    },
-                painter = if (color == 1) {
+                    }, painter = if (color == 1) {
                     painterResource(id = R.drawable.redselecbutton)
-                                          } else {
+                } else {
                     painterResource(id = R.drawable.redbutton)
-                                                 },
-                contentDescription = null
+                }, contentDescription = null
             )
 
             Image(
@@ -1439,13 +1481,11 @@ fun TodoUpdateBottomSheet(
                     .size(26.dp)
                     .clickable {
                         onButtonClick("2")
-                    },
-                painter = if(color == 2) {
+                    }, painter = if (color == 2) {
                     painterResource(id = R.drawable.yellowselecbutton)
-                                         } else{
+                } else {
                     painterResource(id = R.drawable.yellowbutton)
-                                               },
-                contentDescription = null
+                }, contentDescription = null
             )
 
             Image(
@@ -1453,13 +1493,11 @@ fun TodoUpdateBottomSheet(
                     .size(26.dp)
                     .clickable {
                         onButtonClick("3")
-                    },
-                painter = if(color == 3) {
+                    }, painter = if (color == 3) {
                     painterResource(id = R.drawable.greenselecbutton)
-                                         } else{
+                } else {
                     painterResource(id = R.drawable.greenbutton)
-                                               },
-                contentDescription = null
+                }, contentDescription = null
             )
 
             Image(
@@ -1467,13 +1505,11 @@ fun TodoUpdateBottomSheet(
                     .size(26.dp)
                     .clickable {
                         onButtonClick("4")
-                    },
-                painter = if(color == 4) {
-                                         painterResource(id = R.drawable.blueselecbutton)
-                                         } else{
+                    }, painter = if (color == 4) {
+                    painterResource(id = R.drawable.blueselecbutton)
+                } else {
                     painterResource(id = R.drawable.bluebutton)
-                                               },
-                contentDescription = null
+                }, contentDescription = null
             )
 
             Image(
@@ -1481,13 +1517,11 @@ fun TodoUpdateBottomSheet(
                     .size(26.dp)
                     .clickable {
                         onButtonClick("5")
-                    },
-                painter = if(color == 5) {
-                                         painterResource(id = R.drawable.pinkselecbutton)
-                                         } else{
+                    }, painter = if (color == 5) {
+                    painterResource(id = R.drawable.pinkselecbutton)
+                } else {
                     painterResource(id = R.drawable.pinkbutton)
-                                               },
-                contentDescription = null
+                }, contentDescription = null
             )
 
             Image(
@@ -1495,13 +1529,11 @@ fun TodoUpdateBottomSheet(
                     .size(26.dp)
                     .clickable {
                         onButtonClick("6")
-                    },
-                painter = if(color == 6){
-                                        painterResource(id = R.drawable.purpleselecbutton)
-                                        } else{
+                    }, painter = if (color == 6) {
+                    painterResource(id = R.drawable.purpleselecbutton)
+                } else {
                     painterResource(id = R.drawable.purplebutton)
-                                              },
-                contentDescription = null
+                }, contentDescription = null
             )
         }
     }
