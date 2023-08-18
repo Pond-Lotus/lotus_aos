@@ -54,14 +54,12 @@ fun authCode(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit =
-        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create()).build()
+    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var authCodeRequest: AuthCodeRequest = retrofit.create(AuthCodeRequest::class.java)
 
-    authCodeRequest.requestCode(AuthCode(authEmail, code))
-        .enqueue(object : Callback<AuthCodeResponse> {
+    authCodeRequest.requestCode(AuthCode(authEmail, code)).enqueue(object : Callback<AuthCodeResponse> {
 
             //실패할 경우
             override fun onFailure(call: Call<AuthCodeResponse>, t: Throwable) {
@@ -96,7 +94,7 @@ fun authCode(
 fun AuthCodeScreen(routeAction: RouteAction) {
 
     var email by remember { mutableStateOf("") }
-    var authEmail = MyApplication.prefs.getData("email", email)
+    var authEmail = MyApplication.prefs.getData("email", "")
     var code by remember { mutableStateOf("") }
 
     var showErrorText by remember { mutableStateOf(false) }
@@ -113,15 +111,32 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
             }
         })
-    }) {
+    }, floatingActionButton = {
+        Image(
+            modifier = Modifier
+                .size(60.dp)
+                .clickable {
+                    if (authEmail != "") {
+                        scope.launch {
+                            authCode(authEmail, code, routeAction, response = {
+                                showErrorText = true
+                            })
+                        }
+                    }
+                },
+            painter = painterResource(id = R.drawable.authbutton),
+            contentDescription = null,
+            contentScale = ContentScale.Fit
+        )
+    }, floatingActionButtonPosition = FabPosition.End
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
-                .padding(start = 25.dp, end = 25.dp)
-                .imePadding(),
+                .padding(start = 25.dp, end = 25.dp, top = 150.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
 
             Column(
@@ -151,7 +166,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(38.dp))
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -196,7 +211,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                         }
                     })
 
-                Spacer(modifier = Modifier.height(13.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 if (showErrorText) {
                     Text(
@@ -208,48 +223,6 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                         color = Color(0xffFF9D4D)
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.height(250.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                Text(text = "")
-
-                Image(
-                    modifier = Modifier.size(60.dp)
-                        .clickable {
-                            if (email != "") {
-                                scope.launch {
-                                    authCode(authEmail, code, routeAction, response = {
-                                        showErrorText = true
-                                    })
-                                }
-                            }
-                        },
-                    painter = painterResource(id = R.drawable.authbutton),
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit
-                )
-
-//                IconButton(modifier = Modifier.size(43.dp),
-//                    colors = IconButtonDefaults.iconButtonColors(buttonColor),
-//                    onClick = {
-//                        scope.launch {
-//                            authCode(authEmail, code, routeAction, response = {
-//                                showErrorText = true
-//                            })
-//                        }
-//                    }) {
-//                    Icon(
-//                        painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_right_24),
-//                        contentDescription = null
-//                    )
-//                }
             }
         }
     }
@@ -273,9 +246,7 @@ fun EachTextFieldContainer(
             }, contentAlignment = Alignment.Center
     ) {
         Text(
-            text = text,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Medium
+            text = text, fontSize = 22.sp, fontWeight = FontWeight.Medium
         )
     }
 }

@@ -7,6 +7,9 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -26,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Navigation.Action.RouteAction
@@ -67,13 +71,13 @@ fun Register(
         var registerResponse: RegisterResponse? = null
 
         val okHttpClient: OkHttpClient by lazy {
-            val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+            val httpLoInterceptor =
+                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
             OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
         }
 
-        var retrofit =
-            Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create()).build()
+        var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create()).build()
 
         var registerRequest: RegisterRequest = retrofit.create(RegisterRequest::class.java)
 
@@ -149,23 +153,41 @@ fun RegisterScreen(routeAction: RouteAction) {
 
     Scaffold(modifier = Modifier
         .fillMaxSize()
-        .imePadding(), topBar = {
-        CenterAlignedTopAppBar(title = {}, navigationIcon = {
-            IconButton(onClick = {
-                routeAction.goBack()
-            }) {
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
-            }
-        })
-    }) {
+        .imePadding(),
+        topBar = {
+            CenterAlignedTopAppBar(title = {}, navigationIcon = {
+                IconButton(onClick = {
+                    routeAction.goBack()
+                }) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                }
+            })
+        }, floatingActionButton = {
+            Image(
+                modifier = Modifier
+                    .size(60.dp)
+                    .clickable {
+                        if (authEmail != "" && nickname != "" && password1 != "" && password2 != "") {
+                            scope.launch {
+                                Register(
+                                    authEmail, nickname, password1, password2, routeAction, context
+                                )
+                            }
+                        }
+                    },
+                painter = painterResource(id = R.drawable.authbutton),
+                contentDescription = null,
+                contentScale = ContentScale.Fit
+            )
+        }, floatingActionButtonPosition = FabPosition.End
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
-                .padding(start = 25.dp, end = 25.dp)
-                .imePadding(),
+                .padding(start = 25.dp, end = 25.dp, top = 150.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth()
@@ -194,7 +216,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(38.dp))
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -203,31 +225,13 @@ fun RegisterScreen(routeAction: RouteAction) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(id = R.string.ShowEmailText),
-                    fontSize = 13.sp,
+                    fontSize = 14.sp,
                     lineHeight = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xff808080)
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-//                TextField(modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(45.dp),
-////                    value = MyApplication.prefs.getData("email", ""),
-//                    value = "test",
-//                    textStyle = TextStyle(fontSize = 13.sp),
-//                    colors = TextFieldDefaults.textFieldColors(
-//                        containerColor = Color(0xffE9E9E9),
-//                        disabledLabelColor = Color(0xffE9E9E9),
-//                        focusedIndicatorColor = Color.Transparent,
-//                        unfocusedIndicatorColor = Color.Transparent
-//                    ),
-//                    readOnly = true,
-//                    shape = RoundedCornerShape(8.dp),
-//                    onValueChange = {
-//                        email = it
-//                    })
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Box(
                     modifier = Modifier
@@ -250,7 +254,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(id = R.string.ShowNicknameText),
-                    fontSize = 13.sp,
+                    fontSize = 14.sp,
                     lineHeight = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xff808080)
@@ -258,52 +262,56 @@ fun RegisterScreen(routeAction: RouteAction) {
 
                 BasicTextField(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp),
-                    value = nickname,
-                    onValueChange = {
-                        nickname = it
-                    },
-                    singleLine = true,
-                    textStyle = LocalTextStyle.current.copy(
-                        fontSize = 16.sp, lineHeight = 23.sp, fontWeight = FontWeight.Light
+                    .drawWithContent {
+                        drawContent()
+                        drawLine(
+                            color = Color(0xFFBFBFBF),
+                            start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                            end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                            strokeWidth = 1.dp.toPx()
+                        )
+                    }, value = nickname, onValueChange = {
+                    nickname = it
+                }, singleLine = true, maxLines = 1, textStyle = LocalTextStyle.current.copy(
+                    fontSize = 18.sp,
+                    lineHeight = 23.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Black
+                )
+                ) {
+                    TextFieldDefaults.TextFieldDecorationBox(colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent,
+                        disabledLabelColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
                     ),
-                    decorationBox = { innerTextField ->
-                        if (nickname.isEmpty()) {
+                        value = nickname,
+                        innerTextField = it,
+                        singleLine = true,
+                        enabled = true,
+                        interactionSource = remember { MutableInteractionSource() },
+                        contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
+                            start = 0.dp,
+                            bottom = 0.dp
+                        ),
+                        visualTransformation = VisualTransformation.None,
+                        placeholder = {
                             Text(
                                 text = stringResource(id = R.string.ShowNicknamePlaceholder),
-                                fontSize = 15.sp,
+                                fontSize = 14.sp,
                                 lineHeight = 19.sp,
                                 fontWeight = FontWeight.Light,
                                 color = Color(0xffD3D3D3),
                             )
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .drawWithContent {
-                                    drawContent()
-                                    drawLine(
-                                        color = Color(0xffbfbfbf),
-                                        start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
-                                        end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
-                                        strokeWidth = 1.dp.toPx()
-                                    )
-                                }, verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(modifier = Modifier.weight(1f)) {
-                                innerTextField()
-                            }
-                            Spacer(modifier = Modifier.padding(vertical = 14.dp))
-                        }
-                    })
-
+                        })
+                }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(id = R.string.ShowPasswordText),
-                    fontSize = 13.sp,
+                    fontSize = 14.sp,
                     lineHeight = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xff808080)
@@ -311,45 +319,50 @@ fun RegisterScreen(routeAction: RouteAction) {
 
                 BasicTextField(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp),
-                    value = password1,
-                    onValueChange = {
-                        password1 = it
-                        showErrorPassword1 = !it.matches(passwordPattern)
-                    },
-                    singleLine = true,
-                    textStyle = LocalTextStyle.current.copy(
-                        fontSize = 16.sp, lineHeight = 23.sp, fontWeight = FontWeight.Light
+                    .drawWithContent {
+                        drawContent()
+                        drawLine(
+                            color = Color(0xFFBFBFBF),
+                            start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                            end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                            strokeWidth = 1.dp.toPx()
+                        )
+                    }, value = password1, onValueChange = {
+                    password1 = it
+                    showErrorPassword1 = !it.matches(passwordPattern)
+                }, singleLine = true, maxLines = 1, textStyle = LocalTextStyle.current.copy(
+                    fontSize = 18.sp,
+                    lineHeight = 23.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Black
+                )
+                ) {
+                    TextFieldDefaults.TextFieldDecorationBox(colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent,
+                        disabledLabelColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
                     ),
-                    decorationBox = { innerTextField ->
-                        if (password1.isEmpty()) {
+                        value = password1,
+                        innerTextField = it,
+                        singleLine = true,
+                        enabled = true,
+                        interactionSource = remember { MutableInteractionSource() },
+                        contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
+                            start = 0.dp,
+                            bottom = 0.dp
+                        ),
+                        visualTransformation = VisualTransformation.None,
+                        placeholder = {
                             Text(
                                 text = stringResource(id = R.string.ShowPasswordPlaceholder),
-                                fontSize = 15.sp,
+                                fontSize = 14.sp,
                                 lineHeight = 19.sp,
                                 fontWeight = FontWeight.Light,
                                 color = Color(0xffD3D3D3),
                             )
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .drawWithContent {
-                                    drawContent()
-                                    drawLine(
-                                        color = Color(0xffbfbfbf),
-                                        start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
-                                        end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
-                                        strokeWidth = 1.dp.toPx()
-                                    )
-                                }, verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(modifier = Modifier.weight(1f)) {
-                                innerTextField()
-                            }
-                            Spacer(modifier = Modifier.padding(vertical = 14.dp))
-                        }
-                    })
+                        })
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -368,7 +381,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(id = R.string.CheckPasswordText),
-                    fontSize = 13.sp,
+                    fontSize = 14.sp,
                     lineHeight = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xff808080)
@@ -376,45 +389,50 @@ fun RegisterScreen(routeAction: RouteAction) {
 
                 BasicTextField(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp),
-                    value = password2,
-                    onValueChange = {
-                        password2 = it
-                        showMatchPassword = (it != password1)
-                    },
-                    singleLine = true,
-                    textStyle = LocalTextStyle.current.copy(
-                        fontSize = 16.sp, lineHeight = 23.sp, fontWeight = FontWeight.Light
+                    .drawWithContent {
+                        drawContent()
+                        drawLine(
+                            color = Color(0xFFBFBFBF),
+                            start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                            end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                            strokeWidth = 1.dp.toPx()
+                        )
+                    }, value = password2, onValueChange = {
+                    password2 = it
+                    showMatchPassword = (it != password1)
+                }, singleLine = true, maxLines = 1, textStyle = LocalTextStyle.current.copy(
+                    fontSize = 18.sp,
+                    lineHeight = 23.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Black
+                )
+                ) {
+                    TextFieldDefaults.TextFieldDecorationBox(colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent,
+                        disabledLabelColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
                     ),
-                    decorationBox = { innerTextField ->
-                        if (password2.isEmpty()) {
+                        value = password2,
+                        innerTextField = it,
+                        singleLine = true,
+                        enabled = true,
+                        interactionSource = remember { MutableInteractionSource() },
+                        contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
+                            start = 0.dp,
+                            bottom = 0.dp
+                        ),
+                        visualTransformation = VisualTransformation.None,
+                        placeholder = {
                             Text(
                                 text = stringResource(id = R.string.ShowPasswordPlaceholder),
-                                fontSize = 15.sp,
+                                fontSize = 14.sp,
                                 lineHeight = 19.sp,
                                 fontWeight = FontWeight.Light,
                                 color = Color(0xffD3D3D3),
                             )
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .drawWithContent {
-                                    drawContent()
-                                    drawLine(
-                                        color = Color(0xffbfbfbf),
-                                        start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
-                                        end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
-                                        strokeWidth = 1.dp.toPx()
-                                    )
-                                }, verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(modifier = Modifier.weight(1f)) {
-                                innerTextField()
-                            }
-                            Spacer(modifier = Modifier.padding(vertical = 14.dp))
-                        }
-                    })
+                        })
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -427,54 +445,6 @@ fun RegisterScreen(routeAction: RouteAction) {
                         color = Color(0xffFF9D4D)
                     )
 
-                }
-
-                Spacer(modifier = Modifier.height(60.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-                    Text(text = "")
-
-                    Image(
-                        modifier = Modifier
-                            .size(60.dp)
-                            .clickable {
-                                if (email != "") {
-                                    scope.launch {
-                                        Register(
-                                            authEmail,
-                                            nickname,
-                                            password1,
-                                            password2,
-                                            routeAction,
-                                            context
-                                        )
-                                    }
-                                }
-                            },
-                        painter = painterResource(id = R.drawable.authbutton),
-                        contentDescription = null,
-                        contentScale = ContentScale.Fit
-                    )
-
-//                    IconButton(modifier = Modifier.size(43.dp),
-//                        colors = IconButtonDefaults.iconButtonColors(buttonColor),
-//                        onClick = {
-//                            scope.launch {
-//                                Register(
-//                                    authEmail, nickname, password1, password2, routeAction, context
-//                                )
-//                            }
-//                        }) {
-//                        Icon(
-//                            painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_right_24),
-//                            contentDescription = null
-//                        )
-//                    }
                 }
             }
         }
