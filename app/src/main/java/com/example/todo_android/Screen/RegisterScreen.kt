@@ -184,6 +184,7 @@ fun RegisterScreen(routeAction: RouteAction) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .background(Color.White)
                 .padding(start = 25.dp, end = 25.dp, top = 150.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
