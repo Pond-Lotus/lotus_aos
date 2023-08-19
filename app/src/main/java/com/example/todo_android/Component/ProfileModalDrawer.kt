@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -53,9 +54,8 @@ fun Logout(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit =
-        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create()).build()
+    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var logoutRequest: LogoutRequest = retrofit.create(LogoutRequest::class.java)
 
@@ -153,21 +153,19 @@ fun ProfileModalDrawer(
                 )
             }
 
-            IconButton(modifier = Modifier.background(Color.White), onClick = {
-                scope.launch {
-                    bottomScaffoldState.drawerState.close()
-                }
-                routeAction.navTo(NAV_ROUTE.PROFILE)
-            }) {
-                Icon(
-                    modifier = Modifier
-                        .background(Color.White)
-                        .size(30.dp)
-                        .padding(start = 5.dp),
-                    painter = painterResource(id = R.drawable.ic_pen),
-                    contentDescription = null
-                )
-            }
+            Image(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable {
+                        scope.launch {
+                            bottomScaffoldState.drawerState.close()
+                        }
+                        routeAction.navTo(NAV_ROUTE.PROFILE)
+                    },
+                painter = painterResource(id = R.drawable.ic_pen),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(Color.Black)
+            )
         }
 
         Divider(
@@ -248,81 +246,95 @@ fun ProfileModalDrawer(
             thickness = 1.dp
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 15.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            Text(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 2.dp),
-                text = "그룹 설정",
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
-                lineHeight = 17.sp
-            )
-
-            IconButton(onClick = {
+        Column(modifier = Modifier
+            .wrapContentSize()
+            .clickable {
                 routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
             }) {
-                Icon(
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 2.dp),
+                    text = "그룹 설정",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                    lineHeight = 17.sp
+                )
+
+                Image(
                     modifier = Modifier.size(20.dp),
                     painter = painterResource(id = R.drawable.ic_arrow),
-                    contentDescription = null
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(Color(0xFF9E9E9E))
                 )
             }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 22.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
+                    onClick = {},
+                    content = {})
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
+                    onClick = {},
+                    content = {})
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
+                    onClick = {},
+                    content = {})
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
+                    onClick = {},
+                    content = {})
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
+                    onClick = {},
+                    content = {})
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
+                    onClick = {},
+                    content = {})
+            }
+
+            Divider(
+                modifier = Modifier.fillMaxWidth(), color = Color(0xffe9e9e9), thickness = 1.dp
+            )
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 22.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
-                onClick = {},
-                content = {})
-            Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
-                onClick = {},
-                content = {})
-            Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
-                onClick = {},
-                content = {})
-            Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
-                onClick = {},
-                content = {})
-            Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
-                onClick = {},
-                content = {})
-            Button(modifier = Modifier.size(width = 26.dp, height = 26.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
-                onClick = {},
-                content = {})
-        }
 
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth(),
-            color = Color(0xffe9e9e9),
-            thickness = 1.dp
-        )
 
         Spacer(modifier = Modifier.weight(1f))
 
         Divider(
-            modifier = Modifier.fillMaxWidth(),
-            color = Color(0xffe9e9e9),
-            thickness = 1.dp
+            modifier = Modifier.fillMaxWidth(), color = Color(0xffe9e9e9), thickness = 1.dp
         )
 
         Row(
@@ -384,17 +396,19 @@ fun showLogOutDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    TextButton(modifier = Modifier
-                        .background(Color(0xffE9E9E9))
-                        .weight(1f),
+                    TextButton(
+                        modifier = Modifier
+                            .background(Color(0xffE9E9E9))
+                            .weight(1f),
                         onClick = {
                             onDismissRequest()
                         }) {
                         Text(text = "취소", fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }
-                    TextButton(modifier = Modifier
-                        .background(Color(0xffFFDAB9))
-                        .weight(1f),
+                    TextButton(
+                        modifier = Modifier
+                            .background(Color(0xffFFDAB9))
+                            .weight(1f),
                         onClick = {
                             Logout(token, response = {
                                 onDismissRequest()
