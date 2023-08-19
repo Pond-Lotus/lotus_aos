@@ -7,11 +7,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -100,6 +102,20 @@ fun AuthCodeScreen(routeAction: RouteAction) {
     var showErrorText by remember { mutableStateOf(false) }
     var scope = rememberCoroutineScope()
 
+    var isButtonClickable by remember { mutableStateOf(false) }
+
+    val ButtonColor = if (code != "") {
+        Color(0xFFFFDAB9).copy(alpha = 1f)
+    } else {
+        Color(0xFFFFDAB9).copy(alpha = 0.5f)
+    }
+
+    if (code != "") {
+        isButtonClickable = true
+    } else {
+        isButtonClickable = false
+    }
+
 
     Scaffold(modifier = Modifier
         .fillMaxSize()
@@ -112,22 +128,24 @@ fun AuthCodeScreen(routeAction: RouteAction) {
             }
         })
     }, floatingActionButton = {
-        Image(
-            modifier = Modifier
-                .size(60.dp)
-                .clickable {
-                    if (authEmail != "") {
-                        scope.launch {
-                            authCode(authEmail, code, routeAction, response = {
-                                showErrorText = true
-                            })
-                        }
+        FloatingActionButton(
+            modifier = Modifier.size(60.dp),
+            elevation = FloatingActionButtonDefaults.elevation(0.dp),
+            shape = CircleShape, onClick = {
+                if (isButtonClickable) {
+                    scope.launch {
+                        authCode(authEmail, code, routeAction, response = {
+                            showErrorText = true
+                        })
                     }
-                },
-            painter = painterResource(id = R.drawable.authbutton),
-            contentDescription = null,
-            contentScale = ContentScale.Fit
-        )
+                }
+            }, containerColor = ButtonColor
+        ) {
+            Icon(
+                modifier = Modifier.size(50.dp),
+                imageVector = Icons.Filled.KeyboardArrowRight,
+                contentDescription = null)
+        }
     }, floatingActionButtonPosition = FabPosition.End
     ) {
         Column(

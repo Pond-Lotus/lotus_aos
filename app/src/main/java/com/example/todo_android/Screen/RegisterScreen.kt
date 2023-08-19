@@ -11,10 +11,12 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -151,35 +153,55 @@ fun RegisterScreen(routeAction: RouteAction) {
 
     var scope = rememberCoroutineScope()
 
+    var isButtonClickable by remember { mutableStateOf(false) }
+
+    val ButtonColor =
+        if (nickname != "" && passwordPattern.matches(password1) && password1.equals(password2)) {
+            Color(0xFFFFDAB9).copy(alpha = 1f)
+        } else {
+            Color(0xFFFFDAB9).copy(alpha = 0.5f)
+        }
+
+    if (nickname != "" && passwordPattern.matches(password1) && password1.equals(password2)) {
+        isButtonClickable = true
+    } else {
+        isButtonClickable = false
+    }
+
     Scaffold(modifier = Modifier
         .fillMaxSize()
-        .imePadding(),
-        topBar = {
-            CenterAlignedTopAppBar(title = {}, navigationIcon = {
-                IconButton(onClick = {
-                    routeAction.goBack()
-                }) {
-                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+        .imePadding(), topBar = {
+        CenterAlignedTopAppBar(title = {}, navigationIcon = {
+            IconButton(onClick = {
+                routeAction.goBack()
+            }) {
+                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+            }
+        })
+    }, floatingActionButton = {
+
+        FloatingActionButton(
+            modifier = Modifier.size(60.dp),
+            elevation = FloatingActionButtonDefaults.elevation(0.dp),
+            shape = CircleShape,
+            onClick = {
+                if (isButtonClickable) {
+                    scope.launch {
+                        Register(
+                            authEmail, nickname, password1, password2, routeAction, context
+                        )
+                    }
                 }
-            })
-        }, floatingActionButton = {
-            Image(
-                modifier = Modifier
-                    .size(60.dp)
-                    .clickable {
-                        if (authEmail != "" && nickname != "" && password1 != "" && password2 != "") {
-                            scope.launch {
-                                Register(
-                                    authEmail, nickname, password1, password2, routeAction, context
-                                )
-                            }
-                        }
-                    },
-                painter = painterResource(id = R.drawable.authbutton),
-                contentDescription = null,
-                contentScale = ContentScale.Fit
+            },
+            containerColor = ButtonColor
+        ) {
+            Icon(
+                modifier = Modifier.size(50.dp),
+                imageVector = Icons.Filled.KeyboardArrowRight,
+                contentDescription = null
             )
-        }, floatingActionButtonPosition = FabPosition.End
+        }
+    }, floatingActionButtonPosition = FabPosition.End
     ) {
         Column(
             modifier = Modifier
@@ -292,8 +314,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                         enabled = true,
                         interactionSource = remember { MutableInteractionSource() },
                         contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
-                            start = 0.dp,
-                            bottom = 0.dp
+                            start = 0.dp, bottom = 0.dp
                         ),
                         visualTransformation = VisualTransformation.None,
                         placeholder = {
@@ -350,8 +371,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                         enabled = true,
                         interactionSource = remember { MutableInteractionSource() },
                         contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
-                            start = 0.dp,
-                            bottom = 0.dp
+                            start = 0.dp, bottom = 0.dp
                         ),
                         visualTransformation = VisualTransformation.None,
                         placeholder = {
@@ -364,7 +384,6 @@ fun RegisterScreen(routeAction: RouteAction) {
                             )
                         })
                 }
-
                 Spacer(modifier = Modifier.height(8.dp))
 
                 if (showErrorPassword1) {
@@ -420,8 +439,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                         enabled = true,
                         interactionSource = remember { MutableInteractionSource() },
                         contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
-                            start = 0.dp,
-                            bottom = 0.dp
+                            start = 0.dp, bottom = 0.dp
                         ),
                         visualTransformation = VisualTransformation.None,
                         placeholder = {

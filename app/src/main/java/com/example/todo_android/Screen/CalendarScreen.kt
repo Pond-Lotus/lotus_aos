@@ -776,7 +776,7 @@ fun AddTodoFloatingButton(
 
         Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
-        FloatingActionButton(modifier = Modifier.size(63.dp),
+        FloatingActionButton(modifier = Modifier.size(60.dp),
             containerColor = backgroundColor,
             shape = CircleShape,
             onClick = {

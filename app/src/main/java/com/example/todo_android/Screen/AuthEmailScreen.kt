@@ -5,15 +5,18 @@ import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -95,7 +98,21 @@ fun AuthEmailScreen(routeAction: RouteAction) {
 
     var showErrorText by remember { mutableStateOf(false) }
 
+    var isButtonClickable by remember { mutableStateOf(false) }
+
     var scope = rememberCoroutineScope()
+
+    val ButtonColor = if (emailPattern.matches(email)) {
+        Color(0xFFFFDAB9).copy(alpha = 1f)
+    } else {
+        Color(0xFFFFDAB9).copy(alpha = 0.5f)
+    }
+
+    if (emailPattern.matches(email)) {
+        isButtonClickable = true
+    } else {
+        isButtonClickable = false
+    }
 
 
     Scaffold(modifier = Modifier
@@ -109,22 +126,27 @@ fun AuthEmailScreen(routeAction: RouteAction) {
             }
         })
     }, floatingActionButton = {
-        Image(
-            modifier = Modifier
-                .size(60.dp)
-                .clickable {
-                    if (email != "") {
-                        scope.launch {
-                            authEmail(email, routeAction, response = {
-                                showErrorText = true
-                            })
-                        }
+        FloatingActionButton(
+            modifier = Modifier.size(60.dp),
+            elevation = FloatingActionButtonDefaults.elevation(0.dp),
+            shape = CircleShape,
+            onClick = {
+                if (isButtonClickable) {
+                    scope.launch {
+                        authEmail(email, routeAction, response = {
+                            showErrorText = true
+                        })
                     }
-                },
-            painter = painterResource(id = R.drawable.authbutton),
-            contentDescription = null,
-            contentScale = ContentScale.Fit
-        )
+                }
+            },
+            containerColor = ButtonColor
+        ) {
+            Icon(
+                modifier = Modifier.size(50.dp),
+                imageVector = Icons.Filled.KeyboardArrowRight,
+                contentDescription = null
+            )
+        }
     }, floatingActionButtonPosition = FabPosition.End
     ) {
         Column(
