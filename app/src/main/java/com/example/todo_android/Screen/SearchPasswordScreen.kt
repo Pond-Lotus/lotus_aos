@@ -2,12 +2,14 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -19,6 +21,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -112,7 +115,7 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
     }
 
     Scaffold(modifier = Modifier
-        .fillMaxWidth()
+        .fillMaxSize()
         .imePadding(), topBar = {
         Box(
             Modifier
@@ -211,40 +214,48 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
                 lineHeight = 21.sp
             )
 
-            BasicTextField(modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 45.dp),
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 value = email,
                 onValueChange = {
                     email = it
                     showErrorText = false
                 },
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .border(
-                                width = 1.dp,
-                                color = Color(0xFFD0D0D0),
-                                shape = RoundedCornerShape(size = 8.dp)
-                            )
-                            .padding(horizontal = 2.dp, vertical = 12.dp), // inner padding
-                    ) {
-                        innerTextField()
-                    }
-                })
+                shape = RoundedCornerShape(8.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color(0xffffffff),
+                    disabledLabelColor = Color(0xffffffff),
+                    focusedIndicatorColor = Color(0xffD0D0D0),
+                    unfocusedIndicatorColor = Color(0xffD0D0D0)
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true
+            )
 
-            if (showErrorText) {
-                Text(
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 45.dp)
+            ) {
+                // TextField 아래의 레이아웃을 수정
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 28.dp),
-                    text = "유효한 이메일이 아닙니다.",
-                    fontSize = 13.sp,
-                    lineHeight = 19.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xffFF9D4D)
-                )
+                        .height(28.dp)
+                ) {
+                    if (showErrorText) {
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.TopStart),
+                            text = "유효한 이메일이 아닙니다.",
+                            fontSize = 13.sp,
+                            lineHeight = 19.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xffFF9D4D)
+                        )
+                    }
+                }
             }
 
             Button(
@@ -253,13 +264,16 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(color),
                 onClick = {
-                    if (isButtonClickable == true) {
+                    if (isButtonClickable) {
                         scope.launch {
                             SearchPassword(email, routeAction, response = {
-                                if (it?.resultCode == "200") {
-                                    openDialog = true
-                                } else {
-                                    showErrorText = true
+                                when (it?.resultCode) {
+                                    "200" -> {
+                                        openDialog = true
+                                    }
+                                    "500" -> {
+                                        showErrorText = true
+                                    }
                                 }
                             })
                         }
