@@ -10,6 +10,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
@@ -30,39 +32,53 @@ fun CategoryScreen(routeAction: RouteAction) {
     var categoryList = remember { mutableStateListOf<ReadCategoryResponse>() }
     var scope = rememberCoroutineScope()
 
-    LaunchedEffect(
-        key1 = Unit,
-        block = {
-            scope.launch {
-                readCategory(response = { response ->
-                    response?.data?.let { data ->
-                        categoryList.clear()
-                        data.forEach { (key, value) ->
-                            categoryList.add(ReadCategoryResponse(response.resultCode, mapOf(key to value)))
-                        }
+    LaunchedEffect(key1 = Unit, block = {
+        scope.launch {
+            readCategory(response = { response ->
+                response?.data?.let { data ->
+                    categoryList.clear()
+                    data.forEach { (key, value) ->
+                        categoryList.add(
+                            ReadCategoryResponse(
+                                response.resultCode, mapOf(key to value)
+                            )
+                        )
                     }
-                })
-            }
+                }
+            })
         }
-    )
+    })
 
     Scaffold(modifier = Modifier
         .fillMaxWidth()
         .imePadding(), topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(
-                text = "그룹 설정",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 24.sp
-            )
-        }, navigationIcon = {
-            IconButton(onClick = {
-                routeAction.goBack()
-            }) {
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
-            }
-        })
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .drawWithContent {
+                    drawContent()
+                    drawLine(
+                        color = Color(0x26000000), // 기존에 사용 중이셨던 보더 컬러를 선택하세요.
+                        start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                        end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                        strokeWidth = 1.dp.toPx() // 보더 두께를 원하는 값으로 설정하세요.
+                    )
+                }) {
+            CenterAlignedTopAppBar(title = {
+                Text(
+                    text = "그룹 설정",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 24.sp
+                )
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    routeAction.goBack()
+                }) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                }
+            })
+        }
     }) {
         Column(
             modifier = Modifier
@@ -80,7 +96,7 @@ fun CategoryScreen(routeAction: RouteAction) {
 @Composable
 fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
 
-    val colors = when(Category.data.keys.first()) {
+    val colors = when (Category.data.keys.first()) {
         "1" -> Color(0xffFFB4B4)
         "2" -> Color(0xffFFDCA8)
         "3" -> Color(0xffB1E0CF)
@@ -91,18 +107,16 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
     }
 
     Card(
-        modifier = Modifier.fillMaxSize(),
-        colors = CardDefaults.cardColors(Color.Transparent)
+        modifier = Modifier.fillMaxSize(), colors = CardDefaults.cardColors(Color.Transparent)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
-            Button(
-                modifier = Modifier.size(23.dp),
+            Button(modifier = Modifier.size(23.dp),
                 onClick = {},
                 content = {},
-                colors = ButtonDefaults.buttonColors(colors))
+                colors = ButtonDefaults.buttonColors(colors)
+            )
 
             Text(
                 text = Category.data.values.first().toString(), // 수정된 부분

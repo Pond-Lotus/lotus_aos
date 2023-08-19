@@ -14,6 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
@@ -36,20 +38,33 @@ fun SetAlarmScreen(routeAction: RouteAction) {
     Scaffold(modifier = Modifier
         .fillMaxSize()
         .imePadding(), topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(
-                text = "알림 설정",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 24.sp
-            )
-        }, navigationIcon = {
-            IconButton(onClick = {
-                routeAction.goBack()
-            }) {
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
-            }
-        })
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .drawWithContent {
+                    drawContent()
+                    drawLine(
+                        color = Color(0x26000000), // 기존에 사용 중이셨던 보더 컬러를 선택하세요.
+                        start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                        end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                        strokeWidth = 1.dp.toPx() // 보더 두께를 원하는 값으로 설정하세요.
+                    )
+                }) {
+            CenterAlignedTopAppBar(title = {
+                Text(
+                    text = "알림 설정",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 24.sp
+                )
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    routeAction.goBack()
+                }) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                }
+            })
+        }
     }) {
         Column(
             modifier = Modifier
@@ -75,16 +90,13 @@ fun SetAlarmScreen(routeAction: RouteAction) {
                 )
 
                 androidx.compose.material.Switch(
-                    checked = checkAlarmState.value,
-                    onCheckedChange = {
+                    checked = checkAlarmState.value, onCheckedChange = {
                         checkAlarmState.value = it
-                    },
-                    colors = androidx.compose.material.SwitchDefaults.colors(
+                    }, colors = androidx.compose.material.SwitchDefaults.colors(
                         uncheckedTrackColor = Color(0xffD4D4D4),
                         checkedThumbColor = Color(0xffFFC56D),
                         checkedTrackColor = Color(0xFFFFDAB9)
-                    ),
-                    enabled = false
+                    ), enabled = false
                 )
             }
 
@@ -107,8 +119,7 @@ fun SetAlarmScreen(routeAction: RouteAction) {
                     .align(Alignment.Start),
             ) {
                 Row(
-                    modifier = Modifier
-                        .align(Alignment.Center),
+                    modifier = Modifier.align(Alignment.Center),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(

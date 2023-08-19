@@ -22,6 +22,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -69,9 +71,8 @@ fun changeProfile(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit =
-        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create()).build()
+    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var changeProfileRequest: ChangeProfileRequest =
         retrofit.create(ChangeProfileRequest::class.java)
@@ -125,9 +126,8 @@ fun deleteProfileImage(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit =
-        Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create()).build()
+    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create()).build()
 
     var deleteProfileImageRequest: DeleteProfileImageRequest =
         retrofit.create(DeleteProfileImageRequest::class.java)
@@ -231,45 +231,59 @@ fun ProfileScreen(routeAction: RouteAction) {
     Scaffold(modifier = Modifier
         .fillMaxWidth()
         .imePadding(), topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(
-                text = "프로필 수정",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 24.sp
-            )
-        }, navigationIcon = {
-            IconButton(onClick = {
-                routeAction.goBack()
-            }) {
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
-            }
-        }, actions = {
-            Text(text = "완료", modifier = Modifier
-                .padding(30.dp)
-                .clickable {
-                    if (image.value != null) {
-                        scope.launch {
-                            changeProfile(
-                                token,
-                                imdel.value,
-                                nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
-                                image.value!!,
-                                routeAction
-                            )
+
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .drawWithContent {
+                    drawContent()
+                    drawLine(
+                        color = Color(0x26000000), // 기존에 사용 중이셨던 보더 컬러를 선택하세요.
+                        start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                        end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                        strokeWidth = 1.dp.toPx() // 보더 두께를 원하는 값으로 설정하세요.
+                    )
+                }) {
+            CenterAlignedTopAppBar(title = {
+                Text(
+                    text = "프로필 수정",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 24.sp
+                )
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    routeAction.goBack()
+                }) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                }
+            }, actions = {
+                Text(text = "완료", modifier = Modifier
+                    .padding(30.dp)
+                    .clickable {
+                        if (image.value != null) {
+                            scope.launch {
+                                changeProfile(
+                                    token,
+                                    imdel.value,
+                                    nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
+                                    image.value!!,
+                                    routeAction
+                                )
+                            }
+                        } else {
+                            scope.launch {
+                                deleteProfileImage(
+                                    token,
+                                    imdel.value,
+                                    nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
+                                    routeAction
+                                )
+                            }
                         }
-                    } else {
-                        scope.launch {
-                            deleteProfileImage(
-                                token,
-                                imdel.value,
-                                nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
-                                routeAction
-                            )
-                        }
-                    }
-                })
-        })
+                    })
+            })
+        }
     }) {
         Column(
             modifier = Modifier
@@ -367,7 +381,7 @@ fun ProfileScreen(routeAction: RouteAction) {
                     .height(50.dp)
                     .border(
                         width = 0.5.dp,
-                        color = Color(0xff424242),
+                        color = Color(0x26000000),
                         shape = RoundedCornerShape(percent = 8)
                     ), colors = ButtonDefaults.buttonColors(Color.White), onClick = {
                     routeAction.navTo(NAV_ROUTE.CHANGEPASSWORD)

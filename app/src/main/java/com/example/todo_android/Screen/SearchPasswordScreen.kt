@@ -14,6 +14,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,7 +35,9 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun SearchPassword(email: String, routeAction: RouteAction ,response: (SearchEmailResponse?) -> Unit){
+fun SearchPassword(
+    email: String, routeAction: RouteAction, response: (SearchEmailResponse?) -> Unit
+) {
 
     var authEmailResponse: SearchEmailResponse? = null
 
@@ -51,7 +55,7 @@ fun SearchPassword(email: String, routeAction: RouteAction ,response: (SearchEma
         ) {
             authEmailResponse = response.body()
 
-            when(authEmailResponse?.resultCode){
+            when (authEmailResponse?.resultCode) {
                 "200" -> {
                     response(authEmailResponse)
                     Log.d("SEARCHEMAIL", "resultCode : " + authEmailResponse?.resultCode)
@@ -69,7 +73,6 @@ fun SearchPassword(email: String, routeAction: RouteAction ,response: (SearchEma
         }
     })
 }
-
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -111,28 +114,48 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
     Scaffold(modifier = Modifier
         .fillMaxWidth()
         .imePadding(), topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(text = "비밀번호 찾기",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 24.sp)
-        }, navigationIcon = {
-            IconButton(onClick = {
-                routeAction.goBack()
-            }) {
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
-            }
-        })
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .drawWithContent {
+                    drawContent()
+                    drawLine(
+                        color = Color(0x26000000), // 기존에 사용 중이셨던 보더 컬러를 선택하세요.
+                        start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                        end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                        strokeWidth = 1.dp.toPx() // 보더 두께를 원하는 값으로 설정하세요.
+                    )
+                }) {
+            CenterAlignedTopAppBar(title = {
+                Text(
+                    text = "비밀번호 찾기",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 24.sp
+                )
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    routeAction.goBack()
+                }) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                }
+            })
+        }
     }) {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 20.dp)
+        ) {
 
             Spacer(modifier = Modifier.padding(vertical = 41.dp))
 
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 13.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 13.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
                 Image(
                     modifier = Modifier.size(17.dp),
@@ -140,43 +163,53 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
                     contentDescription = null
                 )
 
-                Text(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 5.dp),
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 5.dp),
                     text = "안내드려요",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    lineHeight = 18.sp)
+                    lineHeight = 18.sp
+                )
             }
 
 
 
-            Text(modifier = Modifier.fillMaxWidth(),
+            Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = "가입한 이메일 주소를 입력해주세요.",
                 fontWeight = FontWeight.Light,
                 fontSize = 14.sp,
-                lineHeight = 18.sp)
-            Text(modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 14.dp),
+                lineHeight = 18.sp
+            )
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 14.dp),
                 text = "해당 이메일로 비밀번호 재설정을 위한 링크를 보내드립니다.",
                 fontWeight = FontWeight.Light,
                 fontSize = 14.sp,
-                lineHeight = 18.sp)
+                lineHeight = 18.sp
+            )
 
-            Divider(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 22.dp, bottom = 27.dp),
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 22.dp, bottom = 27.dp),
                 color = Color(0xffE9E9E9),
-                thickness = 1.dp)
+                thickness = 1.dp
+            )
 
-            Text(modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp),
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp),
                 text = "이메일",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                lineHeight = 21.sp)
+                lineHeight = 21.sp
+            )
 
             BasicTextField(modifier = Modifier
                 .fillMaxWidth()
@@ -184,7 +217,8 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
                 value = email,
                 onValueChange = {
                     email = it
-                    showErrorText = false },
+                    showErrorText = false
+                },
                 decorationBox = { innerTextField ->
                     Box(
                         modifier = Modifier
@@ -201,14 +235,16 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
                 })
 
             if (showErrorText) {
-                Text(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 28.dp),
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 28.dp),
                     text = "유효한 이메일이 아닙니다.",
                     fontSize = 13.sp,
                     lineHeight = 19.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xffFF9D4D))
+                    color = Color(0xffFF9D4D)
+                )
             }
 
             Button(
@@ -217,17 +253,17 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(color),
                 onClick = {
-                          if(isButtonClickable == true){
-                              scope.launch {
-                                  SearchPassword(email, routeAction, response = {
-                                      if(it?.resultCode == "200"){
-                                          openDialog = true
-                                      } else{
-                                          showErrorText = true
-                                      }
-                                  })
-                              }
-                          }
+                    if (isButtonClickable == true) {
+                        scope.launch {
+                            SearchPassword(email, routeAction, response = {
+                                if (it?.resultCode == "200") {
+                                    openDialog = true
+                                } else {
+                                    showErrorText = true
+                                }
+                            })
+                        }
+                    }
                 },
                 enabled = isButtonClickable,
                 shape = RoundedCornerShape(8.dp)
@@ -248,34 +284,40 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
 fun showDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
     Dialog(onDismissRequest = { onDismissRequest }) {
         Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
-            Column(modifier = Modifier.width(265.dp),
+            Column(
+                modifier = Modifier.width(265.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
-                Text(modifier = Modifier.padding(top = 28.dp, bottom = 11.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    modifier = Modifier.padding(top = 28.dp, bottom = 11.dp),
                     text = "메일 발송 완료",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Black)
+                    fontWeight = FontWeight.Black
+                )
 
                 Text(
-                    text = "재설정한 비밀번호로",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Light)
+                    text = "재설정한 비밀번호로", fontSize = 15.sp, fontWeight = FontWeight.Light
+                )
 
-                Text(modifier = Modifier.padding(bottom = 28.dp),
+                Text(
+                    modifier = Modifier.padding(bottom = 28.dp),
                     text = "로그인 해주세요.",
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Light)
+                    fontWeight = FontWeight.Light
+                )
 
-                Row(modifier = Modifier.fillMaxWidth(),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround) {
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
                     androidx.compose.material.TextButton(modifier = Modifier
                         .background(buttonColor)
-                        .weight(1f),
-                        onClick = {
-                            onDismissRequest()
-                            routeAction.navTo(NAV_ROUTE.LOGIN)
-                        }) {
+                        .weight(1f), onClick = {
+                        onDismissRequest()
+                        routeAction.navTo(NAV_ROUTE.LOGIN)
+                    }) {
                         Text(text = "로그인", fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }
                 }
