@@ -384,19 +384,31 @@ fun RegisterScreen(routeAction: RouteAction) {
                             )
                         })
                 }
-                Spacer(modifier = Modifier.height(8.dp))
 
-                if (showErrorPassword1) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(id = R.string.UnderPassword),
-                        fontSize = 13.sp,
-                        lineHeight = 19.sp,
-                        color = Color(0xffFF9D4D)
-                    )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    // TextField 아래의 레이아웃을 수정
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+//                            .height(28.dp)
+                    ) {
+                        if (showErrorPassword1) {
+                            Text(
+                                modifier = Modifier
+                                    .align(Alignment.TopStart),
+                                text = stringResource(id = R.string.UnderPassword),
+                                fontSize = 13.sp,
+                                lineHeight = 19.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color(0xffFF9D4D)
+                            )
+                        }
+                    }
                 }
-
-                Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
                     modifier = Modifier.fillMaxWidth(),
@@ -453,17 +465,29 @@ fun RegisterScreen(routeAction: RouteAction) {
                         })
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                if (showMatchPassword) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(id = R.string.NoMatchPassword),
-                        fontSize = 13.sp,
-                        lineHeight = 19.sp,
-                        color = Color(0xffFF9D4D)
-                    )
-
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    // TextField 아래의 레이아웃을 수정
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+//                            .height(28.dp)
+                    ) {
+                        if (showMatchPassword) {
+                            Text(
+                                modifier = Modifier
+                                    .align(Alignment.TopStart),
+                                text = stringResource(id = R.string.UnderPassword),
+                                fontSize = 13.sp,
+                                lineHeight = 19.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color(0xffFF9D4D)
+                            )
+                        }
+                    }
                 }
             }
         }
