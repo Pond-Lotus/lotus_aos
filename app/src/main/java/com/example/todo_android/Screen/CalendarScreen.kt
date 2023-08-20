@@ -1176,49 +1176,8 @@ fun TodoUpdateBottomSheet(
     val minute = calendar[Calendar.MINUTE]
     var amPm by remember { mutableStateOf("") }
 
-    val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-
-    LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
-        scope.launch {
-            title = Todo.title
-            description = Todo.description
-            color = Todo.color
-        }
-    })
-
-    LaunchedEffect(key1 = Todo.time, key2 = Todo.done, block = {
-//        timeValue = Todo.time
-
-        if (Todo.time == "9999") {
-            timeString = "미지정"
-        } else {
-            timeString = Todo.time
-        }
-
-        // 24 시간이 넘어가면 다른 숫자로 파악하여 빈값처리
-        if (Todo.time != "미지정") {
-            amPm = if (Todo.time.substring(0, 2).toInt() < 24) {
-                //  12시간 미만이면 오전 아니면 오후
-                if (Todo.time.substring(0, 2).toInt() <= 12) {
-                    "오전"
-                } else {
-                    "오후"
-                }
-            } else {
-                ""
-            }
-        }
-
-
-        scope.launch {
-            done = Todo.done
-        }
-    })
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
+    val focusRequester = remember { FocusRequester() }
 
     val timePickerDialog = TimePickerDialog(
         context, { _, hour: Int, minute: Int ->
@@ -1278,6 +1237,62 @@ fun TodoUpdateBottomSheet(
         }
     }
 
+    LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
+        scope.launch {
+            title = Todo.title
+            description = Todo.description
+            color = Todo.color
+        }
+    })
+
+    LaunchedEffect(key1 = Todo.time, key2 = Todo.done, block = {
+//        timeValue = Todo.time
+
+        if (Todo.time == "9999") {
+            timeString = "미지정"
+        } else {
+            timeString = Todo.time
+        }
+
+        // 24 시간이 넘어가면 다른 숫자로 파악하여 빈값처리
+        if (Todo.time != "미지정") {
+            amPm = if (Todo.time.substring(0, 2).toInt() < 24) {
+                //  12시간 미만이면 오전 아니면 오후
+                if (Todo.time.substring(0, 2).toInt() <= 12) {
+                    "오전"
+                } else {
+                    "오후"
+                }
+            } else {
+                ""
+            }
+        }
+
+
+        scope.launch {
+            done = Todo.done
+        }
+    })
+
+
+
+    LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue,
+        block = {
+            if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+                focusRequester.requestFocus()
+                keyboardController?.show()
+            }
+        }
+    )
+
+    //    DisposableEffect(bottomSheetScaffoldState.bottomSheetState.currentValue) {
+//        if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+//            focusRequester.requestFocus()
+//            keyboardController?.show()
+//        }
+//        onDispose { }
+//    }
+
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -1304,6 +1319,7 @@ fun TodoUpdateBottomSheet(
                             } else {
                                 Todo.time
                             }
+                            keyboardController?.hide()
                             bottomSheetScaffoldState.bottomSheetState.collapse()
                         }
                     }, painter = painterResource(id = R.drawable.close), contentDescription = null
@@ -1384,9 +1400,9 @@ fun TodoUpdateBottomSheet(
                     color = categoryColor(color)
                 )
                 BasicTextField(modifier = Modifier
-                    .focusRequester(focusRequester)
                     .wrapContentWidth()
-                    .wrapContentHeight(),
+                    .wrapContentHeight()
+                    .focusRequester(focusRequester),
                     value = title,
                     onValueChange = { title = it },
                     textStyle = TextStyle(
