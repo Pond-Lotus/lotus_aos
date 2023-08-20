@@ -217,7 +217,7 @@ fun LoginScreen(routeAction: RouteAction) {
                     IconButton(onClick = {
                         passwordVisible = !passwordVisible
                     }) {
-                        Icon(painter = icon, contentDescription = null)
+                        Icon(painter = icon, contentDescription = null, tint = Color(0xffC9C9C9))
                     }
                 }
             })
