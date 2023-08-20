@@ -1274,8 +1274,6 @@ fun TodoUpdateBottomSheet(
         }
     })
 
-
-
     LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue,
         block = {
             if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
@@ -1284,14 +1282,6 @@ fun TodoUpdateBottomSheet(
             }
         }
     )
-
-    //    DisposableEffect(bottomSheetScaffoldState.bottomSheetState.currentValue) {
-//        if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
-//            focusRequester.requestFocus()
-//            keyboardController?.show()
-//        }
-//        onDispose { }
-//    }
 
     Column(
         modifier = Modifier
