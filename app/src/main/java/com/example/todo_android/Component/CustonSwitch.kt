@@ -102,7 +102,7 @@ fun MonthWeekToggleSwitch(
             Text(
                 text = "월간",
                 color = toggleSwitchMonthText,
-                fontSize = 12.sp,
+                fontSize = 13.sp,
                 fontWeight = FontWeight.Black
             )
         }
@@ -115,7 +115,7 @@ fun MonthWeekToggleSwitch(
             Text(
                 text = "주간",
                 color = toggleSwitchWeekText,
-                fontSize = 12.sp,
+                fontSize = 13.sp,
                 fontWeight = FontWeight.Black
             )
         }

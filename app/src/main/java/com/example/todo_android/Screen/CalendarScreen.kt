@@ -360,6 +360,22 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     var selectedTodo by remember { mutableStateOf<RToDoResponse?>(null) }
 
+    val selectedDate = LocalDate.of(
+        year.toInt(), month.toInt(), day.toInt()
+    )
+    val dayOfWeek = selectedDate.dayOfWeek
+
+    val dayColor: Color = when (dayOfWeek.value) {
+        1 -> Color.Black
+        2 -> Color.Black
+        3 -> Color.Black
+        4 -> Color.Black
+        5 -> Color.Black
+        6 -> Color.Black
+        7 -> Color(0xFFF86B6B)
+        else -> Color.Black
+    }
+
     LaunchedEffect(isVisibility) {
         if (isVisibility) {
             focusRequester.requestFocus()
@@ -444,7 +460,7 @@ fun CalendarScreen(routeAction: RouteAction) {
         topBar = {
             CenterAlignedTopAppBar(title = {
                 MonthWeekToggleSwitch(
-                    width = 115, height = 35, animateState = animateState
+                    width = 110, height = 35, animateState = animateState
                 )
             }, navigationIcon = {
                 Image(
@@ -490,7 +506,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                 modifier = Modifier
                     .shadow(
                         shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
-                        elevation = 3.dp
+                        elevation = 3.dp,
+                        spotColor = Color(0x0D000000),
+                        ambientColor = Color(0x0D000000)
+//                        shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
+//                        elevation = 3.dp
                     )
                     .animateContentSize(
                         animationSpec = tween(
@@ -556,12 +576,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 horizontalArrangement = Arrangement.Start
                             ) {
                                 Image(
-                                    modifier = Modifier
-                                        .size(22.dp),
-                                    painter = painterResource(
+                                    modifier = Modifier.size(22.dp), painter = painterResource(
                                         id = R.drawable.headertextemogi
-                                    ),
-                                    contentDescription = null
+                                    ), contentDescription = null
                                 )
 
                                 Spacer(modifier = Modifier.width(4.dp))
@@ -633,14 +650,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                             Row(
                                 modifier = Modifier.padding(start = 20.dp, bottom = 16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Start) {
+                                horizontalArrangement = Arrangement.Start
+                            ) {
                                 Image(
-                                    modifier = Modifier
-                                        .size(22.dp),
-                                    painter = painterResource(
+                                    modifier = Modifier.size(22.dp), painter = painterResource(
                                         id = R.drawable.headertextemogi
-                                    ),
-                                    contentDescription = null
+                                    ), contentDescription = null
                                 )
 
                                 Spacer(modifier = Modifier.width(4.dp))
@@ -698,11 +713,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                     TextField(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(45.dp)
                             .focusRequester(focusRequester),
                         value = title,
                         colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color(0xffD8D8D8),
+                            containerColor = Color.White,
                             disabledLabelColor = Color(0xffD8D8D8),
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent
@@ -714,6 +729,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
+                        ),
+                        textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
+                            fontSize = 13.sp, fontStyle = FontStyle.Normal
                         ),
                         keyboardActions = KeyboardActions(onDone = {
                             scope.launch {
@@ -734,7 +752,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     Spacer(modifier = Modifier.height(6.dp))
                 }
 
-                if (todoList.isEmpty()) {
+                if (todoList.isEmpty() && !isVisibility) {
                     BlankTodoItem()
                 }
 
@@ -964,7 +982,7 @@ fun TodoItem(
                 )
 
             )
-            Text(text = Todo.title, fontSize = 14.sp, fontStyle = FontStyle.Normal)
+            Text(text = Todo.title, fontSize = 13.sp, fontStyle = FontStyle.Normal)
         }
     }
 }
@@ -1158,6 +1176,7 @@ fun TodoUpdateBottomSheet(
     val minute = calendar[Calendar.MINUTE]
     var amPm by remember { mutableStateOf("") }
 
+    val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
@@ -1196,6 +1215,10 @@ fun TodoUpdateBottomSheet(
             done = Todo.done
         }
     })
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     val timePickerDialog = TimePickerDialog(
         context, { _, hour: Int, minute: Int ->
@@ -1257,8 +1280,6 @@ fun TodoUpdateBottomSheet(
 
     Column(
         modifier = Modifier
-//            .fillMaxWidth()
-//            .wrapContentHeight()
             .wrapContentSize()
             .padding(start = 25.dp, end = 25.dp, top = 20.dp)
             .imePadding()
@@ -1271,27 +1292,29 @@ fun TodoUpdateBottomSheet(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            androidx.compose.material.IconButton(onClick = {
-                scope.launch {
-                    title = Todo.title
-                    description = Todo.description
-                    color = Todo.color
-                    timeString = if (Todo.time == "9999") {
-                        "미지정"
-                    } else {
-                        Todo.time
-                    }
-                    bottomSheetScaffoldState.bottomSheetState.collapse()
-                }
-            }) {
-                Icon(imageVector = Icons.Filled.Close, contentDescription = null)
-            }
-            Button(
-                modifier = Modifier
-                    .width(60.dp)
-                    .height(30.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffFFBE3C7)),
-                onClick = {
+
+            Image(
+                modifier = Modifier.clickable {
+                        scope.launch {
+                            title = Todo.title
+                            description = Todo.description
+                            color = Todo.color
+                            timeString = if (Todo.time == "9999") {
+                                "미지정"
+                            } else {
+                                Todo.time
+                            }
+                            bottomSheetScaffoldState.bottomSheetState.collapse()
+                        }
+                    }, painter = painterResource(id = R.drawable.close), contentDescription = null
+            )
+
+            Box(modifier = Modifier
+                .width(60.dp)
+                .height(30.dp)
+                .clip(shape = RoundedCornerShape(20.dp))
+                .background(Color(0xffFFBE3C7))
+                .clickable {
                     scope.launch {
                         updateTodo(token,
                             Todo?.year.toString(),
@@ -1319,11 +1342,13 @@ fun TodoUpdateBottomSheet(
                         keyboardController?.hide()
                         bottomSheetScaffoldState.bottomSheetState.collapse()
                     }
-                },
-                shape = RoundedCornerShape(20.dp)
-            ) {
+                }) {
                 Text(
-                    text = "저장", color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "저장",
+                    color = Color.Black,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -1359,6 +1384,7 @@ fun TodoUpdateBottomSheet(
                     color = categoryColor(color)
                 )
                 BasicTextField(modifier = Modifier
+                    .focusRequester(focusRequester)
                     .wrapContentWidth()
                     .wrapContentHeight(),
                     value = title,
@@ -1551,7 +1577,7 @@ fun BlankTodoItem() {
             .height(45.dp)
     ) {
         Row(
-            modifier = Modifier.padding(start = 20.dp, top = 15.dp, bottom = 15.dp),
+            modifier = Modifier.padding(start = 12.dp, top = 13.dp, bottom = 13.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
