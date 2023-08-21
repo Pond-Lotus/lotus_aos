@@ -710,46 +710,61 @@ fun CalendarScreen(routeAction: RouteAction) {
                     .padding(top = 15.dp, start = 21.dp, end = 21.dp)
             ) {
                 if (isVisibility) {
-                    TextField(
+
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(45.dp)
-                            .focusRequester(focusRequester),
-                        value = title,
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.White,
-                            disabledLabelColor = Color(0xffD8D8D8),
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        singleLine = true,
+                            .height(45.dp),
+                        colors = CardDefaults.cardColors(Color.White),
                         shape = RoundedCornerShape(8.dp),
-                        onValueChange = {
-                            title = it
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
-                        ),
-                        textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
-                            fontSize = 13.sp, fontStyle = FontStyle.Normal
-                        ),
-                        keyboardActions = KeyboardActions(onDone = {
-                            scope.launch {
-                                createTodo(token, year, month, day, title, color) {
-                                    readTodo(token, year = year, month = month, day = day) {
-                                        todoList.clear()
-                                        for (i in it!!.data) {
-                                            todoList.add(i)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(start = 12.dp, top = 13.dp, bottom = 13.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.blankcheckbox),
+                                contentDescription = null
+                            )
+
+                            BasicTextField(
+                                modifier = Modifier
+                                    .padding(start = 6.dp)
+                                    .wrapContentWidth()
+                                    .wrapContentHeight()
+                                    .focusRequester(focusRequester),
+                                value = title,
+                                onValueChange = { title = it },
+                                textStyle = TextStyle(
+                                    fontSize = 13.sp,
+                                    fontStyle = FontStyle.Normal,
+                                    color = Color.Black,
+                                    lineHeight = 31.sp
+                                ),
+                                singleLine = true,
+                                maxLines = 1,
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
+                                ),
+                                keyboardActions = KeyboardActions(onDone = {
+                                    scope.launch {
+                                        createTodo(token, year, month, day, title, color) {
+                                            readTodo(token, year = year, month = month, day = day) {
+                                                todoList.clear()
+                                                for (i in it!!.data) {
+                                                    todoList.add(i)
+                                                }
+                                            }
                                         }
+                                        keyboardController?.hide()
+                                        title = ""
+                                        isVisibility = !isVisibility
                                     }
-                                }
-                                keyboardController?.hide()
-                                title = ""
-                                isVisibility = !isVisibility
-                            }
-                        })
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
+                                })
+                            )
+                        }
+                    }
                 }
 
                 if (todoList.isEmpty() && !isVisibility) {
@@ -1274,14 +1289,12 @@ fun TodoUpdateBottomSheet(
         }
     })
 
-    LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue,
-        block = {
-            if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
-                focusRequester.requestFocus()
-                keyboardController?.show()
-            }
+    LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue, block = {
+        if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
         }
-    )
+    })
 
     Column(
         modifier = Modifier
@@ -1300,19 +1313,19 @@ fun TodoUpdateBottomSheet(
 
             Image(
                 modifier = Modifier.clickable {
-                        scope.launch {
-                            title = Todo.title
-                            description = Todo.description
-                            color = Todo.color
-                            timeString = if (Todo.time == "9999") {
-                                "미지정"
-                            } else {
-                                Todo.time
-                            }
-                            keyboardController?.hide()
-                            bottomSheetScaffoldState.bottomSheetState.collapse()
+                    scope.launch {
+                        title = Todo.title
+                        description = Todo.description
+                        color = Todo.color
+                        timeString = if (Todo.time == "9999") {
+                            "미지정"
+                        } else {
+                            Todo.time
                         }
-                    }, painter = painterResource(id = R.drawable.close), contentDescription = null
+                        keyboardController?.hide()
+                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                    }
+                }, painter = painterResource(id = R.drawable.close), contentDescription = null
             )
 
             Box(modifier = Modifier
