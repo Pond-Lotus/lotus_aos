@@ -510,8 +510,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                         elevation = 3.dp,
                         spotColor = Color(0x0D000000),
                         ambientColor = Color(0x0D000000)
-//                        shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
-//                        elevation = 3.dp
                     )
                     .animateContentSize(
                         animationSpec = tween(

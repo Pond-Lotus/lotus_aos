@@ -144,23 +144,11 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
                 contentDescription = null)
         }
     }
-//    Divider(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(top = 10.dp, bottom = 10.dp),
-//        color = Color(0xffe9e9e9),
-//        thickness = 1.dp
-//    )
 }
 
 
 @Composable
 fun CategoryItemList(categoryList: List<ReadCategoryResponse>, routeAction: RouteAction) {
-//    LazyColumn() {
-//        items(items = categoryList, key = { item -> item.data.values }) { item ->
-//            CategoryItem(Category = item, routeAction)
-//        }
-//    }
 
     LazyColumn() {
         itemsIndexed(items = categoryList) { index, item ->
