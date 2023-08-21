@@ -1,9 +1,12 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -110,7 +113,7 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
         modifier = Modifier.fillMaxSize(), colors = CardDefaults.cardColors(Color.Transparent)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 16.dp), verticalAlignment = Alignment.CenterVertically
         ) {
             Button(modifier = Modifier.size(23.dp),
                 onClick = {},
@@ -123,40 +126,56 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
                 lineHeight = 18.sp,
-                modifier = Modifier.padding(start = 16.dp, end = 270.dp)
+                modifier = Modifier.padding(start = 16.dp)
             )
 
-            IconButton(onClick = {
-                routeAction.customNavto(
-                    NAV_ROUTE.CHANGECATEGORY,
-                    Category.data.values.first().toString(),
-                    Category.data.keys.first().toString(),
-                    colors.toArgb()
-                )
-            }) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = R.drawable.selectgroup),
-                    contentDescription = null
-                )
-            }
+            Spacer(modifier = Modifier.weight(1f))
+
+            Image(
+                modifier = Modifier.clickable {
+                    routeAction.customNavto(
+                        NAV_ROUTE.CHANGECATEGORY,
+                        Category.data.values.first().toString(),
+                        Category.data.keys.first().toString(),
+                        colors.toArgb()
+                    )
+                },
+                painter = painterResource(id = R.drawable.selectgroup),
+                contentDescription = null)
         }
     }
-    Divider(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp, bottom = 10.dp),
-        color = Color(0xffe9e9e9),
-        thickness = 1.dp
-    )
+//    Divider(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(top = 10.dp, bottom = 10.dp),
+//        color = Color(0xffe9e9e9),
+//        thickness = 1.dp
+//    )
 }
 
 
 @Composable
 fun CategoryItemList(categoryList: List<ReadCategoryResponse>, routeAction: RouteAction) {
+//    LazyColumn() {
+//        items(items = categoryList, key = { item -> item.data.values }) { item ->
+//            CategoryItem(Category = item, routeAction)
+//        }
+//    }
+
     LazyColumn() {
-        items(items = categoryList, key = { item -> item.data.values }) { item ->
+        itemsIndexed(items = categoryList) { index, item ->
             CategoryItem(Category = item, routeAction)
+
+            // 마지막 아이템이 아닌 경우만 Divider를 추가합니다.
+            if (index < categoryList.size - 1) {
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    color = Color(0xffe9e9e9),
+                    thickness = 1.dp
+                )
+            }
         }
     }
 }

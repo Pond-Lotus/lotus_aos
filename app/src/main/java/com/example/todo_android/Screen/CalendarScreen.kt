@@ -1186,6 +1186,7 @@ fun TodoUpdateBottomSheet(
 
     var done by remember { mutableStateOf(Todo.done) }
     var color by remember { mutableStateOf(Todo.color) }
+    var dayString by remember { mutableStateOf("") }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
     var context = LocalContext.current
@@ -1204,6 +1205,22 @@ fun TodoUpdateBottomSheet(
             time = String.format("%02d%02d", hour, minute)
         }, hour, minute, false
     )
+
+    val selectedDate = LocalDate.of(
+        Todo.year.toInt(), Todo.month.toInt(), Todo.day.toInt()
+    )
+    val dayOfWeek = selectedDate.dayOfWeek
+
+    dayString = when (dayOfWeek.value) {
+        1 -> "월요일"
+        2 -> "화요일"
+        3 -> "수요일"
+        4 -> "목요일"
+        5 -> "금요일"
+        6 -> "토요일"
+        7 -> "일요일"
+        else -> ""
+    }
 
 
     val onButtonClick: (String) -> Unit = { id ->
@@ -1399,7 +1416,7 @@ fun TodoUpdateBottomSheet(
             ) {
 
                 Text(
-                    text = "${Todo?.month}월 ${Todo?.day}일",
+                    text = "${Todo.month}월 ${Todo.day}일 ${dayString}",
                     fontSize = 15.sp,
                     lineHeight = 19.sp,
                     fontWeight = FontWeight.Bold,
