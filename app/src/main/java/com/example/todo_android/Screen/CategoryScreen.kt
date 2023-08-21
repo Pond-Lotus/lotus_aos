@@ -124,7 +124,7 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
             Text(
                 text = Category.data.values.first().toString(), // 수정된 부분
                 fontWeight = FontWeight.Medium,
-                fontSize = 14.sp,
+                fontSize = 15.sp,
                 lineHeight = 18.sp,
                 modifier = Modifier.padding(start = 16.dp)
             )
@@ -132,7 +132,9 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
             Spacer(modifier = Modifier.weight(1f))
 
             Image(
-                modifier = Modifier.clickable {
+                modifier = Modifier
+                    .size(21.dp)
+                    .clickable {
                     routeAction.customNavto(
                         NAV_ROUTE.CHANGECATEGORY,
                         Category.data.values.first().toString(),

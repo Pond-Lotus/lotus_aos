@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -216,12 +217,17 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
 
             OutlinedTextField(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(45.dp),
                 value = email,
                 onValueChange = {
                     email = it
                     showErrorText = false
                 },
+                textStyle = TextStyle(
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Normal
+                ),
                 shape = RoundedCornerShape(8.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color(0xffffffff),
@@ -236,13 +242,13 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 45.dp)
+                    .padding(vertical = 8.dp)
             ) {
                 // TextField 아래의 레이아웃을 수정
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(28.dp)
+                        .height(38.dp)
                 ) {
                     if (showErrorText) {
                         Text(

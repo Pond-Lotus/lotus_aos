@@ -461,7 +461,7 @@ fun CalendarScreen(routeAction: RouteAction) {
         topBar = {
             CenterAlignedTopAppBar(title = {
                 MonthWeekToggleSwitch(
-                    width = 110, height = 35, animateState = animateState
+                    width = 105, height = 35, animateState = animateState
                 )
             }, navigationIcon = {
                 Image(

@@ -10,7 +10,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,9 +32,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 fun updateCategory(
-    token: String,
-    categorySet: Map<String, String?>,
-    response: (UpdateCategoryResponse?) -> Unit
+    token: String, categorySet: Map<String, String?>, response: (UpdateCategoryResponse?) -> Unit
 ) {
     var updateCategoryResponse: UpdateCategoryResponse? = null
 
@@ -41,8 +42,11 @@ fun updateCategory(
     var updateCategoryRequest: UpdateCategoryRequest =
         retrofit.create(UpdateCategoryRequest::class.java)
 
-    updateCategoryRequest.requestUpdateCategory(token, UpdateCategory(categorySet)).enqueue(object : Callback<UpdateCategoryResponse> {
-            override fun onResponse(call: Call<UpdateCategoryResponse>, response: Response<UpdateCategoryResponse>) {
+    updateCategoryRequest.requestUpdateCategory(token, UpdateCategory(categorySet))
+        .enqueue(object : Callback<UpdateCategoryResponse> {
+            override fun onResponse(
+                call: Call<UpdateCategoryResponse>, response: Response<UpdateCategoryResponse>
+            ) {
                 updateCategoryResponse = response.body()
 
                 when (updateCategoryResponse?.resultCode) {
@@ -149,35 +153,48 @@ fun ChangeCategoryNameScreen(
     Scaffold(modifier = Modifier
         .fillMaxWidth()
         .imePadding(), topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(
-                text = "그룹 설정",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 24.sp
-            )
-        }, navigationIcon = {
-            IconButton(onClick = {
-                routeAction.goBack()
-            }) {
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
-            }
-        }, actions = {
-            TextButton(onClick = {
-                scope.launch {
-                    updateCategory(token, categorySet) {
-                        routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
-                    }
-                }
-            }) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .drawWithContent {
+                    drawContent()
+                    drawLine(
+                        color = Color(0x26000000), // 기존에 사용 중이셨던 보더 컬러를 선택하세요.
+                        start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                        end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                        strokeWidth = 1.dp.toPx() // 보더 두께를 원하는 값으로 설정하세요.
+                    )
+                }) {
+            CenterAlignedTopAppBar(title = {
                 Text(
-                    text = "완료",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xff9E9E9E)
+                    text = "그룹 설정",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 24.sp
                 )
-            }
-        })
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    routeAction.goBack()
+                }) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                }
+            }, actions = {
+                TextButton(onClick = {
+                    scope.launch {
+                        updateCategory(token, categorySet) {
+                            routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
+                        }
+                    }
+                }) {
+                    Text(
+                        text = "완료",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xff9E9E9E)
+                    )
+                }
+            })
+        }
     }) {
 
         Column(
@@ -200,7 +217,7 @@ fun ChangeCategoryNameScreen(
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(54.dp)
+                        .height(45.dp)
                         .padding(start = 10.dp),
                     value = categoryName,
                     onValueChange = {
@@ -214,6 +231,10 @@ fun ChangeCategoryNameScreen(
                             lineHeight = 24.sp
                         )
                     },
+                    textStyle = TextStyle(
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 13.sp
+                    ),
                     colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color(0xffF3F3F3),
                         disabledLabelColor = Color(0xffF3F3F3),

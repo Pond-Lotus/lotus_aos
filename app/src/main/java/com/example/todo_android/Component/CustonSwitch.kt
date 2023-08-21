@@ -90,7 +90,7 @@ fun MonthWeekToggleSwitch(
         Box(
             modifier = Modifier
                 .layoutId("ToggleSwitch")
-                .padding(4.dp)
+                .padding(2.dp)
                 .clip(RoundedCornerShape(7.dp))
                 .background(Color.White)
         )

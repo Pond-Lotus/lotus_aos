@@ -155,7 +155,7 @@ fun ProfileModalDrawer(
 
             Image(
                 modifier = Modifier
-                    .size(30.dp)
+                    .size(25.dp)
                     .clickable {
                         scope.launch {
                             bottomScaffoldState.drawerState.close()
@@ -164,7 +164,7 @@ fun ProfileModalDrawer(
                     },
                 painter = painterResource(id = R.drawable.ic_pen),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(Color.Black)
+                colorFilter = ColorFilter.tint(Color(0xFF727272))
             )
         }
 
@@ -273,7 +273,7 @@ fun ProfileModalDrawer(
                     modifier = Modifier.size(20.dp),
                     painter = painterResource(id = R.drawable.ic_arrow),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(Color(0xFF9E9E9E))
+                    colorFilter = ColorFilter.tint(Color(0xFF727272))
                 )
             }
 
