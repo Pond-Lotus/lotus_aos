@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -809,7 +810,9 @@ fun AddTodoFloatingButton(
 
         Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
-        FloatingActionButton(modifier = Modifier.size(60.dp),
+        FloatingActionButton(
+            modifier = Modifier.size(60.dp),
+            elevation = FloatingActionButtonDefaults.elevation(0.dp),
             containerColor = backgroundColor,
             shape = CircleShape,
             onClick = {
