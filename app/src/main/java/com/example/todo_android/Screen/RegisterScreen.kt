@@ -162,6 +162,12 @@ fun RegisterScreen(routeAction: RouteAction) {
             Color(0xFFFFDAB9).copy(alpha = 0.5f)
         }
 
+    val NextButtonArrowTint = if (nickname != "" && passwordPattern.matches(password1) && password1.equals(password2)) {
+        1f
+    } else {
+        0.5f
+    }
+
     if (nickname != "" && passwordPattern.matches(password1) && password1.equals(password2)) {
         isButtonClickable = true
     } else {
@@ -195,10 +201,11 @@ fun RegisterScreen(routeAction: RouteAction) {
             },
             containerColor = ButtonColor
         ) {
-            Icon(
-                modifier = Modifier.size(50.dp),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = null
+            Image(
+                modifier = Modifier.size(30.dp),
+                painter = painterResource(id = R.drawable.nextbuttonarrow),
+                contentDescription = null,
+                alpha = NextButtonArrowTint
             )
         }
     }, floatingActionButtonPosition = FabPosition.End

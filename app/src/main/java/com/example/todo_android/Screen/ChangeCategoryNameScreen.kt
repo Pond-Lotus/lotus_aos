@@ -9,10 +9,14 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -72,6 +76,7 @@ fun updateCategory(
 }
 
 
+@ExperimentalComposeUiApi
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @ExperimentalMaterial3Api
 @Composable
@@ -86,17 +91,30 @@ fun ChangeCategoryNameScreen(
     var testList = remember { mutableStateMapOf<String, String>() }
     var scope = rememberCoroutineScope()
 
-    scope.launch {
-        readCategory(response = { response ->
-            response?.data?.let { data ->
-                categoryData.clear()
-                data.forEach { (key, value) ->
-                    categoryData.add(ReadCategoryResponse(response.resultCode, mapOf(key to value)))
-                    testList[key] = value
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(key1 = Unit, block = {
+        scope.launch {
+            readCategory(response = { response ->
+                response?.data?.let { data ->
+                    categoryData.clear()
+                    data.forEach { (key, value) ->
+                        categoryData.add(ReadCategoryResponse(response.resultCode, mapOf(key to value)))
+                        testList[key] = value
+                    }
                 }
-            }
-        })
-    }
+            })
+        }
+    })
+
+    LaunchedEffect(Unit, block = {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    })
+
+
+
 
     val categorySet = when (categoryId) {
         "1" -> mapOf(
@@ -218,7 +236,8 @@ fun ChangeCategoryNameScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(45.dp)
-                        .padding(start = 10.dp),
+                        .padding(start = 10.dp)
+                        .focusRequester(focusRequester),
                     value = categoryName,
                     onValueChange = {
                         categoryName = it

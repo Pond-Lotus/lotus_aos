@@ -61,7 +61,8 @@ fun authCode(
 
     var authCodeRequest: AuthCodeRequest = retrofit.create(AuthCodeRequest::class.java)
 
-    authCodeRequest.requestCode(AuthCode(authEmail, code)).enqueue(object : Callback<AuthCodeResponse> {
+    authCodeRequest.requestCode(AuthCode(authEmail, code))
+        .enqueue(object : Callback<AuthCodeResponse> {
 
             //실패할 경우
             override fun onFailure(call: Call<AuthCodeResponse>, t: Throwable) {
@@ -110,6 +111,12 @@ fun AuthCodeScreen(routeAction: RouteAction) {
         Color(0xFFFFDAB9).copy(alpha = 0.5f)
     }
 
+    val NextButtonArrowTint = if (code != "") {
+        1f
+    } else {
+        0.5f
+    }
+
     if (code != "") {
         isButtonClickable = true
     } else {
@@ -131,7 +138,8 @@ fun AuthCodeScreen(routeAction: RouteAction) {
         FloatingActionButton(
             modifier = Modifier.size(60.dp),
             elevation = FloatingActionButtonDefaults.elevation(0.dp),
-            shape = CircleShape, onClick = {
+            shape = CircleShape,
+            onClick = {
                 if (isButtonClickable) {
                     scope.launch {
                         authCode(authEmail, code, routeAction, response = {
@@ -139,12 +147,15 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                         })
                     }
                 }
-            }, containerColor = ButtonColor
+            },
+            containerColor = ButtonColor
         ) {
-            Icon(
-                modifier = Modifier.size(50.dp),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = null)
+            Image(
+                modifier = Modifier.size(30.dp),
+                painter = painterResource(id = R.drawable.nextbuttonarrow),
+                contentDescription = null,
+                alpha = NextButtonArrowTint
+            )
         }
     }, floatingActionButtonPosition = FabPosition.End
     ) {
@@ -252,16 +263,11 @@ fun EachTextFieldContainer(
     isFocused: Boolean,
 ) {
     Box(
-        modifier = Modifier.width(41.dp).height(53.dp)
-            .background(Color(0xffe9e9e9), shape = RoundedCornerShape(10.dp)).run {
-                if (isFocused) {
-                    border(
-                        width = 3.dp, color = Color(0xffFFBE3C7), shape = RoundedCornerShape(10.dp)
-                    )
-                } else {
-                    this
-                }
-            }, contentAlignment = Alignment.Center
+        modifier = Modifier
+            .width(41.dp)
+            .height(53.dp)
+            .background(Color(0xffe9e9e9), shape = RoundedCornerShape(10.dp)),
+        contentAlignment = Alignment.Center
     ) {
         Text(
             text = text, fontSize = 22.sp, fontWeight = FontWeight.Medium

@@ -108,6 +108,12 @@ fun AuthEmailScreen(routeAction: RouteAction) {
         Color(0xFFFFDAB9).copy(alpha = 0.5f)
     }
 
+    val NextButtonArrowTint = if (emailPattern.matches(email)) {
+        1f
+    } else {
+        0.5f
+    }
+
     if (emailPattern.matches(email)) {
         isButtonClickable = true
     } else {
@@ -141,10 +147,11 @@ fun AuthEmailScreen(routeAction: RouteAction) {
             },
             containerColor = ButtonColor
         ) {
-            Icon(
-                modifier = Modifier.size(50.dp),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = null
+            Image(
+                modifier = Modifier.size(30.dp),
+                painter = painterResource(id = R.drawable.nextbuttonarrow),
+                contentDescription = null,
+                alpha = NextButtonArrowTint
             )
         }
     }, floatingActionButtonPosition = FabPosition.End
@@ -250,6 +257,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                         trailingIcon = {
                             if (emailPattern.matches(email)) {
                                 Icon(
+                                    modifier = Modifier.offset(x = 12.dp),
                                     painter = painterResource(id = R.drawable.checkemail),
                                     contentDescription = null,
                                     tint = Color(0xffFF9D4D)
