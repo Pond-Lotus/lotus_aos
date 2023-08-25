@@ -258,30 +258,34 @@ fun ProfileScreen(routeAction: RouteAction) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
                 }
             }, actions = {
-                Text(text = "완료", modifier = Modifier
-                    .padding(30.dp)
-                    .clickable {
-                        if (image.value != null) {
-                            scope.launch {
-                                changeProfile(
-                                    token,
-                                    imdel.value,
-                                    nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
-                                    image.value!!,
-                                    routeAction
-                                )
+                Text(text = "완료",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xff9E9E9E),
+                    modifier = Modifier
+                        .padding(30.dp)
+                        .clickable {
+                            if (image.value != null) {
+                                scope.launch {
+                                    changeProfile(
+                                        token,
+                                        imdel.value,
+                                        nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
+                                        image.value!!,
+                                        routeAction
+                                    )
+                                }
+                            } else {
+                                scope.launch {
+                                    deleteProfileImage(
+                                        token,
+                                        imdel.value,
+                                        nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
+                                        routeAction
+                                    )
+                                }
                             }
-                        } else {
-                            scope.launch {
-                                deleteProfileImage(
-                                    token,
-                                    imdel.value,
-                                    nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
-                                    routeAction
-                                )
-                            }
-                        }
-                    })
+                        })
             })
         }
     }) {

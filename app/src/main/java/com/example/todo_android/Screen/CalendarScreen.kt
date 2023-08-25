@@ -796,6 +796,15 @@ fun AddTodoFloatingButton(
             0f
         }
     }
+    val NextButtonArrowTint = when(multiFloatingState){
+        FloatingStateType.Expanded -> {
+            Color(0xFFFFFFFF).copy(alpha = 1f)
+        }
+        FloatingStateType.Collapsed -> {
+            Color(0xFF424242).copy(alpha = 1f)
+        }
+    }
+
     Column(horizontalAlignment = Alignment.End) {
 
         AnimatedVisibility(
@@ -810,7 +819,6 @@ fun AddTodoFloatingButton(
 
         FloatingActionButton(
             modifier = Modifier.size(60.dp),
-            elevation = FloatingActionButtonDefaults.elevation(0.dp),
             containerColor = backgroundColor,
             shape = CircleShape,
             onClick = {
@@ -823,11 +831,13 @@ fun AddTodoFloatingButton(
                 )
             }) {
             Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "todolist 추가",
                 modifier = Modifier
                     .rotate(rotate)
-                    .size(30.dp),
+                    .size(30.dp)
+                    .background(Color.Transparent),
+                painter = painterResource(id = R.drawable.todolistaddemogi),
+                contentDescription = null,
+                tint = NextButtonArrowTint
             )
         }
     }
