@@ -11,7 +11,7 @@ class RouteAction(navHostController: NavHostController) {
         navHostController.navigate(route.routeName)
         {
             popUpTo(NAV_ROUTE.SPLASH.routeName) {
-                inclusive = true
+                inclusive = false
             }
         }
     }

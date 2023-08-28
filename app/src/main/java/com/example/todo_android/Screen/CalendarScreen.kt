@@ -1207,7 +1207,9 @@ fun TodoUpdateBottomSheet(
     val focusRequester = remember { FocusRequester() }
 
     val timePickerDialog = TimePickerDialog(
-        context, { _, hour: Int, minute: Int ->
+        context,
+        R.style.TimePickerDialog,
+        { _, hour: Int, minute: Int ->
             amPm = if (hour < 12) "오전" else "오후"
             timeString = String.format("%02d%02d", hour, minute)
             time = String.format("%02d%02d", hour, minute)
