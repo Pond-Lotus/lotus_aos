@@ -2,9 +2,11 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -16,6 +18,8 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -114,10 +118,16 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
         isButtonClickable = false
     }
 
-    val color = if (password1 != "" && password2 != "" && password3 != "") {
+    val buttonColor = if (password1 != "" && password2 != "" && password3 != "") {
         Color(0xffFFDAB9)
     } else {
         Color(0xffE9E9E9)
+    }
+
+    val textColor = if (password1 != "" && password2 != "" && password3 != "") {
+        Color.Black
+    } else{
+        Color(0xFF9E9E9E)
     }
 
     val passwordVisualTransformation = PasswordVisualTransformation()
@@ -175,28 +185,61 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                     .padding(bottom = 7.dp)
             )
 
-
-            OutlinedTextField(
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp)
+                    .height(45.dp)
                     .padding(bottom = 8.dp),
-                value = password1,
-                onValueChange = {
-                    password1 = it
-                    showErrorPassword1 = false
-                },
+                colors = CardDefaults.cardColors(Color.White),
+                border = BorderStroke(1.dp, Color(0xffBFBFBF)),
                 shape = RoundedCornerShape(8.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xffffffff),
-                    disabledLabelColor = Color(0xffffffff),
-                    focusedIndicatorColor = Color(0xffD0D0D0),
-                    unfocusedIndicatorColor = Color(0xffD0D0D0)
-                ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                visualTransformation = passwordVisualTransformation,
-                singleLine = true
-            )
+            ) {
+                Row(
+                    modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    BasicTextField(
+                        value = password1,
+                        onValueChange = {
+                            password1 = it
+                            showErrorPassword1 = false
+                        },
+                        textStyle = TextStyle(
+                            fontSize = 13.sp,
+                            fontStyle = FontStyle.Normal,
+                            color = Color.Black,
+                            lineHeight = 31.sp
+                        ),
+                        singleLine = true,
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        visualTransformation = passwordVisualTransformation)
+                }
+            }
+
+
+//            OutlinedTextField(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(60.dp)
+//                    .padding(bottom = 8.dp),
+//                value = password1,
+//                onValueChange = {
+//                    password1 = it
+//                    showErrorPassword1 = false
+//                },
+//                shape = RoundedCornerShape(8.dp),
+//                colors = TextFieldDefaults.textFieldColors(
+//                    containerColor = Color(0xffffffff),
+//                    disabledLabelColor = Color(0xffffffff),
+//                    focusedIndicatorColor = Color(0xffD0D0D0),
+//                    unfocusedIndicatorColor = Color(0xffD0D0D0)
+//                ),
+//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+//                visualTransformation = passwordVisualTransformation,
+//                singleLine = true
+//            )
 
             if (showErrorPassword1) {
                 Text(
@@ -220,27 +263,60 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                     .padding(bottom = 7.dp)
             )
 
-            OutlinedTextField(
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp)
+                    .height(45.dp)
                     .padding(bottom = 8.dp),
-                value = password2,
-                onValueChange = {
-                    password2 = it
-                    showMatchPassword2 = !it.matches(passwordPattern)
-                },
+                colors = CardDefaults.cardColors(Color.White),
+                border = BorderStroke(1.dp, Color(0xffBFBFBF)),
                 shape = RoundedCornerShape(8.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xffffffff),
-                    disabledLabelColor = Color(0xffffffff),
-                    focusedIndicatorColor = Color(0xffD0D0D0),
-                    unfocusedIndicatorColor = Color(0xffD0D0D0)
-                ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                visualTransformation = passwordVisualTransformation,
-                singleLine = true
-            )
+            ) {
+                Row(
+                    modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    BasicTextField(
+                        value = password2,
+                        onValueChange = {
+                            password2 = it
+                            showMatchPassword2 = !it.matches(passwordPattern)
+                        },
+                        textStyle = TextStyle(
+                            fontSize = 13.sp,
+                            fontStyle = FontStyle.Normal,
+                            color = Color.Black,
+                            lineHeight = 31.sp
+                        ),
+                        singleLine = true,
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        visualTransformation = passwordVisualTransformation)
+                }
+            }
+
+//            OutlinedTextField(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(60.dp)
+//                    .padding(bottom = 8.dp),
+//                value = password2,
+//                onValueChange = {
+//                    password2 = it
+//                    showMatchPassword2 = !it.matches(passwordPattern)
+//                },
+//                shape = RoundedCornerShape(8.dp),
+//                colors = TextFieldDefaults.textFieldColors(
+//                    containerColor = Color(0xffffffff),
+//                    disabledLabelColor = Color(0xffffffff),
+//                    focusedIndicatorColor = Color(0xffD0D0D0),
+//                    unfocusedIndicatorColor = Color(0xffD0D0D0)
+//                ),
+//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+//                visualTransformation = passwordVisualTransformation,
+//                singleLine = true
+//            )
 
             if (showMatchPassword2) {
                 Text(
@@ -265,27 +341,60 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                     .padding(bottom = 7.dp)
             )
 
-            OutlinedTextField(
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp)
+                    .height(45.dp)
                     .padding(bottom = 8.dp),
-                value = password3,
-                onValueChange = {
-                    password3 = it
-                    showMatchPassword3 = (it != password2)
-                },
+                colors = CardDefaults.cardColors(Color.White),
+                border = BorderStroke(1.dp, Color(0xffBFBFBF)),
                 shape = RoundedCornerShape(8.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xffffffff),
-                    disabledLabelColor = Color(0xffffffff),
-                    focusedIndicatorColor = Color(0xffD0D0D0),
-                    unfocusedIndicatorColor = Color(0xffD0D0D0)
-                ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                visualTransformation = passwordVisualTransformation,
-                singleLine = true
-            )
+            ) {
+                Row(
+                    modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    BasicTextField(
+                        value = password3,
+                        onValueChange = {
+                            password3 = it
+                            showMatchPassword3 = (it != password2)
+                        },
+                        textStyle = TextStyle(
+                            fontSize = 13.sp,
+                            fontStyle = FontStyle.Normal,
+                            color = Color.Black,
+                            lineHeight = 31.sp
+                        ),
+                        singleLine = true,
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        visualTransformation = passwordVisualTransformation)
+                }
+            }
+
+//            OutlinedTextField(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(60.dp)
+//                    .padding(bottom = 8.dp),
+//                value = password3,
+//                onValueChange = {
+//                    password3 = it
+//                    showMatchPassword3 = (it != password2)
+//                },
+//                shape = RoundedCornerShape(8.dp),
+//                colors = TextFieldDefaults.textFieldColors(
+//                    containerColor = Color(0xffffffff),
+//                    disabledLabelColor = Color(0xffffffff),
+//                    focusedIndicatorColor = Color(0xffD0D0D0),
+//                    unfocusedIndicatorColor = Color(0xffD0D0D0)
+//                ),
+//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+//                visualTransformation = passwordVisualTransformation,
+//                singleLine = true
+//            )
 
             if (showMatchPassword3) {
                 Text(
@@ -303,7 +412,7 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                colors = ButtonDefaults.buttonColors(color),
+                colors = ButtonDefaults.buttonColors(buttonColor),
                 onClick = {
                     if (isButtonClickable == true) {
                         scope.launch {
@@ -322,7 +431,7 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
             ) {
                 Text(
                     text = "변경 완료",
-                    color = Color.Black,
+                    color = textColor,
                     fontSize = 15.sp,
                     lineHeight = 22.sp,
                     fontWeight = FontWeight.Bold

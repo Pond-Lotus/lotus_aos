@@ -714,7 +714,10 @@ fun CalendarScreen(routeAction: RouteAction) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(45.dp),
-                        colors = CardDefaults.cardColors(Color.White),
+                        colors = CardDefaults.cardColors(Color.Transparent),
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color= Color(0xFFBFBFBF)),
                         shape = RoundedCornerShape(8.dp),
                     ) {
                         Row(
@@ -729,7 +732,7 @@ fun CalendarScreen(routeAction: RouteAction) {
 
                             BasicTextField(
                                 modifier = Modifier
-                                    .padding(start = 6.dp)
+                                    .padding(start = 16.dp)
                                     .wrapContentWidth()
                                     .wrapContentHeight()
                                     .focusRequester(focusRequester),

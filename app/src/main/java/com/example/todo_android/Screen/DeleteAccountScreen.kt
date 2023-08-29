@@ -88,10 +88,16 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
         painterResource(id = R.drawable.dcheck)
     }
 
-    val color = if (checked) {
+    val buttonColor = if (checked) {
         Color(0xffFFDAB9)
     } else {
         Color(0xffE9E9E9)
+    }
+
+    val textColor = if (checked) {
+        Color.Black
+    } else{
+        Color(0xFF9E9E9E)
     }
 
 
@@ -258,7 +264,7 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(54.dp),
-                colors = ButtonDefaults.buttonColors(color),
+                colors = ButtonDefaults.buttonColors(buttonColor),
                 onClick = {
                     if (isButtonClickable == true) {
                         openDialog = true
@@ -269,7 +275,7 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
             ) {
                 Text(
                     text = "계정 탈퇴하기",
-                    color = Color.Black,
+                    color = textColor,
                     fontSize = 15.sp,
                     lineHeight = 22.sp,
                     fontWeight = FontWeight.Bold

@@ -3,12 +3,14 @@ package com.example.todo_android.Screen
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Space
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -17,11 +19,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -109,10 +114,16 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
     }
 
 
-    val color = if (emailPattern.matches(email)) {
+    val buttonColor = if (emailPattern.matches(email)) {
         Color(0xffFFDAB9)
     } else {
         Color(0xffE9E9E9)
+    }
+
+    val textColor = if (emailPattern.matches(email)) {
+        Color.Black
+    } else {
+        Color(0xFF9E9E9E)
     }
 
     Scaffold(modifier = Modifier
@@ -148,153 +159,163 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
     }) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(start = 20.dp, end = 20.dp)
         ) {
 
-            Spacer(modifier = Modifier.padding(vertical = 41.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 13.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.fillMaxWidth()
             ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 90.dp, bottom = 13.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
-                Image(
-                    modifier = Modifier.size(17.dp),
-                    painter = painterResource(id = R.drawable.sms),
-                    contentDescription = null
+                    Image(
+                        modifier = Modifier.size(17.dp),
+                        painter = painterResource(id = R.drawable.sms),
+                        contentDescription = null
+                    )
+
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 5.dp),
+                        text = "안내드려요",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 18.sp
+                    )
+                }
+
+
+
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "가입한 이메일 주소를 입력해주세요.",
+                    fontWeight = FontWeight.Light,
+                    fontSize = 14.sp,
+                    lineHeight = 18.sp
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 30.dp),
+                    text = "해당 이메일로 비밀번호 재설정을 위한 링크를 보내드립니다.",
+                    fontWeight = FontWeight.Light,
+                    fontSize = 14.sp,
+                    lineHeight = 18.sp
+                )
+
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 27.dp),
+                    color = Color(0xffE9E9E9),
+                    thickness = 1.dp
                 )
 
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 5.dp),
-                    text = "안내드려요",
+                        .padding(bottom = 10.dp),
+                    text = "이메일",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    lineHeight = 18.sp
+                    lineHeight = 21.sp
                 )
-            }
 
-
-
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = "가입한 이메일 주소를 입력해주세요.",
-                fontWeight = FontWeight.Light,
-                fontSize = 14.sp,
-                lineHeight = 18.sp
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 14.dp),
-                text = "해당 이메일로 비밀번호 재설정을 위한 링크를 보내드립니다.",
-                fontWeight = FontWeight.Light,
-                fontSize = 14.sp,
-                lineHeight = 18.sp
-            )
-
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 22.dp, bottom = 27.dp),
-                color = Color(0xffE9E9E9),
-                thickness = 1.dp
-            )
-
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-                text = "이메일",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 21.sp
-            )
-
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(45.dp),
-                value = email,
-                onValueChange = {
-                    email = it
-                    showErrorText = false
-                },
-                textStyle = TextStyle(
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Normal
-                ),
-                shape = RoundedCornerShape(8.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xffffffff),
-                    disabledLabelColor = Color(0xffffffff),
-                    focusedIndicatorColor = Color(0xffD0D0D0),
-                    unfocusedIndicatorColor = Color(0xffD0D0D0)
-                ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true
-            )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                // TextField 아래의 레이아웃을 수정
-                Box(
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(38.dp)
+                        .height(45.dp),
+                    colors = CardDefaults.cardColors(Color.White),
+                    border = BorderStroke(1.dp, Color(0xffBFBFBF)),
+                    shape = RoundedCornerShape(8.dp),
                 ) {
-                    if (showErrorText) {
-                        Text(
-                            modifier = Modifier
-                                .align(Alignment.TopStart),
-                            text = "유효한 이메일이 아닙니다.",
-                            fontSize = 13.sp,
-                            lineHeight = 19.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color(0xffFF9D4D)
+                    Row(
+                        modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        BasicTextField(
+                            value = email,
+                            onValueChange = {
+                                email = it
+                                showErrorText = false
+                            },
+                            textStyle = TextStyle(
+                                fontSize = 13.sp,
+                                fontStyle = FontStyle.Normal,
+                                color = Color.Black,
+                                lineHeight = 31.sp
+                            ),
+                            singleLine = true,
+                            maxLines = 1,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         )
                     }
                 }
-            }
 
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(color),
-                onClick = {
-                    if (isButtonClickable) {
-                        scope.launch {
-                            SearchPassword(email, routeAction, response = {
-                                when (it?.resultCode) {
-                                    "200" -> {
-                                        openDialog = true
-                                    }
-                                    "500" -> {
-                                        showErrorText = true
-                                    }
-                                }
-                            })
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    // TextField 아래의 레이아웃을 수정
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(38.dp)
+                    ) {
+                        if (showErrorText) {
+                            Text(
+                                modifier = Modifier.align(Alignment.TopStart),
+                                text = "유효한 이메일이 아닙니다.",
+                                fontSize = 13.sp,
+                                lineHeight = 19.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color(0xffFF9D4D)
+                            )
                         }
                     }
-                },
-                enabled = isButtonClickable,
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(
-                    text = "비밀번호 찾기",
-                    color = Color.Black,
-                    fontSize = 15.sp,
-                    lineHeight = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                }
+
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(buttonColor),
+                    onClick = {
+                        if (isButtonClickable) {
+                            scope.launch {
+                                SearchPassword(email, routeAction, response = {
+                                    when (it?.resultCode) {
+                                        "200" -> {
+                                            openDialog = true
+                                        }
+                                        "500" -> {
+                                            showErrorText = true
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    },
+                    enabled = isButtonClickable,
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = "비밀번호 찾기",
+                        color = textColor,
+                        fontSize = 15.sp,
+                        lineHeight = 22.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
@@ -332,12 +353,13 @@ fun showDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    androidx.compose.material.TextButton(modifier = Modifier
-                        .background(buttonColor)
-                        .weight(1f), onClick = {
-                        onDismissRequest()
-                        routeAction.navTo(NAV_ROUTE.LOGIN)
-                    }) {
+                    androidx.compose.material.TextButton(
+                        modifier = Modifier
+                            .background(buttonColor)
+                            .weight(1f), onClick = {
+                            onDismissRequest()
+                            routeAction.navTo(NAV_ROUTE.LOGIN)
+                        }) {
                         Text(text = "로그인", fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }
                 }
