@@ -110,10 +110,14 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
     }
 
     Card(
-        modifier = Modifier.fillMaxSize(), colors = CardDefaults.cardColors(Color.Transparent)
+        modifier = Modifier.fillMaxSize(),
+        colors = CardDefaults.cardColors(Color.Transparent)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 16.dp), verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth()
+                .padding(top = 16.dp, bottom = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(modifier = Modifier.size(23.dp),
                 onClick = {},
@@ -126,7 +130,8 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
                 fontWeight = FontWeight.Medium,
                 fontSize = 15.sp,
                 lineHeight = 18.sp,
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier.padding(start = 16.dp),
+                maxLines = 1
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -152,7 +157,7 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
 @Composable
 fun CategoryItemList(categoryList: List<ReadCategoryResponse>, routeAction: RouteAction) {
 
-    LazyColumn() {
+    LazyColumn {
         itemsIndexed(items = categoryList) { index, item ->
             CategoryItem(Category = item, routeAction)
 

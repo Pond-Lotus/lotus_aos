@@ -1,6 +1,7 @@
 package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
+import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -68,101 +69,109 @@ fun SetAlarmScreen(routeAction: RouteAction) {
     }) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(start = 20.dp, end = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
-            Spacer(modifier = Modifier.padding(vertical = 36.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "알림 켜기 / 끄기",
-                    fontSize = 16.sp,
-                    lineHeight = 23.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF9E9E9E)
-                )
-
-                androidx.compose.material.Switch(
-                    checked = checkAlarmState.value, onCheckedChange = {
-                        checkAlarmState.value = it
-                    }, colors = androidx.compose.material.SwitchDefaults.colors(
-                        uncheckedTrackColor = Color(0xffD4D4D4),
-                        checkedThumbColor = Color(0xffFFC56D),
-                        checkedTrackColor = Color(0xFFFFDAB9)
-                    ), enabled = false
-                )
-            }
-
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 21.dp),
-                color = Color(0xffe9e9e9),
-                thickness = 1.dp
-            )
-
-            Spacer(modifier = Modifier.padding(vertical = 12.dp))
-
-            Box(
-                modifier = Modifier
-                    .width(70.dp)
-                    .height(24.dp)
-                    .clip(RoundedCornerShape(size = 18.dp))
-                    .background(Color(0xffEDEDED))
-                    .align(Alignment.Start),
+            Column(
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    modifier = Modifier.align(Alignment.Center),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 81.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Image(
-                        modifier = Modifier.size(11.dp),
-                        painter = painterResource(id = R.drawable.notialarm),
-                        contentDescription = null
+                    Text(
+                        text = "알림 켜기 / 끄기",
+                        fontSize = 16.sp,
+                        lineHeight = 23.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF9E9E9E)
                     )
 
-                    Text(
-                        text = " 안내사항",
-                        fontSize = 11.sp,
-                        lineHeight = 16.22.sp,
-                        fontWeight = FontWeight(700),
-                        color = Color(0xFF9E9E9E),
+                    androidx.compose.material.Switch(
+                        modifier = Modifier.offset(x = 7.dp),
+                        checked = checkAlarmState.value,
+                        onCheckedChange = {
+                            checkAlarmState.value = it
+                        },
+                        colors = androidx.compose.material.SwitchDefaults.colors(
+                            uncheckedTrackColor = Color(0xffDDDBDB),
+                            checkedThumbColor = Color(0xffFFC56D),
+                            checkedTrackColor = Color(0xFFFFDAB9)
+                        ),
+                        enabled = true
                     )
                 }
+
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
+                    color = Color(0xffe9e9e9),
+                    thickness = 1.dp
+                )
+
+                Spacer(modifier = Modifier.padding(vertical = 12.dp))
+
+                Box(
+                    modifier = Modifier
+                        .width(70.dp)
+                        .height(24.dp)
+                        .clip(RoundedCornerShape(size = 18.dp))
+                        .background(Color(0xffEDEDED))
+                        .align(Alignment.Start),
+                ) {
+                    Row(
+                        modifier = Modifier.align(Alignment.Center),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            modifier = Modifier.size(11.dp),
+                            painter = painterResource(id = R.drawable.notialarm),
+                            contentDescription = null
+                        )
+
+                        Text(
+                            text = " 안내사항",
+                            fontSize = 11.sp,
+                            lineHeight = 16.22.sp,
+                            fontWeight = FontWeight(700),
+                            color = Color(0xFF9E9E9E),
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.padding(vertical = 5.dp))
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    text = "· 현재 알림 설정은 제공되지 않습니다. (추후 업데이트 예정)",
+                    fontSize = 13.sp,
+                    lineHeight = 19.17.sp,
+                    fontWeight = FontWeight(500),
+                    color = Color(0xFFC1C1C1),
+                )
+
+                Spacer(modifier = Modifier.padding(vertical = 3.dp))
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    text = "· 안드로이드 설정 > 알림 > 앱 설정 에서 설정해 주시기 바랍니다.",
+                    fontSize = 13.sp,
+                    lineHeight = 19.17.sp,
+                    fontWeight = FontWeight(500),
+                    color = Color(0xFFC1C1C1),
+                )
             }
-
-            Spacer(modifier = Modifier.padding(vertical = 5.dp))
-
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                text = "· 현재 알림 설정은 제공되지 않습니다. (추후 업데이트 예정)",
-                fontSize = 13.sp,
-                lineHeight = 19.17.sp,
-                fontWeight = FontWeight(500),
-                color = Color(0xFFC1C1C1),
-            )
-
-            Spacer(modifier = Modifier.padding(vertical = 3.dp))
-
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                text = "· 안드로이드 설정 > 알림 > 앱 설정 에서 설정해 주시기 바랍니다.",
-                fontSize = 13.sp,
-                lineHeight = 19.17.sp,
-                fontWeight = FontWeight(500),
-                color = Color(0xFFC1C1C1),
-            )
         }
     }
 }
