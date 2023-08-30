@@ -11,6 +11,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -40,6 +41,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -78,6 +80,7 @@ import com.himanshoe.kalendar.ui.component.header.KalendarTextKonfig
 import com.himanshoe.kalendar.ui.firey.DaySelectionMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.number
 import okhttp3.OkHttpClient
@@ -714,10 +717,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(45.dp),
-                        colors = CardDefaults.cardColors(Color.Transparent),
-                        border = BorderStroke(
-                            width = 1.dp,
-                            color= Color(0xFFBFBFBF)),
+                        colors = CardDefaults.cardColors(Color.White),
                         shape = RoundedCornerShape(8.dp),
                     ) {
                         Row(

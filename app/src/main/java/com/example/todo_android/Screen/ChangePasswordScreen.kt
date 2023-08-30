@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Data.Modify.ChangePassword
@@ -194,10 +195,11 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                 border = BorderStroke(1.dp, Color(0xffBFBFBF)),
                 shape = RoundedCornerShape(8.dp),
             ) {
-                Row(
-                    modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(start = 16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     BasicTextField(
                         value = password1,
@@ -212,34 +214,11 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                             lineHeight = 31.sp
                         ),
                         singleLine = true,
-                        maxLines = 1,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        visualTransformation = passwordVisualTransformation)
+                        visualTransformation = PasswordVisualTransformation(),
+                    )
                 }
             }
-
-
-//            OutlinedTextField(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(60.dp)
-//                    .padding(bottom = 8.dp),
-//                value = password1,
-//                onValueChange = {
-//                    password1 = it
-//                    showErrorPassword1 = false
-//                },
-//                shape = RoundedCornerShape(8.dp),
-//                colors = TextFieldDefaults.textFieldColors(
-//                    containerColor = Color(0xffffffff),
-//                    disabledLabelColor = Color(0xffffffff),
-//                    focusedIndicatorColor = Color(0xffD0D0D0),
-//                    unfocusedIndicatorColor = Color(0xffD0D0D0)
-//                ),
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-//                visualTransformation = passwordVisualTransformation,
-//                singleLine = true
-//            )
 
             if (showErrorPassword1) {
                 Text(
@@ -272,10 +251,11 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                 border = BorderStroke(1.dp, Color(0xffBFBFBF)),
                 shape = RoundedCornerShape(8.dp),
             ) {
-                Row(
-                    modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(start = 16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     BasicTextField(
                         value = password2,
@@ -290,33 +270,11 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                             lineHeight = 31.sp
                         ),
                         singleLine = true,
-                        maxLines = 1,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        visualTransformation = passwordVisualTransformation)
+                        visualTransformation = PasswordVisualTransformation(),
+                    )
                 }
             }
-
-//            OutlinedTextField(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(60.dp)
-//                    .padding(bottom = 8.dp),
-//                value = password2,
-//                onValueChange = {
-//                    password2 = it
-//                    showMatchPassword2 = !it.matches(passwordPattern)
-//                },
-//                shape = RoundedCornerShape(8.dp),
-//                colors = TextFieldDefaults.textFieldColors(
-//                    containerColor = Color(0xffffffff),
-//                    disabledLabelColor = Color(0xffffffff),
-//                    focusedIndicatorColor = Color(0xffD0D0D0),
-//                    unfocusedIndicatorColor = Color(0xffD0D0D0)
-//                ),
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-//                visualTransformation = passwordVisualTransformation,
-//                singleLine = true
-//            )
 
             if (showMatchPassword2) {
                 Text(
@@ -350,10 +308,11 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                 border = BorderStroke(1.dp, Color(0xffBFBFBF)),
                 shape = RoundedCornerShape(8.dp),
             ) {
-                Row(
-                    modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(start = 16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     BasicTextField(
                         value = password3,
@@ -368,33 +327,11 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                             lineHeight = 31.sp
                         ),
                         singleLine = true,
-                        maxLines = 1,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        visualTransformation = passwordVisualTransformation)
+                        visualTransformation = PasswordVisualTransformation(),
+                    )
                 }
             }
-
-//            OutlinedTextField(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(60.dp)
-//                    .padding(bottom = 8.dp),
-//                value = password3,
-//                onValueChange = {
-//                    password3 = it
-//                    showMatchPassword3 = (it != password2)
-//                },
-//                shape = RoundedCornerShape(8.dp),
-//                colors = TextFieldDefaults.textFieldColors(
-//                    containerColor = Color(0xffffffff),
-//                    disabledLabelColor = Color(0xffffffff),
-//                    focusedIndicatorColor = Color(0xffD0D0D0),
-//                    unfocusedIndicatorColor = Color(0xffD0D0D0)
-//                ),
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-//                visualTransformation = passwordVisualTransformation,
-//                singleLine = true
-//            )
 
             if (showMatchPassword3) {
                 Text(
