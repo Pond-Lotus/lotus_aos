@@ -520,10 +520,10 @@ fun CalendarScreen(routeAction: RouteAction) {
                         )
                     )
             ) {
-                if (animateState.value) {
+                if (!animateState.value) {
                     Kalendar(
                         currentDay = null,
-                        kalendarType = KalendarType.Oceanic,
+                        kalendarType = KalendarType.Firey,
                         kalendarHeaderTextKonfig = KalendarTextKonfig(
                             kalendarTextColor = Color.Black, kalendarTextSize = 22.sp
                         ),
@@ -596,11 +596,10 @@ fun CalendarScreen(routeAction: RouteAction) {
                         },
                         showLabel = true
                     )
-
                 } else {
                     Kalendar(
                         currentDay = null,
-                        kalendarType = KalendarType.Firey,
+                        kalendarType = KalendarType.Oceanic,
                         kalendarHeaderTextKonfig = KalendarTextKonfig(
                             kalendarTextColor = Color.Black, kalendarTextSize = 22.sp
                         ),
