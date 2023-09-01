@@ -455,7 +455,11 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }
     })
-    BottomSheetScaffold(scaffoldState = bottomScaffoldState,
+    BottomSheetScaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding(),
+        scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
                 scope = scope, bottomScaffoldState = bottomScaffoldState, routeAction = routeAction
@@ -504,7 +508,6 @@ fun CalendarScreen(routeAction: RouteAction) {
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xfff0f0f0))
-                .imePadding()
         ) {
             Column(
                 modifier = Modifier

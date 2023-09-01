@@ -299,16 +299,16 @@ fun showDeleteDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    modifier = Modifier.padding(top = 35.dp, bottom = 12.dp),
+                    modifier = Modifier.padding(top = 28.dp, bottom = 11.dp),
                     text = "정말 떠나시나요? \uD83D\uDE22",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.ExtraBold
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Black
                 )
 
                 Text(
-                    modifier = Modifier.padding(bottom = 38.dp),
+                    modifier = Modifier.padding(bottom = 28.dp),
                     text = "다음에 또 만나길 기대할게요.",
-                    fontSize = 12.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Light
                 )
 
