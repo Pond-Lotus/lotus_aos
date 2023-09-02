@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Data.Modify.ChangePassword
@@ -343,7 +342,7 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                 )
             }
 
-            Spacer(modifier = Modifier.padding(vertical = 40.dp))
+            Spacer(modifier = Modifier.padding(bottom = 40.dp))
 
             Button(
                 modifier = Modifier

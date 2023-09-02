@@ -15,6 +15,8 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -30,7 +32,10 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -229,7 +234,7 @@ fun ProfileScreen(routeAction: RouteAction) {
     }
 
     Scaffold(modifier = Modifier
-        .fillMaxWidth()
+        .fillMaxSize()
         .imePadding(), topBar = {
 
         Box(
@@ -292,11 +297,12 @@ fun ProfileScreen(routeAction: RouteAction) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(
+                    start = 20.dp, end = 20.dp, bottom = 37.dp
+                ), horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(modifier = Modifier.padding(vertical = 36.dp))
+            Spacer(modifier = Modifier.padding(vertical = 45.dp))
 
             Box(modifier = Modifier.padding(8.dp)) {
                 Image(bitmap = bitmap.value!!,
@@ -319,9 +325,14 @@ fun ProfileScreen(routeAction: RouteAction) {
                 }
             }
 
-            Spacer(modifier = Modifier.padding(vertical = 26.dp))
+            Spacer(modifier = Modifier.padding(vertical = 12.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
                 Text(
                     text = "닉네임",
                     fontWeight = FontWeight.Bold,
@@ -330,66 +341,94 @@ fun ProfileScreen(routeAction: RouteAction) {
                 )
             }
 
-            Spacer(modifier = Modifier.padding(vertical = 7.dp))
-
-            OutlinedTextField(
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(54.dp),
-                value = nickname,
-                onValueChange = {
-                    nickname = it
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xffffffff),
-                    disabledLabelColor = Color(0xffffffff),
-                    focusedIndicatorColor = Color(0xffD0D0D0),
-                    unfocusedIndicatorColor = Color(0xffD0D0D0)
-                )
-            )
+                    .height(45.dp),
+                colors = CardDefaults.cardColors(Color.White),
+                border = BorderStroke(1.dp, Color(0xffBFBFBF)),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Row(
+                    modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    BasicTextField(
+                        value = nickname,
+                        onValueChange = {
+                            nickname = it
+                        },
+                        textStyle = TextStyle(
+                            fontSize = 13.sp,
+                            fontStyle = FontStyle.Normal,
+                            color = Color.Black,
+                            lineHeight = 31.sp
+                        ),
+                        singleLine = true,
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    )
+                }
+            }
 
-            Spacer(modifier = Modifier.padding(vertical = 14.dp))
+            Spacer(modifier = Modifier.padding(bottom = 14.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
                 Text(
                     text = "이메일", fontWeight = FontWeight.Bold, fontSize = 14.sp, lineHeight = 21.sp
                 )
             }
 
-            Spacer(modifier = Modifier.padding(vertical = 7.dp))
-
-            OutlinedTextField(
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(54.dp)
-                    .focusable(false),
-                value = email,
-                onValueChange = {
-                    email = it
-                },
-                singleLine = true,
-                readOnly = true,
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xffF1F1F1),
-                    disabledLabelColor = Color(0xffF1F1F1),
-                    focusedIndicatorColor = Color(0xffD0D0D0),
-                    unfocusedIndicatorColor = Color(0xffD0D0D0)
-                )
-            )
+                    .height(45.dp),
+                colors = CardDefaults.cardColors(Color(0xffF3F3F3)),
+                border = BorderStroke(1.dp, Color(0xffBFBFBF)),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Row(
+                    modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    BasicTextField(
+                        value = email,
+                        onValueChange = {
+                            email = it
+                        },
+                        textStyle = TextStyle(
+                            fontSize = 13.sp,
+                            fontStyle = FontStyle.Normal,
+                            color = Color.Black,
+                            lineHeight = 31.sp
+                        ),
+                        singleLine = true,
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                        enabled = false
+                    )
+                }
+            }
 
-            Spacer(modifier = Modifier.padding(vertical = 25.dp))
+            Spacer(modifier = Modifier.padding(bottom = 40.dp))
 
-            Button(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
                     .border(
                         width = 0.5.dp,
-                        color = Color(0x26000000),
+                        color = Color(0xff424242),
                         shape = RoundedCornerShape(percent = 8)
-                    ), colors = ButtonDefaults.buttonColors(Color.White), onClick = {
-                    routeAction.navTo(NAV_ROUTE.CHANGEPASSWORD)
-                }, shape = RoundedCornerShape(8.dp)
+                    )
+                    .background(Color.Transparent), contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "비밀번호 변경",
@@ -400,23 +439,25 @@ fun ProfileScreen(routeAction: RouteAction) {
                 )
             }
 
-            Spacer(modifier = Modifier.padding(vertical = 115.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
-            Button(
+            Box(
                 modifier = Modifier
-                    .width(130.dp)
-                    .height(40.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xffE9E9E9)),
-                onClick = {
-                    routeAction.navTo(NAV_ROUTE.DELETEACCOUNT)
-                },
-                shape = RoundedCornerShape(10.dp)
+                    .width(95.dp)
+                    .height(30.dp)
+                    .background(
+                        color = Color(0xFFE9E9E9), shape = RoundedCornerShape(size = 10.dp)
+                    )
+                    .clickable {
+                        routeAction.navTo(NAV_ROUTE.DELETEACCOUNT)
+                    }, contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "계정 탈퇴하기",
-                    color = Color(0xff8D8D8D),
+                    fontWeight = FontWeight(600),
+                    color = Color(0xFF9E9E9E),
                     fontSize = 12.sp,
-                    lineHeight = 22.sp
+                    lineHeight = 15.6.sp,
                 )
             }
         }
@@ -494,7 +535,7 @@ fun setImageDialog(
                     )
                 }
 
-                Spacer(modifier = Modifier.padding(vertical = 10.dp))
+                Spacer(modifier = Modifier.padding(vertical = 5.dp))
 
                 Button(
                     modifier = Modifier

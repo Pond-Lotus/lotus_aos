@@ -11,7 +11,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -20,12 +19,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.DismissDirection
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,7 +36,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -71,7 +65,6 @@ import com.example.todo_android.Util.MyApplication
 import com.example.todo_android.ui.theme.deleteBackground
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.KalendarEvent
-import com.himanshoe.kalendar.KalendarEvents
 import com.himanshoe.kalendar.KalendarType
 import com.himanshoe.kalendar.color.KalendarColor
 import com.himanshoe.kalendar.color.KalendarColors
@@ -80,8 +73,6 @@ import com.himanshoe.kalendar.ui.component.header.KalendarTextKonfig
 import com.himanshoe.kalendar.ui.firey.DaySelectionMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.number
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -90,11 +81,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.time.Clock
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.Month
-import java.time.Year
 import java.util.*
 
 fun createTodo(

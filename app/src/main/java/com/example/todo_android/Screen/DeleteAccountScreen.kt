@@ -28,7 +28,6 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.DeleteAccountRequest
 import com.example.todo_android.Response.ProfileResponse.DeleteAccountResponse
 import com.example.todo_android.Util.MyApplication
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -92,6 +91,12 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
         Color(0xffFFDAB9)
     } else {
         Color(0xffE9E9E9)
+    }
+
+    val buttonTextColor = if (checked) {
+        Color.Black
+    } else{
+        Color(0xFF9E9E9E)
     }
 
     val textColor = if (checked) {
@@ -179,7 +184,7 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 8.dp),
+                            .padding(start = 10.dp),
                         verticalArrangement = Arrangement.SpaceBetween,
                         horizontalAlignment = Alignment.Start
                     ) {
@@ -187,14 +192,12 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
                             text = nickname,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            lineHeight = 21.sp
                         )
                         Text(
                             text = email,
                             color = Color(0xff9E9E9E),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
-                            lineHeight = 16.sp
                         )
                     }
                 }
@@ -243,20 +246,22 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
                     .clickable {
                         checked = !checked
                         isButtonClickable = !isButtonClickable
-                    }, verticalAlignment = Alignment.CenterVertically
+                    },
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    modifier = Modifier.size(14.dp), painter = onCheck, contentDescription = null
+                    modifier = Modifier.size(16.dp),
+                    painter = onCheck,
+                    contentDescription = null
                 )
 
                 Text(
                     modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(start = 9.dp),
+                        .fillMaxWidth()
+                        .padding(start = 6.dp),
                     text = "안내사항을 모두 확인하였으며, 탈퇴를 진행합니다.",
                     fontSize = 13.sp,
-                    fontWeight = FontWeight.Light,
-                    lineHeight = 13.sp
+                    color = textColor
                 )
             }
 
@@ -275,7 +280,7 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
             ) {
                 Text(
                     text = "계정 탈퇴하기",
-                    color = textColor,
+                    color = buttonTextColor,
                     fontSize = 15.sp,
                     lineHeight = 22.sp,
                     fontWeight = FontWeight.Bold
