@@ -788,7 +788,7 @@ fun AddTodoFloatingButton(
             0f
         }
     }
-    val NextButtonArrowTint = when(multiFloatingState){
+    val NextButtonArrowTint = when (multiFloatingState) {
         FloatingStateType.Expanded -> {
             Color(0xFFFFFFFF).copy(alpha = 1f)
         }
@@ -809,8 +809,7 @@ fun AddTodoFloatingButton(
 
         Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
-        FloatingActionButton(
-            modifier = Modifier.size(60.dp),
+        FloatingActionButton(modifier = Modifier.size(60.dp),
             containerColor = backgroundColor,
             shape = CircleShape,
             onClick = {
@@ -960,47 +959,62 @@ fun TodoItem(
                 onTodoItemClick(Todo)
             }) {
         Row(
-            modifier = Modifier.padding(start = 4.dp, top = 15.dp, bottom = 15.dp),
+            modifier = Modifier.padding(
+                    start = 16.dp, top = 13.dp, bottom = 13.dp
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Checkbox(
-                checked = checked, onCheckedChange = { isChecked ->
-                    checked = isChecked
-                    done = isChecked
-                    scope.launch {
-                        updateTodo(
-                            token,
-                            Todo.year,
-                            Todo.month,
-                            Todo.day,
-                            Todo.title,
-                            done,
-                            Todo.description,
-                            Todo.color.toString(),
-                            Todo.time,
-                            Todo.id
-                        ) {
-                            when (isChecked) {
-                                true -> onCheckedUpdateTodo()
-                                false -> onUnCheckedUpdateTodo()
+            Image(painterResource(getCheckboxImageResource(checked, Todo.color)),
+                contentDescription = "custom checkbox",
+                modifier = Modifier.clickable {
+                        checked = !checked;
+                        done = checked;
+                        scope.launch {
+                            updateTodo(
+                                token,
+                                Todo.year,
+                                Todo.month,
+                                Todo.day,
+                                Todo.title,
+                                done,
+                                Todo.description,
+                                Todo.color.toString(),
+                                Todo.time,
+                                Todo.id
+                            ) {
+                                when (checked) {
+                                    true -> onCheckedUpdateTodo();
+                                    false -> onUnCheckedUpdateTodo();
+                                }
                             }
                         }
-                    }
-                }, colors = CheckboxDefaults.colors(
-                    when (Todo.color) {
-                        1 -> Color(0xffFFB4B4)
-                        2 -> Color(0xffFFDCA8)
-                        3 -> Color(0xffB1E0CF)
-                        4 -> Color(0xffB7D7F5)
-                        5 -> Color(0xffFFB8EB)
-                        6 -> Color(0xffB6B1EC)
-                        else -> Color.Black
-                    }
-                )
 
+                    })
+
+            Text(
+                modifier = Modifier.padding(start = 6.dp),
+                text = Todo.title,
+                fontSize = 13.sp,
+                fontStyle = FontStyle.Normal
             )
-            Text(text = Todo.title, fontSize = 13.sp, fontStyle = FontStyle.Normal)
+        }
+    }
+}
+
+@Composable
+fun getCheckboxImageResource(checked: Boolean, color: Int): Int {
+    return if (!checked) {
+        R.drawable.defaultcheckbox;
+    } else {
+        when (color) {
+            1 -> R.drawable.redcheckbox;
+            2 -> R.drawable.yellowcheckbox;
+            3 -> R.drawable.greencheckbox;
+            4 -> R.drawable.bluecheckbox;
+            5 -> R.drawable.pinkcheckbox;
+            6 -> R.drawable.purplecheckbox;
+            else -> R.drawable.defaultcheckbox
         }
     }
 }
@@ -1199,9 +1213,7 @@ fun TodoUpdateBottomSheet(
     val focusRequester = remember { FocusRequester() }
 
     val timePickerDialog = TimePickerDialog(
-        context,
-        R.style.TimePickerDialog,
-        { _, hour: Int, minute: Int ->
+        context, R.style.TimePickerDialog, { _, hour: Int, minute: Int ->
             amPm = if (hour < 12) "오전" else "오후"
             timeString = String.format("%02d%02d", hour, minute)
             time = String.format("%02d%02d", hour, minute)

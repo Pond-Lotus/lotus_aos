@@ -258,7 +258,7 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 6.dp),
+                        .padding(start = 6.dp, bottom = 1.dp),
                     text = "안내사항을 모두 확인하였으며, 탈퇴를 진행합니다.",
                     fontSize = 13.sp,
                     color = textColor
