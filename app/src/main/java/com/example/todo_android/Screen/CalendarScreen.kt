@@ -960,7 +960,7 @@ fun TodoItem(
             }) {
         Row(
             modifier = Modifier.padding(
-                    start = 16.dp, top = 13.dp, bottom = 13.dp
+                    start = 18.dp, top = 13.dp, bottom = 13.dp
                 ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
