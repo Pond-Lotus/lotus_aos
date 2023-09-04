@@ -2,6 +2,7 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -11,6 +12,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -926,6 +928,7 @@ fun TodoItem(
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
     var done by remember { mutableStateOf(false) }
     var scope = rememberCoroutineScope()
+    val swipeableState = rememberSwipeableState(initialValue = 0)
 
     LaunchedEffect(key1 = checked, block = {
         scope.launch {
@@ -955,42 +958,49 @@ fun TodoItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(45.dp)
+            .swipeable(
+                state = swipeableState,
+                anchors = mapOf(
+                    0f to 0,
+                    -dipToPix(context = Context, dipValue = 100f) to 1
+                )
+            )
             .clickable {
                 onTodoItemClick(Todo)
             }) {
         Row(
             modifier = Modifier.padding(
-                    start = 18.dp, top = 13.dp, bottom = 13.dp
-                ),
+                start = 18.dp, top = 13.dp, bottom = 13.dp
+            ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             Image(painterResource(getCheckboxImageResource(checked, Todo.color)),
                 contentDescription = "custom checkbox",
                 modifier = Modifier.clickable {
-                        checked = !checked;
-                        done = checked;
-                        scope.launch {
-                            updateTodo(
-                                token,
-                                Todo.year,
-                                Todo.month,
-                                Todo.day,
-                                Todo.title,
-                                done,
-                                Todo.description,
-                                Todo.color.toString(),
-                                Todo.time,
-                                Todo.id
-                            ) {
-                                when (checked) {
-                                    true -> onCheckedUpdateTodo();
-                                    false -> onUnCheckedUpdateTodo();
-                                }
+                    checked = !checked;
+                    done = checked;
+                    scope.launch {
+                        updateTodo(
+                            token,
+                            Todo.year,
+                            Todo.month,
+                            Todo.day,
+                            Todo.title,
+                            done,
+                            Todo.description,
+                            Todo.color.toString(),
+                            Todo.time,
+                            Todo.id
+                        ) {
+                            when (checked) {
+                                true -> onCheckedUpdateTodo();
+                                false -> onUnCheckedUpdateTodo();
                             }
                         }
+                    }
 
-                    })
+                })
 
             Text(
                 modifier = Modifier.padding(start = 6.dp),
@@ -1087,81 +1097,128 @@ fun TodoItemList(
                     )
                 }
             }
-            items(items = items, key = { Todo -> Todo.id }) { item ->
 
-                val dismissState = androidx.compose.material.rememberDismissState()
-                val dismissDirection = dismissState.dismissDirection
-                val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
-                if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-                    scope.launch {
-                        deleteTodo(token, item.id, response = {
-                            todoList.remove(item)
-                            readTodo(token, year = item.year, month = item.month, day = item.day) {
+            itemsIndexed(items = items, key = { index, item -> item.id }) { index, item ->
+                TodoItem(Todo = item,
+                    onTodoItemClick = { onTodoItemClick(it) },
+                    onCheckedUpdateTodo = {
+                        scope.launch {
+                            todoList.removeAll { it.id == item.id }
+                            todoList.add(item)
+                        }
+                    },
+                    onUnCheckedUpdateTodo = {
+                        scope.launch {
+                            todoList.removeAll { it.id == item.id }
+                            readTodo(
+                                token, year = item.year, month = item.month, day = item.day
+                            ) {
                                 todoList.clear()
                                 for (i in it!!.data) {
                                     todoList.add(i)
                                 }
-                            }
-                        })
-                    }
-                }
-                androidx.compose.material.SwipeToDismiss(state = dismissState,
-                    background = { DeleteBackground() },
-                    directions = setOf(DismissDirection.EndToStart),
-                    dismissContent = {
-                        TodoItem(Todo = item,
-                            onTodoItemClick = { onTodoItemClick(it) },
-                            onCheckedUpdateTodo = {
-                                scope.launch {
-                                    todoList.removeAll { it.id == item.id }
-                                    todoList.add(item)
-                                }
-                            },
-                            onUnCheckedUpdateTodo = {
-                                scope.launch {
-                                    todoList.removeAll { it.id == item.id }
-                                    readTodo(
-                                        token, year = item.year, month = item.month, day = item.day
-                                    ) {
-                                        todoList.clear()
-                                        for (i in it!!.data) {
-                                            todoList.add(i)
-                                        }
-                                    }.also {
-                                        readTodo(
-                                            token,
-                                            year = item.year,
-                                            month = item.month,
-                                            day = item.day
-                                        ) {
-                                            todoList.clear()
-                                            for (i in it!!.data) {
-                                                if (i.done) {
-                                                    todoList.removeAll { it.done == item.done }
-                                                    todoList.add(item)
-                                                }
-                                            }
-                                        }
-                                    }.also {
-                                        readTodo(
-                                            token,
-                                            year = item.year,
-                                            month = item.month,
-                                            day = item.day
-                                        ) {
-                                            todoList.clear()
-                                            for (i in it!!.data) {
-                                                todoList.add(i)
-                                            }
+                            }.also {
+                                readTodo(
+                                    token, year = item.year, month = item.month, day = item.day
+                                ) {
+                                    todoList.clear()
+                                    for (i in it!!.data) {
+                                        if (i.done) {
+                                            todoList.removeAll { it.done == item.done }
+                                            todoList.add(item)
                                         }
                                     }
                                 }
-                            })
-                    },
-                    dismissThresholds = {
-                        androidx.compose.material.FractionalThreshold(fraction = 0.2f)
+                            }.also {
+                                readTodo(
+                                    token, year = item.year, month = item.month, day = item.day
+                                ) {
+                                    todoList.clear()
+                                    for (i in it!!.data) {
+                                        todoList.add(i)
+                                    }
+                                }
+                            }
+                        }
                     })
             }
+
+
+//            items(items = items, key = { Todo -> Todo.id }) { item ->
+//
+//                val dismissState = androidx.compose.material.rememberDismissState()
+//                val dismissDirection = dismissState.dismissDirection
+//                val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
+//                if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+//                    scope.launch {
+//                        deleteTodo(token, item.id, response = {
+//                            todoList.remove(item)
+//                            readTodo(token, year = item.year, month = item.month, day = item.day) {
+//                                todoList.clear()
+//                                for (i in it!!.data) {
+//                                    todoList.add(i)
+//                                }
+//                            }
+//                        })
+//                    }
+//                }
+//                androidx.compose.material.SwipeToDismiss(state = dismissState,
+//                    background = { DeleteBackground() },
+//                    directions = setOf(DismissDirection.EndToStart),
+//                    dismissContent = {
+//                        TodoItem(Todo = item,
+//                            onTodoItemClick = { onTodoItemClick(it) },
+//                            onCheckedUpdateTodo = {
+//                                scope.launch {
+//                                    todoList.removeAll { it.id == item.id }
+//                                    todoList.add(item)
+//                                }
+//                            },
+//                            onUnCheckedUpdateTodo = {
+//                                scope.launch {
+//                                    todoList.removeAll { it.id == item.id }
+//                                    readTodo(
+//                                        token, year = item.year, month = item.month, day = item.day
+//                                    ) {
+//                                        todoList.clear()
+//                                        for (i in it!!.data) {
+//                                            todoList.add(i)
+//                                        }
+//                                    }.also {
+//                                        readTodo(
+//                                            token,
+//                                            year = item.year,
+//                                            month = item.month,
+//                                            day = item.day
+//                                        ) {
+//                                            todoList.clear()
+//                                            for (i in it!!.data) {
+//                                                if (i.done) {
+//                                                    todoList.removeAll { it.done == item.done }
+//                                                    todoList.add(item)
+//                                                }
+//                                            }
+//                                        }
+//                                    }.also {
+//                                        readTodo(
+//                                            token,
+//                                            year = item.year,
+//                                            month = item.month,
+//                                            day = item.day
+//                                        ) {
+//                                            todoList.clear()
+//                                            for (i in it!!.data) {
+//                                                todoList.add(i)
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            })
+//                    },
+//                    dismissThresholds = {
+//                        androidx.compose.material.FractionalThreshold(fraction = 0.2f)
+//                    })
+//            }
         }
     }
 }
@@ -1652,4 +1709,8 @@ fun convertToLayoutTimeFormat(time: String): String {
     } else {
         "${time.substring(0, 1)}:${time.substring(1)}"
     }
+}
+
+private fun dipToPix(context: Context, dipValue: Float): Float {
+    return dipValue * context.resources.displayMetrics.density
 }
