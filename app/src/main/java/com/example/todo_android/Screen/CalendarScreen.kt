@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -958,13 +959,22 @@ fun TodoItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(45.dp)
-//            .swipeable(
-//                state = swipeableState,
-//                anchors = mapOf(
-//                    0f to 0,
-//                    -dipToPix(context = Context, dipValue = 100f) to 1
-//                )
-//            )
+            .swipeable(
+                state = swipeableState,
+                anchors = mapOf(
+                    0f to 0,
+                    -dipToPix(
+                        LocalContext.current,
+                        dipValue = 100f) to 1,
+                    dipToPix(
+                        LocalContext.current,
+                        dipValue = 100f) to 2
+                ),
+                thresholds = { _, _ ->
+                    FractionalThreshold(0.3f)
+                },
+                orientation = Orientation.Horizontal
+            )
             .clickable {
                 onTodoItemClick(Todo)
             }) {
@@ -1099,48 +1109,121 @@ fun TodoItemList(
             }
 
             itemsIndexed(items = items, key = { index, item -> item.id }) { index, item ->
-                TodoItem(Todo = item,
-                    onTodoItemClick = { onTodoItemClick(it) },
-                    onCheckedUpdateTodo = {
-                        scope.launch {
-                            todoList.removeAll { it.id == item.id }
-                            todoList.add(item)
-                        }
-                    },
-                    onUnCheckedUpdateTodo = {
-                        scope.launch {
-                            todoList.removeAll { it.id == item.id }
-                            readTodo(
-                                token, year = item.year, month = item.month, day = item.day
-                            ) {
+                val dismissState = androidx.compose.material.rememberDismissState()
+                val dismissDirection = dismissState.dismissDirection
+                val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
+                if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+                    scope.launch {
+                        deleteTodo(token, item.id, response = {
+                            todoList.remove(item)
+                            readTodo(token, year = item.year, month = item.month, day = item.day) {
                                 todoList.clear()
                                 for (i in it!!.data) {
                                     todoList.add(i)
                                 }
-                            }.also {
-                                readTodo(
-                                    token, year = item.year, month = item.month, day = item.day
-                                ) {
-                                    todoList.clear()
-                                    for (i in it!!.data) {
-                                        if (i.done) {
-                                            todoList.removeAll { it.done == item.done }
-                                            todoList.add(item)
+                            }
+                        })
+                    }
+                }
+                androidx.compose.material.SwipeToDismiss(state = dismissState,
+                    background = { DeleteBackground() },
+                    directions = setOf(DismissDirection.EndToStart),
+                    dismissContent = {
+                        TodoItem(Todo = item,
+                            onTodoItemClick = { onTodoItemClick(it) },
+                            onCheckedUpdateTodo = {
+                                scope.launch {
+                                    todoList.removeAll { it.id == item.id }
+                                    todoList.add(item)
+                                }
+                            },
+                            onUnCheckedUpdateTodo = {
+                                scope.launch {
+                                    todoList.removeAll { it.id == item.id }
+                                    readTodo(
+                                        token, year = item.year, month = item.month, day = item.day
+                                    ) {
+                                        todoList.clear()
+                                        for (i in it!!.data) {
+                                            todoList.add(i)
+                                        }
+                                    }.also {
+                                        readTodo(
+                                            token,
+                                            year = item.year,
+                                            month = item.month,
+                                            day = item.day
+                                        ) {
+                                            todoList.clear()
+                                            for (i in it!!.data) {
+                                                if (i.done) {
+                                                    todoList.removeAll { it.done == item.done }
+                                                    todoList.add(item)
+                                                }
+                                            }
+                                        }
+                                    }.also {
+                                        readTodo(
+                                            token,
+                                            year = item.year,
+                                            month = item.month,
+                                            day = item.day
+                                        ) {
+                                            todoList.clear()
+                                            for (i in it!!.data) {
+                                                todoList.add(i)
+                                            }
                                         }
                                     }
                                 }
-                            }.also {
-                                readTodo(
-                                    token, year = item.year, month = item.month, day = item.day
-                                ) {
-                                    todoList.clear()
-                                    for (i in it!!.data) {
-                                        todoList.add(i)
-                                    }
-                                }
-                            }
-                        }
+                            })
+                    },
+                    dismissThresholds = {
+                        androidx.compose.material.FractionalThreshold(fraction = 0.2f)
                     })
+
+            //                TodoItem(Todo = item,
+//                    onTodoItemClick = { onTodoItemClick(it) },
+//                    onCheckedUpdateTodo = {
+//                        scope.launch {
+//                            todoList.removeAll { it.id == item.id }
+//                            todoList.add(item)
+//                        }
+//                    },
+//                    onUnCheckedUpdateTodo = {
+//                        scope.launch {
+//                            todoList.removeAll { it.id == item.id }
+//                            readTodo(
+//                                token, year = item.year, month = item.month, day = item.day
+//                            ) {
+//                                todoList.clear()
+//                                for (i in it!!.data) {
+//                                    todoList.add(i)
+//                                }
+//                            }.also {
+//                                readTodo(
+//                                    token, year = item.year, month = item.month, day = item.day
+//                                ) {
+//                                    todoList.clear()
+//                                    for (i in it!!.data) {
+//                                        if (i.done) {
+//                                            todoList.removeAll { it.done == item.done }
+//                                            todoList.add(item)
+//                                        }
+//                                    }
+//                                }
+//                            }.also {
+//                                readTodo(
+//                                    token, year = item.year, month = item.month, day = item.day
+//                                ) {
+//                                    todoList.clear()
+//                                    for (i in it!!.data) {
+//                                        todoList.add(i)
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    })
             }
 
 
