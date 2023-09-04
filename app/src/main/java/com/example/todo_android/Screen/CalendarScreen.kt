@@ -958,13 +958,13 @@ fun TodoItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(45.dp)
-            .swipeable(
-                state = swipeableState,
-                anchors = mapOf(
-                    0f to 0,
-                    -dipToPix(context = Context, dipValue = 100f) to 1
-                )
-            )
+//            .swipeable(
+//                state = swipeableState,
+//                anchors = mapOf(
+//                    0f to 0,
+//                    -dipToPix(context = Context, dipValue = 100f) to 1
+//                )
+//            )
             .clickable {
                 onTodoItemClick(Todo)
             }) {
