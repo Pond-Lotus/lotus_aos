@@ -1133,14 +1133,18 @@ fun TodoItemList(
                             onTodoItemClick = { onTodoItemClick(it) },
                             onCheckedUpdateTodo = {
                                 scope.launch {
-                                    todoList.removeAll { it.id == item.id }
-                                    todoList.add(item)
+                                    todoList.removeAll { it.id == item.id }.let {
+                                        todoList.add(item)
+                                    }
+
                                 }
                             },
                             onUnCheckedUpdateTodo = {
                                 scope.launch {
-                                    todoList.removeAll { it.id == item.id }
-                                    todoList.addAll(index, items)
+                                    todoList.removeAll { it.id == item.id }.let {
+                                        todoList.add(index, item)
+                                    }
+
 //                                    readTodo(
 //                                        token, year = item.year, month = item.month, day = item.day
 //                                    ) {
