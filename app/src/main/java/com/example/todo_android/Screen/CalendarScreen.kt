@@ -104,7 +104,7 @@ fun createTodo(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var createTodoRequest: CreateTodoRequest = retrofit.create(CreateTodoRequest::class.java)
@@ -149,7 +149,7 @@ fun readTodo(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var readTodoRequest: ReadTodoRequest = retrofit.create(ReadTodoRequest::class.java)
@@ -190,7 +190,7 @@ fun deleteTodo(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var deleteTodoRequest: DeleteTodoRequest = retrofit.create(DeleteTodoRequest::class.java)
@@ -239,7 +239,7 @@ fun updateTodo(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
@@ -286,7 +286,7 @@ fun readCategory(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var readCategoryRequest: ReadCategoryRequest = retrofit.create(ReadCategoryRequest::class.java)
@@ -959,22 +959,22 @@ fun TodoItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(45.dp)
-            .swipeable(
-                state = swipeableState,
-                anchors = mapOf(
-                    0f to 0,
-                    -dipToPix(
-                        LocalContext.current,
-                        dipValue = 100f) to 1,
-                    dipToPix(
-                        LocalContext.current,
-                        dipValue = 100f) to 2
-                ),
-                thresholds = { _, _ ->
-                    FractionalThreshold(0.3f)
-                },
-                orientation = Orientation.Horizontal
-            )
+//            .swipeable(
+//                state = swipeableState,
+//                anchors = mapOf(
+//                    0f to 0,
+//                    -dipToPix(
+//                        LocalContext.current,
+//                        dipValue = 100f) to 1,
+//                    dipToPix(
+//                        LocalContext.current,
+//                        dipValue = 100f) to 2
+//                ),
+//                thresholds = { _, _ ->
+//                    FractionalThreshold(0.3f)
+//                },
+//                orientation = Orientation.Horizontal
+//            )
             .clickable {
                 onTodoItemClick(Todo)
             }) {

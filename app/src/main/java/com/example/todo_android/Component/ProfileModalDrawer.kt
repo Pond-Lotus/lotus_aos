@@ -57,7 +57,7 @@ fun Logout(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/").client(okHttpClient)
+    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var logoutRequest: LogoutRequest = retrofit.create(LogoutRequest::class.java)

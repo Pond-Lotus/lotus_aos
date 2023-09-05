@@ -45,7 +45,7 @@ fun SearchPassword(
 
     var authEmailResponse: SearchEmailResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/")
+    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ")
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var searchEmailRequest: SearchEmailRequest = retrofit.create(SearchEmailRequest::class.java)

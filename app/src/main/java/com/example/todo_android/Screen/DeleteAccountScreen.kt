@@ -37,7 +37,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 fun deleteAccount(token: String, response: (DeleteAccountResponse?) -> Unit) {
     var deleteAccountResponse: DeleteAccountResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("http://34.22.73.14:8000/")
+    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ")
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var deleteAccountRequest: DeleteAccountRequest =
