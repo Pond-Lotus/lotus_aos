@@ -2,8 +2,13 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -17,13 +22,18 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Data.Category.UpdateCategory
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
+import com.example.todo_android.R
 import com.example.todo_android.Request.CategoryRequest.UpdateCategoryRequest
 import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.Response.CategoryResponse.UpdateCategoryResponse
@@ -100,7 +110,11 @@ fun ChangeCategoryNameScreen(
                 response?.data?.let { data ->
                     categoryData.clear()
                     data.forEach { (key, value) ->
-                        categoryData.add(ReadCategoryResponse(response.resultCode, mapOf(key to value)))
+                        categoryData.add(
+                            ReadCategoryResponse(
+                                response.resultCode, mapOf(key to value)
+                            )
+                        )
                         testList[key] = value
                     }
                 }
@@ -112,8 +126,6 @@ fun ChangeCategoryNameScreen(
         focusRequester.requestFocus()
         keyboardController?.show()
     })
-
-
 
 
     val categorySet = when (categoryId) {
@@ -232,37 +244,37 @@ fun ChangeCategoryNameScreen(
                     onClick = {},
                     content = {})
 
-                TextField(
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(45.dp)
+                        .focusRequester(focusRequester)
                         .padding(start = 10.dp)
-                        .focusRequester(focusRequester),
-                    value = categoryName,
-                    onValueChange = {
-                        categoryName = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "그룹 이름 지정",
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 14.sp,
-                            lineHeight = 24.sp
+                        .background(
+                            shape = RoundedCornerShape(8.dp), color = Color(0xffF3F3F3)
+                        ),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        BasicTextField(
+                            value = categoryName,
+                            onValueChange = {
+                                categoryName = it
+                            },
+                            textStyle = TextStyle(
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 13.sp,
+                                color = Color.Black
+                            ),
+                            singleLine = true,
+                            maxLines = 1,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                         )
-                    },
-                    textStyle = TextStyle(
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 13.sp
-                    ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color(0xffF3F3F3),
-                        disabledLabelColor = Color(0xffF3F3F3),
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    singleLine = true,
-                    shape = RoundedCornerShape(8.dp),
-                )
+                    }
+                }
             }
         }
     }

@@ -1176,7 +1176,8 @@ fun TodoItemList(
                                         }
                                     }
                                 }
-                            })
+                            }
+                        )
                     },
                     dismissThresholds = {
                         androidx.compose.material.FractionalThreshold(fraction = 0.2f)
