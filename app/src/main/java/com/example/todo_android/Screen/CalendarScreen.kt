@@ -1140,41 +1140,42 @@ fun TodoItemList(
                             onUnCheckedUpdateTodo = {
                                 scope.launch {
                                     todoList.removeAll { it.id == item.id }
-                                    readTodo(
-                                        token, year = item.year, month = item.month, day = item.day
-                                    ) {
-                                        todoList.clear()
-                                        for (i in it!!.data) {
-                                            todoList.add(i)
-                                        }
-                                    }.also {
-                                        readTodo(
-                                            token,
-                                            year = item.year,
-                                            month = item.month,
-                                            day = item.day
-                                        ) {
-                                            todoList.clear()
-                                            for (i in it!!.data) {
-                                                if (i.done) {
-                                                    todoList.removeAll { it.done == item.done }
-                                                    todoList.add(item)
-                                                }
-                                            }
-                                        }
-                                    }.also {
-                                        readTodo(
-                                            token,
-                                            year = item.year,
-                                            month = item.month,
-                                            day = item.day
-                                        ) {
-                                            todoList.clear()
-                                            for (i in it!!.data) {
-                                                todoList.add(i)
-                                            }
-                                        }
-                                    }
+                                    todoList.addAll(index, items)
+//                                    readTodo(
+//                                        token, year = item.year, month = item.month, day = item.day
+//                                    ) {
+//                                        todoList.clear()
+//                                        for (i in it!!.data) {
+//                                            todoList.add(i)
+//                                        }
+//                                    }.also {
+//                                        readTodo(
+//                                            token,
+//                                            year = item.year,
+//                                            month = item.month,
+//                                            day = item.day
+//                                        ) {
+//                                            todoList.clear()
+//                                            for (i in it!!.data) {
+//                                                if (i.done) {
+//                                                    todoList.removeAll { it.done == item.done }
+//                                                    todoList.add(item)
+//                                                }
+//                                            }
+//                                        }
+//                                    }.also {
+//                                        readTodo(
+//                                            token,
+//                                            year = item.year,
+//                                            month = item.month,
+//                                            day = item.day
+//                                        ) {
+//                                            todoList.clear()
+//                                            for (i in it!!.data) {
+//                                                todoList.add(i)
+//                                            }
+//                                        }
+//                                    }
                                 }
                             }
                         )
