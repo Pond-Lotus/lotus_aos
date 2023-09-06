@@ -1108,7 +1108,7 @@ fun TodoItemList(
                 }
             }
 
-            itemsIndexed(items = items, key = { index, item -> item.id }) { index, item ->
+            itemsIndexed(items = items, key = { index, Todo -> Todo.id }) { index, item ->
                 val dismissState = androidx.compose.material.rememberDismissState()
                 val dismissDirection = dismissState.dismissDirection
                 val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
@@ -1129,21 +1129,22 @@ fun TodoItemList(
                     background = { DeleteBackground() },
                     directions = setOf(DismissDirection.EndToStart),
                     dismissContent = {
+
+                        Log.d("TodoItemIndex", index.toString())
+
                         TodoItem(Todo = item,
                             onTodoItemClick = { onTodoItemClick(it) },
                             onCheckedUpdateTodo = {
                                 scope.launch {
-                                    todoList.removeAll { it.id == item.id }.let {
-                                        todoList.add(item)
-                                    }
+                                    todoList.removeAll { it.id == item.id }
+                                    todoList.add(item)
 
                                 }
                             },
                             onUnCheckedUpdateTodo = {
                                 scope.launch {
-                                    todoList.removeAll { it.id == item.id }.let {
-                                        todoList.add(index, item)
-                                    }
+                                    todoList.removeAll { it.id == item.id }
+                                    todoList.add(index, item)
 
 //                                    readTodo(
 //                                        token, year = item.year, month = item.month, day = item.day
