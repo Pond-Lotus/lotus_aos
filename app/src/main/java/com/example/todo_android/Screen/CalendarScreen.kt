@@ -11,9 +11,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -38,8 +36,13 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -47,6 +50,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
@@ -86,6 +91,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.util.*
+import kotlin.math.roundToInt
 
 fun createTodo(
     token: String,
@@ -359,6 +365,23 @@ fun CalendarScreen(routeAction: RouteAction) {
     )
     val dayOfWeek = selectedDate.dayOfWeek
 
+    val topAppBarHeight = 64.dp
+    val topAppBarHeightPx = with(LocalDensity.current) { topAppBarHeight.roundToPx().toFloat() }
+    val topAppBarOffsetHeightPx = remember { mutableStateOf(0f) }
+
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+
+                val delta = available.y
+                val newOffset = topAppBarOffsetHeightPx.value + delta
+                topAppBarOffsetHeightPx.value = newOffset.coerceIn(-topAppBarHeightPx, 0f)
+
+                return Offset.Zero
+            }
+        }
+    }
+
     val dayColor: Color = when (dayOfWeek.value) {
         1 -> Color.Black
         2 -> Color.Black
@@ -368,12 +391,6 @@ fun CalendarScreen(routeAction: RouteAction) {
         6 -> Color.Black
         7 -> Color(0xFFF86B6B)
         else -> Color.Black
-    }
-
-    LaunchedEffect(isVisibility) {
-        if (isVisibility) {
-            focusRequester.requestFocus()
-        }
     }
 
     val onButtonClick: (String) -> Unit = { id ->
@@ -445,10 +462,18 @@ fun CalendarScreen(routeAction: RouteAction) {
             }
         }
     })
+
+    LaunchedEffect(isVisibility) {
+        if (isVisibility) {
+            focusRequester.requestFocus()
+        }
+    }
+
     BottomSheetScaffold(
         modifier = Modifier
             .fillMaxSize()
-            .imePadding(),
+            .imePadding()
+            .nestedScroll(nestedScrollConnection),
         scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
@@ -456,7 +481,9 @@ fun CalendarScreen(routeAction: RouteAction) {
             )
         },
         topBar = {
-            CenterAlignedTopAppBar(title = {
+            CenterAlignedTopAppBar(modifier = Modifier.offset {
+                IntOffset(x = 0, y = topAppBarOffsetHeightPx.value.roundToInt())
+            }, title = {
                 MonthWeekToggleSwitch(
                     width = 105, height = 35, animateState = animateState
                 )
@@ -959,28 +986,12 @@ fun TodoItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(45.dp)
-//            .swipeable(
-//                state = swipeableState,
-//                anchors = mapOf(
-//                    0f to 0,
-//                    -dipToPix(
-//                        LocalContext.current,
-//                        dipValue = 100f) to 1,
-//                    dipToPix(
-//                        LocalContext.current,
-//                        dipValue = 100f) to 2
-//                ),
-//                thresholds = { _, _ ->
-//                    FractionalThreshold(0.3f)
-//                },
-//                orientation = Orientation.Horizontal
-//            )
             .clickable {
                 onTodoItemClick(Todo)
             }) {
         Row(
             modifier = Modifier.padding(
-                start = 18.dp, top = 13.dp, bottom = 13.dp
+                start = 14.dp, top = 13.dp, bottom = 13.dp
             ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
@@ -1013,7 +1024,7 @@ fun TodoItem(
                 })
 
             Text(
-                modifier = Modifier.padding(start = 6.dp),
+                modifier = Modifier.padding(start = 6.dp, bottom = 1.dp),
                 text = Todo.title,
                 fontSize = 13.sp,
                 fontStyle = FontStyle.Normal
@@ -1080,26 +1091,25 @@ fun TodoItemList(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Button(modifier = Modifier.size(9.dp),
-                        onClick = { /*TODO*/ },
-                        enabled = false,
-                        content = {},
-                        colors = ButtonDefaults.buttonColors(
-                            disabledContainerColor = when (header) {
-                                1 -> Color(0xffFFB4B4)
-                                2 -> Color(0xffFFDCA8)
-                                3 -> Color(0xffB1E0CF)
-                                4 -> Color(0xffB7D7F5)
-                                5 -> Color(0xffFFB8EB)
-                                6 -> Color(0xffB6B1EC)
-                                else -> Color.Black
-                            }
-                        )
+                    Box(
+                        modifier = Modifier
+                            .size(9.dp)
+                            .clip(shape = CircleShape)
+                            .background(
+                                color = when (header) {
+                                    1 -> Color(0xffFFB4B4)
+                                    2 -> Color(0xffFFDCA8)
+                                    3 -> Color(0xffB1E0CF)
+                                    4 -> Color(0xffB7D7F5)
+                                    5 -> Color(0xffFFB8EB)
+                                    6 -> Color(0xffB6B1EC)
+                                    else -> Color.Black
+                                }
+                            )
                     )
 
-                    Spacer(modifier = Modifier.padding(horizontal = 4.dp))
-
                     Text(
+                        modifier = Modifier.padding(start = 4.dp),
                         text = categoryName?.data?.get(header.toString()) ?: "",
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
@@ -1146,169 +1156,13 @@ fun TodoItemList(
                                     todoList.removeAll { it.id == item.id }
                                     todoList.add(index, item)
 
-//                                    readTodo(
-//                                        token, year = item.year, month = item.month, day = item.day
-//                                    ) {
-//                                        todoList.clear()
-//                                        for (i in it!!.data) {
-//                                            todoList.add(i)
-//                                        }
-//                                    }.also {
-//                                        readTodo(
-//                                            token,
-//                                            year = item.year,
-//                                            month = item.month,
-//                                            day = item.day
-//                                        ) {
-//                                            todoList.clear()
-//                                            for (i in it!!.data) {
-//                                                if (i.done) {
-//                                                    todoList.removeAll { it.done == item.done }
-//                                                    todoList.add(item)
-//                                                }
-//                                            }
-//                                        }
-//                                    }.also {
-//                                        readTodo(
-//                                            token,
-//                                            year = item.year,
-//                                            month = item.month,
-//                                            day = item.day
-//                                        ) {
-//                                            todoList.clear()
-//                                            for (i in it!!.data) {
-//                                                todoList.add(i)
-//                                            }
-//                                        }
-//                                    }
                                 }
-                            }
-                        )
+                            })
                     },
                     dismissThresholds = {
                         androidx.compose.material.FractionalThreshold(fraction = 0.2f)
                     })
-
-            //                TodoItem(Todo = item,
-//                    onTodoItemClick = { onTodoItemClick(it) },
-//                    onCheckedUpdateTodo = {
-//                        scope.launch {
-//                            todoList.removeAll { it.id == item.id }
-//                            todoList.add(item)
-//                        }
-//                    },
-//                    onUnCheckedUpdateTodo = {
-//                        scope.launch {
-//                            todoList.removeAll { it.id == item.id }
-//                            readTodo(
-//                                token, year = item.year, month = item.month, day = item.day
-//                            ) {
-//                                todoList.clear()
-//                                for (i in it!!.data) {
-//                                    todoList.add(i)
-//                                }
-//                            }.also {
-//                                readTodo(
-//                                    token, year = item.year, month = item.month, day = item.day
-//                                ) {
-//                                    todoList.clear()
-//                                    for (i in it!!.data) {
-//                                        if (i.done) {
-//                                            todoList.removeAll { it.done == item.done }
-//                                            todoList.add(item)
-//                                        }
-//                                    }
-//                                }
-//                            }.also {
-//                                readTodo(
-//                                    token, year = item.year, month = item.month, day = item.day
-//                                ) {
-//                                    todoList.clear()
-//                                    for (i in it!!.data) {
-//                                        todoList.add(i)
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    })
             }
-
-
-//            items(items = items, key = { Todo -> Todo.id }) { item ->
-//
-//                val dismissState = androidx.compose.material.rememberDismissState()
-//                val dismissDirection = dismissState.dismissDirection
-//                val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
-//                if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-//                    scope.launch {
-//                        deleteTodo(token, item.id, response = {
-//                            todoList.remove(item)
-//                            readTodo(token, year = item.year, month = item.month, day = item.day) {
-//                                todoList.clear()
-//                                for (i in it!!.data) {
-//                                    todoList.add(i)
-//                                }
-//                            }
-//                        })
-//                    }
-//                }
-//                androidx.compose.material.SwipeToDismiss(state = dismissState,
-//                    background = { DeleteBackground() },
-//                    directions = setOf(DismissDirection.EndToStart),
-//                    dismissContent = {
-//                        TodoItem(Todo = item,
-//                            onTodoItemClick = { onTodoItemClick(it) },
-//                            onCheckedUpdateTodo = {
-//                                scope.launch {
-//                                    todoList.removeAll { it.id == item.id }
-//                                    todoList.add(item)
-//                                }
-//                            },
-//                            onUnCheckedUpdateTodo = {
-//                                scope.launch {
-//                                    todoList.removeAll { it.id == item.id }
-//                                    readTodo(
-//                                        token, year = item.year, month = item.month, day = item.day
-//                                    ) {
-//                                        todoList.clear()
-//                                        for (i in it!!.data) {
-//                                            todoList.add(i)
-//                                        }
-//                                    }.also {
-//                                        readTodo(
-//                                            token,
-//                                            year = item.year,
-//                                            month = item.month,
-//                                            day = item.day
-//                                        ) {
-//                                            todoList.clear()
-//                                            for (i in it!!.data) {
-//                                                if (i.done) {
-//                                                    todoList.removeAll { it.done == item.done }
-//                                                    todoList.add(item)
-//                                                }
-//                                            }
-//                                        }
-//                                    }.also {
-//                                        readTodo(
-//                                            token,
-//                                            year = item.year,
-//                                            month = item.month,
-//                                            day = item.day
-//                                        ) {
-//                                            todoList.clear()
-//                                            for (i in it!!.data) {
-//                                                todoList.add(i)
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            })
-//                    },
-//                    dismissThresholds = {
-//                        androidx.compose.material.FractionalThreshold(fraction = 0.2f)
-//                    })
-//            }
         }
     }
 }
