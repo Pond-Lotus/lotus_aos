@@ -473,6 +473,11 @@ fun CalendarScreen(routeAction: RouteAction) {
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
+            .windowInsetsPadding(
+                WindowInsets.systemBars.only(
+                    WindowInsetsSides.Vertical
+                )
+            )
             .nestedScroll(nestedScrollConnection),
         scaffoldState = bottomScaffoldState,
         drawerContent = {

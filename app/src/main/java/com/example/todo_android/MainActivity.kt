@@ -8,6 +8,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.constraintlayout.compose.ExperimentalMotionApi
+import androidx.core.view.WindowCompat
 import com.example.todo_android.Navigation.NavigationGraph
 import com.example.todo_android.ui.theme.TodoandroidTheme
 
@@ -19,6 +20,7 @@ import com.example.todo_android.ui.theme.TodoandroidTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             TodoandroidTheme {
                 NavigationGraph()
