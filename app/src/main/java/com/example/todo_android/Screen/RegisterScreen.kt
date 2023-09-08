@@ -265,6 +265,7 @@ fun RegisterScreen(routeAction: RouteAction) {
                     Text(
                         text = MyApplication.prefs.getData("email", ""),
                         fontSize = 18.sp,
+                        color = Color(0xFF424242),
                         modifier = Modifier
                             .padding(start = 16.dp)
                             .align(alignment = Alignment.CenterStart)

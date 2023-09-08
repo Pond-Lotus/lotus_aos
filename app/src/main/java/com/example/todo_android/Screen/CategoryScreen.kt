@@ -57,6 +57,7 @@ fun CategoryScreen(routeAction: RouteAction) {
         Box(
             Modifier
                 .fillMaxWidth()
+                .height(45.dp)
                 .drawWithContent {
                     drawContent()
                     drawLine(
@@ -88,7 +89,7 @@ fun CategoryScreen(routeAction: RouteAction) {
                 .padding(start = 28.dp, end = 28.dp)
         ) {
 
-            Spacer(modifier = Modifier.padding(vertical = 41.dp))
+            Spacer(modifier = Modifier.padding(vertical = 28.dp))
 
             CategoryItemList(categoryList, routeAction)
         }
@@ -165,7 +166,7 @@ fun CategoryItemList(categoryList: List<ReadCategoryResponse>, routeAction: Rout
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 10.dp, bottom = 10.dp),
+                        .padding(top = 7.dp, bottom = 7.dp),
                     color = Color(0xffe9e9e9),
                     thickness = 1.dp
                 )

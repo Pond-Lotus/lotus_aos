@@ -137,7 +137,7 @@ fun ProfileModalDrawer(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 8.dp),
+                    .padding(start = 10.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start
             ) {
@@ -192,7 +192,7 @@ fun ProfileModalDrawer(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 2.dp, bottom = 22.dp)
+                .padding(start = 2.dp, bottom = 18.dp)
                 .clickable {
                     routeAction.navTo(NAV_ROUTE.CHANGEPASSWORD)
                 }, verticalAlignment = Alignment.CenterVertically

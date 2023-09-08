@@ -140,6 +140,7 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
         Box(
             Modifier
                 .fillMaxWidth()
+                .height(45.dp)
                 .drawWithContent {
                     drawContent()
                     drawLine(
@@ -173,7 +174,7 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                 .imePadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(modifier = Modifier.padding(vertical = 47.dp))
+            Spacer(modifier = Modifier.padding(vertical = 35.dp))
 
             Text(
                 text = "현재 비밀번호",

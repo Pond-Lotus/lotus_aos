@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -240,6 +241,7 @@ fun ProfileScreen(routeAction: RouteAction) {
         Box(
             Modifier
                 .fillMaxWidth()
+                .height(45.dp)
                 .drawWithContent {
                     drawContent()
                     drawLine(
@@ -258,7 +260,7 @@ fun ProfileScreen(routeAction: RouteAction) {
                 )
             }, navigationIcon = {
                 IconButton(onClick = {
-                    routeAction.goBack()
+                    routeAction.navTo(NAV_ROUTE.CALENDAR)
                 }) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
                 }
@@ -268,7 +270,7 @@ fun ProfileScreen(routeAction: RouteAction) {
                     fontWeight = FontWeight.Medium,
                     color = Color(0xff9E9E9E),
                     modifier = Modifier
-                        .padding(30.dp)
+                        .padding(end = 15.dp)
                         .clickable {
                             if (image.value != null) {
                                 scope.launch {
@@ -302,7 +304,7 @@ fun ProfileScreen(routeAction: RouteAction) {
                 ), horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(modifier = Modifier.padding(vertical = 45.dp))
+            Spacer(modifier = Modifier.padding(vertical = 35.dp))
 
             Box(modifier = Modifier.padding(8.dp)) {
                 Image(bitmap = bitmap.value!!,
@@ -360,10 +362,13 @@ fun ProfileScreen(routeAction: RouteAction) {
                             nickname = it
                         },
                         textStyle = TextStyle(
-                            fontSize = 13.sp,
+                            fontSize = 15.sp,
                             fontStyle = FontStyle.Normal,
                             color = Color.Black,
-                            lineHeight = 31.sp
+                            lineHeight = 31.sp,
+                            platformStyle = PlatformTextStyle(
+                                includeFontPadding = false
+                            )
                         ),
                         singleLine = true,
                         maxLines = 1,
@@ -404,10 +409,13 @@ fun ProfileScreen(routeAction: RouteAction) {
                             email = it
                         },
                         textStyle = TextStyle(
-                            fontSize = 13.sp,
+                            fontSize = 15.sp,
                             fontStyle = FontStyle.Normal,
-                            color = Color.Black,
-                            lineHeight = 31.sp
+                            color = Color(0xFF9E9E9E),
+                            lineHeight = 31.sp,
+                            platformStyle = PlatformTextStyle(
+                                includeFontPadding = false
+                            )
                         ),
                         singleLine = true,
                         maxLines = 1,
@@ -426,7 +434,7 @@ fun ProfileScreen(routeAction: RouteAction) {
                     .border(
                         width = 0.5.dp,
                         color = Color(0xff424242),
-                        shape = RoundedCornerShape(percent = 8)
+                        shape = RoundedCornerShape(8.dp)
                     )
                     .background(Color.Transparent), contentAlignment = Alignment.Center
             ) {
@@ -513,7 +521,7 @@ fun setImageDialog(
                 verticalArrangement = Arrangement.Center
             ) {
 
-                Spacer(modifier = Modifier.padding(vertical = 15.dp))
+                Spacer(modifier = Modifier.padding(vertical = 17.dp))
 
                 Button(
                     modifier = Modifier

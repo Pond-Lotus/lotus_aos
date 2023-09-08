@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -561,7 +562,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         }),
                         kalendarDayKonfig = KalendarDayKonfig(
                             size = 56.dp,
-                            textSize = 13.sp,
+                            textSize = 14.sp,
                             textColor = Color.Black,
                             selectedTextColor = Color.Black,
                             borderColor = Color.Transparent
@@ -611,7 +612,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 Spacer(modifier = Modifier.width(4.dp))
 
                                 Text(
-                                    text = "${year}년 ${month.number}월",
+                                    text = if (month.number.toString().length < 2) {
+                                        "${year}. 0${month.number}"
+                                    } else {
+                                        "${year}. ${month.number}"
+                                    },
                                     fontSize = 22.sp,
                                     lineHeight = 28.6.sp,
                                     fontWeight = FontWeight(700),
@@ -637,7 +642,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         }),
                         kalendarDayKonfig = KalendarDayKonfig(
                             size = 56.dp,
-                            textSize = 13.sp,
+                            textSize = 14.sp,
                             textColor = Color.Black,
                             selectedTextColor = Color.Black,
                             borderColor = Color.Transparent
@@ -687,7 +692,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 Spacer(modifier = Modifier.width(4.dp))
 
                                 Text(
-                                    text = "${year}년 ${month.number}월",
+                                    text = "${year}. ${month.number}",
                                     fontSize = 22.sp,
                                     lineHeight = 28.6.sp,
                                     fontWeight = FontWeight(700),
@@ -708,7 +713,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = day,
+                    text = if (day.length == 1) {
+                        "0${day}"
+                    } else {
+                        day
+                    },
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(end = 6.dp)
@@ -1003,35 +1012,43 @@ fun TodoItem(
         ) {
             Image(painterResource(getCheckboxImageResource(checked, Todo.color)),
                 contentDescription = "custom checkbox",
-                modifier = Modifier.clickable {
-                    checked = !checked;
-                    done = checked;
-                    scope.launch {
-                        updateTodo(
-                            token,
-                            Todo.year,
-                            Todo.month,
-                            Todo.day,
-                            Todo.title,
-                            done,
-                            Todo.description,
-                            Todo.color.toString(),
-                            Todo.time,
-                            Todo.id
-                        ) {
-                            when (checked) {
-                                true -> onCheckedUpdateTodo();
-                                false -> onUnCheckedUpdateTodo();
+                modifier = Modifier
+                    .size(20.dp)
+                    .clickable {
+                        checked = !checked;
+                        done = checked;
+                        scope.launch {
+                            updateTodo(
+                                token,
+                                Todo.year,
+                                Todo.month,
+                                Todo.day,
+                                Todo.title,
+                                done,
+                                Todo.description,
+                                Todo.color.toString(),
+                                Todo.time,
+                                Todo.id
+                            ) {
+                                when (checked) {
+                                    true -> onCheckedUpdateTodo();
+                                    false -> onUnCheckedUpdateTodo();
+                                }
                             }
                         }
-                    }
 
-                })
+                    })
 
             Text(
-                modifier = Modifier.padding(start = 6.dp, bottom = 1.dp),
+                modifier = Modifier
+                    .padding(start = 6.dp),
+                style = TextStyle(
+                    platformStyle = PlatformTextStyle(
+                        includeFontPadding = false
+                    )
+                ),
                 text = Todo.title,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontStyle = FontStyle.Normal
             )
         }
@@ -1092,7 +1109,9 @@ fun TodoItemList(
 
             stickyHeader {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 18.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
@@ -1547,13 +1566,19 @@ fun TodoUpdateBottomSheet(
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 20.dp,
+                    end = 20.dp,
+                    bottom = 19.dp
+                ),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Image(
                 modifier = Modifier
-                    .size(26.dp)
+                    .size(30.dp)
                     .clickable {
                         onButtonClick("1")
                     }, painter = if (color == 1) {
@@ -1565,7 +1590,7 @@ fun TodoUpdateBottomSheet(
 
             Image(
                 modifier = Modifier
-                    .size(26.dp)
+                    .size(30.dp)
                     .clickable {
                         onButtonClick("2")
                     }, painter = if (color == 2) {
@@ -1577,7 +1602,7 @@ fun TodoUpdateBottomSheet(
 
             Image(
                 modifier = Modifier
-                    .size(26.dp)
+                    .size(30.dp)
                     .clickable {
                         onButtonClick("3")
                     }, painter = if (color == 3) {
@@ -1589,7 +1614,7 @@ fun TodoUpdateBottomSheet(
 
             Image(
                 modifier = Modifier
-                    .size(26.dp)
+                    .size(30.dp)
                     .clickable {
                         onButtonClick("4")
                     }, painter = if (color == 4) {
@@ -1601,7 +1626,7 @@ fun TodoUpdateBottomSheet(
 
             Image(
                 modifier = Modifier
-                    .size(26.dp)
+                    .size(30.dp)
                     .clickable {
                         onButtonClick("5")
                     }, painter = if (color == 5) {
@@ -1613,7 +1638,7 @@ fun TodoUpdateBottomSheet(
 
             Image(
                 modifier = Modifier
-                    .size(26.dp)
+                    .size(30.dp)
                     .clickable {
                         onButtonClick("6")
                     }, painter = if (color == 6) {
@@ -1642,7 +1667,12 @@ fun BlankTodoItem() {
         ) {
             Text(
                 text = "등록된 토도리스트가 없습니다.",
-                fontSize = 13.sp,
+                style = TextStyle(
+                    platformStyle = PlatformTextStyle(
+                        includeFontPadding = false
+                    )
+                ),
+                fontSize = 15.sp,
                 fontStyle = FontStyle.Normal,
                 color = Color(0xff9e9e9e)
             )

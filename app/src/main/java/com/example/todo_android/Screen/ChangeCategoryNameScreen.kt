@@ -23,6 +23,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -186,6 +187,7 @@ fun ChangeCategoryNameScreen(
         Box(
             Modifier
                 .fillMaxWidth()
+                .height(45.dp)
                 .drawWithContent {
                     drawContent()
                     drawLine(
@@ -237,7 +239,7 @@ fun ChangeCategoryNameScreen(
                 modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Spacer(modifier = Modifier.padding(vertical = 110.dp))
+                Spacer(modifier = Modifier.padding(vertical = 86.dp))
 
                 Button(modifier = Modifier.size(28.dp),
                     colors = ButtonDefaults.buttonColors(Color(categoryColor!!)),
@@ -251,7 +253,8 @@ fun ChangeCategoryNameScreen(
                         .focusRequester(focusRequester)
                         .padding(start = 10.dp)
                         .background(
-                            shape = RoundedCornerShape(8.dp), color = Color(0xffF3F3F3)
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color(0xffF3F3F3)
                         ),
                 ) {
                     Row(
@@ -266,8 +269,11 @@ fun ChangeCategoryNameScreen(
                             },
                             textStyle = TextStyle(
                                 fontWeight = FontWeight.Normal,
-                                fontSize = 13.sp,
-                                color = Color.Black
+                                fontSize = 15.sp,
+                                color = Color.Black,
+                                platformStyle = PlatformTextStyle(
+                                    includeFontPadding = false
+                                )
                             ),
                             singleLine = true,
                             maxLines = 1,

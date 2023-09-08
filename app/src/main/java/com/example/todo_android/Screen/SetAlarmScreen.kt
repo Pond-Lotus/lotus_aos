@@ -40,6 +40,7 @@ fun SetAlarmScreen(routeAction: RouteAction) {
         Box(
             Modifier
                 .fillMaxWidth()
+                .height(45.dp)
                 .drawWithContent {
                     drawContent()
                     drawLine(
@@ -79,7 +80,7 @@ fun SetAlarmScreen(routeAction: RouteAction) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 81.dp),
+                        .padding(top = 60.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -109,7 +110,7 @@ fun SetAlarmScreen(routeAction: RouteAction) {
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp),
+                        .padding(top = 15.dp),
                     color = Color(0xffe9e9e9),
                     thickness = 1.dp
                 )

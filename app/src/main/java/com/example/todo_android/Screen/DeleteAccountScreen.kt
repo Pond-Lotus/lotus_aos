@@ -118,6 +118,7 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
         Box(
             Modifier
                 .fillMaxWidth()
+                .height(45.dp)
                 .drawWithContent {
                     drawContent()
                     drawLine(

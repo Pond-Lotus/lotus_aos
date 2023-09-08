@@ -20,7 +20,7 @@ import com.example.todo_android.ui.theme.TodoandroidTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+//        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             TodoandroidTheme {
                 NavigationGraph()

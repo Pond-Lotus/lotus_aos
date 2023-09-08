@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -169,6 +171,11 @@ fun LoginScreen(routeAction: RouteAction) {
             },
             placeholder = {
                 Text(text = stringResource(id = R.string.InpurtEmail),
+                    style = TextStyle(
+                        platformStyle = PlatformTextStyle(
+                            includeFontPadding = false
+                        )
+                    ),
                     fontSize = 16.sp,
                     color = Color(0xffA9A9A9),
                     fontWeight = FontWeight.Medium)
@@ -208,6 +215,11 @@ fun LoginScreen(routeAction: RouteAction) {
             },
             placeholder = {
                 Text(text = stringResource(id = R.string.InpurtPassword),
+                    style = TextStyle(
+                        platformStyle = PlatformTextStyle(
+                            includeFontPadding = false
+                        )
+                    ),
                     fontSize = 16.sp,
                     color = Color(0xffA9A9A9),
                     fontWeight = FontWeight.Medium)

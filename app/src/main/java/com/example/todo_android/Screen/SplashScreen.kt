@@ -28,7 +28,7 @@ fun SplashScreen(routeAction: RouteAction) {
     val backgroundColor = listOf(Color(0xffFFDAB9), Color(0xffFF9D4D))
 
     LaunchedEffect(Unit) {
-        delay(3000) // 3초 동안 딜레이 설정
+        delay(1000) // 3초 동안 딜레이 설정
 
         if (MyApplication.prefs.getData("email", "")
                 .isNotEmpty() && MyApplication.prefs.getData("password1", "").isNotEmpty()
@@ -46,7 +46,7 @@ fun SplashScreen(routeAction: RouteAction) {
             .background(
                 brush = Brush.linearGradient(
                     colors = backgroundColor, start = Offset.Zero, end = Offset.Infinite
-                ), shape = RectangleShape, alpha = 1.0f
+                ), shape = RectangleShape, alpha = 1f
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center

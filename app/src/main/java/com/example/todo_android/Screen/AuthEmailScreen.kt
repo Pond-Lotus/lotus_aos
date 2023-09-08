@@ -202,7 +202,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                     color = Color(0xff808080)
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
 
                 BasicTextField(modifier = Modifier
