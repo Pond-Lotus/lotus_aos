@@ -16,11 +16,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -171,14 +172,20 @@ fun LoginScreen(routeAction: RouteAction) {
             },
             placeholder = {
                 Text(text = stringResource(id = R.string.InpurtEmail),
-                    style = TextStyle(
+                    style = LocalTextStyle.current.copy(
                         platformStyle = PlatformTextStyle(
                             includeFontPadding = false
+                        ),
+                        lineHeightStyle = LineHeightStyle(
+                            alignment = LineHeightStyle.Alignment.Center,
+                            trim = LineHeightStyle.Trim.None
                         )
                     ),
                     fontSize = 16.sp,
                     color = Color(0xffA9A9A9),
-                    fontWeight = FontWeight.Medium)
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
             },
             trailingIcon = {
                 if (email.isNotEmpty()) {
@@ -190,7 +197,17 @@ fun LoginScreen(routeAction: RouteAction) {
                         contentDescription = null
                     )
                 }
-            })
+            },
+            textStyle = LocalTextStyle.current.copy(
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                ),
+                lineHeightStyle = LineHeightStyle(
+                    alignment = LineHeightStyle.Alignment.Center,
+                    trim = LineHeightStyle.Trim.None
+                )
+            ),
+        )
 
         Spacer(modifier = Modifier.height(5.dp))
 
@@ -215,14 +232,20 @@ fun LoginScreen(routeAction: RouteAction) {
             },
             placeholder = {
                 Text(text = stringResource(id = R.string.InpurtPassword),
-                    style = TextStyle(
+                    style = LocalTextStyle.current.copy(
                         platformStyle = PlatformTextStyle(
                             includeFontPadding = false
+                        ),
+                        lineHeightStyle = LineHeightStyle(
+                            alignment = LineHeightStyle.Alignment.Center,
+                            trim = LineHeightStyle.Trim.None
                         )
                     ),
                     fontSize = 16.sp,
                     color = Color(0xffA9A9A9),
-                    fontWeight = FontWeight.Medium)
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
             },
             trailingIcon = {
                 if (password.isNotEmpty()) {
@@ -232,7 +255,17 @@ fun LoginScreen(routeAction: RouteAction) {
                         Icon(painter = icon, contentDescription = null, tint = Color(0xffC9C9C9))
                     }
                 }
-            })
+            },
+            textStyle = LocalTextStyle.current.copy(
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                ),
+                lineHeightStyle = LineHeightStyle(
+                    alignment = LineHeightStyle.Alignment.Center,
+                    trim = LineHeightStyle.Trim.None
+                )
+            ),
+        )
 
         Spacer(modifier = Modifier.height(10.dp))
 
