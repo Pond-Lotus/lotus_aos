@@ -28,6 +28,8 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.DeleteAccountRequest
 import com.example.todo_android.Response.ProfileResponse.DeleteAccountResponse
 import com.example.todo_android.Util.MyApplication
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,7 +39,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 fun deleteAccount(token: String, response: (DeleteAccountResponse?) -> Unit) {
     var deleteAccountResponse: DeleteAccountResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ")
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
+
+    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var deleteAccountRequest: DeleteAccountRequest =
