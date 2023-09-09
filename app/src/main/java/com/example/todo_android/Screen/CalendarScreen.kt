@@ -800,7 +800,10 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }
 
                 if (todoList.isEmpty() && !isVisibility) {
-                    BlankTodoItem()
+                    Row(modifier = Modifier.padding(top = 20.dp)) {
+                        BlankTodoItem()
+                    }
+
                 }
 
                 TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = {

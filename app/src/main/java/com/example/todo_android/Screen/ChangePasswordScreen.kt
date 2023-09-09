@@ -25,13 +25,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.todo_android.Data.Modify.ChangePassword
 import com.example.todo_android.Navigation.Action.RouteAction
+import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ModifyRequest.ChangePasswordRequest
 import com.example.todo_android.Response.ModifyResponse.ChangePasswordResponse
 import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.ui.theme.buttonColor
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -47,7 +52,12 @@ fun changePassword(
 
     var changePasswordResponse: ChangePasswordResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ")
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
+
+    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var changePasswordRequest: ChangePasswordRequest =
@@ -128,6 +138,12 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
         Color.Black
     } else{
         Color(0xFF9E9E9E)
+    }
+
+    var openDialog by remember { mutableStateOf(false) }
+
+    if (openDialog) {
+        showChangePasswordDialog(onDismissRequest = { openDialog = false }, routeAction)
     }
 
     val passwordVisualTransformation = PasswordVisualTransformation()
@@ -354,10 +370,13 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                     if (isButtonClickable == true) {
                         scope.launch {
                             changePassword(token, password1, password3, response = {
-                                if (it?.resultCode == "200") {
-                                    routeAction.goBack()
-                                } else {
-                                    showErrorPassword1 = true
+                                when (it?.resultCode) {
+                                    "200" -> {
+                                        openDialog = true
+                                    }
+                                    "500" -> {
+                                        showErrorPassword1 = true
+                                    }
                                 }
                             })
                         }
@@ -373,6 +392,53 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                     lineHeight = 22.sp,
                     fontWeight = FontWeight.Bold
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun showChangePasswordDialog(onDismissRequest: () -> Unit, routeAction: RouteAction) {
+    Dialog(onDismissRequest = { onDismissRequest }) {
+        Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
+            Column(
+                modifier = Modifier.width(265.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    modifier = Modifier.padding(top = 28.dp, bottom = 11.dp),
+                    text = "변경 완료",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Black
+                )
+
+                Text(
+                    text = "새로운 비밀번호로", fontSize = 15.sp, fontWeight = FontWeight.Light
+                )
+
+                Text(
+                    modifier = Modifier.padding(bottom = 28.dp),
+                    text = "다시 로그인해 주세요.",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Light
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    androidx.compose.material.TextButton(
+                        modifier = Modifier
+                            .background(buttonColor)
+                            .weight(1f), onClick = {
+                            onDismissRequest()
+                            routeAction.navTo(NAV_ROUTE.LOGIN)
+                        }) {
+                        Text(text = "확인", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
             }
         }
     }

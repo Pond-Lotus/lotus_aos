@@ -119,13 +119,18 @@ fun AuthEmailScreen(routeAction: RouteAction) {
     Scaffold(modifier = Modifier
         .fillMaxSize()
         .imePadding(), topBar = {
-        CenterAlignedTopAppBar(title = {}, navigationIcon = {
-            IconButton(onClick = {
-                routeAction.goBack()
-            }) {
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
-            }
-        })
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(45.dp)) {
+            CenterAlignedTopAppBar(title = {}, navigationIcon = {
+                IconButton(onClick = {
+                    routeAction.goBack()
+                }) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                }
+            })
+        }
     }, floatingActionButton = {
         FloatingActionButton(
             modifier = Modifier.size(60.dp),

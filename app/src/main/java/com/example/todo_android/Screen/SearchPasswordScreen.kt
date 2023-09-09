@@ -33,6 +33,8 @@ import com.example.todo_android.Request.ProfileRequest.SearchEmailRequest
 import com.example.todo_android.Response.ProfileResponse.SearchEmailResponse
 import com.example.todo_android.ui.theme.buttonColor
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -45,7 +47,12 @@ fun SearchPassword(
 
     var authEmailResponse: SearchEmailResponse? = null
 
-    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ")
+    val okHttpClient: OkHttpClient by lazy {
+        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
+    }
+
+    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var searchEmailRequest: SearchEmailRequest = retrofit.create(SearchEmailRequest::class.java)
@@ -127,6 +134,7 @@ fun SearchPasswordScreen(routeAction: RouteAction) {
         Box(
             Modifier
                 .fillMaxWidth()
+                .height(45.dp)
                 .drawWithContent {
                     drawContent()
                     drawLine(
