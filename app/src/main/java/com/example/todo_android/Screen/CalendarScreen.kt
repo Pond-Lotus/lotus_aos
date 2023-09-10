@@ -93,6 +93,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.util.*
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 fun createTodo(
@@ -1109,6 +1110,7 @@ fun TodoItemList(
     LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
         val grouped = Todo.groupBy { it.color }
+        var rowIndex = 0;
 
         grouped.forEach { (header, items) ->
 
@@ -1168,8 +1170,7 @@ fun TodoItemList(
                     background = { DeleteBackground() },
                     directions = setOf(DismissDirection.EndToStart),
                     dismissContent = {
-
-                        Log.d("TodoItemIndex", index.toString())
+                        item.test = rowIndex++;
 
                         TodoItem(Todo = item,
                             onTodoItemClick = { onTodoItemClick(it) },
@@ -1178,13 +1179,22 @@ fun TodoItemList(
                                     todoList.removeAll { it.id == item.id }
                                     todoList.add(item)
 
+//                                    var list = todoList.toList().asReversed();
+//                                    var listIndex = -1;
+
+                                    // list 뒤에서 findIndex 하는 함수 있으면 그걸 사용해서 루프 돌려서 listIndex 값에 넣어주고 없으면 for문 반대로 돌려서 넣어야 함.
+//                                    val list = todoList.toList().forEachIndexed { index, it ->
+//                                        if(it.color == item.color && listIndex == -1)
+//                                            listIndex = index
+//                                    }
+
+//                                    Log.d("TodoItemIndex", listIndex.toString())
                                 }
                             },
                             onUnCheckedUpdateTodo = {
                                 scope.launch {
                                     todoList.removeAll { it.id == item.id }
-                                    todoList.add(index, item)
-
+                                    todoList.add(item.test, item)
                                 }
                             })
                     },

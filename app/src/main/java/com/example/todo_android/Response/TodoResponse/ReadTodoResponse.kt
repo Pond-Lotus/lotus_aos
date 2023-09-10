@@ -21,5 +21,6 @@ data class RToDoResponse(
     val description: String,
     val done: Boolean,
     val time: String,
-    val color: Int
+    val color: Int,
+    var test : Int
 )
