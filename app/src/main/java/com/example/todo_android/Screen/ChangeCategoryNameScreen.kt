@@ -3,6 +3,7 @@ package com.example.todo_android.Screen
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -34,7 +35,9 @@ import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.Response.CategoryResponse.UpdateCategoryResponse
 import com.example.todo_android.Util.MyApplication
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
@@ -212,20 +215,19 @@ fun ChangeCategoryNameScreen(
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
                 }
             }, actions = {
-                TextButton(onClick = {
-                    scope.launch {
-                        updateCategory(token, categorySet) {
-                            routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
-                        }
-                    }
-                }) {
-                    Text(
-                        text = "완료",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xff9E9E9E)
-                    )
-                }
+                Text(text = "완료",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xff9E9E9E),
+                    modifier = Modifier
+                        .padding(end = 15.dp)
+                        .clickable {
+                            scope.launch {
+                                updateCategory(token, categorySet) {
+                                    routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
+                                }
+                            }
+                        })
             })
         }
     }) {
@@ -252,11 +254,8 @@ fun ChangeCategoryNameScreen(
                         .fillMaxWidth()
                         .height(45.dp)
                         .focusRequester(focusRequester)
-                        .padding(start = 10.dp)
-                        .background(
-                            shape = RoundedCornerShape(8.dp),
-                            color = Color(0xffF3F3F3)
-                        ),
+                        .padding(start = 10.dp),
+                    colors = CardDefaults.cardColors(Color(0xffF3F3F3))
                 ) {
                     Row(
                         modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp),

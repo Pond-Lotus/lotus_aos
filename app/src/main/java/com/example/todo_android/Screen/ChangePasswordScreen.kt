@@ -136,7 +136,7 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
 
     val textColor = if (password1 != "" && password2 != "" && password3 != "") {
         Color.Black
-    } else{
+    } else {
         Color(0xFF9E9E9E)
     }
 
@@ -202,39 +202,42 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                     .padding(bottom = 7.dp)
             )
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(45.dp)
-                    .padding(bottom = 8.dp),
-                colors = CardDefaults.cardColors(Color.White),
-                border = BorderStroke(1.dp, Color(0xffBFBFBF)),
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Box(
+            Box(modifier = Modifier.padding(bottom = 8.dp)) {
+                Card(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(start = 16.dp),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .height(45.dp),
+                    colors = CardDefaults.cardColors(Color.White),
+                    border = BorderStroke(1.dp, Color(0xffBFBFBF)),
+                    shape = RoundedCornerShape(8.dp),
                 ) {
-                    BasicTextField(
-                        value = password1,
-                        onValueChange = {
-                            password1 = it
-                            showErrorPassword1 = false
-                        },
-                        textStyle = TextStyle(
-                            fontSize = 13.sp,
-                            fontStyle = FontStyle.Normal,
-                            color = Color.Black,
-                            lineHeight = 31.sp
-                        ),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        visualTransformation = PasswordVisualTransformation(),
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(start = 16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        BasicTextField(
+                            value = password1,
+                            onValueChange = {
+                                password1 = it
+                                showErrorPassword1 = false
+                            },
+                            textStyle = TextStyle(
+                                fontSize = 13.sp,
+                                fontStyle = FontStyle.Normal,
+                                color = Color.Black,
+                                lineHeight = 31.sp
+                            ),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                            visualTransformation = PasswordVisualTransformation(),
+                        )
+                    }
                 }
             }
+
+
 
             if (showErrorPassword1) {
                 Text(
@@ -258,39 +261,42 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                     .padding(bottom = 7.dp)
             )
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(45.dp)
-                    .padding(bottom = 8.dp),
-                colors = CardDefaults.cardColors(Color.White),
-                border = BorderStroke(1.dp, Color(0xffBFBFBF)),
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Box(
+            Box(modifier = Modifier.padding(bottom = 8.dp)) {
+                Card(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(start = 16.dp),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .height(45.dp),
+                    colors = CardDefaults.cardColors(Color.White),
+                    border = BorderStroke(1.dp, Color(0xffBFBFBF)),
+                    shape = RoundedCornerShape(8.dp),
                 ) {
-                    BasicTextField(
-                        value = password2,
-                        onValueChange = {
-                            password2 = it
-                            showMatchPassword2 = !it.matches(passwordPattern)
-                        },
-                        textStyle = TextStyle(
-                            fontSize = 13.sp,
-                            fontStyle = FontStyle.Normal,
-                            color = Color.Black,
-                            lineHeight = 31.sp
-                        ),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        visualTransformation = PasswordVisualTransformation(),
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(start = 16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        BasicTextField(
+                            value = password2,
+                            onValueChange = {
+                                password2 = it
+                                showMatchPassword2 = !it.matches(passwordPattern)
+                            },
+                            textStyle = TextStyle(
+                                fontSize = 13.sp,
+                                fontStyle = FontStyle.Normal,
+                                color = Color.Black,
+                                lineHeight = 31.sp
+                            ),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                            visualTransformation = PasswordVisualTransformation(),
+                        )
+                    }
                 }
             }
+
+
 
             if (showMatchPassword2) {
                 Text(
@@ -315,39 +321,41 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                     .padding(bottom = 7.dp)
             )
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(45.dp)
-                    .padding(bottom = 8.dp),
-                colors = CardDefaults.cardColors(Color.White),
-                border = BorderStroke(1.dp, Color(0xffBFBFBF)),
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Box(
+            Box(modifier = Modifier.padding(bottom = 8.dp)) {
+                Card(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(start = 16.dp),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .height(45.dp),
+                    colors = CardDefaults.cardColors(Color.White),
+                    border = BorderStroke(1.dp, Color(0xffBFBFBF)),
+                    shape = RoundedCornerShape(8.dp),
                 ) {
-                    BasicTextField(
-                        value = password3,
-                        onValueChange = {
-                            password3 = it
-                            showMatchPassword3 = (it != password2)
-                        },
-                        textStyle = TextStyle(
-                            fontSize = 13.sp,
-                            fontStyle = FontStyle.Normal,
-                            color = Color.Black,
-                            lineHeight = 31.sp
-                        ),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        visualTransformation = PasswordVisualTransformation(),
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(start = 16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        BasicTextField(
+                            value = password3,
+                            onValueChange = {
+                                password3 = it
+                                showMatchPassword3 = (it != password2)
+                            },
+                            textStyle = TextStyle(
+                                fontSize = 13.sp,
+                                fontStyle = FontStyle.Normal,
+                                color = Color.Black,
+                                lineHeight = 31.sp
+                            ),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                            visualTransformation = PasswordVisualTransformation(),
+                        )
+                    }
                 }
             }
+
 
             if (showMatchPassword3) {
                 Text(
