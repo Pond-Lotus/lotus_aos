@@ -28,7 +28,7 @@ fun SplashScreen(routeAction: RouteAction) {
     val backgroundColor = listOf(Color(0xffFFDAB9), Color(0xffFF9D4D))
 
     LaunchedEffect(Unit) {
-        delay(1000) // 3초 동안 딜레이 설정
+        delay(1000) // 1초 동안 딜레이 설정
 
         if (MyApplication.prefs.getData("email", "")
                 .isNotEmpty() && MyApplication.prefs.getData("password1", "").isNotEmpty()

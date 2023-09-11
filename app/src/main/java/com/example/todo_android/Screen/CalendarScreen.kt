@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
@@ -44,14 +43,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -93,7 +90,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.util.*
-import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 fun createTodo(
@@ -1509,66 +1505,10 @@ fun TodoUpdateBottomSheet(
             }
         }
 
-//        Card(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(50.dp)
-//                .focusRequester(focusRequester)
-//                .padding(bottom = 22.dp),
-//            colors = CardDefaults.cardColors(Color(0xffF2F2F2))
-//        ) {
-//            Row(
-//                modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.Center
-//            ) {
-//                BasicTextField(
-//                    value = description,
-//                    onValueChange = {
-//                        if (it.count { it == '\n' } < 4) {
-//                            description = it
-//                        }
-//                    },
-//                    textStyle = TextStyle(
-//                        fontWeight = FontWeight.Normal,
-//                        fontSize = 14.sp,
-//                        color = Color.Black,
-//                        platformStyle = PlatformTextStyle(
-//                            includeFontPadding = false
-//                        )
-//                    ),
-//                    singleLine = true,
-//                    maxLines = 4,
-//                    keyboardOptions = KeyboardOptions(
-//                        keyboardType = KeyboardType.Text,
-//                        imeAction = ImeAction.Done)
-//                ) {
-//                    TextFieldDefaults.TextFieldDecorationBox(
-//                        placeholder = {
-//                            Text(
-//                                text = "+  메모하고 싶은 내용이 있나요?",
-//                                fontSize = 14.sp,
-//                                lineHeight = 19.6.sp,
-//                                fontWeight = FontWeight(300),
-//                                color = Color(0xFF9E9E9E)
-//                            )
-//                        },
-//                        enabled = true,
-//                        innerTextField = it,
-//                        interactionSource = remember { MutableInteractionSource() },
-//                        singleLine = true,
-//                        value = description,
-//                        visualTransformation = VisualTransformation.None
-//                    )
-//                }
-//            }
-//        }
-
-
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 22.dp),
+                .height(50.dp),
             value = description,
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color(0xffF2F2F2),
@@ -1601,7 +1541,7 @@ fun TodoUpdateBottomSheet(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 22.dp),
+                .padding(top = 22.dp, bottom = 22.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
