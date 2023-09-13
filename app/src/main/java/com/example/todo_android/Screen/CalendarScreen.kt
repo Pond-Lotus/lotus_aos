@@ -364,33 +364,33 @@ fun CalendarScreen(routeAction: RouteAction) {
     )
     val dayOfWeek = selectedDate.dayOfWeek
 
-    val topAppBarHeight = 64.dp
-    val topAppBarHeightPx = with(LocalDensity.current) { topAppBarHeight.roundToPx().toFloat() }
-    val topAppBarOffsetHeightPx = remember { mutableStateOf(0f) }
+//    val topAppBarHeight = 64.dp
+//    val topAppBarHeightPx = with(LocalDensity.current) { topAppBarHeight.roundToPx().toFloat() }
+//    val topAppBarOffsetHeightPx = remember { mutableStateOf(0f) }
+//
+//    val nestedScrollConnection = remember {
+//        object : NestedScrollConnection {
+//            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+//
+//                val delta = available.y
+//                val newOffset = topAppBarOffsetHeightPx.value + delta
+//                topAppBarOffsetHeightPx.value = newOffset.coerceIn(-topAppBarHeightPx, 0f)
+//
+//                return Offset.Zero
+//            }
+//        }
+//    }
 
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-
-                val delta = available.y
-                val newOffset = topAppBarOffsetHeightPx.value + delta
-                topAppBarOffsetHeightPx.value = newOffset.coerceIn(-topAppBarHeightPx, 0f)
-
-                return Offset.Zero
-            }
-        }
-    }
-
-    val dayColor: Color = when (dayOfWeek.value) {
-        1 -> Color.Black
-        2 -> Color.Black
-        3 -> Color.Black
-        4 -> Color.Black
-        5 -> Color.Black
-        6 -> Color.Black
-        7 -> Color(0xFFF86B6B)
-        else -> Color.Black
-    }
+//    val dayColor: Color = when (dayOfWeek.value) {
+//        1 -> Color.Black
+//        2 -> Color.Black
+//        3 -> Color.Black
+//        4 -> Color.Black
+//        5 -> Color.Black
+//        6 -> Color.Black
+//        7 -> Color(0xFFF86B6B)
+//        else -> Color.Black
+//    }
 
     val onButtonClick: (String) -> Unit = { id ->
         when (id) {
@@ -476,8 +476,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 WindowInsets.systemBars.only(
                     WindowInsetsSides.Vertical
                 )
-            )
-            .nestedScroll(nestedScrollConnection),
+            ),
+//            .nestedScroll(nestedScrollConnection),
         scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
@@ -485,12 +485,13 @@ fun CalendarScreen(routeAction: RouteAction) {
             )
         },
         topBar = {
-            CenterAlignedTopAppBar(modifier = Modifier.offset {
-                IntOffset(x = 0, y = topAppBarOffsetHeightPx.value.roundToInt())
-            }, title = {
-                MonthWeekToggleSwitch(
-                    width = 105, height = 35, animateState = animateState
-                )
+            CenterAlignedTopAppBar(
+//                modifier = Modifier.offset {
+//                    IntOffset(x = 0, y = topAppBarOffsetHeightPx.value.roundToInt()) },
+                title = {
+                    MonthWeekToggleSwitch(
+                        width = 105, height = 35, animateState = animateState
+                    )
             }, navigationIcon = {
                 Image(
                     modifier = Modifier
