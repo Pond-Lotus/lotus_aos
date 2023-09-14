@@ -526,6 +526,9 @@ fun CalendarScreen(routeAction: RouteAction) {
             topStart = 20.dp, topEnd = 20.dp
         )
     ) {
+
+        //이 컬럼에 스크롤 스테이트를 담아서 화면 전체(LazyColumn을 포함한)를 스크롤 할수 있게 할려고 합니다.
+        //근데 만약 스크롤 스테이트를 붙인다면 여기에 붙여야 하는지 아니면 이것보다 상위 컴포넌트인 BottomSheetScaffold 에 붙여야 될지 잘 모르겠습니다...
         Column(
             modifier = Modifier
                 .fillMaxSize()
