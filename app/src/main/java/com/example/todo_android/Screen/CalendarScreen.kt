@@ -90,6 +90,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.util.*
+import java.util.Calendar.*
 import kotlin.math.roundToInt
 
 fun createTodo(
@@ -381,16 +382,17 @@ fun CalendarScreen(routeAction: RouteAction) {
 //        }
 //    }
 
-//    val dayColor: Color = when (dayOfWeek.value) {
-//        1 -> Color.Black
-//        2 -> Color.Black
-//        3 -> Color.Black
-//        4 -> Color.Black
-//        5 -> Color.Black
-//        6 -> Color.Black
-//        7 -> Color(0xFFF86B6B)
-//        else -> Color.Black
-//    }
+    val dayColor: Color = when (selectedDate.dayOfMonth) {
+        MONDAY -> Color.Black
+        TUESDAY -> Color.Black
+        WEDNESDAY -> Color.Black
+        THURSDAY -> Color.Black
+        FRIDAY -> Color.Black
+        SATURDAY -> Color.Black
+        SUNDAY -> Color(0xFFF86B6B)
+        else -> Color.Black
+//        0 -> Color.Red
+    }
 
     val onButtonClick: (String) -> Unit = { id ->
         when (id) {
@@ -565,8 +567,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                         kalendarDayKonfig = KalendarDayKonfig(
                             size = 56.dp,
                             textSize = 14.sp,
-                            textColor = Color.Black,
-                            selectedTextColor = Color.Black,
+                            textColor = dayColor,
+                            selectedTextColor = dayColor,
                             borderColor = Color.Transparent
                         ),
                         daySelectionMode = DaySelectionMode.Single,
@@ -1708,8 +1710,4 @@ fun convertToLayoutTimeFormat(time: String): String {
     } else {
         "${time.substring(0, 1)}:${time.substring(1)}"
     }
-}
-
-private fun dipToPix(context: Context, dipValue: Float): Float {
-    return dipValue * context.resources.displayMetrics.density
 }
