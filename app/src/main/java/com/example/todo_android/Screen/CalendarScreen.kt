@@ -382,16 +382,10 @@ fun CalendarScreen(routeAction: RouteAction) {
 //        }
 //    }
 
-    val dayColor: Color = when (selectedDate.dayOfMonth) {
-        MONDAY -> Color.Black
-        TUESDAY -> Color.Black
-        WEDNESDAY -> Color.Black
-        THURSDAY -> Color.Black
-        FRIDAY -> Color.Black
-        SATURDAY -> Color.Black
-        SUNDAY -> Color(0xFFF86B6B)
+    val dayColor: Color = when (dayOfWeek.value) {
+        6 -> Color.Blue
+        7 -> Color(0xFFF86B6B)
         else -> Color.Black
-//        0 -> Color.Red
     }
 
     val onButtonClick: (String) -> Unit = { id ->
@@ -494,22 +488,22 @@ fun CalendarScreen(routeAction: RouteAction) {
                     MonthWeekToggleSwitch(
                         width = 105, height = 35, animateState = animateState
                     )
-            }, navigationIcon = {
-                Image(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .padding(start = 21.dp)
-                        .clickable {
-                            scope.launch {
-                                bottomScaffoldState.drawerState.open()
-                            }
-                        },
-                    painter = painterResource(id = R.drawable.menubar),
-                    contentDescription = "menubar"
+                }, navigationIcon = {
+                    Image(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .padding(start = 21.dp)
+                            .clickable {
+                                scope.launch {
+                                    bottomScaffoldState.drawerState.open()
+                                }
+                            },
+                        painter = painterResource(id = R.drawable.menubar),
+                        contentDescription = "menubar"
+                    )
+                }, colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = Color.White, titleContentColor = Color.Black
                 )
-            }, colors = TopAppBarDefaults.smallTopAppBarColors(
-                containerColor = Color.White, titleContentColor = Color.Black
-            )
             )
         },
         floatingActionButton = {
@@ -528,9 +522,6 @@ fun CalendarScreen(routeAction: RouteAction) {
             topStart = 20.dp, topEnd = 20.dp
         )
     ) {
-
-        //이 컬럼에 스크롤 스테이트를 담아서 화면 전체(LazyColumn을 포함한)를 스크롤 할수 있게 할려고 합니다.
-        //근데 만약 스크롤 스테이트를 붙인다면 여기에 붙여야 하는지 아니면 이것보다 상위 컴포넌트인 BottomSheetScaffold 에 붙여야 될지 잘 모르겠습니다...
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -1175,11 +1166,12 @@ fun TodoItemList(
                         item.itemIndex = rowIndex++;
 
                         var listIndex = -1
-                        for (i in (0..(todoList.size - 1)).reversed()){
+                        for (i in (0..(todoList.size - 1)).reversed()) {
                             Log.d("index", i.toString())
-                            if(todoList.get(i).color == item.color
-                                                    && listIndex == -1
-                                                    && item.itemIndex != i){
+                            if (todoList.get(i).color == item.color
+                                && listIndex == -1
+                                && item.itemIndex != i
+                            ) {
                                 item.grpIndex = i
                                 listIndex = i
 
