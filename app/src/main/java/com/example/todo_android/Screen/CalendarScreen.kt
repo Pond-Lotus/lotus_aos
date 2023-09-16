@@ -558,7 +558,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         kalendarDayKonfig = KalendarDayKonfig(
                             size = 56.dp,
                             textSize = 14.sp,
-                            textColor = dayColor,
+                            textColor = Color.Black,
                             selectedTextColor = dayColor,
                             borderColor = Color.Transparent
                         ),
