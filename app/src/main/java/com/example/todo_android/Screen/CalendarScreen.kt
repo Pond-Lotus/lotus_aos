@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
@@ -39,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -80,7 +82,9 @@ import com.himanshoe.kalendar.ui.component.header.KalendarTextKonfig
 import com.himanshoe.kalendar.ui.firey.DaySelectionMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.number
+import kotlinx.datetime.toJavaLocalDate
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -555,43 +559,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 headerTextColor = Color.Black
                             )
                         }),
-                        kalendarDayKonfig = KalendarDayKonfig(
-                            size = 56.dp,
-                            textSize = 14.sp,
-                            textColor = Color.Black,
-                            selectedTextColor = dayColor,
-                            borderColor = Color.Transparent
-                        ),
                         daySelectionMode = DaySelectionMode.Single,
-                        onDayClick = { localDate: kotlinx.datetime.LocalDate, kalendarEvents: List<KalendarEvent> ->
-                            year = localDate.year.toString()
-                            month = localDate.monthNumber.toString()
-                            day = localDate.dayOfMonth.toString()
-
-                            val selectedDate = LocalDate.of(
-                                localDate.year, localDate.monthNumber, localDate.dayOfMonth
-                            )
-                            val dayOfWeek = selectedDate.dayOfWeek
-
-                            dayString = when (dayOfWeek.value) {
-                                1 -> "월요일"
-                                2 -> "화요일"
-                                3 -> "수요일"
-                                4 -> "목요일"
-                                5 -> "금요일"
-                                6 -> "토요일"
-                                7 -> "일요일"
-                                else -> ""
-                            }
-                            scope.launch {
-                                readTodo(token, year, month, day) {
-                                    todoList.clear()
-                                    for (i in it!!.data) {
-                                        todoList.add(i)
-                                    }
-                                }
-                            }
-                        },
                         headerContent = { month, year ->
                             Row(
                                 modifier = Modifier.padding(start = 20.dp, bottom = 16.dp),
@@ -619,7 +587,64 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 )
                             }
                         },
-                        showLabel = true
+                        showLabel = true,
+                        dayContent = { date ->
+                            Box(
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .background(
+                                        color = if (selectedDate == date.toJavaLocalDate()) {
+                                            Color(0xFFFFDAB9)
+                                        } else {
+                                            Color.White
+                                        },
+                                        CircleShape
+                                    )
+                                    .pointerInput(Unit) {
+                                        detectTapGestures(onPress = {
+                                            year = date.year.toString()
+                                            month = date.monthNumber.toString()
+                                            day = date.dayOfMonth.toString()
+
+                                            val selectedDate = LocalDate.of(
+                                                date.year, date.monthNumber, date.dayOfMonth
+                                            )
+                                            val dayOfWeek = selectedDate.dayOfWeek
+
+                                            dayString = when (dayOfWeek.value) {
+                                                1 -> "월요일"
+                                                2 -> "화요일"
+                                                3 -> "수요일"
+                                                4 -> "목요일"
+                                                5 -> "금요일"
+                                                6 -> "토요일"
+                                                7 -> "일요일"
+                                                else -> ""
+                                            }
+                                            scope.launch {
+                                                readTodo(token, year, month, day) {
+                                                    todoList.clear()
+                                                    for (i in it!!.data) {
+                                                        todoList.add(i)
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    },
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(
+                                    text = date.dayOfMonth.toString(),
+                                    fontSize = 14.sp,
+                                    color = when (date.dayOfWeek) {
+                                        DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
+                                        else -> Color(0xFF424242)
+                                    },
+                                    lineHeight = 16.9.sp,
+                                    fontWeight = FontWeight(700)
+                                )
+                            }
+                        }
                     )
                 } else {
                     Kalendar(
@@ -635,43 +660,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 headerTextColor = Color.Black
                             )
                         }),
-                        kalendarDayKonfig = KalendarDayKonfig(
-                            size = 56.dp,
-                            textSize = 14.sp,
-                            textColor = Color.Black,
-                            selectedTextColor = Color.Black,
-                            borderColor = Color.Transparent
-                        ),
                         daySelectionMode = DaySelectionMode.Single,
-                        onDayClick = { localDate: kotlinx.datetime.LocalDate, kalendarEvents: List<KalendarEvent> ->
-                            year = localDate.year.toString()
-                            month = localDate.monthNumber.toString()
-                            day = localDate.dayOfMonth.toString()
-
-                            val selectedDate = LocalDate.of(
-                                localDate.year, localDate.monthNumber, localDate.dayOfMonth
-                            )
-                            val dayOfWeek = selectedDate.dayOfWeek
-
-                            dayString = when (dayOfWeek.value) {
-                                1 -> "월요일"
-                                2 -> "화요일"
-                                3 -> "수요일"
-                                4 -> "목요일"
-                                5 -> "금요일"
-                                6 -> "토요일"
-                                7 -> "일요일"
-                                else -> ""
-                            }
-                            scope.launch {
-                                readTodo(token, year, month, day) {
-                                    todoList.clear()
-                                    for (i in it!!.data) {
-                                        todoList.add(i)
-                                    }
-                                }
-                            }
-                        },
                         headerContent = { month, year ->
                             Row(
                                 modifier = Modifier.padding(start = 20.dp, bottom = 16.dp),
@@ -687,7 +676,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 Spacer(modifier = Modifier.width(4.dp))
 
                                 Text(
-                                    text = "${year}. ${month.number}",
+                                    text = if (month.number.toString().length < 2) {
+                                        "${year}. 0${month.number}"
+                                    } else {
+                                        "${year}. ${month.number}"
+                                    },
                                     fontSize = 22.sp,
                                     lineHeight = 28.6.sp,
                                     fontWeight = FontWeight(700),
@@ -695,7 +688,64 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 )
                             }
                         },
-                        showLabel = true
+                        showLabel = true,
+                        dayContent = { date ->
+                            Box(
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .background(
+                                        color = if (selectedDate == date.toJavaLocalDate()) {
+                                            Color(0xFFFFDAB9)
+                                        } else {
+                                            Color.White
+                                        },
+                                        CircleShape
+                                    )
+                                    .pointerInput(Unit) {
+                                        detectTapGestures(onPress = {
+                                            year = date.year.toString()
+                                            month = date.monthNumber.toString()
+                                            day = date.dayOfMonth.toString()
+
+                                            val selectedDate = LocalDate.of(
+                                                date.year, date.monthNumber, date.dayOfMonth
+                                            )
+                                            val dayOfWeek = selectedDate.dayOfWeek
+
+                                            dayString = when (dayOfWeek.value) {
+                                                1 -> "월요일"
+                                                2 -> "화요일"
+                                                3 -> "수요일"
+                                                4 -> "목요일"
+                                                5 -> "금요일"
+                                                6 -> "토요일"
+                                                7 -> "일요일"
+                                                else -> ""
+                                            }
+                                            scope.launch {
+                                                readTodo(token, year, month, day) {
+                                                    todoList.clear()
+                                                    for (i in it!!.data) {
+                                                        todoList.add(i)
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    },
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(
+                                    text = date.dayOfMonth.toString(),
+                                    fontSize = 14.sp,
+                                    color = when (date.dayOfWeek) {
+                                        DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
+                                        else -> Color(0xFF424242)
+                                    },
+                                    lineHeight = 16.9.sp,
+                                    fontWeight = FontWeight(700)
+                                )
+                            }
+                        }
                     )
                 }
             }
