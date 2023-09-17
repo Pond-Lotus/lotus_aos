@@ -591,7 +591,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                         dayContent = { date ->
                             Box(
                                 modifier = Modifier
-                                    .size(56.dp)
+                                    .padding(8.dp)
+                                    .size(40.dp)
                                     .background(
                                         color = if (selectedDate == date.toJavaLocalDate()) {
                                             Color(0xFFFFDAB9)
@@ -692,7 +693,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                         dayContent = { date ->
                             Box(
                                 modifier = Modifier
-                                    .size(56.dp)
+                                    .padding(8.dp)
+                                    .size(40.dp)
                                     .background(
                                         color = if (selectedDate == date.toJavaLocalDate()) {
                                             Color(0xFFFFDAB9)
