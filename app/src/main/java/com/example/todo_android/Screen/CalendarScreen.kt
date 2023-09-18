@@ -1806,7 +1806,7 @@ fun BlankTodoItem() {
     }
 }
 
-fun convertToLayoutTimeFormat(time: String): String {
+private fun convertToLayoutTimeFormat(time: String): String {
     return if (time == "미지정") {
         "미지정"
     } else if (time.length == 4) {
@@ -1815,3 +1815,12 @@ fun convertToLayoutTimeFormat(time: String): String {
         "${time.substring(0, 1)}:${time.substring(1)}"
     }
 }
+@RequiresApi(Build.VERSION_CODES.O)
+private fun calculateDay(day: Int, currentMonth: Month, currentYear: Int): kotlinx.datetime.LocalDate {
+    val monthValue = currentMonth.value.toString().padStart(2, '0')
+    val dayValue = day.toString().padStart(2, '0')
+    return "$currentYear-$monthValue-$dayValue".toLocalDate()
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun getFirstDayOfMonth(firstDayOfMonth: DayOfWeek) = -(firstDayOfMonth.value).minus(2)
