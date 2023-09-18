@@ -386,12 +386,6 @@ fun CalendarScreen(routeAction: RouteAction) {
 //        }
 //    }
 
-    val dayColor: Color = when (dayOfWeek.value) {
-        6 -> Color.Blue
-        7 -> Color(0xFFF86B6B)
-        else -> Color.Black
-    }
-
     val onButtonClick: (String) -> Unit = { id ->
         when (id) {
             "1" -> {
