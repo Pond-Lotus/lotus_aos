@@ -2,7 +2,6 @@ package com.example.todo_android.Screen
 
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
-import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -35,14 +34,9 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
@@ -52,7 +46,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
@@ -73,18 +66,15 @@ import com.example.todo_android.Response.TodoResponse.*
 import com.example.todo_android.Util.MyApplication
 import com.example.todo_android.ui.theme.deleteBackground
 import com.himanshoe.kalendar.Kalendar
-import com.himanshoe.kalendar.KalendarEvent
 import com.himanshoe.kalendar.KalendarType
 import com.himanshoe.kalendar.color.KalendarColor
 import com.himanshoe.kalendar.color.KalendarColors
-import com.himanshoe.kalendar.ui.component.day.KalendarDayKonfig
 import com.himanshoe.kalendar.ui.component.header.KalendarTextKonfig
 import com.himanshoe.kalendar.ui.firey.DaySelectionMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.number
-import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.*
+import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -95,7 +85,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.util.*
 import java.util.Calendar.*
-import kotlin.math.roundToInt
 
 fun createTodo(
     token: String,
@@ -369,6 +358,13 @@ fun CalendarScreen(routeAction: RouteAction) {
     )
     val dayOfWeek = selectedDate.dayOfWeek
 
+    val today = Clock.System.todayIn(currentSystemDefault())
+    val displayedMonth = remember { mutableStateOf(today.month) }
+    val displayedYear = remember { mutableStateOf(today.year) }
+    val currentMonth = displayedMonth.value
+    val currentYear = displayedYear.value
+    val currentMonthIndex = currentMonth.value.minus(1)
+
 //    val topAppBarHeight = 64.dp
 //    val topAppBarHeightPx = with(LocalDensity.current) { topAppBarHeight.roundToPx().toFloat() }
 //    val topAppBarOffsetHeightPx = remember { mutableStateOf(0f) }
@@ -556,7 +552,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         daySelectionMode = DaySelectionMode.Single,
                         headerContent = { month, year ->
                             Row(
-                                modifier = Modifier.padding(start = 20.dp, bottom = 16.dp),
+                                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Start
                             ) {
@@ -569,11 +565,46 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 Spacer(modifier = Modifier.width(4.dp))
 
                                 Text(
-                                    text = if (month.number.toString().length < 2) {
-                                        "${year}. 0${month.number}"
+//                                    text = if (month.number.toString().length < 2) {
+//                                        "${year}. 0${month.number}"
+//                                    } else {
+//                                        "${year}. ${month.number}"
+//                                    },
+
+                                    text = if (currentMonth.value.toString().length < 2) {
+//                                        "${year}. 0${month.number}"
+                                        "${currentYear}. 0${currentMonth.value}"
                                     } else {
-                                        "${year}. ${month.number}"
+                                        "${currentYear}. ${currentMonth.value}"
                                     },
+                                    fontSize = 22.sp,
+                                    lineHeight = 28.6.sp,
+                                    fontWeight = FontWeight(700),
+                                    color = Color(0xFF000000)
+                                )
+
+                                Spacer(modifier = Modifier.weight(1f))
+
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        displayedYear.value -= if (currentMonth == Month.JANUARY) 1 else 0
+                                        displayedMonth.value -= 1
+                                    },
+                                    text = "<",
+                                    fontSize = 22.sp,
+                                    lineHeight = 28.6.sp,
+                                    fontWeight = FontWeight(700),
+                                    color = Color(0xFF000000)
+                                )
+
+                                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        displayedYear.value += if (currentMonth == Month.DECEMBER) 1 else 0
+                                        displayedMonth.value += 1
+                                    },
+                                    text = ">",
                                     fontSize = 22.sp,
                                     lineHeight = 28.6.sp,
                                     fontWeight = FontWeight(700),
@@ -658,7 +689,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         daySelectionMode = DaySelectionMode.Single,
                         headerContent = { month, year ->
                             Row(
-                                modifier = Modifier.padding(start = 20.dp, bottom = 16.dp),
+                                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Start
                             ) {
@@ -671,11 +702,46 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 Spacer(modifier = Modifier.width(4.dp))
 
                                 Text(
-                                    text = if (month.number.toString().length < 2) {
-                                        "${year}. 0${month.number}"
+//                                    text = if (month.number.toString().length < 2) {
+//                                        "${year}. 0${month.number}"
+//                                    } else {
+//                                        "${year}. ${month.number}"
+//                                    },
+
+                                    text = if (currentMonth.value.toString().length < 2) {
+//                                        "${year}. 0${month.number}"
+                                        "${currentYear}. 0${currentMonth.value}"
                                     } else {
-                                        "${year}. ${month.number}"
+                                        "${currentYear}. ${currentMonth.value}"
                                     },
+                                    fontSize = 22.sp,
+                                    lineHeight = 28.6.sp,
+                                    fontWeight = FontWeight(700),
+                                    color = Color(0xFF000000)
+                                )
+
+                                Spacer(modifier = Modifier.weight(1f))
+
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        displayedYear.value -= if (currentMonth == Month.JANUARY) 1 else 0
+                                        displayedMonth.value -= 1
+                                    },
+                                    text = "<",
+                                    fontSize = 22.sp,
+                                    lineHeight = 28.6.sp,
+                                    fontWeight = FontWeight(700),
+                                    color = Color(0xFF000000)
+                                )
+
+                                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        displayedYear.value += if (currentMonth == Month.DECEMBER) 1 else 0
+                                        displayedMonth.value += 1
+                                    },
+                                    text = ">",
                                     fontSize = 22.sp,
                                     lineHeight = 28.6.sp,
                                     fontWeight = FontWeight(700),
