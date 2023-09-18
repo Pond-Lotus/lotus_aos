@@ -582,7 +582,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                             }
                         },
                         showLabel = true,
-                        dayContent = { date ->
+                        dayContent = { date: kotlinx.datetime.LocalDate ->
                             Box(
                                 modifier = Modifier
                                     .padding(8.dp)
@@ -684,7 +684,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                             }
                         },
                         showLabel = true,
-                        dayContent = { date ->
+                        dayContent = { date: kotlinx.datetime.LocalDate ->
                             Box(
                                 modifier = Modifier
                                     .padding(8.dp)
