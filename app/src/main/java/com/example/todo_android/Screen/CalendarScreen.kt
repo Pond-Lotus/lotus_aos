@@ -616,8 +616,10 @@ fun CalendarScreen(routeAction: RouteAction) {
                         dayContent = { date: kotlinx.datetime.LocalDate ->
                             Box(
                                 modifier = Modifier
-                                    .padding(8.dp)
-                                    .size(40.dp)
+//                                    .padding(8.dp)
+//                                    .size(40.dp)
+                                    .padding(10.dp)
+                                    .size(36.dp)
                                     .background(
                                         color = if (selectedDate == date.toJavaLocalDate()) {
                                             Color(0xFFFFDAB9)
@@ -753,8 +755,10 @@ fun CalendarScreen(routeAction: RouteAction) {
                         dayContent = { date: kotlinx.datetime.LocalDate ->
                             Box(
                                 modifier = Modifier
-                                    .padding(8.dp)
-                                    .size(40.dp)
+//                                    .padding(8.dp)
+//                                    .size(40.dp)
+                                    .padding(10.dp)
+                                    .size(36.dp)
                                     .background(
                                         color = if (selectedDate == date.toJavaLocalDate()) {
                                             Color(0xFFFFDAB9)
