@@ -359,9 +359,6 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     var previousSelectedDate by remember { mutableStateOf(selectedDate) }
 
-
-    val dayOfWeek = selectedDate.dayOfWeek
-
     val today = Clock.System.todayIn(currentSystemDefault())
     val displayedMonth = remember { mutableStateOf(today.month) }
     val displayedYear = remember { mutableStateOf(today.year) }
