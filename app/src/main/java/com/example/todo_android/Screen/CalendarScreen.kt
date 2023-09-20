@@ -621,6 +621,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         },
                         showLabel = true,
                         dayContent = { date: kotlinx.datetime.LocalDate ->
+                            val dayOfWeek = calculateDay(date.dayOfMonth, displayedMonth.value, displayedYear.value).dayOfWeek
                             Box(
                                 modifier = Modifier
 //                                    .padding(8.dp)
@@ -628,11 +629,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                                     .padding(10.dp)
                                     .size(36.dp)
                                     .background(
-                                        color = when {
-                                            selectedDate == date.toJavaLocalDate() -> Color(0xFFFFDAB9)
-                                            previousSelectedDate == date.toJavaLocalDate() -> Color(0xffE9E9E9)
-                                            date == today -> Color.Red // Change this to your desired background color for today's date
-                                            else -> Color.White
+                                        color = if (selectedDate == date.toJavaLocalDate()) {
+                                            Color(0xFFFFDAB9)
+                                        } else if (previousSelectedDate == date.toJavaLocalDate()) {
+                                            Color(0xffE9E9E9)
+                                        } else {
+                                            Color.White
                                         },
                                         CircleShape
                                     )
@@ -771,11 +773,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                                     .padding(10.dp)
                                     .size(36.dp)
                                     .background(
-                                        color = when {
-                                            selectedDate == date.toJavaLocalDate() -> Color(0xFFFFDAB9)
-                                            previousSelectedDate == date.toJavaLocalDate() -> Color(0xffE9E9E9)
-                                            date == today -> Color.Red // Change this to your desired background color for today's date
-                                            else -> Color.White
+                                        color = if (selectedDate == date.toJavaLocalDate()) {
+                                            Color(0xFFFFDAB9)
+                                        } else if (previousSelectedDate == date.toJavaLocalDate()) {
+                                            Color(0xffE9E9E9)
+                                        } else {
+                                            Color.White
                                         },
                                         CircleShape
                                     )
