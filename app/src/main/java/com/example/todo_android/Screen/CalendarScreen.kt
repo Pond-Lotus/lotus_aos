@@ -356,6 +356,10 @@ fun CalendarScreen(routeAction: RouteAction) {
     val selectedDate = LocalDate.of(
         year.toInt(), month.toInt(), day.toInt()
     )
+
+    var previousSelectedDate by remember { mutableStateOf(selectedDate) }
+
+
     val dayOfWeek = selectedDate.dayOfWeek
 
     val today = Clock.System.todayIn(currentSystemDefault())
@@ -552,7 +556,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                         daySelectionMode = DaySelectionMode.Single,
                         headerContent = { month, year ->
                             Row(
-                                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 16.dp),
+                                modifier = Modifier.padding(
+                                    start = 20.dp,
+                                    end = 20.dp,
+                                    bottom = 16.dp
+                                ),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Start
                             ) {
@@ -572,7 +580,6 @@ fun CalendarScreen(routeAction: RouteAction) {
 //                                    },
 
                                     text = if (currentMonth.value.toString().length < 2) {
-//                                        "${year}. 0${month.number}"
                                         "${currentYear}. 0${currentMonth.value}"
                                     } else {
                                         "${currentYear}. ${currentMonth.value}"
@@ -623,6 +630,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                                     .background(
                                         color = if (selectedDate == date.toJavaLocalDate()) {
                                             Color(0xFFFFDAB9)
+                                        } else if (previousSelectedDate == date.toJavaLocalDate()) {
+                                            Color(0xffE9E9E9)
                                         } else {
                                             Color.White
                                         },
@@ -691,7 +700,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                         daySelectionMode = DaySelectionMode.Single,
                         headerContent = { month, year ->
                             Row(
-                                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 16.dp),
+                                modifier = Modifier.padding(
+                                    start = 20.dp,
+                                    end = 20.dp,
+                                    bottom = 16.dp
+                                ),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Start
                             ) {
@@ -711,7 +724,6 @@ fun CalendarScreen(routeAction: RouteAction) {
 //                                    },
 
                                     text = if (currentMonth.value.toString().length < 2) {
-//                                        "${year}. 0${month.number}"
                                         "${currentYear}. 0${currentMonth.value}"
                                     } else {
                                         "${currentYear}. ${currentMonth.value}"
@@ -762,6 +774,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                                     .background(
                                         color = if (selectedDate == date.toJavaLocalDate()) {
                                             Color(0xFFFFDAB9)
+                                        } else if (previousSelectedDate == date.toJavaLocalDate()) {
+                                            Color(0xffE9E9E9)
                                         } else {
                                             Color.White
                                         },
@@ -1819,8 +1833,13 @@ private fun convertToLayoutTimeFormat(time: String): String {
         "${time.substring(0, 1)}:${time.substring(1)}"
     }
 }
+
 @RequiresApi(Build.VERSION_CODES.O)
-private fun calculateDay(day: Int, currentMonth: Month, currentYear: Int): kotlinx.datetime.LocalDate {
+private fun calculateDay(
+    day: Int,
+    currentMonth: Month,
+    currentYear: Int
+): kotlinx.datetime.LocalDate {
     val monthValue = currentMonth.value.toString().padStart(2, '0')
     val dayValue = day.toString().padStart(2, '0')
     return "$currentYear-$monthValue-$dayValue".toLocalDate()
