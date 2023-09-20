@@ -593,6 +593,14 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 Spacer(modifier = Modifier.weight(1f))
 
                                 Text(
+//                                    modifier = Modifier.clickable {
+//                                        if (currentMonth == Month.JANUARY) {
+//                                            displayedYear.value -= 1
+//                                            displayedMonth.value = Month.DECEMBER
+//                                        } else {
+//                                            displayedMonth.value = Month.values()[currentMonth.ordinal - 1]
+//                                        }
+//                                    },
                                     modifier = Modifier.clickable {
                                         displayedYear.value -= if (currentMonth == Month.JANUARY) 1 else 0
                                         displayedMonth.value -= 1
@@ -607,9 +615,18 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 Spacer(modifier = Modifier.padding(horizontal = 8.dp))
 
                                 Text(
+//                                    modifier = Modifier.clickable {
+//                                        if (currentMonth == Month.DECEMBER) {
+//                                            displayedYear.value += 1
+//                                            displayedMonth.value = Month.JANUARY
+//                                        } else {
+//                                            displayedMonth.value = Month.values()[currentMonth.ordinal + 1]
+//                                        }
+//
+//                                    },
                                     modifier = Modifier.clickable {
-                                        displayedYear.value += if (currentMonth == Month.DECEMBER) 1 else 0
-                                        displayedMonth.value += 1
+                                        displayedYear.value -= if (currentMonth == Month.JANUARY) 1 else 0
+                                        displayedMonth.value -= 1
                                     },
                                     text = ">",
                                     fontSize = 22.sp,
@@ -621,7 +638,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                         },
                         showLabel = true,
                         dayContent = { date: kotlinx.datetime.LocalDate ->
-                            val dayOfWeek = calculateDay(date.dayOfMonth, displayedMonth.value, displayedYear.value).dayOfWeek
+                            val dayOfWeek = calculateDay(
+                                date.dayOfMonth,
+                                displayedMonth.value,
+                                displayedYear.value
+                            ).dayOfWeek
                             Box(
                                 modifier = Modifier
 //                                    .padding(8.dp)
