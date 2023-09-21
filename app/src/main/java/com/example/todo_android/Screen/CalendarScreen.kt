@@ -692,8 +692,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 Text(
                                     text = date.dayOfMonth.toString(),
                                     fontSize = 14.sp,
-                                    color = when (date.dayOfWeek) {
-                                        DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
+                                    color = when {
+                                        date.dayOfWeek == DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
                                         else -> Color(0xFF424242)
                                     },
                                     lineHeight = 16.9.sp,
@@ -836,8 +836,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 Text(
                                     text = date.dayOfMonth.toString(),
                                     fontSize = 14.sp,
-                                    color = when (date.dayOfWeek) {
-                                        DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
+                                    color = when {
+                                        date.dayOfWeek == DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
                                         else -> Color(0xFF424242)
                                     },
                                     lineHeight = 16.9.sp,
