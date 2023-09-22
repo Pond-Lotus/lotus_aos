@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "981915491401",
+    "project_id": "fcm-lotus",
+    "storage_bucket": "fcm-lotus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:981915491401:android:775c3d085d78827b1fb398",
+        "android_client_info": {
+          "package_name": "com.example.todo_android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "981915491401-r7u9se4cmo9s7lo2paf35j0qd8541mes.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDtzrAtp8Tiv7giWRgDsrJMwLKcyngkPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "981915491401-r7u9se4cmo9s7lo2paf35j0qd8541mes.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "981915491401-8srgaqi9us1dnedu8vsdaah9m1b93ngd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.teamlotus.todori"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
