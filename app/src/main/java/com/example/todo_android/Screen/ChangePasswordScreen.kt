@@ -202,7 +202,15 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                     .padding(bottom = 7.dp)
             )
 
-            Box(modifier = Modifier.padding(bottom = 8.dp)) {
+            Box(
+                modifier = Modifier.padding(
+                    bottom = if (showMatchPassword2) {
+                        8.dp
+                    } else {
+                        15.dp
+                    }
+                )
+            ) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -224,7 +232,7 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                                 showErrorPassword1 = false
                             },
                             textStyle = TextStyle(
-                                fontSize = 13.sp,
+                                fontSize = 15.sp,
                                 fontStyle = FontStyle.Normal,
                                 color = Color.Black,
                                 lineHeight = 31.sp
@@ -261,7 +269,15 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                     .padding(bottom = 7.dp)
             )
 
-            Box(modifier = Modifier.padding(bottom = 8.dp)) {
+            Box(
+                modifier = Modifier.padding(
+                    bottom = if (showMatchPassword2) {
+                        8.dp
+                    } else {
+                        15.dp
+                    }
+                )
+            ) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -283,7 +299,7 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                                 showMatchPassword2 = !it.matches(passwordPattern)
                             },
                             textStyle = TextStyle(
-                                fontSize = 13.sp,
+                                fontSize = 15.sp,
                                 fontStyle = FontStyle.Normal,
                                 color = Color.Black,
                                 lineHeight = 31.sp
@@ -321,7 +337,15 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                     .padding(bottom = 7.dp)
             )
 
-            Box(modifier = Modifier.padding(bottom = 8.dp)) {
+            Box(
+                modifier = Modifier.padding(
+                    bottom = if (showMatchPassword2) {
+                        8.dp
+                    } else {
+                        15.dp
+                    }
+                )
+            ) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -343,7 +367,7 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                                 showMatchPassword3 = (it != password2)
                             },
                             textStyle = TextStyle(
-                                fontSize = 13.sp,
+                                fontSize = 15.sp,
                                 fontStyle = FontStyle.Normal,
                                 color = Color.Black,
                                 lineHeight = 31.sp

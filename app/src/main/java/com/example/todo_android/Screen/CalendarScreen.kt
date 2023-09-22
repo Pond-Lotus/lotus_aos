@@ -947,7 +947,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }
 
                 if (todoList.isEmpty() && !isVisibility) {
-                    Row(modifier = Modifier.padding(top = 20.dp)) {
+                    Row {
                         BlankTodoItem()
                     }
 
@@ -1260,7 +1260,14 @@ fun TodoItemList(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 18.dp),
+                        .padding(
+                            top = if (rowIndex++ > 0) {
+                                15.dp
+                            } else {
+                                0.dp
+                            }
+                        ),
+//                        .padding(top = 9.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
