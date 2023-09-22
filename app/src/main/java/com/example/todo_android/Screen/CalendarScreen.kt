@@ -531,9 +531,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                 modifier = Modifier
                     .shadow(
                         shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
-                        elevation = 3.dp,
-                        spotColor = Color(0x0D000000),
-                        ambientColor = Color(0x0D000000)
+                        elevation = 7.dp,
+                        spotColor = Color(0xffB0B0B0),
+                        ambientColor = Color(0xffB0B0B0)
                     )
                     .animateContentSize(
                         animationSpec = tween(
@@ -972,13 +972,19 @@ fun AddTodoFloatingButton(
     onButtonClick: (String) -> Unit,
 ) {
     val transition = updateTransition(targetState = multiFloatingState, label = null)
-    val rotate by transition.animateFloat(label = "rotate") {
-        if (it == FloatingStateType.Expanded) {
-            315f
-        } else {
-            0f
-        }
-    }
+//    val rotate by transition.animateFloat(label = "rotate") {
+//        if (it == FloatingStateType.Expanded) {
+//            315f
+//        } else {
+//            0f
+//        }
+//    }
+
+    val rotate by animateFloatAsState(
+        targetValue = if (multiFloatingState == FloatingStateType.Expanded) 45f else 0f,
+        animationSpec = tween(durationMillis = 400) // 여기서 애니메이션 지속 시간을 설정할 수 있습니다.
+    )
+
     val NextButtonArrowTint = when (multiFloatingState) {
         FloatingStateType.Expanded -> {
             Color(0xFFFFFFFF).copy(alpha = 1f)
@@ -988,19 +994,45 @@ fun AddTodoFloatingButton(
         }
     }
 
-    Column(horizontalAlignment = Alignment.End) {
+    Column(
+        modifier = Modifier.padding(end = 20.dp),
+        horizontalAlignment = Alignment.End
+    ) {
 
         AnimatedVisibility(
             visible = (multiFloatingState == FloatingStateType.Expanded),
-            enter = fadeIn(animationSpec = tween(300)),
-            exit = fadeOut(animationSpec = tween(300))
+            enter = fadeIn(
+                animationSpec = tween(500)
+            ) + slideInVertically(
+                animationSpec = tween(500),
+                initialOffsetY = {
+                    it / 8
+                }
+            ),
+            exit = fadeOut(
+                animationSpec = tween(500)
+            ) + slideOutVertically(
+                animationSpec = tween(500),
+                targetOffsetY = {
+                    it / 8
+                }
+            )
         ) {
             FloatingActionButtonMenus(onMultiFloatingStateChange, onButtonClick)
         }
 
-        Spacer(modifier = Modifier.padding(vertical = 10.dp))
+        Spacer(modifier = Modifier.padding(vertical = 7.dp))
 
-        FloatingActionButton(modifier = Modifier.size(60.dp),
+        FloatingActionButton(
+            modifier = Modifier
+                .padding(bottom = 18.dp)
+                .size(65.dp)
+                .shadow(
+                    elevation = 4.dp,
+                    shape = CircleShape,
+                    spotColor = Color(0xff9E9E9E),
+                    ambientColor = Color(0xffACACAC)
+                ),
             containerColor = backgroundColor,
             shape = CircleShape,
             onClick = {
@@ -1015,7 +1047,7 @@ fun AddTodoFloatingButton(
             Icon(
                 modifier = Modifier
                     .rotate(rotate)
-                    .size(30.dp)
+                    .size(32.dp)
                     .background(Color.Transparent),
                 painter = painterResource(id = R.drawable.todolistaddemogi),
                 contentDescription = null,
@@ -1034,7 +1066,12 @@ fun FloatingActionButtonMenus(
         modifier = Modifier
             .width(155.dp)
             .height(110.dp)
-            .shadow(shape = RoundedCornerShape(20.dp), elevation = 5.dp)
+            .shadow(
+                shape = RoundedCornerShape(20.dp),
+                elevation = 5.dp,
+                spotColor = Color(0xff9E9E9E),
+                ambientColor = Color(0xffACACAC)
+            )
             .background(Color.White)
     ) {
         Column(
@@ -1249,7 +1286,7 @@ fun TodoItemList(
         }
     })
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
 
         val grouped = Todo.groupBy { it.color }
         var rowIndex = 0;
@@ -1267,7 +1304,6 @@ fun TodoItemList(
                                 0.dp
                             }
                         ),
-//                        .padding(top = 9.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
