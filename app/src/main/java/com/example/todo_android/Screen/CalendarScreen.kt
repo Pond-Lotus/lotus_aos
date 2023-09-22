@@ -71,6 +71,7 @@ import com.himanshoe.kalendar.color.KalendarColor
 import com.himanshoe.kalendar.color.KalendarColors
 import com.himanshoe.kalendar.ui.component.header.KalendarTextKonfig
 import com.himanshoe.kalendar.ui.firey.DaySelectionMode
+import com.himanshoe.kalendar.ui.oceanic.util.isLeapYear
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*
@@ -364,7 +365,11 @@ fun CalendarScreen(routeAction: RouteAction) {
     val displayedYear = remember { mutableStateOf(today.year) }
     val currentMonth = displayedMonth.value
     val currentYear = displayedYear.value
-    val currentMonthIndex = currentMonth.value.minus(1)
+
+    val daysInMonth = currentMonth.length(currentYear.isLeapYear())
+    val monthValue = currentMonth.value.toString().padStart(2, '0')
+    val startDayOfMonth = "$currentYear-$monthValue-01".toLocalDate()
+    val firstDayOfMonth = startDayOfMonth.dayOfWeek
 
 //    val topAppBarHeight = 64.dp
 //    val topAppBarHeightPx = with(LocalDensity.current) { topAppBarHeight.roundToPx().toFloat() }
@@ -635,11 +640,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                         },
                         showLabel = true,
                         dayContent = { date: kotlinx.datetime.LocalDate ->
-                            val dayOfWeek = calculateDay(
-                                date.dayOfMonth,
-                                displayedMonth.value,
-                                displayedYear.value
-                            ).dayOfWeek
                             Box(
                                 modifier = Modifier
 //                                    .padding(8.dp)

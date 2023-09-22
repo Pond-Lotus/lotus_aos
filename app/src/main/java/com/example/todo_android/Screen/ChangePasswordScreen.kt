@@ -175,7 +175,7 @@ fun ChangePasswordScreen(routeAction: RouteAction) {
                 )
             }, navigationIcon = {
                 IconButton(onClick = {
-                    routeAction.goBack()
+                    routeAction.navTo(NAV_ROUTE.CALENDAR)
                 }) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
                 }
