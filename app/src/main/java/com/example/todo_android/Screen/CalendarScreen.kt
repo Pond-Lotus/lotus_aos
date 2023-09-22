@@ -627,8 +627,8 @@ fun CalendarScreen(routeAction: RouteAction) {
 //
 //                                    },
                                     modifier = Modifier.clickable {
-                                        displayedYear.value -= if (currentMonth == Month.JANUARY) 1 else 0
-                                        displayedMonth.value -= 1
+                                        displayedYear.value += if (currentMonth == Month.DECEMBER) 1 else 0
+                                        displayedMonth.value += 1
                                     },
                                     text = ">",
                                     fontSize = 22.sp,
