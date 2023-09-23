@@ -1,6 +1,8 @@
 package com.example.todo_android.FCM
 
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.Notification.VISIBILITY_PRIVATE
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -17,6 +19,7 @@ import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.core.app.NotificationCompat
 import com.example.todo_android.MainActivity
 import com.example.todo_android.R
+import com.example.todo_android.Util.MyApplication
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -37,11 +40,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d(TAG, "new Token: $token")
 
         // 토큰 값을 따로 저장
-        val pref = this.getSharedPreferences("token", Context.MODE_PRIVATE)
-        val editor = pref.edit()
-        editor.putString("token", token).apply()
-        editor.commit()
+        MyApplication.prefs.setData("fcm_token", token)
         Log.i(TAG, "성공적으로 토큰을 저장함")
+
+
+//        val pref = this.getSharedPreferences("token", Context.MODE_PRIVATE)
+//        val editor = pref.edit()
+//        editor.putString("token", token).apply()
+//        editor.commit()
     }
 
     /** 메시지 수신 메서드(포그라운드) */
@@ -99,12 +105,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // 알림에 대한 UI 정보, 작업
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.mipmap.app_logo) // 아이콘 설정
+            .setSmallIcon(R.mipmap.app_logo_round)
             .setContentTitle(remoteMessage.data["title"].toString()) // 제목
             .setContentText(remoteMessage.data["body"].toString()) // 메시지 내용
-            .setAutoCancel(true) // 알람클릭시 삭제여부
-            .setSound(soundUri)  // 알림 소리
-            .setContentIntent(pendingIntent) // 알림 실행 시 Intent
+            .setAutoCancel(true)
+            .setSound(soundUri)
+            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+            .setContentIntent(pendingIntent)
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

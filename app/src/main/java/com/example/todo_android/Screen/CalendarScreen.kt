@@ -972,13 +972,6 @@ fun AddTodoFloatingButton(
     onButtonClick: (String) -> Unit,
 ) {
     val transition = updateTransition(targetState = multiFloatingState, label = null)
-//    val rotate by transition.animateFloat(label = "rotate") {
-//        if (it == FloatingStateType.Expanded) {
-//            315f
-//        } else {
-//            0f
-//        }
-//    }
 
     val rotate by animateFloatAsState(
         targetValue = if (multiFloatingState == FloatingStateType.Expanded) 45f else 0f,
@@ -1076,7 +1069,6 @@ fun FloatingActionButtonMenus(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .wrapContentSize()
         ) {
             Row(
