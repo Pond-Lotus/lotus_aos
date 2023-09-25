@@ -1350,8 +1350,6 @@ fun AddTodoFloatingButton(
             FloatingActionButtonMenus(onMultiFloatingStateChange, onButtonClick)
         }
 
-        Spacer(modifier = Modifier.padding(vertical = 7.dp))
-
         FloatingActionButton(
             modifier = Modifier
                 .padding(bottom = 18.dp)
@@ -1395,6 +1393,7 @@ fun FloatingActionButtonMenus(
         modifier = Modifier
             .width(155.dp)
             .height(110.dp)
+            .padding(bottom = 10.dp)
             .shadow(
                 shape = RoundedCornerShape(20.dp),
                 elevation = 5.dp,
