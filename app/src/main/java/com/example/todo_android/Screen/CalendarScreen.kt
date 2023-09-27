@@ -1621,43 +1621,50 @@ fun TodoItemList(
         grouped.forEach { (header, items) ->
 
             stickyHeader {
-                Row(
+                Surface(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            top = if (rowIndex++ > 0) {
-                                15.dp
-                            } else {
-                                0.dp
-                            }
-                        ),
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillParentMaxWidth()
+                        .wrapContentHeight(),
+                    color = Color.Transparent
                 ) {
-
-                    Box(
+                    Row(
                         modifier = Modifier
-                            .size(9.dp)
-                            .clip(shape = CircleShape)
-                            .background(
-                                color = when (header) {
-                                    1 -> Color(0xffFFB4B4)
-                                    2 -> Color(0xffFFDCA8)
-                                    3 -> Color(0xffB1E0CF)
-                                    4 -> Color(0xffB7D7F5)
-                                    5 -> Color(0xffFFB8EB)
-                                    6 -> Color(0xffB6B1EC)
-                                    else -> Color.Black
+                            .fillMaxWidth()
+                            .padding(
+                                top = if (rowIndex++ > 0) {
+                                    15.dp
+                                } else {
+                                    0.dp
                                 }
-                            )
-                    )
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
-                    Text(
-                        modifier = Modifier.padding(start = 4.dp),
-                        text = categoryName?.data?.get(header.toString()) ?: "",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        lineHeight = 17.sp
-                    )
+                        Box(
+                            modifier = Modifier
+                                .size(9.dp)
+                                .clip(shape = CircleShape)
+                                .background(
+                                    color = when (header) {
+                                        1 -> Color(0xffFFB4B4)
+                                        2 -> Color(0xffFFDCA8)
+                                        3 -> Color(0xffB1E0CF)
+                                        4 -> Color(0xffB7D7F5)
+                                        5 -> Color(0xffFFB8EB)
+                                        6 -> Color(0xffB6B1EC)
+                                        else -> Color.Black
+                                    }
+                                )
+                        )
+
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = categoryName?.data?.get(header.toString()) ?: "",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            lineHeight = 17.sp
+                        )
+                    }
                 }
             }
 
