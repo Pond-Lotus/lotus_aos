@@ -1,5 +1,7 @@
 package com.example.todo_android.Navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -67,21 +69,69 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
 
         //라우트 이름 = 화면의 키
         //회원가입
-        composable(NAV_ROUTE.REGISTER.routeName) {
+        composable(
+            NAV_ROUTE.REGISTER.routeName,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                    initialOffset = { -it }
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300),
+                    targetOffset = { -it }
+                )
+            }
+        ) {
             // 화면이 들어가는 부분 = 값
             RegisterScreen(routeAction)
         }
 
         //라우트 이름 = 화면의 키
         //이메일 인증
-        composable(NAV_ROUTE.AUTHEMAIL.routeName) {
+        composable(
+            NAV_ROUTE.AUTHEMAIL.routeName,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                    initialOffset = { -it }
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300),
+                    targetOffset = { -it }
+                )
+            }
+        ) {
             // 화면이 들어가는 부분 = 값
             AuthEmailScreen(routeAction)
         }
 
         //라우트 이름 = 화면의 키
         //이메일 인증 코드
-        composable(NAV_ROUTE.AUTHCODE.routeName) {
+        composable(
+            NAV_ROUTE.AUTHCODE.routeName,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                    initialOffset = { -it }
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300),
+                    targetOffset = { -it }
+                )
+            }
+        ) {
             // 화면이 들어가는 부분 = 값
             AuthCodeScreen(routeAction)
         }
@@ -95,14 +145,42 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
 
         //라우트 이름 = 화면의 키
         //프로필
-        composable(NAV_ROUTE.PROFILE.routeName) {
+        composable(
+            NAV_ROUTE.PROFILE.routeName,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
             // 화면이 들어가는 부분 = 값
             ProfileScreen(routeAction)
         }
 
         //라우트 이름 = 화면의 키
         //비밀번호 변경
-        composable(NAV_ROUTE.CHANGEPASSWORD.routeName) {
+        composable(
+            NAV_ROUTE.CHANGEPASSWORD.routeName,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
             // 화면이 들어가는 부분 = 값
             ChangePasswordScreen(routeAction)
         }
@@ -116,32 +194,92 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
 
         //라우트 이름 = 화면의 키
         //계정 탈퇴 화면
-        composable(NAV_ROUTE.DELETEACCOUNT.routeName) {
+        composable(
+            NAV_ROUTE.DELETEACCOUNT.routeName,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                    initialOffset = { -it }
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300),
+                    targetOffset = { -it }
+                )
+            }
+        ) {
             // 화면이 들어가는 부분 = 값
             DeleteAccountScreen(routeAction)
         }
 
         //라우트 이름 = 화면의 키
         //비밀번호 찾기 화면
-        composable(NAV_ROUTE.SEARCHPASSWORD.routeName) {
+        composable(
+            NAV_ROUTE.SEARCHPASSWORD.routeName,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                    initialOffset = { -it }
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300),
+                    targetOffset = { -it }
+                )
+            }
+        ) {
             // 화면이 들어가는 부분 = 값
             SearchPasswordScreen(routeAction)
         }
 
         //라우트 이름 = 화면의 키
         //그룹 설정 화면
-        composable(NAV_ROUTE.SELECTCATEGORY.routeName) {
+        composable(
+            NAV_ROUTE.SELECTCATEGORY.routeName,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
             // 화면이 들어가는 부분 = 값
             CategoryScreen(routeAction)
         }
 
         //라우트 이름 = 화면의 키
         //그룹 설정 화면
-        composable("${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}/{categoryId}/{categoryColor}",
+        composable(
+            "${NAV_ROUTE.CHANGECATEGORY.routeName}/{categoryName}/{categoryId}/{categoryColor}",
             arguments = listOf(
                 navArgument("categoryName") { type = NavType.StringType },
                 navArgument("categoryId") { type = NavType.StringType },
-                navArgument("categoryColor") { type = NavType.IntType })) { backStackEntry ->
+                navArgument("categoryColor") { type = NavType.IntType }),
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            }
+        ) { backStackEntry ->
             // 화면이 들어가는 부분 = 값
             val categoryName = backStackEntry.arguments?.getString("categoryName")
             val categoryId = backStackEntry.arguments?.getString("categoryId")
@@ -151,7 +289,21 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
 
         //라우트 이름 = 화면의 키
         //알림 설정 화면
-        composable(NAV_ROUTE.SETALARM.routeName) {
+        composable(
+            NAV_ROUTE.SETALARM.routeName,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
             // 화면이 들어가는 부분 = 값
             SetAlarmScreen(routeAction)
         }

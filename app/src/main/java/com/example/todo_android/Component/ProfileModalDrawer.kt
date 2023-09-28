@@ -160,9 +160,9 @@ fun ProfileModalDrawer(
                 modifier = Modifier
                     .size(25.dp)
                     .clickable {
-                        scope.launch {
-                            bottomScaffoldState.drawerState.close()
-                        }
+//                        scope.launch {
+//                            bottomScaffoldState.drawerState.close()
+//                        }
                         routeAction.navTo(NAV_ROUTE.PROFILE)
                     },
                 painter = painterResource(id = R.drawable.ic_pen),

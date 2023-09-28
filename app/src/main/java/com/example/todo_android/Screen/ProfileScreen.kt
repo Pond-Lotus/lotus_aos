@@ -436,6 +436,9 @@ fun ProfileScreen(routeAction: RouteAction) {
                         color = Color(0xff424242),
                         shape = RoundedCornerShape(8.dp)
                     )
+                    .clickable {
+                        routeAction.navTo(NAV_ROUTE.CHANGEPASSWORD)
+                    }
                     .background(Color.Transparent), contentAlignment = Alignment.Center
             ) {
                 Text(

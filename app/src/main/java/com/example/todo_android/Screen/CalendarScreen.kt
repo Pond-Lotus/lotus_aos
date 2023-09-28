@@ -1623,9 +1623,8 @@ fun TodoItemList(
             stickyHeader {
                 Surface(
                     modifier = Modifier
-                        .fillParentMaxWidth()
-                        .wrapContentHeight(),
-                    color = Color.Transparent
+                        .fillParentMaxWidth(),
+                    color = Color(0xfff0f0f0)
                 ) {
                     Row(
                         modifier = Modifier

@@ -125,7 +125,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                 .height(45.dp)) {
             CenterAlignedTopAppBar(title = {}, navigationIcon = {
                 IconButton(onClick = {
-                    routeAction.goBack()
+                    routeAction.navTo(NAV_ROUTE.LOGIN)
                 }) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
                 }
