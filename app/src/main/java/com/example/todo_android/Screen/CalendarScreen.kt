@@ -545,16 +545,16 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 if (!animateState.value) -it else it
                             },
                             animationSpec = tween(
-                                durationMillis = 200,
-                                easing = CubicBezierEasing(0.4f, 0.0f, 1.0f, 1.0f)
+                                durationMillis = 500,
+//                                easing = CubicBezierEasing(0.4f, 0.0f, 1.0f, 1.0f)
                             )
                         ) with slideOutVertically(
                             targetOffsetY = {
                                 if (!animateState.value) it else -it
                             },
                             animationSpec = tween(
-                                durationMillis = 200,
-                                easing = CubicBezierEasing(0.4f, 0.0f, 1.0f, 1.0f)
+                                durationMillis = 500,
+//                                easing = CubicBezierEasing(0.4f, 0.0f, 1.0f, 1.0f)
                             )
                         )
                     },
