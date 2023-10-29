@@ -1,8 +1,6 @@
 package com.example.todo_android.FCM
 
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.Notification.VISIBILITY_PRIVATE
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent

@@ -33,25 +33,25 @@ fun MonthWeekToggleSwitch(
 ) {
     val progressState by animateFloatAsState(
         targetValue = if (animateState.value) {
-            1f
-        } else {
             0f
+        } else {
+            1f
         }
     )
 
     val toggleSwitchMonthText by animateColorAsState(
         targetValue = if (animateState.value) {
-            Color(0xFF9E9E9E) // when on
+            Color.Black // when on
         } else {
-            Color.Black // when off
+            Color(0xFF9E9E9E) // when off
         },
     )
 
     val toggleSwitchWeekText by animateColorAsState(
         targetValue = if (animateState.value) {
-            Color.Black // when on
+            Color(0xFF9E9E9E) // when on
         } else {
-            Color(0xFF9E9E9E) // when off
+            Color.Black //when off
         },
     )
 

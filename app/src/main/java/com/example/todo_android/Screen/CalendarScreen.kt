@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
@@ -29,13 +28,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -45,6 +44,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,17 +65,12 @@ import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.Response.TodoResponse.*
 import com.example.todo_android.Util.MyApplication
 import com.example.todo_android.ui.theme.deleteBackground
-import com.himanshoe.kalendar.Kalendar
-import com.himanshoe.kalendar.KalendarType
-import com.himanshoe.kalendar.color.KalendarColor
-import com.himanshoe.kalendar.color.KalendarColors
-import com.himanshoe.kalendar.ui.component.header.KalendarTextKonfig
-import com.himanshoe.kalendar.ui.firey.DaySelectionMode
-import com.himanshoe.kalendar.ui.oceanic.util.isLeapYear
+import com.kizitonwose.calendar.compose.*
+import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
+import com.kizitonwose.calendar.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*
-import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -83,6 +78,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.util.*
 import java.util.Calendar.*
@@ -319,13 +315,11 @@ fun readCategory(
 @ExperimentalMaterial3Api
 @Composable
 fun CalendarScreen(routeAction: RouteAction) {
-
     var isVisibility by remember { mutableStateOf(false) }
 
+    val animateState = remember { mutableStateOf(true) }
+
     var multiFloatingState by remember { mutableStateOf(FloatingStateType.Collapsed) }
-
-    val animateState = remember { mutableStateOf(false) }
-
     val colorFAB = if (multiFloatingState == FloatingStateType.Expanded) {
         Color(0xff9E9E9E)
     } else {
@@ -355,39 +349,33 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     var selectedTodo by remember { mutableStateOf<RToDoResponse?>(null) }
 
-    val selectedDate = LocalDate.of(
-        year.toInt(), month.toInt(), day.toInt()
+    var selectedDate: MutableState<LocalDate> = remember {
+        mutableStateOf(LocalDate.now())
+    }
+
+    var currentDate = remember { LocalDate.now() }
+
+    val startDate = remember { currentDate.minusYears(2) }
+
+    val endDate = remember {
+        currentDate.plusYears(2)
+    }
+
+    val weekState = rememberWeekCalendarState(
+        startDate = startDate,
+        endDate = endDate,
+        firstVisibleWeekDate = currentDate,
+        firstDayOfWeek = DayOfWeek.MONDAY
     )
 
-    var previousSelectedDate by remember { mutableStateOf(selectedDate) }
+    val monthState = rememberCalendarState(
+        startMonth = startDate.yearMonth,
+        endMonth = endDate.yearMonth,
+        firstVisibleMonth = currentDate.yearMonth,
+        firstDayOfWeek = DayOfWeek.MONDAY
+    )
 
-    val today = Clock.System.todayIn(currentSystemDefault())
-    val displayedMonth = remember { mutableStateOf(today.month) }
-    val displayedYear = remember { mutableStateOf(today.year) }
-    val currentMonth = displayedMonth.value
-    val currentYear = displayedYear.value
-
-    val daysInMonth = currentMonth.length(currentYear.isLeapYear())
-    val monthValue = currentMonth.value.toString().padStart(2, '0')
-    val startDayOfMonth = "$currentYear-$monthValue-01".toLocalDate()
-    val firstDayOfMonth = startDayOfMonth.dayOfWeek
-
-//    val topAppBarHeight = 64.dp
-//    val topAppBarHeightPx = with(LocalDensity.current) { topAppBarHeight.roundToPx().toFloat() }
-//    val topAppBarOffsetHeightPx = remember { mutableStateOf(0f) }
-//
-//    val nestedScrollConnection = remember {
-//        object : NestedScrollConnection {
-//            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-//
-//                val delta = available.y
-//                val newOffset = topAppBarOffsetHeightPx.value + delta
-//                topAppBarOffsetHeightPx.value = newOffset.coerceIn(-topAppBarHeightPx, 0f)
-//
-//                return Offset.Zero
-//            }
-//        }
-//    }
+    val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.MONDAY)
 
     val onButtonClick: (String) -> Unit = { id ->
         when (id) {
@@ -467,14 +455,7 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     BottomSheetScaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .imePadding()
-            .windowInsetsPadding(
-                WindowInsets.systemBars.only(
-                    WindowInsetsSides.Vertical
-                )
-            ),
-//            .nestedScroll(nestedScrollConnection),
+            .imePadding(),
         scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
@@ -483,8 +464,6 @@ fun CalendarScreen(routeAction: RouteAction) {
         },
         topBar = {
             CenterAlignedTopAppBar(
-//                modifier = Modifier.offset {
-//                    IntOffset(x = 0, y = topAppBarOffsetHeightPx.value.roundToInt()) },
                 title = {
                     MonthWeekToggleSwitch(
                         width = 105, height = 35, animateState = animateState
@@ -509,9 +488,10 @@ fun CalendarScreen(routeAction: RouteAction) {
         },
         floatingActionButton = {
             AddTodoFloatingButton(
-                multiFloatingState = multiFloatingState, onMultiFloatingStateChange = {
-                    multiFloatingState = it
-                }, backgroundColor = colorFAB, onButtonClick = onButtonClick
+                multiFloatingState = multiFloatingState,
+                onMultiFloatingStateChange = { multiFloatingState = it },
+                backgroundColor = colorFAB,
+                onButtonClick = onButtonClick
             )
         },
         floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
@@ -538,338 +518,102 @@ fun CalendarScreen(routeAction: RouteAction) {
                     )
             ) {
                 AnimatedContent(
-                    targetState = !animateState.value,
+                    targetState = animateState.value,
                     transitionSpec = {
                         slideInVertically(
-                            initialOffsetY = {
-                                if (!animateState.value) 0 else 0
-                            },
+                            initialOffsetY = { 0 },
                             animationSpec = tween(
-                                durationMillis = 500,
+                                easing = LinearOutSlowInEasing
                             )
                         ) togetherWith slideOutVertically(
-                            targetOffsetY = {
-                                if (!animateState.value) 0 else 0
-                            },
+                            targetOffsetY = { 0 },
                             animationSpec = tween(
-                                durationMillis = 500,
+                                easing = FastOutLinearInEasing
                             )
                         )
                     },
                     content = {
-                        if (!animateState.value) {
-                            Kalendar(
-                                currentDay = null,
-                                kalendarType = KalendarType.Firey,
-                                kalendarHeaderTextKonfig = KalendarTextKonfig(
-                                    kalendarTextColor = Color.Black, kalendarTextSize = 22.sp
-                                ),
-                                kalendarColors = KalendarColors(color = List(12) {
-                                    KalendarColor(
-                                        backgroundColor = Color.White,
-                                        dayBackgroundColor = Color(0xFFFFDAB9),
-                                        headerTextColor = Color.Black
-                                    )
-                                }),
-                                daySelectionMode = DaySelectionMode.Single,
-                                headerContent = { month, year ->
-                                    Row(
-                                        modifier = Modifier.padding(
-                                            start = 20.dp,
-                                            end = 20.dp,
-                                            bottom = 16.dp
-                                        ),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.Start
-                                    ) {
-                                        Image(
-                                            modifier = Modifier.size(22.dp),
-                                            painter = painterResource(
-                                                id = R.drawable.headertextemogi
-                                            ),
-                                            contentDescription = null
-                                        )
+                        if (animateState.value) {
+                            Column(
+                                modifier = Modifier
+                                    .background(Color.White)
+                            ) {
+                                CalendarTitle(monthState)
+                                CalendarHeader(daysOfWeek = daysOfWeek)
 
-                                        Spacer(modifier = Modifier.width(4.dp))
-
-                                        Text(
-//                                    text = if (month.number.toString().length < 2) {
-//                                        "${year}. 0${month.number}"
-//                                    } else {
-//                                        "${year}. ${month.number}"
-//                                    },
-
-                                            text = if (currentMonth.value.toString().length < 2) {
-                                                "${currentYear}. 0${currentMonth.value}"
+                                HorizontalCalendar(
+                                    modifier = Modifier
+                                        .background(color = Color.White),
+                                    state = monthState,
+                                    dayContent = { day ->
+                                        MonthsDay(
+                                            day,
+                                            isSelected = currentDate == day.date,
+                                            isToday = day.date == LocalDate.now()
+                                        ) { day ->
+                                            currentDate = if (currentDate == day.date) {
+                                                null
                                             } else {
-                                                "${currentYear}. ${currentMonth.value}"
-                                            },
-                                            fontSize = 22.sp,
-                                            lineHeight = 28.6.sp,
-                                            fontWeight = FontWeight(700),
-                                            color = Color(0xFF000000)
-                                        )
+                                                day.date
+                                            }
 
-                                        Spacer(modifier = Modifier.weight(1f))
+                                            val dayOfWeek = day.date.dayOfWeek
 
-                                        Text(
-//                                    modifier = Modifier.clickable {
-//                                        if (currentMonth == Month.JANUARY) {
-//                                            displayedYear.value -= 1
-//                                            displayedMonth.value = Month.DECEMBER
-//                                        } else {
-//                                            displayedMonth.value = Month.values()[currentMonth.ordinal - 1]
-//                                        }
-//                                    },
-                                            modifier = Modifier.clickable {
-                                                displayedYear.value -= if (currentMonth == Month.JANUARY) 1 else 0
-                                                displayedMonth.value -= 1
-                                            },
-                                            text = "<",
-                                            fontSize = 22.sp,
-                                            lineHeight = 28.6.sp,
-                                            fontWeight = FontWeight(700),
-                                            color = Color(0xFF000000)
-                                        )
-
-                                        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-
-                                        Text(
-//                                    modifier = Modifier.clickable {
-//                                        if (currentMonth == Month.DECEMBER) {
-//                                            displayedYear.value += 1
-//                                            displayedMonth.value = Month.JANUARY
-//                                        } else {
-//                                            displayedMonth.value = Month.values()[currentMonth.ordinal + 1]
-//                                        }
-//
-//                                    },
-                                            modifier = Modifier.clickable {
-                                                displayedYear.value += if (currentMonth == Month.DECEMBER) 1 else 0
-                                                displayedMonth.value += 1
-                                            },
-                                            text = ">",
-                                            fontSize = 22.sp,
-                                            lineHeight = 28.6.sp,
-                                            fontWeight = FontWeight(700),
-                                            color = Color(0xFF000000)
-                                        )
+                                            dayString = when (dayOfWeek.value) {
+                                                1 -> "월요일"
+                                                2 -> "화요일"
+                                                3 -> "수요일"
+                                                4 -> "목요일"
+                                                5 -> "금요일"
+                                                6 -> "토요일"
+                                                7 -> "일요일"
+                                                else -> ""
+                                            }
+                                        }
                                     }
-                                },
-                                showLabel = true,
-                                dayContent = { date: kotlinx.datetime.LocalDate ->
-                                    Box(
-                                        modifier = Modifier
-//                                    .padding(8.dp)
-//                                    .size(40.dp)
-                                            .padding(10.dp)
-                                            .size(36.dp)
-                                            .background(
-                                                color = if (selectedDate == date.toJavaLocalDate()) {
-                                                    Color(0xFFFFDAB9)
-                                                } else if (previousSelectedDate == date.toJavaLocalDate()) {
-                                                    Color(0xffE9E9E9)
-                                                } else {
-                                                    Color.White
-                                                },
-                                                CircleShape
-                                            )
-                                            .pointerInput(Unit) {
-                                                detectTapGestures(onPress = {
-                                                    year = date.year.toString()
-                                                    month = date.monthNumber.toString()
-                                                    day = date.dayOfMonth.toString()
-
-                                                    val selectedDate = LocalDate.of(
-                                                        date.year, date.monthNumber, date.dayOfMonth
-                                                    )
-                                                    val dayOfWeek = selectedDate.dayOfWeek
-
-                                                    dayString = when (dayOfWeek.value) {
-                                                        1 -> "월요일"
-                                                        2 -> "화요일"
-                                                        3 -> "수요일"
-                                                        4 -> "목요일"
-                                                        5 -> "금요일"
-                                                        6 -> "토요일"
-                                                        7 -> "일요일"
-                                                        else -> ""
-                                                    }
-                                                    scope.launch {
-                                                        readTodo(token, year, month, day) {
-                                                            todoList.clear()
-                                                            for (i in it!!.data) {
-                                                                todoList.add(i)
-                                                            }
-                                                        }
-                                                    }
-                                                })
-                                            },
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        Text(
-                                            text = date.dayOfMonth.toString(),
-                                            fontSize = 14.sp,
-                                            color = when {
-                                                date.dayOfWeek == DayOfWeek.SUNDAY -> Color(
-                                                    0xFFF86B6B
-                                                )
-                                                else -> Color(0xFF424242)
-                                            },
-                                            lineHeight = 16.9.sp,
-                                            fontWeight = FontWeight(700)
-                                        )
-                                    }
-                                }
-                            )
+                                )
+                            }
                         } else {
-                            Kalendar(
-                                currentDay = null,
-                                kalendarType = KalendarType.Oceanic,
-                                kalendarHeaderTextKonfig = KalendarTextKonfig(
-                                    kalendarTextColor = Color.Black, kalendarTextSize = 22.sp
-                                ),
-                                kalendarColors = KalendarColors(color = List(12) {
-                                    KalendarColor(
-                                        backgroundColor = Color.White,
-                                        dayBackgroundColor = Color(0xFFFFDAB9),
-                                        headerTextColor = Color.Black
-                                    )
-                                }),
-                                daySelectionMode = DaySelectionMode.Single,
-                                headerContent = { month, year ->
-                                    Row(
-                                        modifier = Modifier.padding(
-                                            start = 20.dp,
-                                            end = 20.dp,
-                                            bottom = 16.dp
-                                        ),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.Start
-                                    ) {
-                                        Image(
-                                            modifier = Modifier.size(22.dp),
-                                            painter = painterResource(
-                                                id = R.drawable.headertextemogi
-                                            ),
-                                            contentDescription = null
-                                        )
-
-                                        Spacer(modifier = Modifier.width(4.dp))
-
-                                        Text(
-//                                    text = if (month.number.toString().length < 2) {
-//                                        "${year}. 0${month.number}"
-//                                    } else {
-//                                        "${year}. ${month.number}"
-//                                    },
-
-                                            text = if (currentMonth.value.toString().length < 2) {
-                                                "${currentYear}. 0${currentMonth.value}"
-                                            } else {
-                                                "${currentYear}. ${currentMonth.value}"
-                                            },
-                                            fontSize = 22.sp,
-                                            lineHeight = 28.6.sp,
-                                            fontWeight = FontWeight(700),
-                                            color = Color(0xFF000000)
-                                        )
-
-                                        Spacer(modifier = Modifier.weight(1f))
-
-                                        Text(
-                                            modifier = Modifier.clickable {
-                                                displayedYear.value -= if (currentMonth == Month.JANUARY) 1 else 0
-                                                displayedMonth.value -= 1
-                                            },
-                                            text = "<",
-                                            fontSize = 22.sp,
-                                            lineHeight = 28.6.sp,
-                                            fontWeight = FontWeight(700),
-                                            color = Color(0xFF000000)
-                                        )
-
-                                        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-
-                                        Text(
-                                            modifier = Modifier.clickable {
-                                                displayedYear.value += if (currentMonth == Month.DECEMBER) 1 else 0
-                                                displayedMonth.value += 1
-                                            },
-                                            text = ">",
-                                            fontSize = 22.sp,
-                                            lineHeight = 28.6.sp,
-                                            fontWeight = FontWeight(700),
-                                            color = Color(0xFF000000)
-                                        )
-                                    }
-                                },
-                                showLabel = true,
-                                dayContent = { date: kotlinx.datetime.LocalDate ->
-                                    Box(
-                                        modifier = Modifier
-//                                    .padding(8.dp)
-//                                    .size(40.dp)
-                                            .padding(10.dp)
-                                            .size(36.dp)
-                                            .background(
-                                                color = if (selectedDate == date.toJavaLocalDate()) {
-                                                    Color(0xFFFFDAB9)
-                                                } else if (previousSelectedDate == date.toJavaLocalDate()) {
-                                                    Color(0xffE9E9E9)
+                            Column(
+                                modifier = Modifier
+                                    .background(Color.White)
+                            ) {
+                                CalendarTitle(monthState)
+                                CalendarHeader(daysOfWeek = daysOfWeek)
+                                WeekCalendar(
+                                    modifier = Modifier
+                                        .background(color = Color.White),
+                                    state = weekState,
+                                    contentPadding = PaddingValues(0.dp),
+                                    dayContent = { day ->
+                                        WeeksDay(
+                                            day,
+                                            isSelected = currentDate == day.date,
+                                            isToday = day.date == LocalDate.now()
+                                        ) { day ->
+                                            currentDate =
+                                                if (currentDate == day.toJavaLocalDate()) {
+                                                    null
                                                 } else {
-                                                    Color.White
-                                                },
-                                                CircleShape
-                                            )
-                                            .pointerInput(Unit) {
-                                                detectTapGestures(onPress = {
-                                                    year = date.year.toString()
-                                                    month = date.monthNumber.toString()
-                                                    day = date.dayOfMonth.toString()
+                                                    day.toJavaLocalDate()
+                                                }
 
-                                                    val selectedDate = LocalDate.of(
-                                                        date.year, date.monthNumber, date.dayOfMonth
-                                                    )
-                                                    val dayOfWeek = selectedDate.dayOfWeek
+                                            val dayOfWeek = day.dayOfWeek
 
-                                                    dayString = when (dayOfWeek.value) {
-                                                        1 -> "월요일"
-                                                        2 -> "화요일"
-                                                        3 -> "수요일"
-                                                        4 -> "목요일"
-                                                        5 -> "금요일"
-                                                        6 -> "토요일"
-                                                        7 -> "일요일"
-                                                        else -> ""
-                                                    }
-                                                    scope.launch {
-                                                        readTodo(token, year, month, day) {
-                                                            todoList.clear()
-                                                            for (i in it!!.data) {
-                                                                todoList.add(i)
-                                                            }
-                                                        }
-                                                    }
-                                                })
-                                            },
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        Text(
-                                            text = date.dayOfMonth.toString(),
-                                            fontSize = 14.sp,
-                                            color = when {
-                                                date.dayOfWeek == DayOfWeek.SUNDAY -> Color(
-                                                    0xFFF86B6B
-                                                )
-                                                else -> Color(0xFF424242)
-                                            },
-                                            lineHeight = 16.9.sp,
-                                            fontWeight = FontWeight(700)
-                                        )
+                                            dayString = when (dayOfWeek.value) {
+                                                1 -> "월요일"
+                                                2 -> "화요일"
+                                                3 -> "수요일"
+                                                4 -> "목요일"
+                                                5 -> "금요일"
+                                                6 -> "토요일"
+                                                7 -> "일요일"
+                                                else -> ""
+                                            }
+                                        }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 )
@@ -884,9 +628,9 @@ fun CalendarScreen(routeAction: RouteAction) {
             ) {
                 Text(
                     text = if (day.length == 1) {
-                        "0${day}"
+                        "0${currentDate.dayOfMonth}"
                     } else {
-                        day
+                        currentDate.dayOfMonth.toString()
                     },
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
@@ -1377,20 +1121,20 @@ fun TodoItemList(
                     background = { DeleteBackground() },
                     directions = setOf(DismissDirection.EndToStart),
                     dismissContent = {
-                        item.itemIndex = rowIndex++;
-
-                        var listIndex = -1
-                        for (i in (0..(todoList.size - 1)).reversed()) {
-                            Log.d("index", i.toString())
-                            if (todoList.get(i).color == item.color
-                                && listIndex == -1
-                                && item.itemIndex != i
-                            ) {
-                                item.grpIndex = i
-                                listIndex = i
-
-                            }
-                        }
+//                        item.itemIndex = rowIndex++;
+//
+//                        var listIndex = -1
+//                        for (i in (0..(todoList.size - 1)).reversed()) {
+//                            Log.d("index", i.toString())
+//                            if (todoList.get(i).color == item.color
+//                                && listIndex == -1
+//                                && item.itemIndex != i
+//                            ) {
+//                                item.grpIndex = i
+//                                listIndex = i
+//
+//                            }
+//                        }
 
                         Log.d("list", todoList.toList().toString())
 
@@ -1400,14 +1144,14 @@ fun TodoItemList(
                             onCheckedUpdateTodo = {
                                 scope.launch {
                                     todoList.removeAll { it.id == item.id }
-                                    todoList.add(item.grpIndex, item)
+//                                    todoList.add(item.grpIndex, item)
 
                                 }
                             },
                             onUnCheckedUpdateTodo = {
                                 scope.launch {
                                     todoList.removeAll { it.id == item.id }
-                                    todoList.add(item.itemIndex, item)
+//                                    todoList.add(item.itemIndex, item)
                                 }
                             })
                     },
@@ -1918,16 +1662,199 @@ private fun convertToLayoutTimeFormat(time: String): String {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-private fun calculateDay(
-    day: Int,
-    currentMonth: Month,
-    currentYear: Int
-): kotlinx.datetime.LocalDate {
-    val monthValue = currentMonth.value.toString().padStart(2, '0')
-    val dayValue = day.toString().padStart(2, '0')
-    return "$currentYear-$monthValue-$dayValue".toLocalDate()
+@Composable
+fun MonthsDay(
+    day: CalendarDay,
+    isSelected: Boolean,
+    isToday: Boolean,
+    onClick: (CalendarDay) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f)
+            .size(36.dp)
+            .padding(10.dp)
+            .clip(CircleShape)
+            .background(
+                color = if (isSelected) {
+                    Color(0xFFFFDAB9)
+                } else if (isToday) {
+                    Color(0xffE9E9E9)
+                } else {
+                    Color.Transparent
+                },
+                CircleShape
+            )
+            .clickable(
+                enabled = day.position == DayPosition.MonthDate,
+                onClick = {
+                    onClick(day)
+                }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.alpha(
+                if (day.position == DayPosition.MonthDate) {
+                    1f
+                } else {
+                    0.5f
+                }
+            ),
+            text = day.date.dayOfMonth.toString(),
+            color = when (day.date.dayOfWeek) {
+                DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
+                else -> Color(
+                    0xFF424242
+                )
+            },
+            lineHeight = 17.sp,
+            fontWeight = FontWeight(700)
+        )
+    }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-private fun getFirstDayOfMonth(firstDayOfMonth: DayOfWeek) = -(firstDayOfMonth.value).minus(2)
+@Composable
+fun WeeksDay(
+    day: WeekDay,
+    isSelected: Boolean,
+    isToday: Boolean,
+    onClick: (kotlinx.datetime.LocalDate) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f)
+            .clip(CircleShape)
+            .padding(10.dp)
+            .clip(CircleShape)
+            .background(
+                color = if (isSelected) {
+                    Color(0xFFFFDAB9)
+                } else if (isToday) {
+                    Color(0xffE9E9E9)
+                } else {
+                    Color.Transparent
+                },
+                CircleShape
+            )
+            .clickable {
+                onClick(day.date.toKotlinLocalDate())
+            }, // This is important for square sizing!
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.alpha(
+                if (day.position == WeekDayPosition.RangeDate) {
+                    1f
+                } else {
+                    0.5f
+                }
+            ),
+            text = day.date.dayOfMonth.toString(),
+            color = when (day.date.dayOfWeek) {
+                DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
+                else -> Color(0xFF424242)
+            },
+            lineHeight = 17.sp,
+            fontWeight = FontWeight(700)
+        )
+    }
+}
+
+@Composable
+fun CalendarHeader(daysOfWeek: List<DayOfWeek>) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        for (dayOfWeek in daysOfWeek) {
+            Text(
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center,
+                text = dayOfWeek.getDisplayName(
+                    java.time.format.TextStyle.SHORT,
+                    Locale.getDefault()
+                ),
+                lineHeight = 17.sp,
+                fontWeight = FontWeight(700)
+            )
+        }
+    }
+}
+
+@Composable
+fun CalendarTitle(
+    calendarState: CalendarState
+) {
+    Row(
+        modifier = Modifier
+            .padding(
+                start = 20.dp,
+                end = 20.dp,
+                bottom = 16.dp
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Image(
+            modifier = Modifier.size(22.dp),
+            painter = painterResource(
+                id = R.drawable.headertextemogi
+            ),
+            contentDescription = null
+        )
+
+        Spacer(modifier = Modifier.width(4.dp))
+
+        Text(
+            text = if (calendarState.firstVisibleMonth.yearMonth.month.value > 9) {
+                "${calendarState.firstVisibleMonth.yearMonth.year}. ${calendarState.firstVisibleMonth.yearMonth.monthValue}"
+            } else {
+                "${calendarState.firstVisibleMonth.yearMonth.year}. 0${calendarState.firstVisibleMonth.yearMonth.monthValue}"
+            },
+            fontSize = 22.sp,
+            lineHeight = 28.6.sp,
+            fontWeight = FontWeight(700),
+            color = Color(0xFF000000)
+        )
+    }
+}
+
+//private fun todoSortByDone(todoList: MutableList<RToDoResponse>): MutableList<RToDoResponse>{
+//
+//    var resultUnCheckedValue = mutableListOf<RToDoResponse>()
+//    var resultCheckedValue = mutableListOf<RToDoResponse>()
+//
+//    var finalUnCheckedValue =  mutableListOf<RToDoResponse>()
+//    var finalCheckedValue = mutableListOf<RToDoResponse>()
+//
+//    var returnValue = mutableListOf<RToDoResponse>()
+//
+//    todoList.forEach { response ->
+//        var resultDone = response.done
+//
+//        if(!resultDone){
+//            resultUnCheckedValue.add(response)
+//        }else{
+//            resultCheckedValue.add(response)
+//        }
+//    }
+//
+//    resultUnCheckedValue.sortedBy {
+//
+//        finalUnCheckedValue.add(it.id.toInt())
+//    }
+//
+//    resultCheckedValue.sortedBy {
+//
+//        finalUnCheckedValue.add(it.id.toInt())
+//    }
+//
+////    resultUnCheckedValue.sortBy { it.id.toInt() }
+////
+////    resultCheckedValue.sortBy { it.id.toInt() }
+//
+//    returnValue = (finalUnCheckedValue + finalCheckedValue).toMutableList()
+//
+//    return returnValue
+//}

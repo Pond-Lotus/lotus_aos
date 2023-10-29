@@ -38,7 +38,6 @@ import com.example.todo_android.Request.ProfileRequest.LogoutRequest
 import com.example.todo_android.Response.ProfileResponse.LogoutResponse
 import com.example.todo_android.Util.MyApplication
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
