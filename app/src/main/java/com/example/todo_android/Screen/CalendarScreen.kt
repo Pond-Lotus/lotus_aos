@@ -85,6 +85,7 @@ import java.time.LocalDate
 import java.util.*
 import java.util.Calendar.*
 import androidx.compose.material3.Card
+import java.time.YearMonth
 
 fun createTodo(
     token: String,
@@ -503,7 +504,20 @@ fun CalendarScreen(routeAction: RouteAction) {
         },
         floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
         sheetContent = {
-            selectedTodo?.let { TodoUpdateBottomSheet(scope, bottomScaffoldState, it, todoList) }
+            Box {
+                Box(
+                    modifier = Modifier.fillMaxSize(0.51f),
+                )
+                selectedTodo?.let {
+                    TodoUpdateBottomSheet(
+                        scope,
+                        bottomScaffoldState,
+                        it,
+                        todoList
+                    )
+                }
+            }
+
         },
         sheetPeekHeight = 0.dp,
         sheetShape = RoundedCornerShape(
@@ -525,26 +539,16 @@ fun CalendarScreen(routeAction: RouteAction) {
                     )
             ) {
                 CalendarTitle(
+                    yearMonth = selectedDate.yearMonth,
                     isMonthMode = animateState.value,
                     monthState = monthState,
-                    weekState = weekState,
-                    onSwitchCalendarType = {
-                        animateState.value = !animateState.value
-                        scope.launch {
-                            if(animateState.value){
-                                monthState.animateScrollToMonth(selectedDate.yearMonth)
-                            }else{
-                                weekState.animateScrollToWeek(selectedDate)
-                            }
-                        }
-                    }
+                    weekState = weekState
                 )
 
                 CalendarHeader(daysOfWeek = daysOfWeek)
 
                 CalendarContent(
-                    currentDate = currentDate,
-//                    selectedDate = selectedDate.value,
+                    selectedDate = selectedDate,
                     weekState = weekState,
                     monthState = monthState,
                     isMonthMode = animateState.value,
@@ -553,7 +557,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         todoMonth = it.monthValue.toString()
                         todoDay = it.dayOfMonth.toString()
 
-                        val selectedDate = LocalDate.of(it.year, it.dayOfMonth, it.dayOfMonth)
+                        val selectedDate = LocalDate.of(it.year, it.monthValue, it.dayOfMonth)
                         val dayOfWeek = selectedDate.dayOfWeek
 
                         dayString = when (dayOfWeek.value) {
@@ -564,7 +568,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                             5 -> "금요일"
                             6 -> "토요일"
                             7 -> "일요일"
-                            else -> ""
+                            else -> null.toString()
                         }
                         scope.launch {
                             readTodo(token, todoYear, todoMonth, todoDay) {
@@ -587,9 +591,9 @@ fun CalendarScreen(routeAction: RouteAction) {
             ) {
                 Text(
                     text = if (todoDay.length == 1) {
-                        "0${currentDate.dayOfMonth}"
+                        "0${todoDay}"
                     } else {
-                        currentDate.dayOfMonth.toString()
+                        todoDay
                     },
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
@@ -1634,7 +1638,12 @@ private fun convertToLayoutTimeFormat(time: String): String {
 }
 
 @Composable
-fun MonthsDay(day: CalendarDay, isSelected: Boolean, isToday: Boolean, onClick: (CalendarDay) -> Unit) {
+fun MonthsDay(
+    day: CalendarDay,
+    isSelected: Boolean,
+    isToday: Boolean,
+    onClick: (CalendarDay) -> Unit
+) {
     Box(
         modifier = Modifier
             .aspectRatio(1f)
@@ -1681,7 +1690,12 @@ fun MonthsDay(day: CalendarDay, isSelected: Boolean, isToday: Boolean, onClick: 
 }
 
 @Composable
-fun WeeksDay(day: WeekDay, isSelected: Boolean, isToday: Boolean, onClick: (kotlinx.datetime.LocalDate) -> Unit) {
+fun WeeksDay(
+    day: WeekDay,
+    isSelected: Boolean,
+    isToday: Boolean,
+    onClick: (kotlinx.datetime.LocalDate) -> Unit
+) {
     Box(
         modifier = Modifier
             .aspectRatio(1f)
@@ -1723,10 +1737,62 @@ fun WeeksDay(day: WeekDay, isSelected: Boolean, isToday: Boolean, onClick: (kotl
 }
 
 @Composable
+fun Day(
+    day: LocalDate,
+    isSelected: Boolean,
+    isToday: Boolean,
+    onClick: (LocalDate) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f)
+            .size(36.dp)
+            .padding(10.dp)
+            .clip(CircleShape)
+            .background(
+                color = if (isSelected) {
+                    Color(0xFFFFDAB9)
+                } else if (isToday) {
+                    Color(0xffE9E9E9)
+                } else {
+                    Color.Transparent
+                },
+                CircleShape
+            )
+            .clickable(
+                onClick = {
+                    onClick(day)
+                }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = day.dayOfMonth.toString(),
+            color = when (day.dayOfWeek) {
+                DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
+                else -> Color(
+                    0xFF424242
+                )
+            },
+            lineHeight = 17.sp,
+            fontWeight = FontWeight(700)
+//            modifier = Modifier.alpha(
+//                if (day.position == DayPosition.MonthDate) {
+//                    1f
+//                } else {
+//                    0.5f
+//                }
+//            ),
+        )
+    }
+}
+
+@Composable
 fun CalendarHeader(daysOfWeek: List<DayOfWeek>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(Color.White)
     ) {
         for (dayOfWeek in daysOfWeek) {
             Text(
@@ -1745,10 +1811,10 @@ fun CalendarHeader(daysOfWeek: List<DayOfWeek>) {
 
 @Composable
 fun CalendarTitle(
+    yearMonth: YearMonth,
     isMonthMode: Boolean,
     monthState: CalendarState,
-    weekState: WeekCalendarState,
-    onSwitchCalendarType: () -> Unit
+    weekState: WeekCalendarState
 ) {
     Row(
         modifier = Modifier
@@ -1756,7 +1822,9 @@ fun CalendarTitle(
                 start = 20.dp,
                 end = 20.dp,
                 bottom = 16.dp
-            ),
+            )
+            .background(Color.White)
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
@@ -1771,12 +1839,7 @@ fun CalendarTitle(
         Spacer(modifier = Modifier.width(4.dp))
 
         Text(
-//            text = if (calendarState.firstVisibleMonth.yearMonth.month.value > 9) {
-//                "${calendarState.firstVisibleMonth.yearMonth.year}. ${calendarState.firstVisibleMonth.yearMonth.monthValue}"
-//            } else {
-//                "${calendarState.firstVisibleMonth.yearMonth.year}. 0${calendarState.firstVisibleMonth.yearMonth.monthValue}"
-//            },
-            text = "test",
+            text = yearMonth.displayText(),
             fontSize = 22.sp,
             lineHeight = 28.6.sp,
             fontWeight = FontWeight(700),
@@ -1813,15 +1876,30 @@ fun rememberFirstVisibleMonthAfterScroll(state: CalendarState): com.kizitonwose.
     return visibleMonth.value
 }
 
+fun YearMonth.displayText(short: Boolean = false): String {
+    return "${this.month.displayText(short = short)} ${this.year}"
+}
+
+private fun Month.displayText(short: Boolean = true): String {
+    val style = if (short) java.time.format.TextStyle.SHORT else java.time.format.TextStyle.FULL
+    return getDisplayName(style, Locale.KOREAN)
+}
+
 @Composable
 fun CalendarContent(
-    currentDate: LocalDate,
-//    selectedDate: LocalDate,
+    selectedDate: LocalDate,
     weekState: WeekCalendarState,
     monthState: CalendarState,
     isMonthMode: Boolean,
     onSelectedDate: (LocalDate) -> Unit
 ) {
+
+    LaunchedEffect(key1 = selectedDate, block = {
+        Log.d("testtest", selectedDate.toString())
+
+    })
+
+
     Card(
         modifier = Modifier.background(Color.White),
         shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)
@@ -1848,14 +1926,22 @@ fun CalendarContent(
                             .background(color = Color.White),
                         state = monthState,
                         dayContent = { day ->
-                            MonthsDay(
-                                day,
-                                isSelected = currentDate == day.date,
+                            Day(
+                                day = day.date,
+                                isSelected = selectedDate == day.date,
                                 isToday = day.date == LocalDate.now(),
                                 onClick = {
                                     onSelectedDate(day.date)
                                 }
                             )
+//                            MonthsDay(
+//                                day,
+//                                isSelected = selectedDate == day.date,
+//                                isToday = day.date == LocalDate.now(),
+//                                onClick = {
+//                                    onSelectedDate(day.date)
+//                                }
+//                            )
                         }
                     )
                 } else {
@@ -1865,14 +1951,22 @@ fun CalendarContent(
                         state = weekState,
                         contentPadding = PaddingValues(0.dp),
                         dayContent = { day ->
-                            WeeksDay(
-                                day,
-                                isSelected = currentDate == day.date,
+                            Day(
+                                day = day.date,
+                                isSelected = selectedDate == day.date,
                                 isToday = day.date == LocalDate.now(),
                                 onClick = {
                                     onSelectedDate(day.date)
                                 }
                             )
+//                            WeeksDay(
+//                                day,
+//                                isSelected = selectedDate == day.date,
+//                                isToday = day.date == LocalDate.now(),
+//                                onClick = {
+//                                    onSelectedDate(day.date)
+//                                }
+//                            )
                         }
                     )
                 }
