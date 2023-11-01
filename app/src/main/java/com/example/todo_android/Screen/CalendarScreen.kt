@@ -85,6 +85,9 @@ import java.time.LocalDate
 import java.util.*
 import java.util.Calendar.*
 import androidx.compose.material3.Card
+import com.example.todo_android.Util.displayText
+import com.example.todo_android.Util.rememberFirstVisibleMonthAfterScroll
+import com.example.todo_android.Util.rememberFirstVisibleWeekAfterScroll
 import java.time.YearMonth
 
 fun createTodo(
@@ -379,10 +382,18 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     LaunchedEffect(key1 = month) {
         selectedDate = month.yearMonth.atStartOfMonth()
+
+        Log.d("testtest", selectedDate.toString())
     }
 
     LaunchedEffect(key1 = week) {
-        selectedDate = week.days.first().date
+        selectedDate = if (week.days.contains(WeekDay(currentDate, WeekDayPosition.RangeDate))) {
+            currentDate
+        } else {
+            week.days.first().date
+        }
+
+        Log.d("testtest", selectedDate.toString())
     }
 
     val onButtonClick: (String) -> Unit = { id ->
@@ -517,7 +528,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                     )
                 }
             }
-
         },
         sheetPeekHeight = 0.dp,
         sheetShape = RoundedCornerShape(
@@ -538,12 +548,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         ambientColor = Color(0xffB0B0B0)
                     )
             ) {
-                CalendarTitle(
-                    yearMonth = selectedDate.yearMonth,
-                    isMonthMode = animateState.value,
-                    monthState = monthState,
-                    weekState = weekState
-                )
+                CalendarTitle(yearMonth = selectedDate.yearMonth)
 
                 CalendarHeader(daysOfWeek = daysOfWeek)
 
@@ -553,9 +558,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                     monthState = monthState,
                     isMonthMode = animateState.value,
                     onSelectedDate = {
-                        todoYear = it.year.toString()
-                        todoMonth = it.monthValue.toString()
-                        todoDay = it.dayOfMonth.toString()
+
+                        selectedDate = if (selectedDate == it) {
+                            null
+                        } else {
+                            it
+                        }
 
                         val selectedDate = LocalDate.of(it.year, it.monthValue, it.dayOfMonth)
                         val dayOfWeek = selectedDate.dayOfWeek
@@ -571,7 +579,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                             else -> null.toString()
                         }
                         scope.launch {
-                            readTodo(token, todoYear, todoMonth, todoDay) {
+                            readTodo(
+                                token,
+                                it.year.toString(),
+                                it.monthValue.toString(),
+                                it.dayOfMonth.toString()
+                            ) {
                                 todoList.clear()
                                 for (i in it!!.data) {
                                     todoList.add(i)
@@ -1301,7 +1314,6 @@ fun TodoUpdateBottomSheet(
             keyboardController?.show()
         }
     })
-
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -1810,21 +1822,16 @@ fun CalendarHeader(daysOfWeek: List<DayOfWeek>) {
 }
 
 @Composable
-fun CalendarTitle(
-    yearMonth: YearMonth,
-    isMonthMode: Boolean,
-    monthState: CalendarState,
-    weekState: WeekCalendarState
-) {
+fun CalendarTitle(yearMonth: YearMonth) {
     Row(
         modifier = Modifier
+            .fillMaxWidth()
             .padding(
                 start = 20.dp,
                 end = 20.dp,
                 bottom = 16.dp
             )
-            .background(Color.White)
-            .fillMaxWidth(),
+            .background(Color.White),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
@@ -1849,43 +1856,6 @@ fun CalendarTitle(
 }
 
 @Composable
-fun rememberFirstVisibleWeekAfterScroll(state: WeekCalendarState): Week {
-    val visibleWeek = remember(state) {
-        mutableStateOf(state.firstVisibleWeek)
-    }
-
-    LaunchedEffect(state) {
-        snapshotFlow {
-            state.isScrollInProgress
-        }.filter { scrolling -> !scrolling }.collect {
-            visibleWeek.value = state.firstVisibleWeek
-        }
-    }
-
-    return visibleWeek.value
-}
-
-@Composable
-fun rememberFirstVisibleMonthAfterScroll(state: CalendarState): com.kizitonwose.calendar.core.CalendarMonth {
-    val visibleMonth = remember(state) { mutableStateOf(state.firstVisibleMonth) }
-    LaunchedEffect(state) {
-        snapshotFlow { state.isScrollInProgress }
-            .filter { scrolling -> !scrolling }
-            .collect { visibleMonth.value = state.firstVisibleMonth }
-    }
-    return visibleMonth.value
-}
-
-fun YearMonth.displayText(short: Boolean = false): String {
-    return "${this.month.displayText(short = short)} ${this.year}"
-}
-
-private fun Month.displayText(short: Boolean = true): String {
-    val style = if (short) java.time.format.TextStyle.SHORT else java.time.format.TextStyle.FULL
-    return getDisplayName(style, Locale.KOREAN)
-}
-
-@Composable
 fun CalendarContent(
     selectedDate: LocalDate,
     weekState: WeekCalendarState,
@@ -1893,13 +1863,6 @@ fun CalendarContent(
     isMonthMode: Boolean,
     onSelectedDate: (LocalDate) -> Unit
 ) {
-
-    LaunchedEffect(key1 = selectedDate, block = {
-        Log.d("testtest", selectedDate.toString())
-
-    })
-
-
     Card(
         modifier = Modifier.background(Color.White),
         shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)
@@ -1934,14 +1897,6 @@ fun CalendarContent(
                                     onSelectedDate(day.date)
                                 }
                             )
-//                            MonthsDay(
-//                                day,
-//                                isSelected = selectedDate == day.date,
-//                                isToday = day.date == LocalDate.now(),
-//                                onClick = {
-//                                    onSelectedDate(day.date)
-//                                }
-//                            )
                         }
                     )
                 } else {
@@ -1959,14 +1914,6 @@ fun CalendarContent(
                                     onSelectedDate(day.date)
                                 }
                             )
-//                            WeeksDay(
-//                                day,
-//                                isSelected = selectedDate == day.date,
-//                                isToday = day.date == LocalDate.now(),
-//                                onClick = {
-//                                    onSelectedDate(day.date)
-//                                }
-//                            )
                         }
                     )
                 }
