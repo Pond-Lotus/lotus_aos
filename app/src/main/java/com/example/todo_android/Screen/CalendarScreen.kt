@@ -565,8 +565,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                             it
                         }
 
-                        val selectedDate = LocalDate.of(it.year, it.monthValue, it.dayOfMonth)
-                        val dayOfWeek = selectedDate.dayOfWeek
+                        val dayOfWeek = LocalDate.of(it.year, it.monthValue, it.dayOfMonth).dayOfWeek
 
                         dayString = when (dayOfWeek.value) {
                             1 -> "월요일"
