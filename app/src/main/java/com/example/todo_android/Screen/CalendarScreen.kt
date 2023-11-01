@@ -559,11 +559,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     isMonthMode = animateState.value,
                     onSelectedDate = {
 
-                        selectedDate = if (selectedDate == it) {
-                            null
-                        } else {
-                            it
-                        }
+                        selectedDate = it
 
                         val dayOfWeek = LocalDate.of(it.year, it.monthValue, it.dayOfMonth).dayOfWeek
 
@@ -1856,16 +1852,14 @@ fun CalendarTitle(yearMonth: YearMonth) {
 
 @Composable
 fun CalendarContent(
+//    yearMonth: YearMonth,
+//    daysOfWeek: List<DayOfWeek>,
     selectedDate: LocalDate,
     weekState: WeekCalendarState,
     monthState: CalendarState,
     isMonthMode: Boolean,
     onSelectedDate: (LocalDate) -> Unit
 ) {
-    Card(
-        modifier = Modifier.background(Color.White),
-        shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)
-    ) {
         AnimatedContent(
             targetState = isMonthMode,
             transitionSpec = {
@@ -1918,7 +1912,6 @@ fun CalendarContent(
                 }
             }
         )
-    }
 }
 
 //private fun todoSortByDone(todoList: MutableList<RToDoResponse>): MutableList<RToDoResponse>{
