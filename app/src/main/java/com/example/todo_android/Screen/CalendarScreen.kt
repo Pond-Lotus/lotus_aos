@@ -70,7 +70,6 @@ import com.kizitonwose.calendar.compose.weekcalendar.WeekCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import okhttp3.OkHttpClient
@@ -324,7 +323,7 @@ fun readCategory(
 fun CalendarScreen(routeAction: RouteAction) {
     var isVisibility by remember { mutableStateOf(false) }
 
-    val animateState = remember { mutableStateOf(true) }
+    var animateState = remember { mutableStateOf(true) }
 
     var multiFloatingState by remember { mutableStateOf(FloatingStateType.Collapsed) }
     val colorFAB = if (multiFloatingState == FloatingStateType.Expanded) {
@@ -380,22 +379,6 @@ fun CalendarScreen(routeAction: RouteAction) {
     val week = rememberFirstVisibleWeekAfterScroll(state = weekState)
     val month = rememberFirstVisibleMonthAfterScroll(state = monthState)
 
-    LaunchedEffect(key1 = month) {
-        selectedDate = month.yearMonth.atStartOfMonth()
-
-        Log.d("testtest", selectedDate.toString())
-    }
-
-    LaunchedEffect(key1 = week) {
-        selectedDate = if (week.days.contains(WeekDay(currentDate, WeekDayPosition.RangeDate))) {
-            currentDate
-        } else {
-            week.days.first().date
-        }
-
-        Log.d("testtest", selectedDate.toString())
-    }
-
     val onButtonClick: (String) -> Unit = { id ->
         when (id) {
             "1" -> {
@@ -432,9 +415,6 @@ fun CalendarScreen(routeAction: RouteAction) {
     }
 
     LaunchedEffect(key1 = Unit, block = {
-
-        todoDay = LocalDate.now().dayOfMonth.toString()
-
         val selectedDate = LocalDate.of(
             LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth
         )
@@ -472,6 +452,78 @@ fun CalendarScreen(routeAction: RouteAction) {
         }
     }
 
+    LaunchedEffect(key1 = month) {
+        selectedDate = month.yearMonth.atStartOfMonth()
+
+        val dayOfWeek = LocalDate.of(
+            selectedDate.year,
+            selectedDate.monthValue,
+            selectedDate.dayOfMonth
+        ).dayOfWeek
+
+        dayString = when (dayOfWeek.value) {
+            1 -> "월요일"
+            2 -> "화요일"
+            3 -> "수요일"
+            4 -> "목요일"
+            5 -> "금요일"
+            6 -> "토요일"
+            7 -> "일요일"
+            else -> null.toString()
+        }
+        scope.launch {
+            readTodo(
+                token,
+                selectedDate.year.toString(),
+                selectedDate.monthValue.toString(),
+                selectedDate.dayOfMonth.toString()
+            ) {
+                todoList.clear()
+                for (i in it!!.data) {
+                    todoList.add(i)
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = week) {
+        selectedDate = if (week.days.contains(WeekDay(currentDate, WeekDayPosition.RangeDate))) {
+            currentDate
+        } else {
+            week.days.first().date
+        }
+
+        val dayOfWeek = LocalDate.of(
+            selectedDate.year,
+            selectedDate.monthValue,
+            selectedDate.dayOfMonth
+        ).dayOfWeek
+
+        dayString = when (dayOfWeek.value) {
+            1 -> "월요일"
+            2 -> "화요일"
+            3 -> "수요일"
+            4 -> "목요일"
+            5 -> "금요일"
+            6 -> "토요일"
+            7 -> "일요일"
+            else -> null.toString()
+        }
+        scope.launch {
+            readTodo(
+                token,
+                selectedDate.year.toString(),
+                selectedDate.monthValue.toString(),
+                selectedDate.dayOfMonth.toString()
+            ) {
+                todoList.clear()
+                for (i in it!!.data) {
+                    todoList.add(i)
+                }
+            }
+        }
+    }
+
     BottomSheetScaffold(
         modifier = Modifier
             .imePadding(),
@@ -485,7 +537,21 @@ fun CalendarScreen(routeAction: RouteAction) {
             CenterAlignedTopAppBar(
                 title = {
                     MonthWeekToggleSwitch(
-                        width = 105, height = 35, animateState = animateState
+                        width = 105,
+                        height = 35,
+                        animateState = animateState,
+                        onChangeCalendar = {
+                            animateState.value = !animateState.value
+                            scope.launch {
+                                if (animateState.value) {
+                                    monthState.animateScrollToMonth(currentDate.yearMonth)
+                                    Log.d("scrolltest", selectedDate.toString())
+                                } else {
+                                    weekState.animateScrollToWeek(currentDate)
+                                    Log.d("scrolltest", selectedDate.toString())
+                                }
+                            }
+                        }
                     )
                 }, navigationIcon = {
                     Image(
@@ -561,7 +627,8 @@ fun CalendarScreen(routeAction: RouteAction) {
 
                         selectedDate = it
 
-                        val dayOfWeek = LocalDate.of(it.year, it.monthValue, it.dayOfMonth).dayOfWeek
+                        val dayOfWeek =
+                            LocalDate.of(it.year, it.monthValue, it.dayOfMonth).dayOfWeek
 
                         dayString = when (dayOfWeek.value) {
                             1 -> "월요일"
@@ -598,10 +665,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (todoDay.length == 1) {
-                        "0${todoDay}"
+                    text = if (
+                        selectedDate.dayOfMonth.toString().length == 1
+                    ) {
+                        "0${selectedDate.dayOfMonth}"
                     } else {
-                        todoDay
+                        "${selectedDate.dayOfMonth}"
                     },
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
@@ -1821,12 +1890,12 @@ fun CalendarTitle(yearMonth: YearMonth) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(Color.White)
             .padding(
                 start = 20.dp,
                 end = 20.dp,
                 bottom = 16.dp
-            )
-            .background(Color.White),
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
@@ -1841,7 +1910,11 @@ fun CalendarTitle(yearMonth: YearMonth) {
         Spacer(modifier = Modifier.width(4.dp))
 
         Text(
-            text = yearMonth.displayText(),
+            text = if (yearMonth.monthValue.toString().length == 2) {
+                "${yearMonth.year}. ${yearMonth.monthValue}"
+            } else {
+                "${yearMonth.year}. 0${yearMonth.monthValue}"
+            },
             fontSize = 22.sp,
             lineHeight = 28.6.sp,
             fontWeight = FontWeight(700),
@@ -1852,66 +1925,60 @@ fun CalendarTitle(yearMonth: YearMonth) {
 
 @Composable
 fun CalendarContent(
-//    yearMonth: YearMonth,
-//    daysOfWeek: List<DayOfWeek>,
     selectedDate: LocalDate,
     weekState: WeekCalendarState,
     monthState: CalendarState,
     isMonthMode: Boolean,
     onSelectedDate: (LocalDate) -> Unit
 ) {
-        AnimatedContent(
-            targetState = isMonthMode,
-            transitionSpec = {
-                slideInVertically(
-                    initialOffsetY = { 0 },
-                    animationSpec = tween(
-                        easing = LinearOutSlowInEasing
-                    )
-                ) togetherWith slideOutVertically(
-                    targetOffsetY = { 0 },
-                    animationSpec = tween(
-                        easing = FastOutLinearInEasing
-                    )
+    AnimatedContent(
+        targetState = isMonthMode,
+        transitionSpec = {
+            slideInVertically(
+                initialOffsetY = { 0 },
+                animationSpec = tween(easing = FastOutLinearInEasing)
+            ) togetherWith slideOutVertically(
+                targetOffsetY = { 0 },
+                animationSpec = tween(easing = LinearOutSlowInEasing)
+            )
+        },
+        content = {
+            if (isMonthMode) {
+                HorizontalCalendar(
+                    modifier = Modifier
+                        .background(color = Color.White),
+                    state = monthState,
+                    dayContent = { day ->
+                        Day(
+                            day = day.date,
+                            isSelected = selectedDate == day.date,
+                            isToday = day.date == LocalDate.now(),
+                            onClick = {
+                                onSelectedDate(day.date)
+                            }
+                        )
+                    }
                 )
-            },
-            content = {
-                if (isMonthMode) {
-                    HorizontalCalendar(
-                        modifier = Modifier
-                            .background(color = Color.White),
-                        state = monthState,
-                        dayContent = { day ->
-                            Day(
-                                day = day.date,
-                                isSelected = selectedDate == day.date,
-                                isToday = day.date == LocalDate.now(),
-                                onClick = {
-                                    onSelectedDate(day.date)
-                                }
-                            )
-                        }
-                    )
-                } else {
-                    WeekCalendar(
-                        modifier = Modifier
-                            .background(color = Color.White),
-                        state = weekState,
-                        contentPadding = PaddingValues(0.dp),
-                        dayContent = { day ->
-                            Day(
-                                day = day.date,
-                                isSelected = selectedDate == day.date,
-                                isToday = day.date == LocalDate.now(),
-                                onClick = {
-                                    onSelectedDate(day.date)
-                                }
-                            )
-                        }
-                    )
-                }
+            } else {
+                WeekCalendar(
+                    modifier = Modifier
+                        .background(color = Color.White),
+                    state = weekState,
+                    contentPadding = PaddingValues(0.dp),
+                    dayContent = { day ->
+                        Day(
+                            day = day.date,
+                            isSelected = selectedDate == day.date,
+                            isToday = day.date == LocalDate.now(),
+                            onClick = {
+                                onSelectedDate(day.date)
+                            }
+                        )
+                    }
+                )
             }
-        )
+        }
+    )
 }
 
 //private fun todoSortByDone(todoList: MutableList<RToDoResponse>): MutableList<RToDoResponse>{

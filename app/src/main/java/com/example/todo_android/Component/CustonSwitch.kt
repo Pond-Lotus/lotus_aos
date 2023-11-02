@@ -24,12 +24,16 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
+import kotlinx.coroutines.Job
 
 @ExperimentalMaterialApi
 @ExperimentalMotionApi
 @Composable
 fun MonthWeekToggleSwitch(
-    width: Int, height: Int, animateState: MutableState<Boolean>
+    width: Int,
+    height: Int,
+    animateState: MutableState<Boolean>,
+    onChangeCalendar: () -> Job
 ) {
     val progressState by animateFloatAsState(
         targetValue = if (animateState.value) {
@@ -71,9 +75,11 @@ fun MonthWeekToggleSwitch(
                 .layoutId("ToggleSwitchBackground")
                 .background(Color(0xffe9e9e9))
                 .pointerInput(Unit) {
-                    detectTapGestures(onPress = {
-                        animateState.value = !animateState.value
-                    })
+                    detectTapGestures(
+                        onPress = {
+                            onChangeCalendar()
+                        }
+                    )
                 }
         )
 
