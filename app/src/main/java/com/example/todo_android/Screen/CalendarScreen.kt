@@ -84,7 +84,6 @@ import java.time.LocalDate
 import java.util.*
 import java.util.Calendar.*
 import androidx.compose.material3.Card
-import com.example.todo_android.Util.displayText
 import com.example.todo_android.Util.rememberFirstVisibleMonthAfterScroll
 import com.example.todo_android.Util.rememberFirstVisibleWeekAfterScroll
 import java.time.YearMonth
@@ -351,7 +350,7 @@ fun CalendarScreen(routeAction: RouteAction) {
     val bottomScaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
 
-    var selectedTodo by remember { mutableStateOf<RToDoResponse?>(null) }
+    var selectedTodoListItem by remember { mutableStateOf<RToDoResponse?>(null) }
 
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
@@ -585,7 +584,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Box(
                     modifier = Modifier.fillMaxSize(0.51f),
                 )
-                selectedTodo?.let {
+                selectedTodoListItem?.let {
                     TodoUpdateBottomSheet(
                         scope,
                         bottomScaffoldState,
@@ -775,7 +774,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }
 
                 TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = {
-                    selectedTodo = it
+                    selectedTodoListItem = it
                     scope.launch {
                         bottomScaffoldState.bottomSheetState.expand()
                     }
@@ -1817,7 +1816,8 @@ fun Day(
     day: LocalDate,
     isSelected: Boolean,
     isToday: Boolean,
-    onClick: (LocalDate) -> Unit
+    onClick: (LocalDate) -> Unit,
+    isPastDay: Boolean
 ) {
     Box(
         modifier = Modifier
@@ -1843,6 +1843,13 @@ fun Day(
         contentAlignment = Alignment.Center
     ) {
         Text(
+            modifier = Modifier.alpha(
+                if (isPastDay) {
+                    0.5f
+                } else {
+                    1f
+                }
+            ),
             text = day.dayOfMonth.toString(),
             color = when (day.dayOfWeek) {
                 DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
@@ -1852,13 +1859,6 @@ fun Day(
             },
             lineHeight = 17.sp,
             fontWeight = FontWeight(700)
-//            modifier = Modifier.alpha(
-//                if (day.position == DayPosition.MonthDate) {
-//                    1f
-//                } else {
-//                    0.5f
-//                }
-//            ),
         )
     }
 }
@@ -1893,7 +1893,6 @@ fun CalendarTitle(yearMonth: YearMonth) {
             .background(Color.White)
             .padding(
                 start = 20.dp,
-                end = 20.dp,
                 bottom = 16.dp
             ),
         verticalAlignment = Alignment.CenterVertically,
@@ -1944,6 +1943,9 @@ fun CalendarContent(
         },
         content = {
             if (isMonthMode) {
+                var start = selectedDate.yearMonth.atDay(1)
+                var end = selectedDate.yearMonth.atEndOfMonth()
+
                 HorizontalCalendar(
                     modifier = Modifier
                         .background(color = Color.White),
@@ -1953,13 +1955,17 @@ fun CalendarContent(
                             day = day.date,
                             isSelected = selectedDate == day.date,
                             isToday = day.date == LocalDate.now(),
+                            isPastDay = day.date < start || day.date > end,
                             onClick = {
                                 onSelectedDate(day.date)
-                            }
+                            },
                         )
                     }
                 )
             } else {
+                var start = selectedDate.yearMonth.atDay(1)
+                var end = selectedDate.yearMonth.atEndOfMonth()
+
                 WeekCalendar(
                     modifier = Modifier
                         .background(color = Color.White),
@@ -1970,6 +1976,7 @@ fun CalendarContent(
                             day = day.date,
                             isSelected = selectedDate == day.date,
                             isToday = day.date == LocalDate.now(),
+                            isPastDay = day.date < start || day.date > end,
                             onClick = {
                                 onSelectedDate(day.date)
                             }
