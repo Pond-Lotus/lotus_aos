@@ -556,7 +556,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     Image(
                         modifier = Modifier
                             .size(50.dp)
-                            .padding(start = 21.dp)
+                            .padding(start = 17.dp)
                             .clickable {
                                 scope.launch {
                                     bottomScaffoldState.drawerState.open()
@@ -579,25 +579,20 @@ fun CalendarScreen(routeAction: RouteAction) {
             )
         },
         floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
-        sheetContent = {
-            Box {
-                Box(
-                    modifier = Modifier.fillMaxSize(0.51f),
-                )
-                selectedTodoListItem?.let {
-                    TodoUpdateBottomSheet(
-                        scope,
-                        bottomScaffoldState,
-                        it,
-                        todoList
-                    )
-                }
-            }
-        },
-        sheetPeekHeight = 0.dp,
+        sheetPeekHeight = 1.dp,
         sheetShape = RoundedCornerShape(
             topStart = 20.dp, topEnd = 20.dp
-        )
+        ),
+        sheetContent = {
+            selectedTodoListItem?.let {
+                TodoUpdateBottomSheet(
+                    scope,
+                    bottomScaffoldState,
+                    it,
+                    todoList
+                )
+            }
+        }
     ) {
         Column(
             modifier = Modifier
@@ -807,9 +802,10 @@ fun AddTodoFloatingButton(
         }
     }
 
-    Column(
-        modifier = Modifier.padding(end = 20.dp),
-        horizontalAlignment = Alignment.End
+    Box(
+        modifier = Modifier.padding(end = 20.dp, bottom = 150.dp),
+        contentAlignment = Alignment.CenterEnd
+//        horizontalAlignment = Alignment.End
     ) {
 
         AnimatedVisibility(
@@ -866,6 +862,68 @@ fun AddTodoFloatingButton(
             )
         }
     }
+
+
+
+//    Column(
+//        modifier = Modifier.padding(end = 20.dp, bottom = 150.dp),
+//        horizontalAlignment = Alignment.End
+//    ) {
+//
+//        AnimatedVisibility(
+//            visible = (multiFloatingState == FloatingStateType.Expanded),
+//            enter = fadeIn(
+//                animationSpec = tween(500)
+//            ) + slideInVertically(
+//                animationSpec = tween(500),
+//                initialOffsetY = {
+//                    it / 8
+//                }
+//            ),
+//            exit = fadeOut(
+//                animationSpec = tween(500)
+//            ) + slideOutVertically(
+//                animationSpec = tween(500),
+//                targetOffsetY = {
+//                    it / 8
+//                }
+//            )
+//        ) {
+//            FloatingActionButtonMenus(onMultiFloatingStateChange, onButtonClick)
+//        }
+//
+//        FloatingActionButton(
+//            modifier = Modifier
+//                .padding(bottom = 18.dp)
+//                .size(65.dp)
+//                .shadow(
+//                    elevation = 4.dp,
+//                    shape = CircleShape,
+//                    spotColor = Color(0xff9E9E9E),
+//                    ambientColor = Color(0xffACACAC)
+//                ),
+//            containerColor = backgroundColor,
+//            shape = CircleShape,
+//            onClick = {
+//                onMultiFloatingStateChange(
+//                    if (transition.currentState == FloatingStateType.Expanded) {
+//                        FloatingStateType.Collapsed
+//                    } else {
+//                        FloatingStateType.Expanded
+//                    }
+//                )
+//            }) {
+//            Icon(
+//                modifier = Modifier
+//                    .rotate(rotate)
+//                    .size(32.dp)
+//                    .background(Color.Transparent),
+//                painter = painterResource(id = R.drawable.todolistaddemogi),
+//                contentDescription = null,
+//                tint = NextButtonArrowTint
+//            )
+//        }
+//    }
 }
 
 @Composable
@@ -875,6 +933,7 @@ fun FloatingActionButtonMenus(
 ) {
     Surface(
         modifier = Modifier
+            .offset(y = -110.dp)
             .width(155.dp)
             .height(110.dp)
             .padding(bottom = 10.dp)
@@ -1334,6 +1393,13 @@ fun TodoUpdateBottomSheet(
         }
     }
 
+    LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue, block = {
+        if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    })
+
     LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
         scope.launch {
             title = Todo.title
@@ -1364,19 +1430,11 @@ fun TodoUpdateBottomSheet(
                 ""
             }
         }
-
-
         scope.launch {
             done = Todo.done
         }
     })
 
-    LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue, block = {
-        if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
-            focusRequester.requestFocus()
-            keyboardController?.show()
-        }
-    })
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -1713,105 +1771,6 @@ private fun convertToLayoutTimeFormat(time: String): String {
 }
 
 @Composable
-fun MonthsDay(
-    day: CalendarDay,
-    isSelected: Boolean,
-    isToday: Boolean,
-    onClick: (CalendarDay) -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .aspectRatio(1f)
-            .size(36.dp)
-            .padding(10.dp)
-            .clip(CircleShape)
-            .background(
-                color = if (isSelected) {
-                    Color(0xFFFFDAB9)
-                } else if (isToday) {
-                    Color(0xffE9E9E9)
-                } else {
-                    Color.Transparent
-                },
-                CircleShape
-            )
-            .clickable(
-                enabled = day.position == DayPosition.MonthDate,
-                onClick = {
-                    onClick(day)
-                }
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            modifier = Modifier.alpha(
-                if (day.position == DayPosition.MonthDate) {
-                    1f
-                } else {
-                    0.5f
-                }
-            ),
-            text = day.date.dayOfMonth.toString(),
-            color = when (day.date.dayOfWeek) {
-                DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
-                else -> Color(
-                    0xFF424242
-                )
-            },
-            lineHeight = 17.sp,
-            fontWeight = FontWeight(700)
-        )
-    }
-}
-
-@Composable
-fun WeeksDay(
-    day: WeekDay,
-    isSelected: Boolean,
-    isToday: Boolean,
-    onClick: (kotlinx.datetime.LocalDate) -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .aspectRatio(1f)
-            .clip(CircleShape)
-            .padding(10.dp)
-            .clip(CircleShape)
-            .background(
-                color = if (isSelected) {
-                    Color(0xFFFFDAB9)
-                } else if (isToday) {
-                    Color(0xffE9E9E9)
-                } else {
-                    Color.Transparent
-                },
-                CircleShape
-            )
-            .clickable {
-                onClick(day.date.toKotlinLocalDate())
-            }, // This is important for square sizing!
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            modifier = Modifier.alpha(
-                if (day.position == WeekDayPosition.RangeDate) {
-                    1f
-                } else {
-                    0.5f
-                }
-            ),
-            text = day.date.dayOfMonth.toString(),
-            color = when (day.date.dayOfWeek) {
-                DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
-                else -> Color(0xFF424242)
-            },
-            lineHeight = 17.sp,
-            fontWeight = FontWeight(700)
-        )
-    }
-}
-
-@Composable
 fun Day(
     day: LocalDate,
     isSelected: Boolean,
@@ -1892,7 +1851,7 @@ fun CalendarTitle(yearMonth: YearMonth) {
             .fillMaxWidth()
             .background(Color.White)
             .padding(
-                start = 20.dp,
+                start = 22.dp,
                 bottom = 16.dp
             ),
         verticalAlignment = Alignment.CenterVertically,
