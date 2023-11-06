@@ -579,7 +579,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             )
         },
         floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
-        sheetPeekHeight = 0.dp,
+        sheetPeekHeight = 1.dp,
         sheetShape = RoundedCornerShape(
             topStart = 20.dp, topEnd = 20.dp
         ),
@@ -865,7 +865,6 @@ fun AddTodoFloatingButton(
             )
         }
     }
-
 
 
 //    Column(

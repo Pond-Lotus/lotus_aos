@@ -84,6 +84,20 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                     animationSpec = tween(300),
                     targetOffset = { -it }
                 )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                    initialOffset = { -it }
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300),
+                    targetOffset = { -it }
+                )
             }
         ) {
             // 화면이 들어가는 부분 = 값
@@ -107,6 +121,20 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                     animationSpec = tween(300),
                     targetOffset = { -it }
                 )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                    initialOffset = { -it }
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300),
+                    targetOffset = { -it }
+                )
             }
         ) {
             // 화면이 들어가는 부분 = 값
@@ -125,6 +153,20 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                 )
             },
             exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300),
+                    targetOffset = { -it }
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                    initialOffset = { -it }
+                )
+            },
+            popExitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Left,
                     animationSpec = tween(300),
@@ -158,6 +200,18 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                     towards = AnimatedContentTransitionScope.SlideDirection.Left,
                     animationSpec = tween(300)
                 )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
             }
         ) {
             // 화면이 들어가는 부분 = 값
@@ -169,16 +223,41 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
         composable(
             NAV_ROUTE.CHANGEPASSWORD.routeName,
             enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(300),
-                )
+                when (initialState.destination.route) {
+                    NAV_ROUTE.PROFILE.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                    )
+                    else -> null
+                }
             },
             exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(300)
-                )
+                when (initialState.destination.route) {
+                    NAV_ROUTE.PROFILE.routeName -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300)
+                    )
+                    else -> null
+                }
+
+            },
+            popEnterTransition = {
+                when (initialState.destination.route) {
+                    NAV_ROUTE.PROFILE.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                    )
+                    else -> null
+                }
+            },
+            popExitTransition = {
+                when (initialState.destination.route) {
+                    NAV_ROUTE.PROFILE.routeName -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300)
+                    )
+                    else -> null
+                }
             }
         ) {
             // 화면이 들어가는 부분 = 값
@@ -209,6 +288,20 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                     animationSpec = tween(300),
                     targetOffset = { -it }
                 )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                    initialOffset = { -it }
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300),
+                    targetOffset = { -it }
+                )
             }
         ) {
             // 화면이 들어가는 부분 = 값
@@ -221,14 +314,28 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
             NAV_ROUTE.SEARCHPASSWORD.routeName,
             enterTransition = {
                 slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
                     animationSpec = tween(300),
                     initialOffset = { -it }
                 )
             },
             exitTransition = {
                 slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                    targetOffset = { -it }
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300),
+                    initialOffset = { -it }
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
                     animationSpec = tween(300),
                     targetOffset = { -it }
                 )
@@ -249,6 +356,18 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                 )
             },
             exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                )
+            },
+            popExitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Left,
                     animationSpec = tween(300)
@@ -278,6 +397,18 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                     towards = AnimatedContentTransitionScope.SlideDirection.Left,
                     animationSpec = tween(300)
                 )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
             }
         ) { backStackEntry ->
             // 화면이 들어가는 부분 = 값
@@ -298,6 +429,18 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                 )
             },
             exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300),
+                )
+            },
+            popExitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Left,
                     animationSpec = tween(300)
