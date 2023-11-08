@@ -529,7 +529,7 @@ fun CalendarScreen(routeAction: RouteAction) {
         scaffoldState = bottomScaffoldState,
         drawerContent = {
             ProfileModalDrawer(
-                scope = scope, bottomScaffoldState = bottomScaffoldState, routeAction = routeAction
+                scope = scope, routeAction = routeAction
             )
         },
         topBar = {

@@ -38,6 +38,7 @@ import com.example.todo_android.Request.ProfileRequest.LogoutRequest
 import com.example.todo_android.Response.ProfileResponse.LogoutResponse
 import com.example.todo_android.Util.MyApplication
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -88,7 +89,6 @@ fun Logout(
 @Composable
 fun ProfileModalDrawer(
     scope: CoroutineScope,
-    bottomScaffoldState: BottomSheetScaffoldState,
     routeAction: RouteAction,
 ) {
 
@@ -159,10 +159,9 @@ fun ProfileModalDrawer(
                 modifier = Modifier
                     .size(25.dp)
                     .clickable {
-//                        scope.launch {
-//                            bottomScaffoldState.drawerState.close()
-//                        }
-                        routeAction.navTo(NAV_ROUTE.PROFILE)
+                        scope.launch {
+                            routeAction.navTo(NAV_ROUTE.PROFILE)
+                        }
                     },
                 painter = painterResource(id = R.drawable.ic_pen),
                 contentDescription = null,
@@ -193,8 +192,11 @@ fun ProfileModalDrawer(
                 .fillMaxWidth()
                 .padding(start = 2.dp, bottom = 18.dp)
                 .clickable {
-                    routeAction.navTo(NAV_ROUTE.CHANGEPASSWORD)
-                }, verticalAlignment = Alignment.CenterVertically
+                    scope.launch {
+                        routeAction.navTo(NAV_ROUTE.CHANGEPASSWORD)
+                    }
+                },
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
             Image(
@@ -219,8 +221,11 @@ fun ProfileModalDrawer(
                 .fillMaxWidth()
                 .padding(start = 2.dp, bottom = 22.dp)
                 .clickable {
-                    routeAction.navTo(NAV_ROUTE.SETALARM)
-                }, verticalAlignment = Alignment.CenterVertically
+                    scope.launch {
+                        routeAction.navTo(NAV_ROUTE.SETALARM)
+                    }
+                },
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
             Image(
@@ -251,8 +256,11 @@ fun ProfileModalDrawer(
         Column(modifier = Modifier
             .wrapContentSize()
             .clickable {
-                routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
-            }) {
+                scope.launch {
+                    routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
+                }
+            }
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
