@@ -11,13 +11,13 @@ class RouteAction(navHostController: NavHostController) {
         navHostController.navigate(route.routeName)
         {
             popUpTo(NAV_ROUTE.SPLASH.routeName) {
-                inclusive = false
+                inclusive = true
             }
         }
     }
     // 뒤로가기 이동
     val goBack: () -> Unit = {
-        navHostController.navigateUp()
+        navHostController.popBackStack()
     }
 
     val customNavto: (NAV_ROUTE, String, String, Int) -> Unit = { route, name, id, color ->

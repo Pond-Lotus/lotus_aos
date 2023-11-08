@@ -144,7 +144,8 @@ fun DeleteAccountScreen(routeAction: RouteAction) {
                 )
             }, navigationIcon = {
                 IconButton(onClick = {
-                    routeAction.navTo(NAV_ROUTE.PROFILE)
+//                    routeAction.navTo(NAV_ROUTE.PROFILE)
+                    routeAction.goBack()
                 }) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
                 }

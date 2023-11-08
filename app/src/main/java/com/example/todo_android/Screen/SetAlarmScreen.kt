@@ -60,7 +60,7 @@ fun SetAlarmScreen(routeAction: RouteAction) {
                 )
             }, navigationIcon = {
                 IconButton(onClick = {
-                    routeAction.navTo(NAV_ROUTE.CALENDAR)
+                    routeAction.goBack()
                 }) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
                 }

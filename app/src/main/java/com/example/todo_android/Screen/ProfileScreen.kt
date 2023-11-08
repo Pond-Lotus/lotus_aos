@@ -236,66 +236,67 @@ fun ProfileScreen(routeAction: RouteAction) {
 
     Scaffold(modifier = Modifier
         .fillMaxSize()
-        .imePadding(), topBar = {
-
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(45.dp)
-                .drawWithContent {
-                    drawContent()
-                    drawLine(
-                        color = Color(0x26000000), // 기존에 사용 중이셨던 보더 컬러를 선택하세요.
-                        start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
-                        end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
-                        strokeWidth = 1.dp.toPx() // 보더 두께를 원하는 값으로 설정하세요.
+        .imePadding(),
+        topBar = {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+                    .drawWithContent {
+                        drawContent()
+                        drawLine(
+                            color = Color(0x26000000), // 기존에 사용 중이셨던 보더 컬러를 선택하세요.
+                            start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                            end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                            strokeWidth = 1.dp.toPx() // 보더 두께를 원하는 값으로 설정하세요.
+                        )
+                    }) {
+                CenterAlignedTopAppBar(title = {
+                    Text(
+                        text = "프로필 수정",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 24.sp
                     )
-                }) {
-            CenterAlignedTopAppBar(title = {
-                Text(
-                    text = "프로필 수정",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 24.sp
-                )
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    routeAction.navTo(NAV_ROUTE.CALENDAR)
-                }) {
-                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
-                }
-            }, actions = {
-                Text(text = "완료",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xff9E9E9E),
-                    modifier = Modifier
-                        .padding(end = 15.dp)
-                        .clickable {
-                            if (image.value != null) {
-                                scope.launch {
-                                    changeProfile(
-                                        token,
-                                        imdel.value,
-                                        nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
-                                        image.value!!,
-                                        routeAction
-                                    )
+                }, navigationIcon = {
+                    IconButton(onClick = {
+//                        routeAction.navTo(NAV_ROUTE.CALENDAR)
+                        routeAction.goBack()
+                    }) {
+                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                    }
+                }, actions = {
+                    Text(text = "완료",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xff9E9E9E),
+                        modifier = Modifier
+                            .padding(end = 15.dp)
+                            .clickable {
+                                if (image.value != null) {
+                                    scope.launch {
+                                        changeProfile(
+                                            token,
+                                            imdel.value,
+                                            nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
+                                            image.value!!,
+                                            routeAction
+                                        )
+                                    }
+                                } else {
+                                    scope.launch {
+                                        deleteProfileImage(
+                                            token,
+                                            imdel.value,
+                                            nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
+                                            routeAction
+                                        )
+                                    }
                                 }
-                            } else {
-                                scope.launch {
-                                    deleteProfileImage(
-                                        token,
-                                        imdel.value,
-                                        nickname.toRequestBody("text/plain".toMediaTypeOrNull()),
-                                        routeAction
-                                    )
-                                }
-                            }
-                        })
-            })
-        }
-    }) {
+                            })
+                })
+            }
+        }) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

@@ -381,7 +381,10 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                         towards = AnimatedContentTransitionScope.SlideDirection.Left,
                         animationSpec = tween(300),
                     )
-                    else -> null
+                    else -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                    )
                 }
             },
             exitTransition = {
@@ -390,7 +393,10 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                         towards = AnimatedContentTransitionScope.SlideDirection.Right,
                         animationSpec = tween(300)
                     )
-                    else -> null
+                    else -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300)
+                    )
                 }
 
             },
@@ -400,7 +406,10 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                         towards = AnimatedContentTransitionScope.SlideDirection.Right,
                         animationSpec = tween(300),
                     )
-                    else -> null
+                    else -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                    )
                 }
             },
             popExitTransition = {
@@ -409,7 +418,10 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                         towards = AnimatedContentTransitionScope.SlideDirection.Right,
                         animationSpec = tween(300)
                     )
-                    else -> null
+                    else -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300)
+                    )
                 }
             }
         ) {

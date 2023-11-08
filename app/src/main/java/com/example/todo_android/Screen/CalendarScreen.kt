@@ -532,6 +532,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 scope = scope, routeAction = routeAction
             )
         },
+        drawerGesturesEnabled = true,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
