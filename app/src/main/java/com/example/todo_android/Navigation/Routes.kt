@@ -41,7 +41,7 @@ enum class NAV_ROUTE(val routeName: String, val description: String) {
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
-fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
+fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.AUTHEMAIL) {
 
     // 네비게이션 컨트롤러 가져오기
     val navController = rememberNavController()
@@ -62,46 +62,37 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
 
         //라우트 이름 = 화면의 키
         //메인
-        composable(NAV_ROUTE.LOGIN.routeName) {
-            // 화면이 들어가는 부분 = 값
-            LoginScreen(routeAction)
-        }
-
-        //라우트 이름 = 화면의 키
-        //회원가입
         composable(
-            NAV_ROUTE.REGISTER.routeName,
+            NAV_ROUTE.LOGIN.routeName,
             enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(300),
-                    initialOffset = { -it }
-                )
+                when (initialState.destination.route) {
+                    NAV_ROUTE.LOTTIE.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { it }
+                    )
+                    else -> null
+                }
             },
             exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(300),
-                    targetOffset = { -it }
-                )
+                null
             },
             popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(300),
-                    initialOffset = { -it }
-                )
+                when (initialState.destination.route) {
+                    NAV_ROUTE.LOTTIE.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { it }
+                    )
+                    else -> null
+                }
             },
             popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(300),
-                    targetOffset = { -it }
-                )
+                null
             }
         ) {
             // 화면이 들어가는 부분 = 값
-            RegisterScreen(routeAction)
+            LoginScreen(routeAction)
         }
 
         //라우트 이름 = 화면의 키
@@ -109,32 +100,54 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
         composable(
             NAV_ROUTE.AUTHEMAIL.routeName,
             enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(300),
-                    initialOffset = { -it }
-                )
+                when (initialState.destination.route) {
+                    NAV_ROUTE.LOGIN.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    NAV_ROUTE.AUTHCODE.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    else -> null
+                }
             },
             exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(300),
-                    targetOffset = { -it }
-                )
+                when (targetState.destination.route) {
+                    NAV_ROUTE.AUTHCODE.routeName -> null
+                    else -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        targetOffset = { -it }
+                    )
+                }
             },
             popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(300),
-                    initialOffset = { -it }
-                )
+                when (initialState.destination.route) {
+                    NAV_ROUTE.LOGIN.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    NAV_ROUTE.AUTHCODE.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    else -> null
+                }
             },
             popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(300),
-                    targetOffset = { -it }
-                )
+                when (targetState.destination.route) {
+                    NAV_ROUTE.AUTHCODE.routeName -> null
+                    else -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        targetOffset = { -it }
+                    )
+                }
             }
         ) {
             // 화면이 들어가는 부분 = 값
@@ -146,36 +159,176 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
         composable(
             NAV_ROUTE.AUTHCODE.routeName,
             enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(300),
-                    initialOffset = { -it }
-                )
+                when (initialState.destination.route) {
+                    NAV_ROUTE.AUTHEMAIL.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    NAV_ROUTE.REGISTER.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    else -> null
+                }
             },
             exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(300),
-                    targetOffset = { -it }
-                )
+                when (targetState.destination.route) {
+                    NAV_ROUTE.REGISTER.routeName -> null
+                    else -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        targetOffset = { -it }
+                    )
+                }
             },
             popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(300),
-                    initialOffset = { -it }
-                )
+                when (initialState.destination.route) {
+                    NAV_ROUTE.AUTHEMAIL.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    NAV_ROUTE.REGISTER.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    else -> null
+                }
             },
             popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(300),
-                    targetOffset = { -it }
-                )
+                when (targetState.destination.route) {
+                    NAV_ROUTE.REGISTER.routeName -> null
+                    else -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        targetOffset = { -it }
+                    )
+                }
             }
         ) {
             // 화면이 들어가는 부분 = 값
             AuthCodeScreen(routeAction)
+        }
+
+        //라우트 이름 = 화면의 키
+        //회원가입
+        composable(
+            NAV_ROUTE.REGISTER.routeName,
+            enterTransition = {
+                when (initialState.destination.route) {
+                    NAV_ROUTE.AUTHCODE.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    NAV_ROUTE.LOTTIE.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    else -> null
+                }
+            },
+            exitTransition = {
+                when (targetState.destination.route) {
+                    NAV_ROUTE.LOTTIE.routeName -> null
+                    else -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        targetOffset = { -it }
+                    )
+                }
+            },
+            popEnterTransition = {
+                when (initialState.destination.route) {
+                    NAV_ROUTE.AUTHCODE.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    NAV_ROUTE.LOTTIE.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    else -> null
+                }
+            },
+            popExitTransition = {
+                when (targetState.destination.route) {
+                    NAV_ROUTE.LOTTIE.routeName -> null
+                    else -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        targetOffset = { -it }
+                    )
+                }
+            }
+        ) {
+            // 화면이 들어가는 부분 = 값
+            RegisterScreen(routeAction)
+        }
+
+        //라우트 이름 = 화면의 키
+        //로티 화면
+        composable(
+            NAV_ROUTE.LOTTIE.routeName,
+            enterTransition = {
+                when (initialState.destination.route) {
+                    NAV_ROUTE.REGISTER.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    NAV_ROUTE.LOGIN.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    else -> null
+                }
+            },
+            exitTransition = {
+                when (targetState.destination.route) {
+                    NAV_ROUTE.LOGIN.routeName -> null
+                    else -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        targetOffset = { -it }
+                    )
+                }
+            },
+            popEnterTransition = {
+                when (initialState.destination.route) {
+                    NAV_ROUTE.REGISTER.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    NAV_ROUTE.LOGIN.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    else -> null
+                }
+            },
+            popExitTransition = {
+                when (targetState.destination.route) {
+                    NAV_ROUTE.LOGIN.routeName -> null
+                    else -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        targetOffset = { -it }
+                    )
+                }
+            }
+        ) {
+            // 화면이 들어가는 부분 = 값
+            LottieScreen(routeAction)
         }
 
         //라우트 이름 = 화면의 키
@@ -262,13 +415,6 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
         ) {
             // 화면이 들어가는 부분 = 값
             ChangePasswordScreen(routeAction)
-        }
-
-        //라우트 이름 = 화면의 키
-        //로티 화면
-        composable(NAV_ROUTE.LOTTIE.routeName) {
-            // 화면이 들어가는 부분 = 값
-            LottieScreen(routeAction)
         }
 
         //라우트 이름 = 화면의 키
