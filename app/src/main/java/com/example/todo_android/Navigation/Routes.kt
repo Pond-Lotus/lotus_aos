@@ -388,7 +388,7 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                 }
             },
             exitTransition = {
-                when (initialState.destination.route) {
+                when (targetState.destination.route) {
                     NAV_ROUTE.PROFILE.routeName -> slideOutOfContainer(
                         towards = AnimatedContentTransitionScope.SlideDirection.Right,
                         animationSpec = tween(300)
@@ -398,7 +398,6 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                         animationSpec = tween(300)
                     )
                 }
-
             },
             popEnterTransition = {
                 when (initialState.destination.route) {
@@ -413,7 +412,7 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                 }
             },
             popExitTransition = {
-                when (initialState.destination.route) {
+                when (targetState.destination.route) {
                     NAV_ROUTE.PROFILE.routeName -> slideOutOfContainer(
                         towards = AnimatedContentTransitionScope.SlideDirection.Right,
                         animationSpec = tween(300)
@@ -508,28 +507,50 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
         composable(
             NAV_ROUTE.SELECTCATEGORY.routeName,
             enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(300),
-                )
+                when (initialState.destination.route) {
+                    NAV_ROUTE.CHANGECATEGORY.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    else -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                }
             },
             exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(300)
-                )
+                when (targetState.destination.route) {
+                    NAV_ROUTE.CALENDAR.routeName -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300)
+                    )
+                    else -> null
+                }
             },
             popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(300),
-                )
+                when (initialState.destination.route) {
+                    NAV_ROUTE.CHANGECATEGORY.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    else -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                }
             },
             popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(300)
-                )
+                when (targetState.destination.route) {
+                    NAV_ROUTE.CALENDAR.routeName -> slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300)
+                    )
+                    else -> null
+                }
             }
         ) {
             // 화면이 들어가는 부분 = 값
@@ -545,26 +566,34 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
                 navArgument("categoryId") { type = NavType.StringType },
                 navArgument("categoryColor") { type = NavType.IntType }),
             enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(300),
-                )
+                when (initialState.destination.route) {
+                    NAV_ROUTE.SELECTCATEGORY.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    else -> null
+                }
             },
             exitTransition = {
                 slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
                     animationSpec = tween(300)
                 )
             },
             popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(300),
-                )
+                when (initialState.destination.route) {
+                    NAV_ROUTE.SELECTCATEGORY.routeName -> slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300),
+                        initialOffset = { -it }
+                    )
+                    else -> null
+                }
             },
             popExitTransition = {
                 slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
                     animationSpec = tween(300)
                 )
             }
