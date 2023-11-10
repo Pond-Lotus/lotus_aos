@@ -49,9 +49,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
-import com.example.todo_android.Component.FloatingStateType
-import com.example.todo_android.Component.MonthWeekToggleSwitch
-import com.example.todo_android.Component.ProfileModalDrawer
+import com.example.todo_android.Composable.FloatingStateType
+import com.example.todo_android.Composable.MonthWeekToggleSwitch
+import com.example.todo_android.Composable.ProfileModalDrawer
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.Navigation.Action.RouteAction
@@ -769,12 +769,16 @@ fun CalendarScreen(routeAction: RouteAction) {
 
                 }
 
-                TodoItemList(Todo = todoList, todoList = todoList, onTodoItemClick = {
-                    selectedTodoListItem = it
-                    scope.launch {
-                        bottomScaffoldState.bottomSheetState.expand()
+                TodoItemList(
+                    Todo = todoList,
+                    todoList = todoList,
+                    onTodoItemClick = {
+                        selectedTodoListItem = it
+                        scope.launch {
+                            bottomScaffoldState.bottomSheetState.expand()
+                        }
                     }
-                })
+                )
             }
         }
     }
@@ -803,13 +807,12 @@ fun AddTodoFloatingButton(
         }
     }
 
-    Box(
+    Column(
         modifier = Modifier.padding(
             end = 20.dp,
-//            bottom = 150.dp
+            bottom = 150.dp
         ),
-        contentAlignment = Alignment.CenterEnd
-//        horizontalAlignment = Alignment.End
+        horizontalAlignment = Alignment.End
     ) {
 
         AnimatedVisibility(
@@ -866,67 +869,6 @@ fun AddTodoFloatingButton(
             )
         }
     }
-
-
-//    Column(
-//        modifier = Modifier.padding(end = 20.dp, bottom = 150.dp),
-//        horizontalAlignment = Alignment.End
-//    ) {
-//
-//        AnimatedVisibility(
-//            visible = (multiFloatingState == FloatingStateType.Expanded),
-//            enter = fadeIn(
-//                animationSpec = tween(500)
-//            ) + slideInVertically(
-//                animationSpec = tween(500),
-//                initialOffsetY = {
-//                    it / 8
-//                }
-//            ),
-//            exit = fadeOut(
-//                animationSpec = tween(500)
-//            ) + slideOutVertically(
-//                animationSpec = tween(500),
-//                targetOffsetY = {
-//                    it / 8
-//                }
-//            )
-//        ) {
-//            FloatingActionButtonMenus(onMultiFloatingStateChange, onButtonClick)
-//        }
-//
-//        FloatingActionButton(
-//            modifier = Modifier
-//                .padding(bottom = 18.dp)
-//                .size(65.dp)
-//                .shadow(
-//                    elevation = 4.dp,
-//                    shape = CircleShape,
-//                    spotColor = Color(0xff9E9E9E),
-//                    ambientColor = Color(0xffACACAC)
-//                ),
-//            containerColor = backgroundColor,
-//            shape = CircleShape,
-//            onClick = {
-//                onMultiFloatingStateChange(
-//                    if (transition.currentState == FloatingStateType.Expanded) {
-//                        FloatingStateType.Collapsed
-//                    } else {
-//                        FloatingStateType.Expanded
-//                    }
-//                )
-//            }) {
-//            Icon(
-//                modifier = Modifier
-//                    .rotate(rotate)
-//                    .size(32.dp)
-//                    .background(Color.Transparent),
-//                painter = painterResource(id = R.drawable.todolistaddemogi),
-//                contentDescription = null,
-//                tint = NextButtonArrowTint
-//            )
-//        }
-//    }
 }
 
 @Composable
@@ -936,7 +878,7 @@ fun FloatingActionButtonMenus(
 ) {
     Surface(
         modifier = Modifier
-            .offset(y = -110.dp)
+//            .offset(y = -110.dp)
             .width(155.dp)
             .height(110.dp)
             .padding(bottom = 10.dp)
@@ -1021,7 +963,7 @@ fun TodoItem(
     Todo: RToDoResponse,
     onTodoItemClick: (RToDoResponse) -> Unit,
     onCheckedUpdateTodo: () -> Unit,
-    onUnCheckedUpdateTodo: () -> Unit
+//    onUnCheckedUpdateTodo: () -> Unit
 ) {
     var checked by rememberSaveable { mutableStateOf(Todo.done) }
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
@@ -1087,10 +1029,11 @@ fun TodoItem(
                                 Todo.time,
                                 Todo.id
                             ) {
-                                when (checked) {
-                                    true -> onCheckedUpdateTodo();
-                                    false -> onUnCheckedUpdateTodo();
-                                }
+                                onCheckedUpdateTodo()
+//                                when (checked) {
+//                                    true -> onCheckedUpdateTodo();
+//                                    false -> onUnCheckedUpdateTodo();
+//                                }
                             }
                         }
 
@@ -1148,7 +1091,6 @@ fun TodoItemList(
     var categoryName by remember { mutableStateOf<ReadCategoryResponse?>(null) }
 
     var scope = rememberCoroutineScope()
-
     // 카테고리를 요청하는 함수를 호출하고, 응답을 categoryResponse에 저장합니다.
 
     LaunchedEffect(key1 = Unit, block = {
@@ -1234,39 +1176,31 @@ fun TodoItemList(
                     background = { DeleteBackground() },
                     directions = setOf(DismissDirection.EndToStart),
                     dismissContent = {
-//                        item.itemIndex = rowIndex++;
-//
-//                        var listIndex = -1
-//                        for (i in (0..(todoList.size - 1)).reversed()) {
-//                            Log.d("index", i.toString())
-//                            if (todoList.get(i).color == item.color
-//                                && listIndex == -1
-//                                && item.itemIndex != i
-//                            ) {
-//                                item.grpIndex = i
-//                                listIndex = i
-//
-//                            }
-//                        }
 
                         Log.d("list", todoList.toList().toString())
 
 
-                        TodoItem(Todo = item,
+                        TodoItem(
+                            Todo = item,
                             onTodoItemClick = { onTodoItemClick(it) },
                             onCheckedUpdateTodo = {
                                 scope.launch {
-                                    todoList.removeAll { it.id == item.id }
-//                                    todoList.add(item.grpIndex, item)
-
+                                    todoList.sortBy { it.done }
                                 }
-                            },
-                            onUnCheckedUpdateTodo = {
-                                scope.launch {
-                                    todoList.removeAll { it.id == item.id }
-//                                    todoList.add(item.itemIndex, item)
-                                }
-                            })
+                            }
+//                            onCheckedUpdateTodo = {
+//                                scope.launch {
+//                                    todoList.removeAll { it.id == item.id }
+//                                    todoList.add(item)
+//
+//                                }
+//                            },
+//                            onUnCheckedUpdateTodo = {
+//                                scope.launch {
+//                                    todoList.removeAll { it.id == item.id }
+//                                }
+//                            }
+                        )
                     },
                     dismissThresholds = {
                         androidx.compose.material.FractionalThreshold(fraction = 0.2f)

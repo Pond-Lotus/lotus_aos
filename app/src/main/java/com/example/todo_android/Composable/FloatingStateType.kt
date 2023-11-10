@@ -1,4 +1,4 @@
-package com.example.todo_android.Component
+package com.example.todo_android.Composable
 
 enum class FloatingStateType {
     Expanded,

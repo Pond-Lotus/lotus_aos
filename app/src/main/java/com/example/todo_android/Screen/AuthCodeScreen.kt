@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo_android.Data.Profile.AuthCode
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -29,6 +30,7 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.AuthCodeRequest
 import com.example.todo_android.Response.ProfileResponse.AuthCodeResponse
 import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.ViewModel.ProFileViewModel.AuthCodeViewModel
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -89,9 +91,11 @@ fun authCode(
 @Composable
 fun AuthCodeScreen(routeAction: RouteAction) {
 
-    var email by remember { mutableStateOf("") }
+    val vm : AuthCodeViewModel = viewModel()
+
+    val code by vm.code.collectAsState()
+
     var authEmail = MyApplication.prefs.getData("email", "")
-    var code by remember { mutableStateOf("") }
 
     var showErrorText by remember { mutableStateOf(false) }
     var scope = rememberCoroutineScope()
@@ -110,11 +114,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
         0.5f
     }
 
-    if (code != "") {
-        isButtonClickable = true
-    } else {
-        isButtonClickable = false
-    }
+    isButtonClickable = code != ""
 
 
     Scaffold(modifier = Modifier
@@ -126,7 +126,6 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                 .height(45.dp)) {
             CenterAlignedTopAppBar(title = {}, navigationIcon = {
                 IconButton(onClick = {
-//                    routeAction.navTo(NAV_ROUTE.AUTHEMAIL)
                     routeAction.goBack()
                 }) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
@@ -215,9 +214,9 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                 BasicTextField(modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     value = code,
-                    onValueChange = { input ->
-                        if (input.length <= 6) {
-                            code = input
+                    onValueChange = { code: String ->
+                        if(code.length <= 6){
+                            vm::inputCode.invoke(code)
                             showErrorText = false
                         }
                     },
@@ -227,13 +226,12 @@ fun AuthCodeScreen(routeAction: RouteAction) {
                         ) {
                             code.forEachIndexed { index, c ->
                                 EachTextFieldContainer(
-                                    text = c.toString(), isFocused = index == code.lastIndex
+                                    text = c.toString()
                                 )
                             }
                             repeat(6 - code.length) {
                                 EachTextFieldContainer(
-                                    text = ' '.toString(),
-                                    isFocused = false,
+                                    text = ' '.toString()
                                 )
                             }
                         }
@@ -258,8 +256,7 @@ fun AuthCodeScreen(routeAction: RouteAction) {
 
 @Composable
 fun EachTextFieldContainer(
-    text: String,
-    isFocused: Boolean,
+    text: String
 ) {
     Box(
         modifier = Modifier

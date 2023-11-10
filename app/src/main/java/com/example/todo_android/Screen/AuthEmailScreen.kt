@@ -22,12 +22,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.AuthEmailRequest
 import com.example.todo_android.Response.ProfileResponse.AuthEmailResponse
 import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.ViewModel.ProFileViewModel.AuthEmailViewModel
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -87,7 +90,9 @@ fun authEmail(email: String, routeAction: RouteAction, response: (AuthEmailRespo
 @Composable
 fun AuthEmailScreen(routeAction: RouteAction) {
 
-    var email by remember { mutableStateOf("") }
+    val vm: AuthEmailViewModel = viewModel()
+
+    val email by vm.email.collectAsState()
 
     val emailPattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}".toRegex()
 
@@ -109,11 +114,7 @@ fun AuthEmailScreen(routeAction: RouteAction) {
         0.5f
     }
 
-    if (emailPattern.matches(email)) {
-        isButtonClickable = true
-    } else {
-        isButtonClickable = false
-    }
+    isButtonClickable = emailPattern.matches(email)
 
 
     Scaffold(modifier = Modifier
@@ -122,10 +123,10 @@ fun AuthEmailScreen(routeAction: RouteAction) {
         Box(
             Modifier
                 .fillMaxWidth()
-                .height(45.dp)) {
+                .height(45.dp)
+        ) {
             CenterAlignedTopAppBar(title = {}, navigationIcon = {
                 IconButton(onClick = {
-//                    routeAction.navTo(NAV_ROUTE.LOGIN)
                     routeAction.goBack()
                 }) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
@@ -211,25 +212,31 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                 Spacer(modifier = Modifier.height(2.dp))
 
 
-                BasicTextField(modifier = Modifier
-                    .fillMaxWidth()
-                    .drawWithContent {
-                        drawContent()
-                        drawLine(
-                            color = Color(0xFFBFBFBF),
-                            start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
-                            end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
-                            strokeWidth = 1.dp.toPx()
-                        )
-                    }, value = email, onValueChange = {
-                    email = it
-                    showErrorText = false
-                }, singleLine = true, maxLines = 1, textStyle = LocalTextStyle.current.copy(
-                    fontSize = 18.sp,
-                    lineHeight = 23.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Black
-                )
+                BasicTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .drawWithContent {
+                            drawContent()
+                            drawLine(
+                                color = Color(0xFFBFBFBF),
+                                start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                                end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                                strokeWidth = 1.dp.toPx()
+                            )
+                        },
+                    value = email,
+                    onValueChange = { text: String ->
+                        vm::inputEmail.invoke(text)
+                        showErrorText = false
+                    },
+                    singleLine = true,
+                    maxLines = 1,
+                    textStyle = LocalTextStyle.current.copy(
+                        fontSize = 18.sp,
+                        lineHeight = 23.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Black
+                    )
                 ) {
                     TextFieldDefaults.TextFieldDecorationBox(colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color.Transparent,
@@ -264,7 +271,8 @@ fun AuthEmailScreen(routeAction: RouteAction) {
                                     tint = Color(0xffFF9D4D)
                                 )
                             }
-                        })
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))

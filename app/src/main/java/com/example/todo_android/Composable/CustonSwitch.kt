@@ -1,4 +1,4 @@
-package com.example.todo_android.Component
+package com.example.todo_android.Composable
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState

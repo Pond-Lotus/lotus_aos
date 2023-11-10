@@ -29,12 +29,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
 import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.RegisterRequest
 import com.example.todo_android.Response.ProfileResponse.RegisterResponse
 import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.ViewModel.ProFileViewModel.RegisterViewModel
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -129,10 +131,11 @@ fun Register(
 @Composable
 fun RegisterScreen(routeAction: RouteAction) {
 
-    var email by remember { mutableStateOf("") }
-    var nickname by remember { mutableStateOf("") }
-    var password1 by remember { mutableStateOf("") }
-    var password2 by remember { mutableStateOf("") }
+    val vm: RegisterViewModel = viewModel()
+    val nickname by vm.nickname.collectAsState()
+    val password1 by vm.password1.collectAsState()
+    val password2 by vm.password2.collectAsState()
+
     val context = LocalContext.current
 
     var authEmail: String = MyApplication.prefs.getData("email", "")
@@ -154,17 +157,14 @@ fun RegisterScreen(routeAction: RouteAction) {
             Color(0xFFFFDAB9).copy(alpha = 0.5f)
         }
 
-    val NextButtonArrowTint = if (nickname != "" && passwordPattern.matches(password1) && password1.equals(password2)) {
-        1f
-    } else {
-        0.5f
-    }
+    val NextButtonArrowTint =
+        if (nickname.length in 2..6 && passwordPattern.matches(password1) && password1 == password2) {
+            1f
+        } else {
+            0.5f
+        }
 
-    if (nickname != "" && passwordPattern.matches(password1) && password1.equals(password2)) {
-        isButtonClickable = true
-    } else {
-        isButtonClickable = false
-    }
+    isButtonClickable = nickname.length in 2..6 && passwordPattern.matches(password1) && password1 == password2
 
     Scaffold(modifier = Modifier
         .fillMaxSize()
@@ -172,10 +172,10 @@ fun RegisterScreen(routeAction: RouteAction) {
         Box(
             Modifier
                 .fillMaxWidth()
-                .height(45.dp)) {
+                .height(45.dp)
+        ) {
             CenterAlignedTopAppBar(title = {}, navigationIcon = {
                 IconButton(onClick = {
-//                    routeAction.navTo(NAV_ROUTE.AUTHCODE)
                     routeAction.goBack()
                 }) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
@@ -289,24 +289,28 @@ fun RegisterScreen(routeAction: RouteAction) {
                     color = Color(0xff808080)
                 )
 
-                BasicTextField(modifier = Modifier
-                    .fillMaxWidth()
-                    .drawWithContent {
-                        drawContent()
-                        drawLine(
-                            color = Color(0xFFBFBFBF),
-                            start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
-                            end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
-                            strokeWidth = 1.dp.toPx()
-                        )
-                    }, value = nickname, onValueChange = {
-                    nickname = it
-                }, singleLine = true, maxLines = 1, textStyle = LocalTextStyle.current.copy(
-                    fontSize = 18.sp,
-                    lineHeight = 23.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Black
-                )
+                BasicTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .drawWithContent {
+                            drawContent()
+                            drawLine(
+                                color = Color(0xFFBFBFBF),
+                                start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                                end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                                strokeWidth = 1.dp.toPx()
+                            )
+                        },
+                    value = nickname,
+                    onValueChange = vm::inputNickName,
+                    singleLine = true,
+                    maxLines = 1,
+                    textStyle = LocalTextStyle.current.copy(
+                        fontSize = 18.sp,
+                        lineHeight = 23.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Black
+                    )
                 ) {
                     TextFieldDefaults.TextFieldDecorationBox(colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color.Transparent,
@@ -345,25 +349,32 @@ fun RegisterScreen(routeAction: RouteAction) {
                     color = Color(0xff808080)
                 )
 
-                BasicTextField(modifier = Modifier
-                    .fillMaxWidth()
-                    .drawWithContent {
-                        drawContent()
-                        drawLine(
-                            color = Color(0xFFBFBFBF),
-                            start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
-                            end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
-                            strokeWidth = 1.dp.toPx()
-                        )
-                    }, value = password1, onValueChange = {
-                    password1 = it
-                    showErrorPassword1 = !it.matches(passwordPattern)
-                }, singleLine = true, maxLines = 1, textStyle = LocalTextStyle.current.copy(
-                    fontSize = 18.sp,
-                    lineHeight = 23.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Black
-                )
+                BasicTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .drawWithContent {
+                            drawContent()
+                            drawLine(
+                                color = Color(0xFFBFBFBF),
+                                start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                                end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                                strokeWidth = 1.dp.toPx()
+                            )
+                        },
+                    value = password1,
+                    onValueChange = { text: String ->
+                        vm::inputPassWord1.invoke(text)
+                        showErrorPassword1 = !text.matches(passwordPattern)
+
+                    },
+                    singleLine = true,
+                    maxLines = 1,
+                    textStyle = LocalTextStyle.current.copy(
+                        fontSize = 18.sp,
+                        lineHeight = 23.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Black
+                    )
                 ) {
                     TextFieldDefaults.TextFieldDecorationBox(colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color.Transparent,
@@ -425,25 +436,31 @@ fun RegisterScreen(routeAction: RouteAction) {
                     color = Color(0xff808080)
                 )
 
-                BasicTextField(modifier = Modifier
-                    .fillMaxWidth()
-                    .drawWithContent {
-                        drawContent()
-                        drawLine(
-                            color = Color(0xFFBFBFBF),
-                            start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
-                            end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
-                            strokeWidth = 1.dp.toPx()
-                        )
-                    }, value = password2, onValueChange = {
-                    password2 = it
-                    showMatchPassword = (it != password1)
-                }, singleLine = true, maxLines = 1, textStyle = LocalTextStyle.current.copy(
-                    fontSize = 18.sp,
-                    lineHeight = 23.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Black
-                )
+                BasicTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .drawWithContent {
+                            drawContent()
+                            drawLine(
+                                color = Color(0xFFBFBFBF),
+                                start = Offset(x = 0f, y = size.height - 1.dp.toPx()),
+                                end = Offset(x = size.width, y = size.height - 1.dp.toPx()),
+                                strokeWidth = 1.dp.toPx()
+                            )
+                        },
+                    value = password2,
+                    onValueChange = { text: String ->
+                        vm::inputPassWord2.invoke(text)
+                        showMatchPassword = (text != password1)
+                    },
+                    singleLine = true,
+                    maxLines = 1,
+                    textStyle = LocalTextStyle.current.copy(
+                        fontSize = 18.sp,
+                        lineHeight = 23.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Black
+                    )
                 ) {
                     TextFieldDefaults.TextFieldDecorationBox(colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color.Transparent,

@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo_android.Data.Profile.Login
 import com.example.todo_android.Navigation.Action.RouteAction
 import com.example.todo_android.Navigation.NAV_ROUTE
@@ -32,6 +34,7 @@ import com.example.todo_android.R
 import com.example.todo_android.Request.ProfileRequest.LoginRequest
 import com.example.todo_android.Response.ProfileResponse.LoginResponse
 import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.ViewModel.ProFileViewModel.LoginViewModel
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -82,7 +85,7 @@ fun sendLogin(
 
                     Log.d("LOGIN", "resultCode : " + loginResponse?.resultCode)
                     Log.d("LOGIN", "token : " + loginResponse?.token)
-               //     Log.d("LOGIN", "nickname : " + loginResponse?.nickname)
+                    //     Log.d("LOGIN", "nickname : " + loginResponse?.nickname)
                     Log.d("LOGIN", "email : " + loginResponse?.email)
                     Log.d("LOGIN", "image : " + loginResponse?.image)
                     MyApplication.prefs.setData("email", email)
@@ -101,8 +104,10 @@ fun sendLogin(
 @Composable
 fun LoginScreen(routeAction: RouteAction) {
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val vm: LoginViewModel = viewModel()
+    val email by vm.email.collectAsState()
+    val password by vm.password.collectAsState()
+
     var checked by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -126,18 +131,20 @@ fun LoginScreen(routeAction: RouteAction) {
         painterResource(id = R.drawable.nocheck)
     }
 
-    if(checked){
+    if (checked) {
 //        MyApplication.prefs.setData("email", email)
         MyApplication.prefs.setData("password1", password)
     }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.White)
-        .padding(start = 41.dp, end = 41.dp)
-        .imePadding(),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(start = 41.dp, end = 41.dp)
+            .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+        verticalArrangement = Arrangement.Center
+    ) {
 
         Image(
             modifier = Modifier.size(90.dp),
@@ -156,22 +163,25 @@ fun LoginScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(61.dp))
 
-        TextField(modifier = Modifier
-            .fillMaxWidth()
-            .height(54.dp),
+
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(54.dp),
             value = email,
-            colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF2F2F2),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color(0xffF2F2F2),
                 disabledLabelColor = Color(0xffF2F2F2),
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent),
+                unfocusedIndicatorColor = Color.Transparent
+            ),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             shape = RoundedCornerShape(18.dp),
-            onValueChange = {
-                email = it
-            },
+            onValueChange = vm::inputEmail,
             placeholder = {
-                Text(text = stringResource(id = R.string.InpurtEmail),
+                Text(
+                    text = "이메일 입력",
                     style = LocalTextStyle.current.copy(
                         platformStyle = PlatformTextStyle(
                             includeFontPadding = false
@@ -188,15 +198,13 @@ fun LoginScreen(routeAction: RouteAction) {
                 )
             },
             trailingIcon = {
-                if (email.isNotEmpty()) {
-                    Image(
-                        modifier = Modifier.clickable {
-                            email = ""
-                        },
-                        painter = painterResource(id = R.drawable.deleteemail),
-                        contentDescription = null
-                    )
-                }
+                Image(
+                    modifier = Modifier.clickable {
+                        vm.inputEmail("")
+                    },
+                    painter = painterResource(id = R.drawable.deleteemail),
+                    contentDescription = null
+                )
             },
             textStyle = LocalTextStyle.current.copy(
                 platformStyle = PlatformTextStyle(
@@ -211,14 +219,17 @@ fun LoginScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(5.dp))
 
-        TextField(modifier = Modifier
-            .fillMaxWidth()
-            .height(54.dp),
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(54.dp),
             value = password,
-            colors = TextFieldDefaults.textFieldColors(containerColor = Color(0xffF2F2F2),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color(0xffF2F2F2),
                 disabledLabelColor = Color(0xffF2F2F2),
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent),
+                unfocusedIndicatorColor = Color.Transparent
+            ),
             singleLine = true,
             visualTransformation = if (passwordVisible) {
                 VisualTransformation.None
@@ -227,11 +238,10 @@ fun LoginScreen(routeAction: RouteAction) {
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             shape = RoundedCornerShape(18.dp),
-            onValueChange = {
-                password = it
-            },
+            onValueChange = vm::inputPassword,
             placeholder = {
-                Text(text = stringResource(id = R.string.InpurtPassword),
+                Text(
+                    text = "비밀번호 입력",
                     style = LocalTextStyle.current.copy(
                         platformStyle = PlatformTextStyle(
                             includeFontPadding = false
@@ -248,12 +258,10 @@ fun LoginScreen(routeAction: RouteAction) {
                 )
             },
             trailingIcon = {
-                if (password.isNotEmpty()) {
-                    IconButton(onClick = {
-                        passwordVisible = !passwordVisible
-                    }) {
-                        Icon(painter = icon, contentDescription = null, tint = Color(0xffC9C9C9))
-                    }
+                IconButton(onClick = {
+                    passwordVisible = !passwordVisible
+                }) {
+                    Icon(painter = icon, contentDescription = null, tint = Color(0xffC9C9C9))
                 }
             },
             textStyle = LocalTextStyle.current.copy(
@@ -269,11 +277,12 @@ fun LoginScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                checked = !checked
-            },
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    checked = !checked
+                },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
 
@@ -292,33 +301,43 @@ fun LoginScreen(routeAction: RouteAction) {
 
         Spacer(modifier = Modifier.height(38.dp))
 
-        Button(modifier = Modifier
-            .fillMaxWidth()
-            .height(54.dp),
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(54.dp),
             colors = ButtonDefaults.buttonColors(Color(0xffFFDAB9)),
             onClick = {
                 if (email == "" || password == "") {
                     openDialog = true
                 } else {
                     scope.launch {
-                        sendLogin(email, password, routeAction, response = {
+                        sendLogin(
+                            email,
+                            password,
+                            routeAction
+                        ) {
                             openDialog = true
-                        })
+                        }
                     }
                 }
             },
-            shape = RoundedCornerShape(18.dp)) {
-            Text(text = stringResource(id = R.string.Login),
+            shape = RoundedCornerShape(18.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.Login),
                 color = Color.Black,
                 fontSize = 16.sp,
-                fontWeight = FontWeight.ExtraBold)
+                fontWeight = FontWeight.ExtraBold
+            )
         }
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        Row(modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween) {
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(text = stringResource(id = R.string.Search),
                 fontSize = 14.sp,
                 color = Color(0xFF999999),
@@ -346,27 +365,36 @@ fun FailureLoginDialog(onDismissRequest: () -> Unit) {
 
     Dialog(onDismissRequest = { onDismissRequest }) {
         androidx.compose.material3.Surface(shape = RoundedCornerShape(15.dp), color = Color.White) {
-            Column(modifier = Modifier.width(265.dp),
+            Column(
+                modifier = Modifier.width(265.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
-                Text(modifier = Modifier.padding(top = 28.dp, bottom = 10.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    modifier = Modifier.padding(top = 28.dp, bottom = 10.dp),
                     text = "로그인 실패",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Black)
+                    fontWeight = FontWeight.Black
+                )
 
                 Text(
                     text = "이메일 혹은 비밀번호를",
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Light)
+                    fontWeight = FontWeight.Light
+                )
 
-                Text(modifier = Modifier.padding(bottom = 28.dp),
+                Text(
+                    modifier = Modifier.padding(bottom = 28.dp),
                     text = "다시 확인해 주세요.",
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Light)
+                    fontWeight = FontWeight.Light
+                )
 
-                Row(modifier = Modifier.fillMaxWidth(),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround) {
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
                     androidx.compose.material.TextButton(modifier = Modifier
                         .background(Color(0xffE9E9E9))
                         .weight(1f),
