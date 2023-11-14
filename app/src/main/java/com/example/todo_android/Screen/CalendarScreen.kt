@@ -64,6 +64,8 @@ import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
 import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.Response.TodoResponse.*
 import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.Util.rememberFirstVisibleMonthAfterScroll
+import com.example.todo_android.Util.rememberFirstVisibleWeekAfterScroll
 import com.example.todo_android.ui.theme.deleteBackground
 import com.kizitonwose.calendar.compose.*
 import com.kizitonwose.calendar.compose.weekcalendar.WeekCalendarState
@@ -81,12 +83,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.YearMonth
 import java.util.*
 import java.util.Calendar.*
-import androidx.compose.material3.Card
-import com.example.todo_android.Util.rememberFirstVisibleMonthAfterScroll
-import com.example.todo_android.Util.rememberFirstVisibleWeekAfterScroll
-import java.time.YearMonth
 
 fun createTodo(
     token: String,
@@ -607,7 +606,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                         elevation = 7.dp,
                         spotColor = Color(0xffB0B0B0),
                         ambientColor = Color(0xffB0B0B0)
-                    )
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 CalendarTitle(yearMonth = selectedDate.yearMonth)
 
@@ -1708,88 +1709,14 @@ private fun convertToLayoutTimeFormat(time: String): String {
 }
 
 @Composable
-fun Day(
-    day: LocalDate,
-    isSelected: Boolean,
-    isToday: Boolean,
-    onClick: (LocalDate) -> Unit,
-    isPastDay: Boolean
-) {
-    Box(
-        modifier = Modifier
-            .aspectRatio(1f)
-            .size(36.dp)
-            .padding(10.dp)
-            .clip(CircleShape)
-            .background(
-                color = if (isSelected) {
-                    Color(0xFFFFDAB9)
-                } else if (isToday) {
-                    Color(0xffE9E9E9)
-                } else {
-                    Color.Transparent
-                },
-                CircleShape
-            )
-            .clickable(
-                onClick = {
-                    onClick(day)
-                }
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            modifier = Modifier.alpha(
-                if (isPastDay) {
-                    0.5f
-                } else {
-                    1f
-                }
-            ),
-            text = day.dayOfMonth.toString(),
-            color = when (day.dayOfWeek) {
-                DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
-                else -> Color(
-                    0xFF424242
-                )
-            },
-            lineHeight = 17.sp,
-            fontWeight = FontWeight(700)
-        )
-    }
-}
-
-@Composable
-fun CalendarHeader(daysOfWeek: List<DayOfWeek>) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-    ) {
-        for (dayOfWeek in daysOfWeek) {
-            Text(
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Center,
-                text = dayOfWeek.getDisplayName(
-                    java.time.format.TextStyle.SHORT,
-                    Locale.getDefault()
-                ),
-                lineHeight = 17.sp,
-                fontWeight = FontWeight(700)
-            )
-        }
-    }
-}
-
-@Composable
 fun CalendarTitle(yearMonth: YearMonth) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
             .padding(
-                start = 22.dp,
-                bottom = 16.dp
+                vertical = 15.dp,
+                horizontal = 35.dp
             ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
@@ -1815,6 +1742,33 @@ fun CalendarTitle(yearMonth: YearMonth) {
             fontWeight = FontWeight(700),
             color = Color(0xFF000000)
         )
+    }
+}
+
+@Composable
+fun CalendarHeader(daysOfWeek: List<DayOfWeek>) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(
+                start = 15.dp,
+                end = 15.dp,
+//                top = 15.dp
+            )
+    ) {
+        for (dayOfWeek in daysOfWeek) {
+            Text(
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center,
+                text = dayOfWeek.getDisplayName(
+                    java.time.format.TextStyle.SHORT,
+                    Locale.getDefault()
+                ),
+                lineHeight = 17.sp,
+                fontWeight = FontWeight(700)
+            )
+        }
     }
 }
 
@@ -1856,7 +1810,11 @@ fun CalendarContent(
                                 onSelectedDate(day.date)
                             },
                         )
-                    }
+                    },
+                    contentPadding = PaddingValues(
+                        start = 15.dp,
+                        end = 15.dp
+                    )
                 )
             } else {
                 var start = selectedDate.yearMonth.atDay(1)
@@ -1866,7 +1824,6 @@ fun CalendarContent(
                     modifier = Modifier
                         .background(color = Color.White),
                     state = weekState,
-                    contentPadding = PaddingValues(0.dp),
                     dayContent = { day ->
                         Day(
                             day = day.date,
@@ -1877,11 +1834,68 @@ fun CalendarContent(
                                 onSelectedDate(day.date)
                             }
                         )
-                    }
+                    },
+                    contentPadding = PaddingValues(
+                        start = 15.dp,
+                        end = 15.dp
+                    )
                 )
             }
         }
     )
+}
+
+@Composable
+fun Day(
+    day: LocalDate,
+    isSelected: Boolean,
+    isToday: Boolean,
+    onClick: (LocalDate) -> Unit,
+    isPastDay: Boolean
+) {
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f)
+            .size(36.dp)
+            .padding(13.dp)
+            .clip(CircleShape)
+            .background(
+                color = if (isSelected) {
+                    Color(0xFFFFDAB9)
+                } else if (isToday) {
+                    Color(0xffE9E9E9)
+                } else {
+                    Color.Transparent
+                },
+                CircleShape
+            )
+            .clickable(
+                onClick = {
+                    onClick(day)
+                }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.alpha(
+                if (isPastDay) {
+                    0.5f
+                } else {
+                    1f
+                }
+            ),
+            text = day.dayOfMonth.toString(),
+            fontSize = 14.sp,
+            color = when (day.dayOfWeek) {
+                DayOfWeek.SUNDAY -> Color(0xFFF86B6B)
+                else -> Color(
+                    0xFF424242
+                )
+            },
+            lineHeight = 17.sp,
+            fontWeight = FontWeight(700)
+        )
+    }
 }
 
 //private fun todoSortByDone(todoList: MutableList<RToDoResponse>): MutableList<RToDoResponse>{
