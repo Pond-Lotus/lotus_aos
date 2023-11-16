@@ -1,4 +1,4 @@
-package com.example.todo_android.Screen
+package com.example.todo_android.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -21,7 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.todo_android.Navigation.Action.RouteAction
+import com.example.todo_android.navigation.Action.RouteAction
 import com.example.todo_android.R
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

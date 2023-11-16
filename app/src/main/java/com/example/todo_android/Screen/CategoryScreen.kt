@@ -1,4 +1,4 @@
-package com.example.todo_android.Screen
+package com.example.todo_android.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -20,10 +20,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.todo_android.Navigation.Action.RouteAction
-import com.example.todo_android.Navigation.NAV_ROUTE
+import com.example.todo_android.navigation.Action.RouteAction
+import com.example.todo_android.navigation.NAV_ROUTE
 import com.example.todo_android.R
-import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
+import com.example.todo_android.Screen.readCategory
+import com.example.todo_android.response.CategoryResponse.ReadCategoryResponse
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

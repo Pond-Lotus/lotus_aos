@@ -1,4 +1,4 @@
-package com.example.todo_android.Screen
+package com.example.todo_android.screen
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -22,12 +22,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.todo_android.Navigation.Action.RouteAction
-import com.example.todo_android.Navigation.NAV_ROUTE
+import com.example.todo_android.navigation.Action.RouteAction
+import com.example.todo_android.navigation.NAV_ROUTE
 import com.example.todo_android.R
-import com.example.todo_android.Request.ProfileRequest.DeleteAccountRequest
-import com.example.todo_android.Response.ProfileResponse.DeleteAccountResponse
-import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.request.ProfileRequest.DeleteAccountRequest
+import com.example.todo_android.response.ProfileResponse.DeleteAccountResponse
+import com.example.todo_android.util.MyApplication
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call

@@ -1,4 +1,4 @@
-package com.example.todo_android.Screen
+package com.example.todo_android.screen
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -27,13 +27,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo_android.Data.Profile.Login
-import com.example.todo_android.Navigation.Action.RouteAction
-import com.example.todo_android.Navigation.NAV_ROUTE
+import com.example.todo_android.navigation.Action.RouteAction
+import com.example.todo_android.navigation.NAV_ROUTE
 import com.example.todo_android.R
-import com.example.todo_android.Request.ProfileRequest.LoginRequest
-import com.example.todo_android.Response.ProfileResponse.LoginResponse
-import com.example.todo_android.Util.MyApplication
-import com.example.todo_android.ViewModel.ProFileViewModel.LoginViewModel
+import com.example.todo_android.request.ProfileRequest.LoginRequest
+import com.example.todo_android.response.ProfileResponse.LoginResponse
+import com.example.todo_android.util.MyApplication
+import com.example.todo_android.viewmodel.ProFileViewModel.LoginViewModel
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

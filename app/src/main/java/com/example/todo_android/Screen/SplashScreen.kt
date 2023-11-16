@@ -1,4 +1,4 @@
-package com.example.todo_android.Screen
+package com.example.todo_android.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,10 +17,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.todo_android.Navigation.Action.RouteAction
-import com.example.todo_android.Navigation.NAV_ROUTE
+import com.example.todo_android.navigation.Action.RouteAction
+import com.example.todo_android.navigation.NAV_ROUTE
 import com.example.todo_android.R
-import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.util.MyApplication
 import kotlinx.coroutines.delay
 
 @Composable

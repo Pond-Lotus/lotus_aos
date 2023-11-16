@@ -1,4 +1,4 @@
-package com.example.todo_android.Screen
+package com.example.todo_android.screen
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -26,11 +26,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.todo_android.Navigation.Action.RouteAction
-import com.example.todo_android.Navigation.NAV_ROUTE
+import com.example.todo_android.navigation.Action.RouteAction
+import com.example.todo_android.navigation.NAV_ROUTE
 import com.example.todo_android.R
-import com.example.todo_android.Request.ProfileRequest.SearchEmailRequest
-import com.example.todo_android.Response.ProfileResponse.SearchEmailResponse
+import com.example.todo_android.request.ProfileRequest.SearchEmailRequest
+import com.example.todo_android.response.ProfileResponse.SearchEmailResponse
 import com.example.todo_android.ui.theme.buttonColor
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient

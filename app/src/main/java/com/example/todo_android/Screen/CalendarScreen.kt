@@ -49,24 +49,27 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
-import com.example.todo_android.Composable.FloatingStateType
-import com.example.todo_android.Composable.MonthWeekToggleSwitch
-import com.example.todo_android.Composable.ProfileModalDrawer
+
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
-import com.example.todo_android.Navigation.Action.RouteAction
+
 import com.example.todo_android.R
-import com.example.todo_android.Request.CategoryRequest.ReadCategoryRequest
-import com.example.todo_android.Request.TodoRequest.CreateTodoRequest
-import com.example.todo_android.Request.TodoRequest.DeleteTodoRequest
-import com.example.todo_android.Request.TodoRequest.ReadTodoRequest
-import com.example.todo_android.Request.TodoRequest.UpdateTodoRequest
-import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
-import com.example.todo_android.Response.TodoResponse.*
-import com.example.todo_android.Util.MyApplication
-import com.example.todo_android.Util.rememberFirstVisibleMonthAfterScroll
-import com.example.todo_android.Util.rememberFirstVisibleWeekAfterScroll
+import com.example.todo_android.composable.FloatingStateType
+import com.example.todo_android.composable.MonthWeekToggleSwitch
+import com.example.todo_android.composable.ProfileModalDrawer
+import com.example.todo_android.navigation.Action.RouteAction
+import com.example.todo_android.request.CategoryRequest.ReadCategoryRequest
+import com.example.todo_android.request.TodoRequest.CreateTodoRequest
+import com.example.todo_android.request.TodoRequest.DeleteTodoRequest
+import com.example.todo_android.request.TodoRequest.ReadTodoRequest
+import com.example.todo_android.request.TodoRequest.UpdateTodoRequest
+import com.example.todo_android.response.CategoryResponse.ReadCategoryResponse
+import com.example.todo_android.response.TodoResponse.*
+
 import com.example.todo_android.ui.theme.deleteBackground
+import com.example.todo_android.util.MyApplication
+import com.example.todo_android.util.rememberFirstVisibleMonthAfterScroll
+import com.example.todo_android.util.rememberFirstVisibleWeekAfterScroll
 import com.kizitonwose.calendar.compose.*
 import com.kizitonwose.calendar.compose.weekcalendar.WeekCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
@@ -154,7 +157,7 @@ fun readTodo(
 
     var readTodoRequest: ReadTodoRequest = retrofit.create(ReadTodoRequest::class.java)
 
-    readTodoRequest.requestReadTodo(token, year, month, day)
+    readTodoRequest.requestReadTodo(token, year.toInt(), month.toInt(), day.toInt())
         .enqueue(object : Callback<ReadTodoResponse> {
 
             //실패할 경우
@@ -979,9 +982,9 @@ fun TodoItem(
                 done = true
                 checked = true
                 updateTodo(token,
-                    Todo.year,
-                    Todo.month,
-                    Todo.day,
+                    Todo.year.toString(),
+                    Todo.month.toString(),
+                    Todo.day.toString(),
                     Todo.title,
                     done,
                     Todo.description,
@@ -1020,9 +1023,9 @@ fun TodoItem(
                         scope.launch {
                             updateTodo(
                                 token,
-                                Todo.year,
-                                Todo.month,
-                                Todo.day,
+                                Todo.year.toString(),
+                                Todo.month.toString(),
+                                Todo.day.toString(),
                                 Todo.title,
                                 done,
                                 Todo.description,
@@ -1164,7 +1167,12 @@ fun TodoItemList(
                     scope.launch {
                         deleteTodo(token, item.id, response = {
                             todoList.remove(item)
-                            readTodo(token, year = item.year, month = item.month, day = item.day) {
+                            readTodo(
+                                token,
+                                year = item.year.toString(),
+                                month = item.month.toString(),
+                                day = item.day.toString()
+                            ) {
                                 todoList.clear()
                                 for (i in it!!.data) {
                                     todoList.add(i)

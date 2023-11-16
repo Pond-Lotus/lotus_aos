@@ -1,4 +1,4 @@
-package com.example.todo_android.Screen
+package com.example.todo_android.screen
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -40,14 +40,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.todo_android.Navigation.Action.RouteAction
-import com.example.todo_android.Navigation.NAV_ROUTE
+import com.example.todo_android.navigation.Action.RouteAction
+import com.example.todo_android.navigation.NAV_ROUTE
 import com.example.todo_android.R
-import com.example.todo_android.Request.ModifyRequest.ChangeProfileRequest
-import com.example.todo_android.Request.ModifyRequest.DeleteProfileImageRequest
-import com.example.todo_android.Response.ModifyResponse.ChangeProfileResponse
-import com.example.todo_android.Response.ModifyResponse.DeleteProfileImageResponse
-import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.request.ModifyRequest.ChangeProfileRequest
+import com.example.todo_android.request.ModifyRequest.DeleteProfileImageRequest
+import com.example.todo_android.response.ModifyResponse.ChangeProfileResponse
+import com.example.todo_android.response.ModifyResponse.DeleteProfileImageResponse
+import com.example.todo_android.util.MyApplication
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody

@@ -1,4 +1,4 @@
-package com.example.todo_android.Screen
+package com.example.todo_android.screen
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -26,12 +26,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Data.Category.UpdateCategory
-import com.example.todo_android.Navigation.Action.RouteAction
-import com.example.todo_android.Navigation.NAV_ROUTE
-import com.example.todo_android.Request.CategoryRequest.UpdateCategoryRequest
-import com.example.todo_android.Response.CategoryResponse.ReadCategoryResponse
-import com.example.todo_android.Response.CategoryResponse.UpdateCategoryResponse
-import com.example.todo_android.Util.MyApplication
+import com.example.todo_android.Screen.readCategory
+import com.example.todo_android.navigation.Action.RouteAction
+import com.example.todo_android.navigation.NAV_ROUTE
+import com.example.todo_android.request.CategoryRequest.UpdateCategoryRequest
+import com.example.todo_android.response.CategoryResponse.ReadCategoryResponse
+import com.example.todo_android.response.CategoryResponse.UpdateCategoryResponse
+import com.example.todo_android.util.MyApplication
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
