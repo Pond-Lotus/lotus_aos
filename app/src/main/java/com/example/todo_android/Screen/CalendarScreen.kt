@@ -1865,7 +1865,8 @@ fun Day(
         modifier = Modifier
             .aspectRatio(1f)
             .size(36.dp)
-            .padding(13.dp)
+//            .padding(13.dp)
+            .padding(10.dp)
             .clip(CircleShape)
             .background(
                 color = if (isSelected) {
