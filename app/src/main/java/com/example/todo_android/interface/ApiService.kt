@@ -1,18 +1,16 @@
 package com.example.todo_android.`interface`
 
-import com.example.todo_android.response.ProfileResponse.LoginResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.POST
 
-interface ApiClient {
+interface ApiService {
 
     companion object {
         private const val baseURL = "https://team-lotus.kr/"
 
-        fun create() : ApiClient {
+        fun create() : ApiService {
 
             // 로그 메세지의 포맷을 설정
             val logger = HttpLoggingInterceptor().apply {
@@ -31,7 +29,7 @@ interface ApiClient {
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-                .create(ApiClient::class.java)
+                .create(ApiService::class.java)
         }
     }
 

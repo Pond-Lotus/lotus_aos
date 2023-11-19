@@ -17,9 +17,9 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.todo_android.R
 import com.example.todo_android.navigation.Action.RouteAction
 import com.example.todo_android.navigation.NAV_ROUTE
-import com.example.todo_android.R
 import com.example.todo_android.util.MyApplication
 import kotlinx.coroutines.delay
 

@@ -27,13 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.todo_android.Data.Modify.ChangePassword
+import com.example.todo_android.R
 import com.example.todo_android.navigation.Action.RouteAction
 import com.example.todo_android.navigation.NAV_ROUTE
-import com.example.todo_android.R
 import com.example.todo_android.request.ModifyRequest.ChangePasswordRequest
 import com.example.todo_android.response.ModifyResponse.ChangePasswordResponse
-import com.example.todo_android.util.MyApplication
 import com.example.todo_android.ui.theme.buttonColor
+import com.example.todo_android.util.MyApplication
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

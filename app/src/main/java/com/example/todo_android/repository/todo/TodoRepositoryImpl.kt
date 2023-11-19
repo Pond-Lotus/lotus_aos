@@ -11,6 +11,21 @@ import com.example.todo_android.response.TodoResponse.UpdateTodoResponse
 
 class TodoRepositoryImpl(private val TodoRemoteDataResource: TodoRemoteDataResource) : TodoRepository {
 
+    override suspend fun createTodo(
+        token: String,
+        createTodo: CreateTodo
+    ): APIResponse<CreateTodoResponse> {
+
+        // 회원가입 요청이 성공하면 Success에 데이터를 실어서 ,실패하면 Error에 message 리턴
+        val response = TodoRemoteDataResource.createTodo(token, createTodo)
+        if (response.execute().isSuccessful) {
+            response.execute().body()?.let { result ->
+                return APIResponse.Success(result)
+            }
+        }
+        return APIResponse.Error(response.execute().message())
+    }
+
     override suspend fun readTodo(
         token: String,
         year: Int,
@@ -20,21 +35,6 @@ class TodoRepositoryImpl(private val TodoRemoteDataResource: TodoRemoteDataResou
 
         // 회원가입 요청이 성공하면 Success에 데이터를 실어서 ,실패하면 Error에 message 리턴
         val response = TodoRemoteDataResource.readTodo(token, year, month, day)
-        if (response.execute().isSuccessful) {
-            response.execute().body()?.let { result ->
-                return APIResponse.Success(result)
-            }
-        }
-        return APIResponse.Error(response.execute().message())
-    }
-
-    override suspend fun createTodo(
-        token: String,
-        createTodo: CreateTodo
-    ): APIResponse<CreateTodoResponse> {
-
-        // 회원가입 요청이 성공하면 Success에 데이터를 실어서 ,실패하면 Error에 message 리턴
-        val response = TodoRemoteDataResource.createTodo(token, createTodo)
         if (response.execute().isSuccessful) {
             response.execute().body()?.let { result ->
                 return APIResponse.Success(result)

@@ -24,13 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo_android.Data.Profile.AuthCode
+import com.example.todo_android.R
 import com.example.todo_android.navigation.Action.RouteAction
 import com.example.todo_android.navigation.NAV_ROUTE
-import com.example.todo_android.R
 import com.example.todo_android.request.ProfileRequest.AuthCodeRequest
 import com.example.todo_android.response.ProfileResponse.AuthCodeResponse
 import com.example.todo_android.util.MyApplication
-import com.example.todo_android.viewmodel.ProFileViewModel.AuthCodeViewModel
+import com.example.todo_android.viewmodel.Profile.AuthCodeViewModel
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

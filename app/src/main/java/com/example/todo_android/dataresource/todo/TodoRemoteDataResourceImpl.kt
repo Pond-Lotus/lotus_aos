@@ -34,5 +34,4 @@ class TodoRemoteDataResourceImpl(
     override suspend fun deleteTodo(token: String, id: String): Call<DeleteTodoResponse> {
         return deleteTodoService.requestDeleteTodo(token, id)
     }
-
 }

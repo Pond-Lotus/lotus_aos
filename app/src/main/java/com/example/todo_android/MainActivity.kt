@@ -11,16 +11,17 @@ import androidx.constraintlayout.compose.ExperimentalMotionApi
 import com.example.todo_android.fcm.MyFirebaseMessagingService
 import com.example.todo_android.navigation.NavigationGraph
 import com.example.todo_android.ui.theme.TodoandroidTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalMotionApi
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             TodoandroidTheme {
                 NavigationGraph()

@@ -1,4 +1,4 @@
-package com.example.todo_android.viewmodel.ProFileViewModel
+package com.example.todo_android.viewmodel.Profile
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

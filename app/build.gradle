@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -47,6 +49,11 @@ android {
         }
     }
 }
+
+kapt {
+    correctErrorTypes true
+}
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -107,4 +114,8 @@ dependencies {
     def new_calendar = "2.0.3"
     implementation "com.kizitonwose.calendar:compose:$new_calendar"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+
+    // dagger & hilt
+    implementation "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-compiler:2.44"
 }
