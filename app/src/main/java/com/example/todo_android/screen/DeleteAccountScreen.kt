@@ -50,7 +50,7 @@ fun deleteAccount(token: String, response: (DeleteAccountResponse?) -> Unit) {
     var deleteAccountRequest: DeleteAccountRequest =
         retrofit.create(DeleteAccountRequest::class.java)
 
-    deleteAccountRequest.requestDeleteTodo(token).enqueue(object : Callback<DeleteAccountResponse> {
+    deleteAccountRequest.requestDeleteAccount(token).enqueue(object : Callback<DeleteAccountResponse> {
         override fun onResponse(
             call: Call<DeleteAccountResponse>,
             response: Response<DeleteAccountResponse>,

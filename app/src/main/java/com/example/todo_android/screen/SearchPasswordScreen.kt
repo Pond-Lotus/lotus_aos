@@ -29,7 +29,7 @@ import androidx.compose.ui.window.Dialog
 import com.example.todo_android.R
 import com.example.todo_android.navigation.Action.RouteAction
 import com.example.todo_android.navigation.NAV_ROUTE
-import com.example.todo_android.request.ProfileRequest.SearchEmailRequest
+import com.example.todo_android.request.ProfileRequest.FindOutPassWordRequest
 import com.example.todo_android.response.ProfileResponse.SearchEmailResponse
 import com.example.todo_android.ui.theme.buttonColor
 import kotlinx.coroutines.launch
@@ -55,9 +55,9 @@ fun SearchPassword(
     var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
-    var searchEmailRequest: SearchEmailRequest = retrofit.create(SearchEmailRequest::class.java)
+    var searchEmailRequest: FindOutPassWordRequest = retrofit.create(FindOutPassWordRequest::class.java)
 
-    searchEmailRequest.requestEmail(email).enqueue(object : Callback<SearchEmailResponse> {
+    searchEmailRequest.requestFindOutPassWord(email).enqueue(object : Callback<SearchEmailResponse> {
 
         //성공할 경우
         override fun onResponse(

@@ -14,9 +14,9 @@ data class ReadTodoResponse(
 data class RToDoResponse(
     val id: String,
     val writer: String,
-    val year: String,
-    val month: String,
-    val day: String,
+    val year: Int,
+    val month: Int,
+    val day: Int,
     val title: String,
     val description: String,
     val done: Boolean,

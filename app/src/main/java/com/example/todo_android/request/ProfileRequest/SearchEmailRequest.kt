@@ -5,9 +5,9 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface SearchEmailRequest {
+interface FindOutPassWordRequest {
     @GET("/account/findpw/")
-    fun requestEmail(
+    fun requestFindOutPassWord(
         @Query("email") email: String
     ) : Call<SearchEmailResponse>
 }

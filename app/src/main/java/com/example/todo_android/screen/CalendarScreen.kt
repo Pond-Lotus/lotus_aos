@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 import com.example.todo_android.Data.Todo.CreateTodo
@@ -76,6 +77,7 @@ import com.kizitonwose.calendar.compose.*
 import com.kizitonwose.calendar.compose.weekcalendar.WeekCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*
@@ -94,11 +96,11 @@ import java.util.Calendar.*
 
 fun createTodo(
     token: String,
-    year: String,
-    month: String,
-    day: String,
+    year: Int,
+    month: Int,
+    day: Int,
     title: String,
-    color: String,
+    color: Int,
     response: (CreateTodoResponse?) -> Unit,
 ) {
 
@@ -225,13 +227,13 @@ fun deleteTodo(
 
 fun updateTodo(
     token: String,
-    year: String,
-    month: String,
-    day: String,
+    year: Int,
+    month: Int,
+    day: Int,
     title: String,
     done: Boolean,
     description: String,
-    color: String,
+    color: Int,
     time: String,
     id: String,
     response: (UpdateTodoResponse?) -> Unit,
@@ -324,12 +326,15 @@ fun readCategory(
 @ExperimentalMaterial3Api
 @Composable
 fun CalendarScreen(routeAction: RouteAction) {
-//    val vm: TodoViewModel = viewModel()
-//    val todoYear = vm.todoYear.collectAsState()
-//    val todoMonth = vm.todoMonth.collectAsState()
-//    val todoDay = vm.todoDay.collectAsState()
-//    val todoTitle = vm.todoTitle.collectAsState()
-//    val todoColor = vm.todoColor.collectAsState()
+
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
+    val vm: TodoViewModel = hiltViewModel()
+    val todoYear by vm.todoYear.collectAsState()
+    val todoMonth by vm.todoMonth.collectAsState()
+    val todoDay by vm.todoDay.collectAsState()
+    val todoTitle by vm.todoTitle.collectAsState()
+    val todoColor by vm.todoColor.collectAsState()
 
 
     var isVisibility by remember { mutableStateOf(false) }
@@ -344,13 +349,13 @@ fun CalendarScreen(routeAction: RouteAction) {
     }
 
 
-    val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
-    var todoYear by remember { mutableStateOf(LocalDate.now().year.toString()) }
-    var todoMonth by remember { mutableStateOf(LocalDate.now().monthValue.toString()) }
-    var todoDay by remember { mutableStateOf(LocalDate.now().dayOfMonth.toString()) }
-    var todoTitle by remember { mutableStateOf("") }
-    var todoColor by remember { mutableStateOf("") }
+
+//    var todoYear by remember { mutableStateOf(LocalDate.now().year.toString()) }
+//    var todoMonth by remember { mutableStateOf(LocalDate.now().monthValue.toString()) }
+//    var todoDay by remember { mutableStateOf(LocalDate.now().dayOfMonth.toString()) }
+//    var todoTitle by remember { mutableStateOf("") }
+//    var todoColor by remember { mutableStateOf("") }
 
     var dayString by remember { mutableStateOf("") }
     var todoList = remember { mutableStateListOf<RToDoResponse>() }
@@ -394,38 +399,38 @@ fun CalendarScreen(routeAction: RouteAction) {
         when (id) {
             "1" -> {
                 isVisibility = !isVisibility
-                todoColor = "1"
-//                vm::setTodoColor.invoke("1")
+//                todoColor = "1"
+                vm::setTodoColor.invoke(1)
                 Log.d("id", "id : ${id}")
             }
             "2" -> {
                 isVisibility = !isVisibility
-                todoColor = "2"
-//                vm::setTodoColor.invoke("2")
+//                todoColor = "2"
+                vm::setTodoColor.invoke(2)
                 Log.d("id", "id : ${id}")
             }
             "3" -> {
                 isVisibility = !isVisibility
-                todoColor = "3"
-//                vm::setTodoColor.invoke("3")
+//                todoColor = "3"
+                vm::setTodoColor.invoke(3)
                 Log.d("id", "id : ${id}")
             }
             "4" -> {
                 isVisibility = !isVisibility
-                todoColor = "4"
-//                vm::setTodoColor.invoke("4")
+//                todoColor = "4"
+                vm::setTodoColor.invoke(4)
                 Log.d("id", "id : ${id}")
             }
             "5" -> {
                 isVisibility = !isVisibility
-                todoColor = "5"
-//                vm::setTodoColor.invoke("5")
+//                todoColor = "5"
+                vm::setTodoColor.invoke(5)
                 Log.d("id", "id : ${id}")
             }
             "6" -> {
                 isVisibility = !isVisibility
-                todoColor = "6"
-//                vm::setTodoColor.invoke("6")
+//                todoColor = "6"
+                vm::setTodoColor.invoke(6)
                 Log.d("id", "id : ${id}")
             }
         }
@@ -738,8 +743,11 @@ fun CalendarScreen(routeAction: RouteAction) {
                                     .wrapContentHeight()
                                     .focusRequester(focusRequester),
                                 value = todoTitle,
-                                onValueChange = { todoTitle = it },
-                                textStyle = TextStyle(
+//                                onValueChange = { todoTitle = it },
+                                onValueChange = { text: String ->
+                                    vm::setTodoTitle.invoke(text)
+                                },
+                                textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
                                     fontSize = 13.sp,
                                     fontStyle = FontStyle.Normal,
                                     color = Color.Black,
@@ -752,29 +760,52 @@ fun CalendarScreen(routeAction: RouteAction) {
                                 ),
                                 keyboardActions = KeyboardActions(onDone = {
                                     scope.launch {
-                                        createTodo(
+                                        vm.createTodo(
                                             token,
-                                            todoYear,
-                                            todoMonth,
-                                            todoDay,
-                                            todoTitle,
-                                            todoColor
-                                        ) {
-                                            readTodo(
-                                                token,
-                                                year = todoYear,
-                                                month = todoMonth,
-                                                day = todoDay
-                                            ) {
-                                                todoList.clear()
-                                                for (i in it!!.data) {
-                                                    todoList.add(i)
-                                                }
-                                            }
-                                        }
-                                        keyboardController?.hide()
-                                        todoTitle = ""
+                                            CreateTodo(
+                                                todoYear,
+                                                todoMonth,
+                                                todoDay,
+                                                todoTitle,
+                                                todoColor
+                                            )
+                                        )
+                                        vm.setTodoTitle("")
                                         isVisibility = !isVisibility
+//                                        createTodo(
+//                                            token,
+//                                            todoYear,
+//                                            todoMonth,
+//                                            todoDay,
+//                                            todoTitle,
+//                                            todoColor
+//                                        ) {
+//                                            readTodo(
+//                                                token,
+//                                                year = todoYear,
+//                                                month = todoMonth,
+//                                                day = todoDay
+//                                            ) {
+//                                                todoList.clear()
+//                                                for (i in it!!.data) {
+//                                                    todoList.add(i)
+//                                                }
+//                                            }
+//                                        }
+//                                        keyboardController?.hide()
+//                                        todoTitle = ""
+//                                        vm.createTodo(
+//                                            token,
+//                                            CreateTodo(
+//                                                todoYear,
+//                                                todoMonth,
+//                                                todoDay,
+//                                                todoTitle,
+//                                                todoColor
+//                                            )
+//                                        )
+//                                        vm.setTodoTitle("")
+//                                        isVisibility = !isVisibility
                                     }
                                 })
                             )
@@ -998,13 +1029,13 @@ fun TodoItem(
                 done = true
                 checked = true
                 updateTodo(token,
-                    Todo.year.toString(),
-                    Todo.month.toString(),
-                    Todo.day.toString(),
+                    Todo.year,
+                    Todo.month,
+                    Todo.day,
                     Todo.title,
                     done,
                     Todo.description,
-                    Todo.color.toString(),
+                    Todo.color,
                     Todo.time,
                     Todo.id,
                     response = {
@@ -1039,13 +1070,13 @@ fun TodoItem(
                         scope.launch {
                             updateTodo(
                                 token,
-                                Todo.year.toString(),
-                                Todo.month.toString(),
-                                Todo.day.toString(),
+                                Todo.year,
+                                Todo.month,
+                                Todo.day,
                                 Todo.title,
                                 done,
                                 Todo.description,
-                                Todo.color.toString(),
+                                Todo.color,
                                 Todo.time,
                                 Todo.id
                             ) {
@@ -1437,21 +1468,21 @@ fun TodoUpdateBottomSheet(
                 .clickable {
                     scope.launch {
                         updateTodo(token,
-                            Todo?.year.toString(),
-                            Todo?.month.toString(),
-                            Todo?.day.toString(),
+                            Todo!!.year,
+                            Todo!!.month,
+                            Todo!!.day,
                             title,
                             Todo?.done!!,
                             description,
-                            color.toString(),
+                            color,
                             time,
                             Todo?.id.toString(),
                             response = {
                                 readTodo(
                                     token,
-                                    Todo?.year.toString(),
-                                    Todo?.month.toString(),
-                                    Todo?.day.toString()
+                                    Todo.year.toString(),
+                                    Todo.month.toString(),
+                                    Todo.day.toString()
                                 ) {
                                     todoList.clear()
                                     for (i in it!!.data) {

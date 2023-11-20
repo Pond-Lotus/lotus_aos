@@ -7,7 +7,7 @@ import retrofit2.http.Header
 
 interface DeleteAccountRequest {
     @DELETE("/account/withdrawal/")
-    fun requestDeleteTodo(
+    fun requestDeleteAccount(
         @Header("Authorization") token: String
     ): Call<DeleteAccountResponse>
 }
