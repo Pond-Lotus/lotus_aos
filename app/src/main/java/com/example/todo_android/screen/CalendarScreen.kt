@@ -1,4 +1,4 @@
-package com.example.todo_android.Screen
+package com.example.todo_android.screen
 
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog

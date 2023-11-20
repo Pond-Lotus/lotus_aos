@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Data.Category.UpdateCategory
-import com.example.todo_android.Screen.readCategory
 import com.example.todo_android.navigation.Action.RouteAction
 import com.example.todo_android.navigation.NAV_ROUTE
 import com.example.todo_android.request.CategoryRequest.UpdateCategoryRequest

@@ -1,37 +1,34 @@
-package com.example.todo_android.dataresource.todo
+package com.example.todo_android.dataresource.Todo
 
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
-import com.example.todo_android.request.TodoRequest.CreateTodoRequest
-import com.example.todo_android.request.TodoRequest.DeleteTodoRequest
-import com.example.todo_android.request.TodoRequest.ReadTodoRequest
-import com.example.todo_android.request.TodoRequest.UpdateTodoRequest
 import com.example.todo_android.response.TodoResponse.CreateTodoResponse
 import com.example.todo_android.response.TodoResponse.DeleteTodoResponse
 import com.example.todo_android.response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.response.TodoResponse.UpdateTodoResponse
+import com.example.todo_android.service.Todo.TodoService
 import retrofit2.Call
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class TodoRemoteDataResourceImpl(
-    private val createTodoService: CreateTodoRequest,
-    private val readTodoService: ReadTodoRequest,
-    private val updateTodoService: UpdateTodoRequest,
-    private val deleteTodoService: DeleteTodoRequest
+@Singleton
+class TodoRemoteDataResourceImpl @Inject constructor(
+    private val todoService: TodoService
 ): TodoRemoteDataResource {
 
     override suspend fun createTodo(token: String, createTodo: CreateTodo): Call<CreateTodoResponse> {
-        return createTodoService.requestCreateTodo(token, createTodo)
+        return todoService.requestCreateTodo(token, createTodo)
     }
 
     override suspend fun readTodo(token: String, year: Int, month: Int, day: Int): Call<ReadTodoResponse> {
-        return readTodoService.requestReadTodo(token, year, month, day)
+        return todoService.requestReadTodo(token, year, month, day)
     }
 
     override suspend fun updateTodo(token: String, id: String, updateTodo: UpdateTodo): Call<UpdateTodoResponse> {
-        return updateTodoService.requestUpdateTodo(token, id, updateTodo)
+        return todoService.requestUpdateTodo(token, id, updateTodo)
     }
 
     override suspend fun deleteTodo(token: String, id: String): Call<DeleteTodoResponse> {
-        return deleteTodoService.requestDeleteTodo(token, id)
+        return todoService.requestDeleteTodo(token, id)
     }
 }

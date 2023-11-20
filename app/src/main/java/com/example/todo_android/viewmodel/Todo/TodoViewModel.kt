@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
-import com.example.todo_android.repository.todo.TodoRepository
+import com.example.todo_android.repository.Todo.TodoRepository
 import com.example.todo_android.response.TodoResponse.ReadTodoResponse
 import com.example.todo_android.util.MyApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,12 +38,21 @@ class TodoViewModel @Inject constructor(
 
     val todoList = _todoList.asStateFlow()
 
+    // todoColor 변경
+    fun setTodoColor(color: String) {
+        _todoColor.value = color
+    }
+
+    // todoTitle 변경
+    fun inputTodoTitle(text: String){
+        _todoTitle.value = text
+    }
+
 
     // ViewModel이 가지고 있는 값을 변경하는 메소드
-    fun readTodo(token: String, todoYear: Int, todoMonth: Int, todoDay: Int) =
-        viewModelScope.launch {
-            repository.readTodo(token, todoYear, todoMonth, todoDay)
-        }
+    fun readTodo(token: String, todoYear: Int, todoMonth: Int, todoDay: Int) = viewModelScope.launch {
+        repository.readTodo(token, todoYear, todoMonth, todoDay)
+    }
 
     fun createTodo(token: String, createTodo: CreateTodo) = viewModelScope.launch {
         repository.createTodo(token, createTodo)
@@ -57,14 +66,5 @@ class TodoViewModel @Inject constructor(
         repository.deleteTodo(token, id)
     }
 
-    // todoColor 변경
-    fun setTodoColor(color: String) {
-        _todoColor.value = color
-    }
-
-    // todoTitle 변경
-    fun inputTodoTitle(text: String){
-        _todoTitle.value = text
-    }
 }
 
