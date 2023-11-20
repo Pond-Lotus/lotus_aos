@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
@@ -70,6 +71,7 @@ import com.example.todo_android.ui.theme.deleteBackground
 import com.example.todo_android.util.MyApplication
 import com.example.todo_android.util.rememberFirstVisibleMonthAfterScroll
 import com.example.todo_android.util.rememberFirstVisibleWeekAfterScroll
+import com.example.todo_android.viewmodel.Todo.TodoViewModel
 import com.kizitonwose.calendar.compose.*
 import com.kizitonwose.calendar.compose.weekcalendar.WeekCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
@@ -322,6 +324,14 @@ fun readCategory(
 @ExperimentalMaterial3Api
 @Composable
 fun CalendarScreen(routeAction: RouteAction) {
+//    val vm: TodoViewModel = viewModel()
+//    val todoYear = vm.todoYear.collectAsState()
+//    val todoMonth = vm.todoMonth.collectAsState()
+//    val todoDay = vm.todoDay.collectAsState()
+//    val todoTitle = vm.todoTitle.collectAsState()
+//    val todoColor = vm.todoColor.collectAsState()
+
+
     var isVisibility by remember { mutableStateOf(false) }
 
     var animateState = remember { mutableStateOf(true) }
@@ -385,31 +395,37 @@ fun CalendarScreen(routeAction: RouteAction) {
             "1" -> {
                 isVisibility = !isVisibility
                 todoColor = "1"
+//                vm::setTodoColor.invoke("1")
                 Log.d("id", "id : ${id}")
             }
             "2" -> {
                 isVisibility = !isVisibility
                 todoColor = "2"
+//                vm::setTodoColor.invoke("2")
                 Log.d("id", "id : ${id}")
             }
             "3" -> {
                 isVisibility = !isVisibility
                 todoColor = "3"
+//                vm::setTodoColor.invoke("3")
                 Log.d("id", "id : ${id}")
             }
             "4" -> {
                 isVisibility = !isVisibility
                 todoColor = "4"
+//                vm::setTodoColor.invoke("4")
                 Log.d("id", "id : ${id}")
             }
             "5" -> {
                 isVisibility = !isVisibility
                 todoColor = "5"
+//                vm::setTodoColor.invoke("5")
                 Log.d("id", "id : ${id}")
             }
             "6" -> {
                 isVisibility = !isVisibility
                 todoColor = "6"
+//                vm::setTodoColor.invoke("6")
                 Log.d("id", "id : ${id}")
             }
         }
