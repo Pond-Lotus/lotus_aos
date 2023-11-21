@@ -335,6 +335,7 @@ fun CalendarScreen(routeAction: RouteAction) {
     val todoDay by vm.todoDay.collectAsState()
     val todoTitle by vm.todoTitle.collectAsState()
     val todoColor by vm.todoColor.collectAsState()
+    val todooList by vm.todoList.collectAsState()
 
 
     var isVisibility by remember { mutableStateOf(false) }
