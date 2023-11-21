@@ -1,4 +1,4 @@
-package com.example.todo_android.di.DataSource
+package com.example.todo_android.di
 
 import com.example.todo_android.dataresource.Todo.TodoRemoteDataResource
 import com.example.todo_android.dataresource.Todo.TodoRemoteDataResourceImpl

@@ -4,7 +4,10 @@ import com.google.gson.annotations.SerializedName
 
 data class UpdateTodoResponse(
     @SerializedName("resultCode")
-    val resultCode: String
+    val resultCode: Int,
+    @SerializedName("data")
+    val data: List<UTodoResponse>
+
 )
 
 // 응답값으로 data의 디테일한 값들

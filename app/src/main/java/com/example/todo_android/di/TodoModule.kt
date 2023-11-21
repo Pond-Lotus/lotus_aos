@@ -1,4 +1,4 @@
-package com.example.todo_android.di.Todo
+package com.example.todo_android.di
 
 import com.example.todo_android.repository.Todo.TodoRepository
 import com.example.todo_android.repository.Todo.TodoRepositoryImpl

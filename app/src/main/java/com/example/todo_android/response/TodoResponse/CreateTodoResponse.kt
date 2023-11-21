@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 data class CreateTodoResponse(
     @SerializedName("resultCode")
-    val resultCode: String,
+    val resultCode: Int,
     @SerializedName("data")
-    val data: CTodoResponse,
+    val data: CTodoResponse
 )
 
 
@@ -14,14 +14,12 @@ data class CreateTodoResponse(
 data class CTodoResponse(
     val id: String,
     val writer: String,
-    val year: String,
-    val month: String,
-    val day: String,
+    val year: Int,
+    val month: Int,
+    val day: Int,
     val title: String,
     val description: String,
     val done: Boolean,
     val time: String,
-    val color: Int,
-
-
+    val color: Int
 )

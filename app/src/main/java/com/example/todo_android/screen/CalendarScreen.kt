@@ -50,11 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
-
 import com.example.todo_android.R
 import com.example.todo_android.composable.FloatingStateType
 import com.example.todo_android.composable.MonthWeekToggleSwitch
@@ -67,7 +64,6 @@ import com.example.todo_android.request.TodoRequest.ReadTodoRequest
 import com.example.todo_android.request.TodoRequest.UpdateTodoRequest
 import com.example.todo_android.response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.response.TodoResponse.*
-
 import com.example.todo_android.ui.theme.deleteBackground
 import com.example.todo_android.util.MyApplication
 import com.example.todo_android.util.rememberFirstVisibleMonthAfterScroll
@@ -77,7 +73,6 @@ import com.kizitonwose.calendar.compose.*
 import com.kizitonwose.calendar.compose.weekcalendar.WeekCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.*
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*
@@ -220,7 +215,6 @@ fun deleteTodo(
 
             Log.d("deleteTodo", "token : " + MyApplication.prefs.getData("token", ""))
             Log.d("deleteTodo", "resultCode : " + deleteTodoResponse?.resultCode)
-            Log.d("deleteTodo", "data : " + deleteTodoResponse?.data)
         }
     })
 }
@@ -335,7 +329,12 @@ fun CalendarScreen(routeAction: RouteAction) {
     val todoDay by vm.todoDay.collectAsState()
     val todoTitle by vm.todoTitle.collectAsState()
     val todoColor by vm.todoColor.collectAsState()
-    val todooList by vm.todoList.collectAsState()
+
+    val todoReadList by vm.todoReadList.collectAsState()
+    val todoCreateList by vm.todoCreateList.collectAsState()
+    val todoUpdateList by vm.todoUpdateList.collectAsState()
+    val todoDeleteList by vm.todoDeleteList.collectAsState()
+
 
 
     var isVisibility by remember { mutableStateOf(false) }
@@ -754,7 +753,9 @@ fun CalendarScreen(routeAction: RouteAction) {
                                                 todoTitle,
                                                 todoColor
                                             )
-                                        )
+                                        ).let {
+                                            vm.readTodo(token, todoYear, todoMonth, todoDay)
+                                        }
                                         vm.setTodoTitle("")
                                         isVisibility = !isVisibility
                                     }
