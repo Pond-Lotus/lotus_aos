@@ -12,7 +12,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TodoRepositoryImpl @Inject constructor (
+class TodoRepositoryImpl @Inject constructor(
     private val TodoRemoteDataResource: TodoRemoteDataResource
 ) : TodoRepository {
 
@@ -21,14 +21,14 @@ class TodoRepositoryImpl @Inject constructor (
         createTodo: CreateTodo
     ): APIResponse<CreateTodoResponse> {
 
-        // 회원가입 요청이 성공하면 Success에 데이터를 실어서 ,실패하면 Error에 message 리턴
-        val response = TodoRemoteDataResource.createTodo(token, createTodo)
-        if (response.execute().isSuccessful) {
-            response.execute().body()?.let { result ->
+        // todo 생성 요청이 성공하면 Success에 데이터를 실어서 ,실패하면 Error에 message 리턴
+        val response = TodoRemoteDataResource.createTodo(token, createTodo).clone().execute()
+        if (response.isSuccessful) {
+            response.body()?.let { result ->
                 return APIResponse.Success(result)
             }
         }
-        return APIResponse.Error(response.execute().message())
+        return APIResponse.Error(response.message())
     }
 
     override suspend fun readTodo(
@@ -38,14 +38,14 @@ class TodoRepositoryImpl @Inject constructor (
         day: Int
     ): APIResponse<ReadTodoResponse> {
 
-        // 회원가입 요청이 성공하면 Success에 데이터를 실어서 ,실패하면 Error에 message 리턴
-        val response = TodoRemoteDataResource.readTodo(token, year, month, day)
-        if (response.execute().isSuccessful) {
-            response.execute().body()?.let { result ->
+        // todo 조회 요청이 성공하면 Success에 데이터를 실어서 ,실패하면 Error에 message 리턴
+        val response = TodoRemoteDataResource.readTodo(token, year, month, day).clone().execute()
+        if (response.isSuccessful) {
+            response.body()?.let { result ->
                 return APIResponse.Success(result)
             }
         }
-        return APIResponse.Error(response.execute().message())
+        return APIResponse.Error(response.message())
     }
 
     override suspend fun updateTodo(
@@ -54,25 +54,25 @@ class TodoRepositoryImpl @Inject constructor (
         updateTodo: UpdateTodo
     ): APIResponse<UpdateTodoResponse> {
 
-        // 회원가입 요청이 성공하면 Success에 데이터를 실어서 ,실패하면 Error에 message 리턴
-        val response = TodoRemoteDataResource.updateTodo(token, id, updateTodo)
-        if (response.execute().isSuccessful) {
-            response.execute().body()?.let { result ->
+        // todo 수정 요청이 성공하면 Success에 데이터를 실어서 ,실패하면 Error에 message 리턴
+        val response = TodoRemoteDataResource.updateTodo(token, id, updateTodo).clone().execute()
+        if (response.isSuccessful) {
+            response.body()?.let { result ->
                 return APIResponse.Success(result)
             }
         }
-        return APIResponse.Error(response.execute().message())
+        return APIResponse.Error(response.message())
     }
 
     override suspend fun deleteTodo(token: String, id: String): APIResponse<DeleteTodoResponse> {
 
-        // 회원가입 요청이 성공하면 Success에 데이터를 실어서 ,실패하면 Error에 message 리턴
-        val response = TodoRemoteDataResource.deleteTodo(token, id)
-        if (response.execute().isSuccessful) {
-            response.execute().body()?.let { result ->
+        // todo 삭제 요청이 성공하면 Success에 데이터를 실어서 ,실패하면 Error에 message 리턴
+        val response = TodoRemoteDataResource.deleteTodo(token, id).clone().execute()
+        if (response.isSuccessful) {
+            response.body()?.let { result ->
                 return APIResponse.Success(result)
             }
         }
-        return APIResponse.Error(response.execute().message())
+        return APIResponse.Error(response.message())
     }
 }

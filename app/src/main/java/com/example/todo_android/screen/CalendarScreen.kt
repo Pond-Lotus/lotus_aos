@@ -348,15 +348,6 @@ fun CalendarScreen(routeAction: RouteAction) {
         Color(0xffFFDAB9)
     }
 
-
-
-
-//    var todoYear by remember { mutableStateOf(LocalDate.now().year.toString()) }
-//    var todoMonth by remember { mutableStateOf(LocalDate.now().monthValue.toString()) }
-//    var todoDay by remember { mutableStateOf(LocalDate.now().dayOfMonth.toString()) }
-//    var todoTitle by remember { mutableStateOf("") }
-//    var todoColor by remember { mutableStateOf("") }
-
     var dayString by remember { mutableStateOf("") }
     var todoList = remember { mutableStateListOf<RToDoResponse>() }
 
@@ -399,37 +390,31 @@ fun CalendarScreen(routeAction: RouteAction) {
         when (id) {
             "1" -> {
                 isVisibility = !isVisibility
-//                todoColor = "1"
                 vm::setTodoColor.invoke(1)
                 Log.d("id", "id : ${id}")
             }
             "2" -> {
                 isVisibility = !isVisibility
-//                todoColor = "2"
                 vm::setTodoColor.invoke(2)
                 Log.d("id", "id : ${id}")
             }
             "3" -> {
                 isVisibility = !isVisibility
-//                todoColor = "3"
                 vm::setTodoColor.invoke(3)
                 Log.d("id", "id : ${id}")
             }
             "4" -> {
                 isVisibility = !isVisibility
-//                todoColor = "4"
                 vm::setTodoColor.invoke(4)
                 Log.d("id", "id : ${id}")
             }
             "5" -> {
                 isVisibility = !isVisibility
-//                todoColor = "5"
                 vm::setTodoColor.invoke(5)
                 Log.d("id", "id : ${id}")
             }
             "6" -> {
                 isVisibility = !isVisibility
-//                todoColor = "6"
                 vm::setTodoColor.invoke(6)
                 Log.d("id", "id : ${id}")
             }
@@ -743,7 +728,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                                     .wrapContentHeight()
                                     .focusRequester(focusRequester),
                                 value = todoTitle,
-//                                onValueChange = { todoTitle = it },
                                 onValueChange = { text: String ->
                                     vm::setTodoTitle.invoke(text)
                                 },
@@ -772,40 +756,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                                         )
                                         vm.setTodoTitle("")
                                         isVisibility = !isVisibility
-//                                        createTodo(
-//                                            token,
-//                                            todoYear,
-//                                            todoMonth,
-//                                            todoDay,
-//                                            todoTitle,
-//                                            todoColor
-//                                        ) {
-//                                            readTodo(
-//                                                token,
-//                                                year = todoYear,
-//                                                month = todoMonth,
-//                                                day = todoDay
-//                                            ) {
-//                                                todoList.clear()
-//                                                for (i in it!!.data) {
-//                                                    todoList.add(i)
-//                                                }
-//                                            }
-//                                        }
-//                                        keyboardController?.hide()
-//                                        todoTitle = ""
-//                                        vm.createTodo(
-//                                            token,
-//                                            CreateTodo(
-//                                                todoYear,
-//                                                todoMonth,
-//                                                todoDay,
-//                                                todoTitle,
-//                                                todoColor
-//                                            )
-//                                        )
-//                                        vm.setTodoTitle("")
-//                                        isVisibility = !isVisibility
                                     }
                                 })
                             )
