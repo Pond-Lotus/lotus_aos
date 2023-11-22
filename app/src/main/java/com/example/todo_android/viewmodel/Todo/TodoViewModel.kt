@@ -1,5 +1,6 @@
 package com.example.todo_android.viewmodel.Todo
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todo_android.Data.Todo.CreateTodo
@@ -47,7 +48,6 @@ class TodoViewModel @Inject constructor(
     val todoCreateList = _todoCreateList.asStateFlow()
     val todoUpdateList = _todoUpdateList.asStateFlow()
     val todoDeleteList = _todoDeleteList.asStateFlow()
-
 
     fun createTodo(token: String, createTodo: CreateTodo) {
         viewModelScope.launch(Dispatchers.IO) {
