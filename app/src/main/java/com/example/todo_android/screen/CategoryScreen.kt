@@ -39,13 +39,20 @@ fun CategoryScreen(routeAction: RouteAction) {
             readCategory(response = { response ->
                 response?.data?.let { data ->
                     categoryList.clear()
-                    data.forEach { (key, value) ->
+                    data.forEach { key, value ->
                         categoryList.add(
                             ReadCategoryResponse(
                                 response.resultCode, mapOf(key to value)
                             )
                         )
                     }
+//                    data.forEach { (key, value) ->
+//                        categoryList.add(
+//                            ReadCategoryResponse(
+//                                response.resultCode, mapOf(key to value)
+//                            )
+//                        )
+//                    }
                 }
             })
         }
@@ -115,12 +122,14 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
         colors = CardDefaults.cardColors(Color.Transparent)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 16.dp, bottom = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(modifier = Modifier.size(23.dp),
+            Button(
+                modifier = Modifier.size(23.dp),
                 onClick = {},
                 content = {},
                 colors = ButtonDefaults.buttonColors(colors)
@@ -141,15 +150,20 @@ fun CategoryItem(Category: ReadCategoryResponse, routeAction: RouteAction) {
                 modifier = Modifier
                     .size(21.dp)
                     .clickable {
-                    routeAction.customNavto(
-                        NAV_ROUTE.CHANGECATEGORY,
-                        Category.data.values.first().toString(),
-                        Category.data.keys.first().toString(),
-                        colors.toArgb()
-                    )
-                },
+                        routeAction.customNavto(
+                            NAV_ROUTE.CHANGECATEGORY,
+                            Category.data.values
+                                .first()
+                                .toString(),
+                            Category.data.keys
+                                .first()
+                                .toString(),
+                            colors.toArgb()
+                        )
+                    },
                 painter = painterResource(id = R.drawable.selectgroup),
-                contentDescription = null)
+                contentDescription = null
+            )
         }
     }
 }

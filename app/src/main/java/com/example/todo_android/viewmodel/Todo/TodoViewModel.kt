@@ -7,6 +7,7 @@ import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.common.APIResponse
 import com.example.todo_android.repository.Todo.TodoRepository
+import com.example.todo_android.response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.response.TodoResponse.*
 import com.example.todo_android.util.MyApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,31 +31,26 @@ class TodoViewModel @Inject constructor(
     private val _todoDay = MutableStateFlow(LocalDate.now().dayOfMonth)
     private val _todoTitle = MutableStateFlow("")
     private val _todoColor = MutableStateFlow(0)
+    private val _todoList = MutableStateFlow<List<TodoData>>(emptyList())
 
     val todoYear = _todoYear.asStateFlow()
-
     val todoMonth = _todoMonth.asStateFlow()
     val todoDay = _todoDay.asStateFlow()
     val todoTitle = _todoTitle.asStateFlow()
     val todoColor = _todoColor.asStateFlow()
+    val todoList = _todoList.asStateFlow()
 
-
-    private val _todoReadList = MutableStateFlow<List<RToDoResponse>>(emptyList())
-    private val _todoCreateList = MutableStateFlow<List<CTodoResponse>>(emptyList())
-    private val _todoUpdateList = MutableStateFlow<List<UTodoResponse>>(emptyList())
-    private val _todoDeleteList = MutableStateFlow<List<DeleteTodoResponse>>(emptyList())
-
-    val todoReadList = _todoReadList.asStateFlow()
-    val todoCreateList = _todoCreateList.asStateFlow()
-    val todoUpdateList = _todoUpdateList.asStateFlow()
-    val todoDeleteList = _todoDeleteList.asStateFlow()
 
     fun createTodo(token: String, createTodo: CreateTodo) {
         viewModelScope.launch(Dispatchers.IO) {
             val value = repository.createTodo(token, createTodo)
             when (value) {
                 is APIResponse.Success -> {
-                    _todoCreateList.value = listOf(value.data!!.data)
+                    val todoState = _todoList.value
+                    val items = todoState.toMutableList().apply {
+                        add(value.data!!.data)
+                    }.toList()
+                    _todoList.value = items
                 }
                 is APIResponse.Error -> {
 
@@ -71,7 +67,7 @@ class TodoViewModel @Inject constructor(
             val value = repository.readTodo(token, todoYear, todoMonth, todoDay)
             when(value){
                 is APIResponse.Success -> {
-                    _todoReadList.value = value.data!!.data
+                    _todoList.emit(value.data!!.data)
                 }
                 is APIResponse.Error -> {
 
@@ -86,13 +82,39 @@ class TodoViewModel @Inject constructor(
 
     fun updateTodo(token: String, id: String, updateTodo: UpdateTodo) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.updateTodo(token, id, updateTodo)
+            val value = repository.updateTodo(token, id, updateTodo)
+            when(value){
+                is APIResponse.Success -> {
+                    _todoList.emit(value.data!!.data)
+                }
+                is APIResponse.Error -> {
+
+                }
+                is APIResponse.Loading -> {
+
+                }
+            }
         }
     }
 
-    fun deleteTodo(token: String, id: String) {
+    fun deleteTodo(token: String, todo: TodoData) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.deleteTodo(token, id)
+            val value = repository.deleteTodo(token, todo.id!!)
+            when(value){
+                is APIResponse.Success -> {
+                    val todoState = _todoList.value
+                    val items = todoState.toMutableList().apply {
+                        remove(todo)
+                    }.toList()
+                    _todoList.value = items
+                }
+                is APIResponse.Error -> {
+
+                }
+                is APIResponse.Loading -> {
+
+                }
+            }
         }
     }
 

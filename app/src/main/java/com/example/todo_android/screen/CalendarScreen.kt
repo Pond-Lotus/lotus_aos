@@ -1,10 +1,7 @@
 package com.example.todo_android.screen
 
 import android.annotation.SuppressLint
-import android.app.TimePickerDialog
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -16,15 +13,13 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.DismissDirection
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -35,7 +30,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
@@ -329,12 +323,7 @@ fun CalendarScreen(routeAction: RouteAction) {
     val todoDay by vm.todoDay.collectAsState()
     val todoTitle by vm.todoTitle.collectAsState()
     val todoColor by vm.todoColor.collectAsState()
-
-    val todoReadList by vm.todoReadList.collectAsState()
-    val todoCreateList by vm.todoCreateList.collectAsState()
-    val todoUpdateList by vm.todoUpdateList.collectAsState()
-    val todoDeleteList by vm.todoDeleteList.collectAsState()
-
+    val todoList by vm.todoList.collectAsState()
 
 
     var isVisibility by remember { mutableStateOf(false) }
@@ -349,7 +338,6 @@ fun CalendarScreen(routeAction: RouteAction) {
     }
 
     var dayString by remember { mutableStateOf("") }
-    var todoList = remember { mutableStateListOf<RToDoResponse>() }
 
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -358,7 +346,7 @@ fun CalendarScreen(routeAction: RouteAction) {
     val bottomScaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
 
-    var selectedTodoListItem by remember { mutableStateOf<RToDoResponse?>(null) }
+//    var selectedTodoListItem by remember { mutableStateOf<RToDoResponse?>(null) }
 
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
@@ -439,17 +427,7 @@ fun CalendarScreen(routeAction: RouteAction) {
         }
 
         scope.launch {
-            readTodo(
-                token,
-                LocalDate.now().year.toString(),
-                LocalDate.now().monthValue.toString(),
-                LocalDate.now().dayOfMonth.toString()
-            ) {
-                todoList.clear()
-                for (i in it!!.data) {
-                    todoList.add(i)
-                }
-            }
+            vm.readTodo(token, todoYear, todoMonth, todoDay)
         }
     })
 
@@ -479,17 +457,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             else -> null.toString()
         }
         scope.launch {
-            readTodo(
-                token,
-                selectedDate.year.toString(),
-                selectedDate.monthValue.toString(),
-                selectedDate.dayOfMonth.toString()
-            ) {
-                todoList.clear()
-                for (i in it!!.data) {
-                    todoList.add(i)
-                }
-            }
+            vm.readTodo(token, todoYear, todoMonth, todoDay)
         }
     }
 
@@ -517,17 +485,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             else -> null.toString()
         }
         scope.launch {
-            readTodo(
-                token,
-                selectedDate.year.toString(),
-                selectedDate.monthValue.toString(),
-                selectedDate.dayOfMonth.toString()
-            ) {
-                todoList.clear()
-                for (i in it!!.data) {
-                    todoList.add(i)
-                }
-            }
+            vm.readTodo(token, todoYear, todoMonth, todoDay)
         }
     }
 
@@ -593,199 +551,194 @@ fun CalendarScreen(routeAction: RouteAction) {
             topStart = 20.dp, topEnd = 20.dp
         ),
         sheetContent = {
-            selectedTodoListItem?.let {
-                TodoUpdateBottomSheet(
-                    scope,
-                    bottomScaffoldState,
-                    it,
-                    todoList
-                )
-            }
+
         }
     ) {
-        Column(
+
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xfff0f0f0))
+                .background(Color(0xfff0f0f0)),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            state = rememberLazyListState()
         ) {
-            Column(
-                modifier = Modifier
-                    .shadow(
-                        shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
-                        elevation = 7.dp,
-                        spotColor = Color(0xffB0B0B0),
-                        ambientColor = Color(0xffB0B0B0)
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                CalendarTitle(yearMonth = selectedDate.yearMonth)
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .shadow(
+                                shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp),
+                                elevation = 7.dp,
+                                spotColor = Color(0xffB0B0B0),
+                                ambientColor = Color(0xffB0B0B0)
+                            ),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        CalendarTitle(yearMonth = selectedDate.yearMonth)
 
-                CalendarHeader(daysOfWeek = daysOfWeek)
+                        CalendarHeader(daysOfWeek = daysOfWeek)
 
-                CalendarContent(
-                    selectedDate = selectedDate,
-                    weekState = weekState,
-                    monthState = monthState,
-                    isMonthMode = animateState.value,
-                    onSelectedDate = {
+                        CalendarContent(
+                            selectedDate = selectedDate,
+                            weekState = weekState,
+                            monthState = monthState,
+                            isMonthMode = animateState.value,
+                            onSelectedDate = {
 
-                        selectedDate = it
+                                selectedDate = it
 
-                        val dayOfWeek =
-                            LocalDate.of(it.year, it.monthValue, it.dayOfMonth).dayOfWeek
+                                val dayOfWeek =
+                                    LocalDate.of(it.year, it.monthValue, it.dayOfMonth).dayOfWeek
 
-                        dayString = when (dayOfWeek.value) {
-                            1 -> "월요일"
-                            2 -> "화요일"
-                            3 -> "수요일"
-                            4 -> "목요일"
-                            5 -> "금요일"
-                            6 -> "토요일"
-                            7 -> "일요일"
-                            else -> null.toString()
-                        }
-                        scope.launch {
-                            readTodo(
-                                token,
-                                it.year.toString(),
-                                it.monthValue.toString(),
-                                it.dayOfMonth.toString()
-                            ) {
-                                todoList.clear()
-                                for (i in it!!.data) {
-                                    todoList.add(i)
+                                dayString = when (dayOfWeek.value) {
+                                    1 -> "월요일"
+                                    2 -> "화요일"
+                                    3 -> "수요일"
+                                    4 -> "목요일"
+                                    5 -> "금요일"
+                                    6 -> "토요일"
+                                    7 -> "일요일"
+                                    else -> null.toString()
                                 }
+                                scope.launch {
+                                    vm.readTodo(token, it.year, it.monthValue, it.dayOfMonth)
+                                }
+                            }
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 21.dp, end = 21.dp, top = 30.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (
+                                selectedDate.dayOfMonth.toString().length == 1
+                            ) {
+                                "0${selectedDate.dayOfMonth}"
+                            } else {
+                                "${selectedDate.dayOfMonth}"
+                            },
+                            fontSize = 26.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(end = 6.dp)
+                        )
+
+                        Text(
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            lineHeight = 18.sp,
+                            color = Color(0xff9E9E9E),
+                            text = dayString
+                        )
+
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 6.dp, top = 1.dp),
+                            color = Color(0xffdddbdb)
+                        )
+                    }
+                }
+            }
+
+            TodoItem(
+                vm = vm,
+                token = token,
+                todo = todoList,
+                scope = scope
+            )
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 21.dp, end = 21.dp)
+                ) {
+                    if (isVisibility) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(45.dp),
+                            colors = CardDefaults.cardColors(Color.White),
+                            shape = RoundedCornerShape(8.dp),
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(
+                                    start = 12.dp,
+                                    top = 13.dp,
+                                    bottom = 13.dp
+                                ),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.blankcheckbox),
+                                    contentDescription = null
+                                )
+
+                                BasicTextField(
+                                    modifier = Modifier
+                                        .wrapContentWidth()
+                                        .wrapContentHeight()
+                                        .padding(start = 16.dp)
+                                        .focusRequester(focusRequester)
+                                        .imePadding(),
+                                    value = todoTitle,
+                                    onValueChange = { text: String ->
+                                        vm::setTodoTitle.invoke(text)
+                                    },
+                                    textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
+                                        fontSize = 13.sp,
+                                        fontStyle = FontStyle.Normal,
+                                        color = Color.Black,
+                                        lineHeight = 31.sp
+                                    ),
+                                    singleLine = true,
+                                    maxLines = 1,
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Text,
+                                        imeAction = ImeAction.Done
+                                    ),
+                                    keyboardActions = KeyboardActions(onDone = {
+                                        scope.launch {
+                                            vm.createTodo(
+                                                token,
+                                                CreateTodo(
+                                                    todoYear,
+                                                    todoMonth,
+                                                    todoDay,
+                                                    todoTitle,
+                                                    todoColor
+                                                )
+                                            ).let {
+                                                vm.readTodo(token, todoYear, todoMonth, todoDay)
+                                            }
+                                            vm.setTodoTitle("")
+                                            isVisibility = !isVisibility
+                                        }
+                                    })
+                                )
                             }
                         }
                     }
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 21.dp, end = 21.dp, top = 30.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (
-                        selectedDate.dayOfMonth.toString().length == 1
-                    ) {
-                        "0${selectedDate.dayOfMonth}"
-                    } else {
-                        "${selectedDate.dayOfMonth}"
-                    },
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(end = 6.dp)
-                )
-
-                Text(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    lineHeight = 18.sp,
-                    color = Color(0xff9E9E9E),
-                    text = dayString
-                )
-
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 6.dp, top = 1.dp),
-                    color = Color(0xffdddbdb)
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 15.dp, start = 21.dp, end = 21.dp)
-            ) {
-                if (isVisibility) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(45.dp),
-                        colors = CardDefaults.cardColors(Color.White),
-                        shape = RoundedCornerShape(8.dp),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(start = 12.dp, top = 13.dp, bottom = 13.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.blankcheckbox),
-                                contentDescription = null
-                            )
-
-                            BasicTextField(
-                                modifier = Modifier
-                                    .padding(start = 16.dp)
-                                    .wrapContentWidth()
-                                    .wrapContentHeight()
-                                    .focusRequester(focusRequester),
-                                value = todoTitle,
-                                onValueChange = { text: String ->
-                                    vm::setTodoTitle.invoke(text)
-                                },
-                                textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
-                                    fontSize = 13.sp,
-                                    fontStyle = FontStyle.Normal,
-                                    color = Color.Black,
-                                    lineHeight = 31.sp
-                                ),
-                                singleLine = true,
-                                maxLines = 1,
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
-                                ),
-                                keyboardActions = KeyboardActions(onDone = {
-                                    scope.launch {
-                                        vm.createTodo(
-                                            token,
-                                            CreateTodo(
-                                                todoYear,
-                                                todoMonth,
-                                                todoDay,
-                                                todoTitle,
-                                                todoColor
-                                            )
-                                        ).let {
-                                            vm.readTodo(token, todoYear, todoMonth, todoDay)
-                                        }
-                                        vm.setTodoTitle("")
-                                        isVisibility = !isVisibility
-                                    }
-                                })
-                            )
+                    if (todoList.isEmpty() && !isVisibility) {
+                        Row {
+                            BlankTodoItem()
                         }
                     }
                 }
-
-                if (todoList.isEmpty() && !isVisibility) {
-                    Row {
-                        BlankTodoItem()
-                    }
-
-                }
-
-                TodoItemList(
-                    Todo = todoList,
-                    todoList = todoList,
-                    onTodoItemClick = {
-                        selectedTodoListItem = it
-                        scope.launch {
-                            bottomScaffoldState.bottomSheetState.expand()
-                        }
-                    }
-                )
             }
         }
     }
 }
+
 
 @Composable
 fun AddTodoFloatingButton(
@@ -881,7 +834,6 @@ fun FloatingActionButtonMenus(
 ) {
     Surface(
         modifier = Modifier
-//            .offset(y = -110.dp)
             .width(155.dp)
             .height(110.dp)
             .padding(bottom = 10.dp)
@@ -958,107 +910,6 @@ fun FloatingActionButtonMenus(
     }
 }
 
-@ExperimentalComposeUiApi
-@ExperimentalMaterial3Api
-@ExperimentalMaterialApi
-@Composable
-fun TodoItem(
-    Todo: RToDoResponse,
-    onTodoItemClick: (RToDoResponse) -> Unit,
-    onCheckedUpdateTodo: () -> Unit,
-//    onUnCheckedUpdateTodo: () -> Unit
-) {
-    var checked by rememberSaveable { mutableStateOf(Todo.done) }
-    val token = "Token ${MyApplication.prefs.getData("token", "")}"
-    var done by remember { mutableStateOf(false) }
-    var scope = rememberCoroutineScope()
-    val swipeableState = rememberSwipeableState(initialValue = 0)
-
-    LaunchedEffect(key1 = checked, block = {
-        scope.launch {
-            done = Todo.done
-            if (checked) {
-                done = true
-                checked = true
-                updateTodo(token,
-                    Todo.year,
-                    Todo.month,
-                    Todo.day,
-                    Todo.title,
-                    done,
-                    Todo.description,
-                    Todo.color,
-                    Todo.time,
-                    Todo.id,
-                    response = {
-                        onCheckedUpdateTodo()
-                    })
-            }
-        }
-    })
-
-    Card(colors = CardDefaults.cardColors(Color.White),
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(45.dp)
-            .clickable {
-                onTodoItemClick(Todo)
-            }) {
-        Row(
-            modifier = Modifier.padding(
-                start = 14.dp, top = 13.dp, bottom = 13.dp
-            ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Image(painterResource(getCheckboxImageResource(checked, Todo.color)),
-                contentDescription = "custom checkbox",
-                modifier = Modifier
-                    .size(20.dp)
-                    .clickable {
-                        checked = !checked;
-                        done = checked;
-                        scope.launch {
-                            updateTodo(
-                                token,
-                                Todo.year,
-                                Todo.month,
-                                Todo.day,
-                                Todo.title,
-                                done,
-                                Todo.description,
-                                Todo.color,
-                                Todo.time,
-                                Todo.id
-                            ) {
-                                onCheckedUpdateTodo()
-//                                when (checked) {
-//                                    true -> onCheckedUpdateTodo();
-//                                    false -> onUnCheckedUpdateTodo();
-//                                }
-                            }
-                        }
-
-                    })
-
-            Text(
-                modifier = Modifier
-                    .padding(start = 6.dp),
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    )
-                ),
-                text = Todo.title,
-                fontSize = 15.sp,
-                fontStyle = FontStyle.Normal,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
-
 @Composable
 fun getCheckboxImageResource(checked: Boolean, color: Int): Int {
     return if (!checked) {
@@ -1072,148 +923,6 @@ fun getCheckboxImageResource(checked: Boolean, color: Int): Int {
             5 -> R.drawable.pinkcheckbox;
             6 -> R.drawable.purplecheckbox;
             else -> R.drawable.defaultcheckbox
-        }
-    }
-}
-
-@SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
-@RequiresApi(Build.VERSION_CODES.N)
-@ExperimentalFoundationApi
-@ExperimentalComposeUiApi
-@ExperimentalMaterialApi
-@ExperimentalMaterial3Api
-@Composable
-fun TodoItemList(
-    Todo: List<RToDoResponse>,
-    todoList: MutableList<RToDoResponse>,
-    onTodoItemClick: (RToDoResponse) -> Unit,
-) {
-
-    val token = "Token ${MyApplication.prefs.getData("token", "")}"
-
-    var categoryName by remember { mutableStateOf<ReadCategoryResponse?>(null) }
-
-    var scope = rememberCoroutineScope()
-    // 카테고리를 요청하는 함수를 호출하고, 응답을 categoryResponse에 저장합니다.
-
-    LaunchedEffect(key1 = Unit, block = {
-        scope.launch {
-            readCategory(response = {
-                categoryName = it
-            })
-        }
-    })
-
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-
-        val grouped = Todo.groupBy { it.color }
-        var rowIndex = 0;
-
-        grouped.forEach { (header, items) ->
-
-            stickyHeader {
-                Surface(
-                    modifier = Modifier
-                        .fillParentMaxWidth(),
-                    color = Color(0xfff0f0f0)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                top = if (rowIndex++ > 0) {
-                                    15.dp
-                                } else {
-                                    0.dp
-                                }
-                            ),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-
-                        Box(
-                            modifier = Modifier
-                                .size(9.dp)
-                                .clip(shape = CircleShape)
-                                .background(
-                                    color = when (header) {
-                                        1 -> Color(0xffFFB4B4)
-                                        2 -> Color(0xffFFDCA8)
-                                        3 -> Color(0xffB1E0CF)
-                                        4 -> Color(0xffB7D7F5)
-                                        5 -> Color(0xffFFB8EB)
-                                        6 -> Color(0xffB6B1EC)
-                                        else -> Color.Black
-                                    }
-                                )
-                        )
-
-                        Text(
-                            modifier = Modifier.padding(start = 4.dp),
-                            text = categoryName?.data?.get(header.toString()) ?: "",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            lineHeight = 17.sp
-                        )
-                    }
-                }
-            }
-
-            itemsIndexed(items = items, key = { index, Todo -> Todo.id }) { index, item ->
-                val dismissState = androidx.compose.material.rememberDismissState()
-                val dismissDirection = dismissState.dismissDirection
-                val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
-                if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
-                    scope.launch {
-                        deleteTodo(token, item.id, response = {
-                            todoList.remove(item)
-                            readTodo(
-                                token,
-                                year = item.year.toString(),
-                                month = item.month.toString(),
-                                day = item.day.toString()
-                            ) {
-                                todoList.clear()
-                                for (i in it!!.data) {
-                                    todoList.add(i)
-                                }
-                            }
-                        })
-                    }
-                }
-                androidx.compose.material.SwipeToDismiss(state = dismissState,
-                    background = { DeleteBackground() },
-                    directions = setOf(DismissDirection.EndToStart),
-                    dismissContent = {
-
-                        Log.d("list", todoList.toList().toString())
-
-
-                        TodoItem(
-                            Todo = item,
-                            onTodoItemClick = { onTodoItemClick(it) },
-                            onCheckedUpdateTodo = {
-                                scope.launch {
-                                    todoList.sortBy { it.done }
-                                }
-                            }
-//                            onCheckedUpdateTodo = {
-//                                scope.launch {
-//                                    todoList.removeAll { it.id == item.id }
-//                                    todoList.add(item)
-//
-//                                }
-//                            },
-//                            onUnCheckedUpdateTodo = {
-//                                scope.launch {
-//                                    todoList.removeAll { it.id == item.id }
-//                                }
-//                            }
-                        )
-                    },
-                    dismissThresholds = {
-                        androidx.compose.material.FractionalThreshold(fraction = 0.2f)
-                    })
-            }
         }
     }
 }
@@ -1233,448 +942,448 @@ fun DeleteBackground() {
     }
 }
 
-@ExperimentalComposeUiApi
-@SuppressLint("NewApi")
-@ExperimentalMaterialApi
-@ExperimentalMaterial3Api
-@Composable
-fun TodoUpdateBottomSheet(
-    scope: CoroutineScope,
-    bottomSheetScaffoldState: androidx.compose.material.BottomSheetScaffoldState,
-    Todo: RToDoResponse,
-    todoList: MutableList<RToDoResponse>,
-) {
-
-    var title by remember { mutableStateOf(Todo.title) }
-    var description by remember { mutableStateOf(Todo.description) }
-    var timeString by remember { mutableStateOf(Todo.time) }
-    var time by remember { mutableStateOf(Todo.time) }
-
-    var done by remember { mutableStateOf(Todo.done) }
-    var color by remember { mutableStateOf(Todo.color) }
-    var dayString by remember { mutableStateOf("") }
-    val token = "Token ${MyApplication.prefs.getData("token", "")}"
-
-    var context = LocalContext.current
-    val calendar = Calendar.getInstance()
-    val hour = calendar[Calendar.HOUR_OF_DAY]
-    val minute = calendar[Calendar.MINUTE]
-    var amPm by remember { mutableStateOf("") }
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusRequester = remember { FocusRequester() }
-
-    val timePickerDialog = TimePickerDialog(
-        context, R.style.TimePickerDialog, { _, hour: Int, minute: Int ->
-            amPm = if (hour < 12) "오전" else "오후"
-            timeString = String.format("%02d%02d", hour, minute)
-            time = String.format("%02d%02d", hour, minute)
-        }, hour, minute, false
-    )
-
-    val selectedDate = LocalDate.of(
-        Todo.year.toInt(), Todo.month.toInt(), Todo.day.toInt()
-    )
-    val dayOfWeek = selectedDate.dayOfWeek
-
-    dayString = when (dayOfWeek.value) {
-        1 -> "월요일"
-        2 -> "화요일"
-        3 -> "수요일"
-        4 -> "목요일"
-        5 -> "금요일"
-        6 -> "토요일"
-        7 -> "일요일"
-        else -> ""
-    }
-
-
-    val onButtonClick: (String) -> Unit = { id ->
-        when (id) {
-            "1" -> {
-                color = 1
-            }
-            "2" -> {
-                color = 2
-            }
-            "3" -> {
-                color = 3
-            }
-            "4" -> {
-                color = 4
-            }
-            "5" -> {
-                color = 5
-            }
-            "6" -> {
-                color = 6
-            }
-        }
-    }
-
-    val categoryColor: (Int?) -> Color = {
-        when (color) {
-            1 -> {
-                Color(0xffFFB4B4)
-            }
-            2 -> {
-                Color(0xffFFDCA8)
-            }
-            3 -> {
-                Color(0xffB1E0CF)
-            }
-            4 -> {
-                Color(0xffB7D7F5)
-            }
-            5 -> {
-                Color(0xffFFB8EB)
-            }
-            6 -> {
-                Color(0xffB6B1EC)
-            }
-            else -> {
-                Color.Black
-            }
-        }
-    }
-
-    LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue, block = {
-        if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
-            focusRequester.requestFocus()
-            keyboardController?.show()
-        }
-    })
-
-    LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
-        scope.launch {
-            title = Todo.title
-            description = Todo.description
-            color = Todo.color
-        }
-    })
-
-    LaunchedEffect(key1 = Todo.time, key2 = Todo.done, block = {
-//        timeValue = Todo.time
-
-        if (Todo.time == "9999") {
-            timeString = "미지정"
-        } else {
-            timeString = Todo.time
-        }
-
-        // 24 시간이 넘어가면 다른 숫자로 파악하여 빈값처리
-        if (Todo.time != "미지정") {
-            amPm = if (Todo.time.substring(0, 2).toInt() < 24) {
-                //  12시간 미만이면 오전 아니면 오후
-                if (Todo.time.substring(0, 2).toInt() <= 12) {
-                    "오전"
-                } else {
-                    "오후"
-                }
-            } else {
-                ""
-            }
-        }
-        scope.launch {
-            done = Todo.done
-        }
-    })
-
-    Column(
-        modifier = Modifier
-            .wrapContentSize()
-            .padding(start = 25.dp, end = 25.dp, top = 20.dp)
-            .imePadding()
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 5.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            Image(
-                modifier = Modifier.clickable {
-                    scope.launch {
-                        title = Todo.title
-                        description = Todo.description
-                        color = Todo.color
-                        timeString = if (Todo.time == "9999") {
-                            "미지정"
-                        } else {
-                            Todo.time
-                        }
-                        keyboardController?.hide()
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                    }
-                }, painter = painterResource(id = R.drawable.close), contentDescription = null
-            )
-
-            Box(modifier = Modifier
-                .width(60.dp)
-                .height(30.dp)
-                .clip(shape = RoundedCornerShape(20.dp))
-                .background(Color(0xffFFBE3C7))
-                .clickable {
-                    scope.launch {
-                        updateTodo(token,
-                            Todo!!.year,
-                            Todo!!.month,
-                            Todo!!.day,
-                            title,
-                            Todo?.done!!,
-                            description,
-                            color,
-                            time,
-                            Todo?.id.toString(),
-                            response = {
-                                readTodo(
-                                    token,
-                                    Todo.year.toString(),
-                                    Todo.month.toString(),
-                                    Todo.day.toString()
-                                ) {
-                                    todoList.clear()
-                                    for (i in it!!.data) {
-                                        todoList.add(i)
-                                    }
-                                }
-                            })
-                        keyboardController?.hide()
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                    }
-                }) {
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = "저장",
-                    color = Color.Black,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 15.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                modifier = Modifier
-                    .width(9.dp)
-                    .height(51.dp),
-                onClick = { /*TODO*/ },
-                enabled = false,
-                content = {},
-                colors = ButtonDefaults.buttonColors(disabledContainerColor = categoryColor(Todo?.color))
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 8.dp),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.Start
-            ) {
-
-                Text(
-                    text = "${Todo.month}월 ${Todo.day}일 ${dayString}",
-                    fontSize = 15.sp,
-                    lineHeight = 19.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = categoryColor(color)
-                )
-                BasicTextField(modifier = Modifier
-                    .wrapContentWidth()
-                    .wrapContentHeight()
-                    .focusRequester(focusRequester),
-                    value = title,
-                    onValueChange = { title = it },
-                    textStyle = TextStyle(
-                        color = Color.Black,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 31.sp
-                    ),
-                    singleLine = true,
-                    decorationBox = { innerTextField ->
-                        Box(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            if (title.isEmpty()) {
-                                Text(
-                                    text = "토도리스트 입력",
-                                    fontSize = 24.sp,
-                                    lineHeight = 31.2.sp,
-                                    fontWeight = FontWeight(700),
-                                    color = Color(0xFFC8C8C8),
-                                )
-                            }
-                            innerTextField()
-                        }
-                    })
-
-            }
-        }
-
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            value = description,
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color(0xffF2F2F2),
-                disabledLabelColor = Color(0xffF2F2F2),
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
-            ),
-            shape = RoundedCornerShape(10.dp),
-            onValueChange = {
-                if (it.count { it == '\n' } < 4) {
-                    description = it
-                }
-            },
-            maxLines = 4,
-            placeholder = {
-                Text(
-                    text = "+  메모하고 싶은 내용이 있나요?",
-                    fontSize = 14.sp,
-                    lineHeight = 19.6.sp,
-                    fontWeight = FontWeight(300),
-                    color = Color(0xFF9E9E9E)
-                )
-            },
-            textStyle = TextStyle(fontSize = 14.sp)
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 22.dp, bottom = 22.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.clock),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(24.dp)
-                    .padding(end = 5.dp)
-            )
-            Text(
-                text = "시간",
-                modifier = Modifier.padding(end = 8.dp),
-                fontWeight = FontWeight.Bold,
-                lineHeight = 19.sp,
-                fontSize = 15.sp
-            )
-            Text(
-                modifier = Modifier.clickable {
-                    timePickerDialog.show()
-                },
-                text = "$amPm ${convertToLayoutTimeFormat(timeString)}",
-                lineHeight = 19.sp,
-                fontSize = 15.sp,
-                color = Color(0xff9E9E9E)
-            )
-        }
-
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 5.dp, bottom = 19.dp),
-            color = Color(0xffe9e9e9)
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = 20.dp,
-                    end = 20.dp,
-                    bottom = 19.dp
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Image(
-                modifier = Modifier
-                    .size(30.dp)
-                    .clickable {
-                        onButtonClick("1")
-                    }, painter = if (color == 1) {
-                    painterResource(id = R.drawable.redselecbutton)
-                } else {
-                    painterResource(id = R.drawable.redbutton)
-                }, contentDescription = null
-            )
-
-            Image(
-                modifier = Modifier
-                    .size(30.dp)
-                    .clickable {
-                        onButtonClick("2")
-                    }, painter = if (color == 2) {
-                    painterResource(id = R.drawable.yellowselecbutton)
-                } else {
-                    painterResource(id = R.drawable.yellowbutton)
-                }, contentDescription = null
-            )
-
-            Image(
-                modifier = Modifier
-                    .size(30.dp)
-                    .clickable {
-                        onButtonClick("3")
-                    }, painter = if (color == 3) {
-                    painterResource(id = R.drawable.greenselecbutton)
-                } else {
-                    painterResource(id = R.drawable.greenbutton)
-                }, contentDescription = null
-            )
-
-            Image(
-                modifier = Modifier
-                    .size(30.dp)
-                    .clickable {
-                        onButtonClick("4")
-                    }, painter = if (color == 4) {
-                    painterResource(id = R.drawable.blueselecbutton)
-                } else {
-                    painterResource(id = R.drawable.bluebutton)
-                }, contentDescription = null
-            )
-
-            Image(
-                modifier = Modifier
-                    .size(30.dp)
-                    .clickable {
-                        onButtonClick("5")
-                    }, painter = if (color == 5) {
-                    painterResource(id = R.drawable.pinkselecbutton)
-                } else {
-                    painterResource(id = R.drawable.pinkbutton)
-                }, contentDescription = null
-            )
-
-            Image(
-                modifier = Modifier
-                    .size(30.dp)
-                    .clickable {
-                        onButtonClick("6")
-                    }, painter = if (color == 6) {
-                    painterResource(id = R.drawable.purpleselecbutton)
-                } else {
-                    painterResource(id = R.drawable.purplebutton)
-                }, contentDescription = null
-            )
-        }
-    }
-}
+//@ExperimentalComposeUiApi
+//@SuppressLint("NewApi")
+//@ExperimentalMaterialApi
+//@ExperimentalMaterial3Api
+//@Composable
+//fun TodoUpdateBottomSheet(
+//    scope: CoroutineScope,
+//    bottomSheetScaffoldState: androidx.compose.material.BottomSheetScaffoldState,
+//    Todo: RToDoResponse,
+//    todoList: MutableList<RToDoResponse>,
+//) {
+//
+//    var title by remember { mutableStateOf(Todo.title) }
+//    var description by remember { mutableStateOf(Todo.description) }
+//    var timeString by remember { mutableStateOf(Todo.time) }
+//    var time by remember { mutableStateOf(Todo.time) }
+//
+//    var done by remember { mutableStateOf(Todo.done) }
+//    var color by remember { mutableStateOf(Todo.color) }
+//    var dayString by remember { mutableStateOf("") }
+//    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+//
+//    var context = LocalContext.current
+//    val calendar = Calendar.getInstance()
+//    val hour = calendar[Calendar.HOUR_OF_DAY]
+//    val minute = calendar[Calendar.MINUTE]
+//    var amPm by remember { mutableStateOf("") }
+//
+//    val keyboardController = LocalSoftwareKeyboardController.current
+//    val focusRequester = remember { FocusRequester() }
+//
+//    val timePickerDialog = TimePickerDialog(
+//        context, R.style.TimePickerDialog, { _, hour: Int, minute: Int ->
+//            amPm = if (hour < 12) "오전" else "오후"
+//            timeString = String.format("%02d%02d", hour, minute)
+//            time = String.format("%02d%02d", hour, minute)
+//        }, hour, minute, false
+//    )
+//
+//    val selectedDate = LocalDate.of(
+//        Todo.year.toInt(), Todo.month.toInt(), Todo.day.toInt()
+//    )
+//    val dayOfWeek = selectedDate.dayOfWeek
+//
+//    dayString = when (dayOfWeek.value) {
+//        1 -> "월요일"
+//        2 -> "화요일"
+//        3 -> "수요일"
+//        4 -> "목요일"
+//        5 -> "금요일"
+//        6 -> "토요일"
+//        7 -> "일요일"
+//        else -> ""
+//    }
+//
+//
+//    val onButtonClick: (String) -> Unit = { id ->
+//        when (id) {
+//            "1" -> {
+//                color = 1
+//            }
+//            "2" -> {
+//                color = 2
+//            }
+//            "3" -> {
+//                color = 3
+//            }
+//            "4" -> {
+//                color = 4
+//            }
+//            "5" -> {
+//                color = 5
+//            }
+//            "6" -> {
+//                color = 6
+//            }
+//        }
+//    }
+//
+//    val categoryColor: (Int?) -> Color = {
+//        when (color) {
+//            1 -> {
+//                Color(0xffFFB4B4)
+//            }
+//            2 -> {
+//                Color(0xffFFDCA8)
+//            }
+//            3 -> {
+//                Color(0xffB1E0CF)
+//            }
+//            4 -> {
+//                Color(0xffB7D7F5)
+//            }
+//            5 -> {
+//                Color(0xffFFB8EB)
+//            }
+//            6 -> {
+//                Color(0xffB6B1EC)
+//            }
+//            else -> {
+//                Color.Black
+//            }
+//        }
+//    }
+//
+//    LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue, block = {
+//        if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+//            focusRequester.requestFocus()
+//            keyboardController?.show()
+//        }
+//    })
+//
+//    LaunchedEffect(key1 = Todo.title, key2 = Todo.description, key3 = Todo.color, block = {
+//        scope.launch {
+//            title = Todo.title
+//            description = Todo.description
+//            color = Todo.color
+//        }
+//    })
+//
+//    LaunchedEffect(key1 = Todo.time, key2 = Todo.done, block = {
+////        timeValue = Todo.time
+//
+//        if (Todo.time == "9999") {
+//            timeString = "미지정"
+//        } else {
+//            timeString = Todo.time
+//        }
+//
+//        // 24 시간이 넘어가면 다른 숫자로 파악하여 빈값처리
+//        if (Todo.time != "미지정") {
+//            amPm = if (Todo.time.substring(0, 2).toInt() < 24) {
+//                //  12시간 미만이면 오전 아니면 오후
+//                if (Todo.time.substring(0, 2).toInt() <= 12) {
+//                    "오전"
+//                } else {
+//                    "오후"
+//                }
+//            } else {
+//                ""
+//            }
+//        }
+//        scope.launch {
+//            done = Todo.done
+//        }
+//    })
+//
+//    Column(
+//        modifier = Modifier
+//            .wrapContentSize()
+//            .padding(start = 25.dp, end = 25.dp, top = 20.dp)
+//            .imePadding()
+//    ) {
+//
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(bottom = 5.dp),
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//
+//            Image(
+//                modifier = Modifier.clickable {
+//                    scope.launch {
+//                        title = Todo.title
+//                        description = Todo.description
+//                        color = Todo.color
+//                        timeString = if (Todo.time == "9999") {
+//                            "미지정"
+//                        } else {
+//                            Todo.time
+//                        }
+//                        keyboardController?.hide()
+//                        bottomSheetScaffoldState.bottomSheetState.collapse()
+//                    }
+//                }, painter = painterResource(id = R.drawable.close), contentDescription = null
+//            )
+//
+//            Box(modifier = Modifier
+//                .width(60.dp)
+//                .height(30.dp)
+//                .clip(shape = RoundedCornerShape(20.dp))
+//                .background(Color(0xffFFBE3C7))
+//                .clickable {
+//                    scope.launch {
+//                        updateTodo(token,
+//                            Todo!!.year,
+//                            Todo!!.month,
+//                            Todo!!.day,
+//                            title,
+//                            Todo?.done!!,
+//                            description,
+//                            color,
+//                            time,
+//                            Todo?.id.toString(),
+//                            response = {
+//                                readTodo(
+//                                    token,
+//                                    Todo.year.toString(),
+//                                    Todo.month.toString(),
+//                                    Todo.day.toString()
+//                                ) {
+//                                    todoList.clear()
+//                                    for (i in it!!.data) {
+//                                        todoList.add(i)
+//                                    }
+//                                }
+//                            })
+//                        keyboardController?.hide()
+//                        bottomSheetScaffoldState.bottomSheetState.collapse()
+//                    }
+//                }) {
+//                Text(
+//                    modifier = Modifier.align(Alignment.Center),
+//                    text = "저장",
+//                    color = Color.Black,
+//                    fontSize = 13.sp,
+//                    fontWeight = FontWeight.Bold
+//                )
+//            }
+//        }
+//
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(bottom = 15.dp),
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Button(
+//                modifier = Modifier
+//                    .width(9.dp)
+//                    .height(51.dp),
+//                onClick = { /*TODO*/ },
+//                enabled = false,
+//                content = {},
+//                colors = ButtonDefaults.buttonColors(disabledContainerColor = categoryColor(Todo?.color))
+//            )
+//            Column(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(start = 8.dp),
+//                verticalArrangement = Arrangement.SpaceBetween,
+//                horizontalAlignment = Alignment.Start
+//            ) {
+//
+//                Text(
+//                    text = "${Todo.month}월 ${Todo.day}일 ${dayString}",
+//                    fontSize = 15.sp,
+//                    lineHeight = 19.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    color = categoryColor(color)
+//                )
+//                BasicTextField(modifier = Modifier
+//                    .wrapContentWidth()
+//                    .wrapContentHeight()
+//                    .focusRequester(focusRequester),
+//                    value = title,
+//                    onValueChange = { title = it },
+//                    textStyle = TextStyle(
+//                        color = Color.Black,
+//                        fontSize = 24.sp,
+//                        fontWeight = FontWeight.Bold,
+//                        lineHeight = 31.sp
+//                    ),
+//                    singleLine = true,
+//                    decorationBox = { innerTextField ->
+//                        Box(
+//                            modifier = Modifier.fillMaxWidth()
+//                        ) {
+//                            if (title.isEmpty()) {
+//                                Text(
+//                                    text = "토도리스트 입력",
+//                                    fontSize = 24.sp,
+//                                    lineHeight = 31.2.sp,
+//                                    fontWeight = FontWeight(700),
+//                                    color = Color(0xFFC8C8C8),
+//                                )
+//                            }
+//                            innerTextField()
+//                        }
+//                    })
+//
+//            }
+//        }
+//
+//        TextField(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(50.dp),
+//            value = description,
+//            colors = TextFieldDefaults.textFieldColors(
+//                containerColor = Color(0xffF2F2F2),
+//                disabledLabelColor = Color(0xffF2F2F2),
+//                focusedIndicatorColor = Color.Transparent,
+//                unfocusedIndicatorColor = Color.Transparent
+//            ),
+//            keyboardOptions = KeyboardOptions(
+//                keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
+//            ),
+//            shape = RoundedCornerShape(10.dp),
+//            onValueChange = {
+//                if (it.count { it == '\n' } < 4) {
+//                    description = it
+//                }
+//            },
+//            maxLines = 4,
+//            placeholder = {
+//                Text(
+//                    text = "+  메모하고 싶은 내용이 있나요?",
+//                    fontSize = 14.sp,
+//                    lineHeight = 19.6.sp,
+//                    fontWeight = FontWeight(300),
+//                    color = Color(0xFF9E9E9E)
+//                )
+//            },
+//            textStyle = TextStyle(fontSize = 14.sp)
+//        )
+//
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 22.dp, bottom = 22.dp),
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Image(
+//                painter = painterResource(id = R.drawable.clock),
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .size(24.dp)
+//                    .padding(end = 5.dp)
+//            )
+//            Text(
+//                text = "시간",
+//                modifier = Modifier.padding(end = 8.dp),
+//                fontWeight = FontWeight.Bold,
+//                lineHeight = 19.sp,
+//                fontSize = 15.sp
+//            )
+//            Text(
+//                modifier = Modifier.clickable {
+//                    timePickerDialog.show()
+//                },
+//                text = "$amPm ${convertToLayoutTimeFormat(timeString)}",
+//                lineHeight = 19.sp,
+//                fontSize = 15.sp,
+//                color = Color(0xff9E9E9E)
+//            )
+//        }
+//
+//        Divider(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(start = 5.dp, bottom = 19.dp),
+//            color = Color(0xffe9e9e9)
+//        )
+//
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(
+//                    start = 20.dp,
+//                    end = 20.dp,
+//                    bottom = 19.dp
+//                ),
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Image(
+//                modifier = Modifier
+//                    .size(30.dp)
+//                    .clickable {
+//                        onButtonClick("1")
+//                    }, painter = if (color == 1) {
+//                    painterResource(id = R.drawable.redselecbutton)
+//                } else {
+//                    painterResource(id = R.drawable.redbutton)
+//                }, contentDescription = null
+//            )
+//
+//            Image(
+//                modifier = Modifier
+//                    .size(30.dp)
+//                    .clickable {
+//                        onButtonClick("2")
+//                    }, painter = if (color == 2) {
+//                    painterResource(id = R.drawable.yellowselecbutton)
+//                } else {
+//                    painterResource(id = R.drawable.yellowbutton)
+//                }, contentDescription = null
+//            )
+//
+//            Image(
+//                modifier = Modifier
+//                    .size(30.dp)
+//                    .clickable {
+//                        onButtonClick("3")
+//                    }, painter = if (color == 3) {
+//                    painterResource(id = R.drawable.greenselecbutton)
+//                } else {
+//                    painterResource(id = R.drawable.greenbutton)
+//                }, contentDescription = null
+//            )
+//
+//            Image(
+//                modifier = Modifier
+//                    .size(30.dp)
+//                    .clickable {
+//                        onButtonClick("4")
+//                    }, painter = if (color == 4) {
+//                    painterResource(id = R.drawable.blueselecbutton)
+//                } else {
+//                    painterResource(id = R.drawable.bluebutton)
+//                }, contentDescription = null
+//            )
+//
+//            Image(
+//                modifier = Modifier
+//                    .size(30.dp)
+//                    .clickable {
+//                        onButtonClick("5")
+//                    }, painter = if (color == 5) {
+//                    painterResource(id = R.drawable.pinkselecbutton)
+//                } else {
+//                    painterResource(id = R.drawable.pinkbutton)
+//                }, contentDescription = null
+//            )
+//
+//            Image(
+//                modifier = Modifier
+//                    .size(30.dp)
+//                    .clickable {
+//                        onButtonClick("6")
+//                    }, painter = if (color == 6) {
+//                    painterResource(id = R.drawable.purpleselecbutton)
+//                } else {
+//                    painterResource(id = R.drawable.purplebutton)
+//                }, contentDescription = null
+//            )
+//        }
+//    }
+//}
 
 @Composable
 fun BlankTodoItem() {
@@ -1761,8 +1470,7 @@ fun CalendarHeader(daysOfWeek: List<DayOfWeek>) {
             .padding(
                 start = 15.dp,
                 end = 15.dp,
-//                top = 15.dp
-            )
+                )
     ) {
         for (dayOfWeek in daysOfWeek) {
             Text(
@@ -1903,6 +1611,141 @@ fun Day(
             lineHeight = 17.sp,
             fontWeight = FontWeight(700)
         )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@ExperimentalMaterial3Api
+fun LazyListScope.TodoItem(
+    vm: TodoViewModel,
+    token: String,
+    todo: List<TodoData>,
+    scope: CoroutineScope
+) {
+
+//    val todoCategories = category.groupBy { it.color }
+//    todoCategories.forEach {
+//        stickyHeader {
+//            TodoCategoryHeader(
+//
+//            )
+//        }
+//    }
+
+
+    itemsIndexed(
+        items = todo,
+        key = {index: Int, todo: TodoData -> todo.id!! }
+    ) { index, todo ->
+
+        val dismissState = androidx.compose.material3.rememberDismissState()
+        if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+            scope.launch {
+                vm.deleteTodo(token, todo)
+            }
+        }
+
+        SwipeToDismiss(
+            modifier = Modifier.padding(
+//                top = 15.dp,
+                start = 21.dp,
+                end = 21.dp
+            ),
+            state = dismissState,
+            background = {
+                DeleteBackground()
+            },
+            directions = setOf(DismissDirection.EndToStart),
+            dismissContent = {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .clickable {
+                            // bottomsheet 열기
+                        },
+                    colors = CardDefaults.cardColors(Color.White),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(start = 14.dp, top = 13.dp, bottom = 13.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clickable {
+                                    // todo 체크박스 클릭
+                                },
+                            painter = painterResource(
+                                id = getCheckboxImageResource(
+                                    checked = todo.done!!,
+                                    color = todo.color!!
+                                )
+                            ),
+                            contentDescription = "checkboxImage"
+                        )
+
+                        Text(
+                            modifier = Modifier.padding(start = 6.dp),
+                            text = todo.title!!,
+                            fontSize = 15.sp,
+                            fontStyle = FontStyle.Normal,
+                            overflow = TextOverflow.Ellipsis,
+                            style = TextStyle(
+                                platformStyle = PlatformTextStyle(
+                                    includeFontPadding = false
+                                )
+                            )
+                        )
+                    }
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun TodoCategoryHeader() {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = Color(0xfff0f0f0)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 15.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Box(
+                modifier = Modifier
+                    .size(9.dp)
+                    .clip(shape = CircleShape)
+//                    .background(
+////                        color = when (category) {
+////                            1 -> Color(0xffFFB4B4)
+////                            2 -> Color(0xffFFDCA8)
+////                            3 -> Color(0xffB1E0CF)
+////                            4 -> Color(0xffB7D7F5)
+////                            5 -> Color(0xffFFB8EB)
+////                            6 -> Color(0xffB6B1EC)
+////                            else -> Color.Black
+////                        }
+//                    )
+            )
+
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+//                text = categoryName?.data?.get(header.toString()) ?: "",
+//                text = category.value.get(),
+                text = "test",
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                lineHeight = 17.sp
+            )
+        }
     }
 }
 
