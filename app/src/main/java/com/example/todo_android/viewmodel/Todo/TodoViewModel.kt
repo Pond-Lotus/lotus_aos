@@ -35,6 +35,8 @@ class TodoViewModel @Inject constructor(
     private val _todoDay = MutableStateFlow(LocalDate.now().dayOfMonth)
     private val _todoTitle = MutableStateFlow("")
     private val _todoColor = MutableStateFlow(0)
+    private val _todoDone = MutableStateFlow(false)
+
     private val _todoList = MutableStateFlow<List<TodoData>>(emptyList())
     private val _categoryList = MutableStateFlow<List<CategoryData>>(emptyList())
     private val _categoryTodoList = MutableStateFlow<Map<Int?, List<TodoData>>>(emptyMap())
@@ -47,6 +49,7 @@ class TodoViewModel @Inject constructor(
     val todoList = _todoList.asStateFlow()
     val categoryList = _categoryList.asStateFlow()
     val categoryTodoList = _categoryTodoList.asStateFlow()
+    val todoDone = _todoDone.asStateFlow()
 
     init {
         readCategory(token)
@@ -181,6 +184,10 @@ class TodoViewModel @Inject constructor(
     // todoTitle 변경
     fun setTodoTitle(text: String) {
         _todoTitle.value = text
+    }
+
+    fun setTodoDone(done: Boolean){
+        _todoDone.value = done
     }
 
     fun setTodoGroup(){
