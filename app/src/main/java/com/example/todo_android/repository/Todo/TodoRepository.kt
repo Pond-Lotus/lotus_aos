@@ -12,10 +12,13 @@ import com.example.todo_android.response.TodoResponse.UpdateTodoResponse
 interface TodoRepository {
     suspend fun createTodo(token: String, createTodo: CreateTodo):
             APIResponse<CreateTodoResponse>
+
     suspend fun readTodo(token: String, year: Int, month: Int, day: Int):
             APIResponse<ReadTodoResponse>
+
     suspend fun updateTodo(token: String, id: String, updateTodo: UpdateTodo):
             APIResponse<UpdateTodoResponse>
+
     suspend fun deleteTodo(token: String, id: String):
             APIResponse<DeleteTodoResponse>
 }

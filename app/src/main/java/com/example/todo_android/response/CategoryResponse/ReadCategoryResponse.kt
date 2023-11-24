@@ -6,5 +6,5 @@ data class ReadCategoryResponse(
     @SerializedName("resultCode")
     val resultCode: Int,
     @SerializedName("data")
-    val data: Map<String, String>
+    val data: CategoryData
 )

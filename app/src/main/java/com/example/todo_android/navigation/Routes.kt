@@ -554,7 +554,7 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
             }
         ) {
             // 화면이 들어가는 부분 = 값
-            CategoryScreen(routeAction)
+//            CategoryScreen(routeAction)
         }
 
         //라우트 이름 = 화면의 키
@@ -602,7 +602,7 @@ fun NavigationGraph(startRoute: NAV_ROUTE = NAV_ROUTE.SPLASH) {
             val categoryName = backStackEntry.arguments?.getString("categoryName")
             val categoryId = backStackEntry.arguments?.getString("categoryId")
             val categoryColor = backStackEntry.arguments?.getInt("categoryColor")
-            ChangeCategoryNameScreen(routeAction, categoryName, categoryId, categoryColor)
+//            ChangeCategoryNameScreen(routeAction, categoryName, categoryId, categoryColor)
         }
 
         //라우트 이름 = 화면의 키

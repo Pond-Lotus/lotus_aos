@@ -56,6 +56,7 @@ import com.example.todo_android.request.TodoRequest.CreateTodoRequest
 import com.example.todo_android.request.TodoRequest.DeleteTodoRequest
 import com.example.todo_android.request.TodoRequest.ReadTodoRequest
 import com.example.todo_android.request.TodoRequest.UpdateTodoRequest
+import com.example.todo_android.response.CategoryResponse.CategoryData
 import com.example.todo_android.response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.response.TodoResponse.*
 import com.example.todo_android.ui.theme.deleteBackground
@@ -318,13 +319,16 @@ fun CalendarScreen(routeAction: RouteAction) {
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
     val vm: TodoViewModel = hiltViewModel()
+
     val todoYear by vm.todoYear.collectAsState()
     val todoMonth by vm.todoMonth.collectAsState()
     val todoDay by vm.todoDay.collectAsState()
     val todoTitle by vm.todoTitle.collectAsState()
     val todoColor by vm.todoColor.collectAsState()
-    val todoList by vm.todoList.collectAsState()
 
+    val todoList by vm.todoList.collectAsState()
+    val categoryList by vm.categoryList.collectAsState()
+    val categoryTodoList by vm.categoryTodoList.collectAsState()
 
     var isVisibility by remember { mutableStateOf(false) }
 
@@ -652,9 +656,11 @@ fun CalendarScreen(routeAction: RouteAction) {
             TodoItem(
                 vm = vm,
                 token = token,
-                todo = todoList,
+                categoryList = categoryList,
+                categoryTodoList = categoryTodoList,
                 scope = scope
             )
+
             item {
                 Column(
                     modifier = Modifier
@@ -717,9 +723,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                                                     todoTitle,
                                                     todoColor
                                                 )
-                                            ).let {
-                                                vm.readTodo(token, todoYear, todoMonth, todoDay)
-                                            }
+                                            )
                                             vm.setTodoTitle("")
                                             isVisibility = !isVisibility
                                         }
@@ -1470,7 +1474,7 @@ fun CalendarHeader(daysOfWeek: List<DayOfWeek>) {
             .padding(
                 start = 15.dp,
                 end = 15.dp,
-                )
+            )
     ) {
         for (dayOfWeek in daysOfWeek) {
             Text(
@@ -1619,171 +1623,173 @@ fun Day(
 fun LazyListScope.TodoItem(
     vm: TodoViewModel,
     token: String,
-    todo: List<TodoData>,
-    scope: CoroutineScope
+    categoryList: List<CategoryData>,
+    categoryTodoList: Map<Int?, List<TodoData>>,
+    scope: CoroutineScope,
 ) {
 
-//    val todoCategories = category.groupBy { it.color }
-//    todoCategories.forEach {
-//        stickyHeader {
-//            TodoCategoryHeader(
-//
-//            )
-//        }
-//    }
-
-
-    itemsIndexed(
-        items = todo,
-        key = {index: Int, todo: TodoData -> todo.id!! }
-    ) { index, todo ->
-
-        val dismissState = androidx.compose.material3.rememberDismissState()
-        if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-            scope.launch {
-                vm.deleteTodo(token, todo)
-            }
+    categoryTodoList.forEach { _, items ->
+        stickyHeader {
+            TodoCategoryHeader(
+                categoryList = categoryList,
+                items = items
+            )
         }
 
-        SwipeToDismiss(
-            modifier = Modifier.padding(
-//                top = 15.dp,
-                start = 21.dp,
-                end = 21.dp
-            ),
-            state = dismissState,
-            background = {
-                DeleteBackground()
-            },
-            directions = setOf(DismissDirection.EndToStart),
-            dismissContent = {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(45.dp)
-                        .clickable {
-                            // bottomsheet 열기
-                        },
-                    colors = CardDefaults.cardColors(Color.White),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(start = 14.dp, top = 13.dp, bottom = 13.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickable {
-                                    // todo 체크박스 클릭
-                                },
-                            painter = painterResource(
-                                id = getCheckboxImageResource(
-                                    checked = todo.done!!,
-                                    color = todo.color!!
-                                )
-                            ),
-                            contentDescription = "checkboxImage"
-                        )
+        itemsIndexed(
+            items = items,
+            key = { index: Int, todo: TodoData -> todo.id!! }
+        ) { index, item ->
 
-                        Text(
-                            modifier = Modifier.padding(start = 6.dp),
-                            text = todo.title!!,
-                            fontSize = 15.sp,
-                            fontStyle = FontStyle.Normal,
-                            overflow = TextOverflow.Ellipsis,
-                            style = TextStyle(
-                                platformStyle = PlatformTextStyle(
-                                    includeFontPadding = false
-                                )
-                            )
-                        )
-                    }
+            val dismissState = androidx.compose.material3.rememberDismissState()
+            if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+                scope.launch {
+                    vm.deleteTodo(token, item)
                 }
             }
-        )
+
+            SwipeToDismiss(
+                modifier = Modifier.padding(
+                    start = 21.dp,
+                    end = 21.dp
+                ),
+                state = dismissState,
+                background = {
+                    DeleteBackground()
+                },
+                directions = setOf(DismissDirection.EndToStart),
+                dismissContent = {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(45.dp)
+                            .clickable {
+                                // bottomsheet 열기
+                            },
+                        colors = CardDefaults.cardColors(Color.White),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(start = 14.dp, top = 13.dp, bottom = 13.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clickable {
+                                        // todo 체크박스 클릭
+                                    },
+                                painter = painterResource(
+                                    id = getCheckboxImageResource(
+                                        checked = item.done!!,
+                                        color = item.color!!
+                                    )
+                                ),
+                                contentDescription = "checkboxImage"
+                            )
+
+                            Text(
+                                modifier = Modifier.padding(start = 6.dp),
+                                text = item.title!!,
+                                fontSize = 15.sp,
+                                fontStyle = FontStyle.Normal,
+                                overflow = TextOverflow.Ellipsis,
+                                style = TextStyle(
+                                    platformStyle = PlatformTextStyle(
+                                        includeFontPadding = false
+                                    )
+                                )
+                            )
+                        }
+                    }
+                }
+            )
+        }
     }
 }
 
 @Composable
-fun TodoCategoryHeader() {
+fun TodoCategoryHeader(
+    categoryList: List<CategoryData>,
+    items: List<TodoData>
+) {
+
+    val color = items.map { it.color }.last()
+
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = 21.dp,
+                end = 21.dp
+            ),
         color = Color(0xfff0f0f0)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 15.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Box(
-                modifier = Modifier
-                    .size(9.dp)
-                    .clip(shape = CircleShape)
-//                    .background(
-////                        color = when (category) {
-////                            1 -> Color(0xffFFB4B4)
-////                            2 -> Color(0xffFFDCA8)
-////                            3 -> Color(0xffB1E0CF)
-////                            4 -> Color(0xffB7D7F5)
-////                            5 -> Color(0xffFFB8EB)
-////                            6 -> Color(0xffB6B1EC)
-////                            else -> Color.Black
-////                        }
-//                    )
-            )
-
-            Text(
-                modifier = Modifier.padding(start = 4.dp),
-//                text = categoryName?.data?.get(header.toString()) ?: "",
-//                text = category.value.get(),
-                text = "test",
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                lineHeight = 17.sp
-            )
+        when (color) {
+            1 -> {
+                val name = categoryList.map { it._1 }.last()
+                TodoCategoryDetailHeader(color = color, categoryName = name!!)
+            }
+            2 -> {
+                val name = categoryList.map { it._2 }.last()
+                TodoCategoryDetailHeader(color = color, categoryName = name!!)
+            }
+            3 -> {
+                val name = categoryList.map { it._3 }.last()
+                TodoCategoryDetailHeader(color = color, categoryName = name!!)
+            }
+            4 -> {
+                val name = categoryList.map { it._4 }.last()
+                TodoCategoryDetailHeader(color = color, categoryName = name!!)
+            }
+            5 -> {
+                val name = categoryList.map { it._5 }.last()
+                TodoCategoryDetailHeader(color = color, categoryName = name!!)
+            }
+            6 -> {
+                val name = categoryList.map { it._6 }.last()
+                TodoCategoryDetailHeader(color = color, categoryName = name!!)
+            }
         }
     }
 }
 
-//private fun todoSortByDone(todoList: MutableList<RToDoResponse>): MutableList<RToDoResponse>{
-//
-//    var resultUnCheckedValue = mutableListOf<RToDoResponse>()
-//    var resultCheckedValue = mutableListOf<RToDoResponse>()
-//
-//    var finalUnCheckedValue =  mutableListOf<RToDoResponse>()
-//    var finalCheckedValue = mutableListOf<RToDoResponse>()
-//
-//    var returnValue = mutableListOf<RToDoResponse>()
-//
-//    todoList.forEach { response ->
-//        var resultDone = response.done
-//
-//        if(!resultDone){
-//            resultUnCheckedValue.add(response)
-//        }else{
-//            resultCheckedValue.add(response)
-//        }
-//    }
-//
-//    resultUnCheckedValue.sortedBy {
-//
-//        finalUnCheckedValue.add(it.id.toInt())
-//    }
-//
-//    resultCheckedValue.sortedBy {
-//
-//        finalUnCheckedValue.add(it.id.toInt())
-//    }
-//
-////    resultUnCheckedValue.sortBy { it.id.toInt() }
-////
-////    resultCheckedValue.sortBy { it.id.toInt() }
-//
-//    returnValue = (finalUnCheckedValue + finalCheckedValue).toMutableList()
-//
-//    return returnValue
-//}
+@Composable
+fun TodoCategoryDetailHeader(
+    color: Int,
+    categoryName: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 15.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Box(
+            modifier = Modifier
+                .size(9.dp)
+                .clip(shape = CircleShape)
+                .background(
+                    color = when (color) {
+                        1 -> Color(0xffFFB4B4)
+                        2 -> Color(0xffFFDCA8)
+                        3 -> Color(0xffB1E0CF)
+                        4 -> Color(0xffB7D7F5)
+                        5 -> Color(0xffFFB8EB)
+                        6 -> Color(0xffB6B1EC)
+                        else -> Color.Black
+                }
+            )
+        )
+
+        Text(
+            modifier = Modifier.padding(start = 4.dp),
+            text = categoryName,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp,
+            lineHeight = 17.sp
+        )
+    }
+}

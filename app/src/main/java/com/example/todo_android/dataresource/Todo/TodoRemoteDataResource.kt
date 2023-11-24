@@ -11,10 +11,13 @@ import retrofit2.Call
 interface TodoRemoteDataResource {
     suspend fun createTodo(token: String, createTodo: CreateTodo):
             Call<CreateTodoResponse>
+
     suspend fun readTodo(token: String, year: Int, month: Int, day: Int):
             Call<ReadTodoResponse>
+
     suspend fun updateTodo(token: String, id: String, updateTodo: UpdateTodo):
             Call<UpdateTodoResponse>
+
     suspend fun deleteTodo(token: String, id: String):
             Call<DeleteTodoResponse>
 }

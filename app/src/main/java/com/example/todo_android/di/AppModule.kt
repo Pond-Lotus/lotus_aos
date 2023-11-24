@@ -1,5 +1,6 @@
 package com.example.todo_android.di
 
+import com.example.todo_android.service.Category.CategoryService
 import com.example.todo_android.service.Todo.TodoService
 import dagger.Module
 import dagger.Provides
@@ -9,6 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import javax.inject.Singleton
 
 @Module
@@ -42,5 +44,11 @@ object AppModule {
     @Provides
     fun provideTodoService(retrofit: Retrofit): TodoService {
         return retrofit.create(TodoService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCategoryService(retrofit: Retrofit): CategoryService {
+        return retrofit.create(CategoryService::class.java)
     }
 }
