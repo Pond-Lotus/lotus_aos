@@ -22,7 +22,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -192,33 +191,27 @@ fun CalendarScreen(routeAction: RouteAction) {
         when (id) {
             "1" -> {
                 isVisibility = !isVisibility
-                vm::setTodoColor.invoke(1)
-                Log.d("id", "id : ${id}")
+                vm.setTodoColor(1)
             }
             "2" -> {
                 isVisibility = !isVisibility
-                vm::setTodoColor.invoke(2)
-                Log.d("id", "id : ${id}")
+                vm.setTodoColor(2)
             }
             "3" -> {
                 isVisibility = !isVisibility
-                vm::setTodoColor.invoke(3)
-                Log.d("id", "id : ${id}")
+                vm.setTodoColor(3)
             }
             "4" -> {
                 isVisibility = !isVisibility
-                vm::setTodoColor.invoke(4)
-                Log.d("id", "id : ${id}")
+                vm.setTodoColor(4)
             }
             "5" -> {
                 isVisibility = !isVisibility
-                vm::setTodoColor.invoke(5)
-                Log.d("id", "id : ${id}")
+                vm.setTodoColor(5)
             }
             "6" -> {
                 isVisibility = !isVisibility
-                vm::setTodoColor.invoke(6)
-                Log.d("id", "id : ${id}")
+                vm.setTodoColor(6)
             }
         }
     }
@@ -245,11 +238,11 @@ fun CalendarScreen(routeAction: RouteAction) {
         }
     })
 
-    LaunchedEffect(isVisibility) {
-        if (isVisibility) {
-            focusRequester.requestFocus()
-        }
-    }
+//    LaunchedEffect(isVisibility) {
+//        if (isVisibility) {
+//            focusRequester.requestFocus()
+//        }
+//    }
 
     LaunchedEffect(key1 = month) {
         selectedDate = month.yearMonth.atStartOfMonth()
@@ -466,7 +459,6 @@ fun CalendarScreen(routeAction: RouteAction) {
             TodoItem(
                 vm = vm,
                 token = token,
-                todo = todoList,
                 categoryList = categoryList,
                 categoryTodoList = categoryTodoList,
                 scope = scope
@@ -505,7 +497,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                                         .wrapContentWidth()
                                         .wrapContentHeight()
                                         .padding(start = 16.dp)
-                                        .focusRequester(focusRequester)
+//                                        .focusRequester(focusRequester)
                                         .imePadding(),
                                     value = todoTitle,
                                     onValueChange = { text ->

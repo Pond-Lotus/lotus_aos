@@ -34,10 +34,9 @@ import kotlinx.coroutines.launch
 fun LazyListScope.TodoItem(
     vm: TodoViewModel,
     token: String,
-    todo: List<TodoData>,
     categoryList: List<CategoryData>,
     categoryTodoList: Map<Int?, List<TodoData>>,
-    scope: CoroutineScope,
+    scope: CoroutineScope
 ) {
 
     categoryTodoList.forEach { _, items ->
@@ -49,8 +48,8 @@ fun LazyListScope.TodoItem(
         }
 
         itemsIndexed(
-            items = todo,
-            key = { index: Int, todo: TodoData -> todo.id!! }
+            items = items,
+            key = { index: Int, todo -> todo.id!! }
         ) { index, todo ->
 
             val dismissState = rememberDismissState()
@@ -118,6 +117,7 @@ fun LazyListScope.TodoItem(
                 }
             )
         }
+
     }
 }
 

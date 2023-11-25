@@ -67,7 +67,8 @@ class TodoViewModel @Inject constructor(
                     val items = todoState.toMutableList().apply {
                         add(value.data!!.data)
                     }.toList()
-                    _todoList.value = items
+                    _todoList.emit(items)
+                    setTodoGroup()
                 }
                 is APIResponse.Error -> {
 
@@ -125,6 +126,7 @@ class TodoViewModel @Inject constructor(
                         remove(todo)
                     }.toList()
                     _todoList.value = items
+                    setTodoGroup()
                 }
                 is APIResponse.Error -> {
 
