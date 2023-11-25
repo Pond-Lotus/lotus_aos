@@ -1,6 +1,5 @@
 package com.example.todo_android.viewmodel.Todo
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todo_android.Data.Todo.CreateTodo
@@ -9,12 +8,10 @@ import com.example.todo_android.common.APIResponse
 import com.example.todo_android.repository.Category.CategoryRepository
 import com.example.todo_android.repository.Todo.TodoRepository
 import com.example.todo_android.response.CategoryResponse.CategoryData
-import com.example.todo_android.response.CategoryResponse.ReadCategoryResponse
-import com.example.todo_android.response.TodoResponse.*
+import com.example.todo_android.response.TodoResponse.TodoData
 import com.example.todo_android.util.MyApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -34,8 +31,10 @@ class TodoViewModel @Inject constructor(
     private val _todoMonth = MutableStateFlow(LocalDate.now().monthValue)
     private val _todoDay = MutableStateFlow(LocalDate.now().dayOfMonth)
     private val _todoTitle = MutableStateFlow("")
+    private val _todoDescription = MutableStateFlow("")
     private val _todoColor = MutableStateFlow(0)
     private val _todoDone = MutableStateFlow(false)
+    private val _todoTime = MutableStateFlow("9999")
 
     private val _todoList = MutableStateFlow<List<TodoData>>(emptyList())
     private val _categoryList = MutableStateFlow<List<CategoryData>>(emptyList())
@@ -46,15 +45,17 @@ class TodoViewModel @Inject constructor(
     val todoDay = _todoDay.asStateFlow()
     val todoTitle = _todoTitle.asStateFlow()
     val todoColor = _todoColor.asStateFlow()
+    val todoDone = _todoDone.asStateFlow()
+    val todoTime = _todoTime.asStateFlow()
+    val todoDescription = _todoDescription.asStateFlow()
+
     val todoList = _todoList.asStateFlow()
     val categoryList = _categoryList.asStateFlow()
     val categoryTodoList = _categoryTodoList.asStateFlow()
-    val todoDone = _todoDone.asStateFlow()
 
     init {
         readCategory(token)
     }
-
 
 
     fun createTodo(token: String, createTodo: CreateTodo) {
@@ -186,13 +187,13 @@ class TodoViewModel @Inject constructor(
         _todoTitle.value = text
     }
 
-    fun setTodoDone(done: Boolean){
+    fun setTodoDone(done: Boolean) {
         _todoDone.value = done
     }
 
-    fun setTodoGroup(){
+    fun setTodoGroup() {
         val categoryColor = todoList.value.groupBy { it.color }
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _categoryTodoList.emit(categoryColor)
         }
     }
