@@ -22,6 +22,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -238,11 +239,11 @@ fun CalendarScreen(routeAction: RouteAction) {
         }
     })
 
-//    LaunchedEffect(isVisibility) {
-//        if (isVisibility) {
-//            focusRequester.requestFocus()
-//        }
-//    }
+    LaunchedEffect(isVisibility) {
+        if (isVisibility) {
+            focusRequester.requestFocus()
+        }
+    }
 
     LaunchedEffect(key1 = month) {
         selectedDate = month.yearMonth.atStartOfMonth()
@@ -349,7 +350,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 multiFloatingState = multiFloatingState,
                 onMultiFloatingStateChange = { multiFloatingState = it },
                 backgroundColor = colorFAB,
-                onButtonClick = onButtonClick
+                onButtonClick = onButtonClick,
+                focusRequester = focusRequester
             )
         },
         floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
@@ -358,7 +360,7 @@ fun CalendarScreen(routeAction: RouteAction) {
             topStart = 20.dp, topEnd = 20.dp
         ),
         sheetContent = {
-
+            // bottomsheet 컴포저블
         }
     ) {
 
@@ -497,7 +499,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                                         .wrapContentWidth()
                                         .wrapContentHeight()
                                         .padding(start = 16.dp)
-//                                        .focusRequester(focusRequester)
+                                        .focusRequester(focusRequester)
                                         .imePadding(),
                                     value = todoTitle,
                                     onValueChange = { text ->

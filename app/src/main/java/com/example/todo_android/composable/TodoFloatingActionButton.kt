@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -26,6 +27,7 @@ fun AddTodoFloatingButton(
     onMultiFloatingStateChange: (FloatingStateType) -> Unit,
     backgroundColor: Color,
     onButtonClick: (String) -> Unit,
+    focusRequester: FocusRequester,
 ) {
     val transition = updateTransition(targetState = multiFloatingState, label = null)
 
@@ -70,7 +72,11 @@ fun AddTodoFloatingButton(
                 }
             )
         ) {
-            FloatingActionButtonMenus(onMultiFloatingStateChange, onButtonClick)
+            FloatingActionButtonMenus(
+                onMultiFloatingStateChange,
+                onButtonClick,
+                focusRequester
+            )
         }
 
         FloatingActionButton(
@@ -111,6 +117,7 @@ fun AddTodoFloatingButton(
 fun FloatingActionButtonMenus(
     onMultiFloatingStateChange: (FloatingStateType) -> Unit,
     onButtonClick: (String) -> Unit,
+    focusRequester: FocusRequester,
 ) {
     Surface(
         modifier = Modifier
@@ -139,6 +146,7 @@ fun FloatingActionButtonMenus(
                     onClick = {
                         onButtonClick("1")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                        focusRequester.requestFocus()
                     },
                     content = {})
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
@@ -146,6 +154,7 @@ fun FloatingActionButtonMenus(
                     onClick = {
                         onButtonClick("2")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                        focusRequester.requestFocus()
                     },
                     content = {})
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
@@ -153,6 +162,7 @@ fun FloatingActionButtonMenus(
                     onClick = {
                         onButtonClick("3")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                        focusRequester.requestFocus()
                     },
                     content = {})
             }
@@ -169,6 +179,7 @@ fun FloatingActionButtonMenus(
                     onClick = {
                         onButtonClick("4")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                        focusRequester.requestFocus()
                     },
                     content = {})
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
@@ -176,6 +187,7 @@ fun FloatingActionButtonMenus(
                     onClick = {
                         onButtonClick("5")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                        focusRequester.requestFocus()
                     },
                     content = {})
                 Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
@@ -183,6 +195,7 @@ fun FloatingActionButtonMenus(
                     onClick = {
                         onButtonClick("6")
                         onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                        focusRequester.requestFocus()
                     },
                     content = {})
             }
