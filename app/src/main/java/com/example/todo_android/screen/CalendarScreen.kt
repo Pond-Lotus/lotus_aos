@@ -153,7 +153,7 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     var dayString by remember { mutableStateOf("") }
 
-    val focusRequester = remember { FocusRequester() }
+//    val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val scope = rememberCoroutineScope()
@@ -239,11 +239,11 @@ fun CalendarScreen(routeAction: RouteAction) {
         }
     })
 
-    LaunchedEffect(isVisibility) {
-        if (isVisibility) {
-            focusRequester.requestFocus()
-        }
-    }
+//    LaunchedEffect(isVisibility) {
+//        if (isVisibility) {
+//            focusRequester.requestFocus()
+//        }
+//    }
 
     LaunchedEffect(key1 = month) {
         selectedDate = month.yearMonth.atStartOfMonth()
@@ -351,7 +351,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 onMultiFloatingStateChange = { multiFloatingState = it },
                 backgroundColor = colorFAB,
                 onButtonClick = onButtonClick,
-                focusRequester = focusRequester
+//                focusRequester = focusRequester
             )
         },
         floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
@@ -467,80 +467,84 @@ fun CalendarScreen(routeAction: RouteAction) {
             )
 
             item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 21.dp, end = 21.dp)
-                ) {
+                val focusRequester = remember { FocusRequester() }
+
+                LaunchedEffect(isVisibility) {
                     if (isVisibility) {
-                        Card(
+                        focusRequester.requestFocus()
+                    }
+                }
+
+                if (isVisibility) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(45.dp)
+                            .padding(start = 21.dp, end = 21.dp),
+                        colors = CardDefaults.cardColors(Color.White),
+                        shape = RoundedCornerShape(8.dp),
+                    ) {
+                        Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(45.dp),
-                            colors = CardDefaults.cardColors(Color.White),
-                            shape = RoundedCornerShape(8.dp),
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(
+                                .padding(
                                     start = 12.dp,
                                     top = 13.dp,
                                     bottom = 13.dp
                                 ),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.blankcheckbox),
-                                    contentDescription = null
-                                )
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.blankcheckbox),
+                                contentDescription = null
+                            )
 
-                                BasicTextField(
-                                    modifier = Modifier
-                                        .wrapContentWidth()
-                                        .wrapContentHeight()
-                                        .padding(start = 16.dp)
-                                        .focusRequester(focusRequester)
-                                        .imePadding(),
-                                    value = todoTitle,
-                                    onValueChange = { text ->
-                                        vm.setTodoTitle(text)
-                                    },
-                                    textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
-                                        fontSize = 13.sp,
-                                        fontStyle = FontStyle.Normal,
-                                        color = Color.Black,
-                                        lineHeight = 31.sp
-                                    ),
-                                    singleLine = true,
-                                    maxLines = 1,
-                                    keyboardOptions = KeyboardOptions(
-                                        keyboardType = KeyboardType.Text,
-                                        imeAction = ImeAction.Done
-                                    ),
-                                    keyboardActions = KeyboardActions(onDone = {
-                                        scope.launch {
-                                            vm.createTodo(
-                                                token,
-                                                CreateTodo(
-                                                    todoYear,
-                                                    todoMonth,
-                                                    todoDay,
-                                                    todoTitle,
-                                                    todoColor
-                                                )
+                            BasicTextField(
+                                modifier = Modifier
+                                    .wrapContentWidth()
+                                    .wrapContentHeight()
+                                    .padding(start = 16.dp)
+                                    .focusRequester(focusRequester)
+                                    .imePadding(),
+                                value = todoTitle,
+                                onValueChange = { text ->
+                                    vm.setTodoTitle(text)
+                                },
+                                textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
+                                    fontSize = 13.sp,
+                                    fontStyle = FontStyle.Normal,
+                                    color = Color.Black,
+                                    lineHeight = 31.sp
+                                ),
+                                singleLine = true,
+                                maxLines = 1,
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Text,
+                                    imeAction = ImeAction.Done
+                                ),
+                                keyboardActions = KeyboardActions(onDone = {
+                                    scope.launch {
+                                        vm.createTodo(
+                                            token,
+                                            CreateTodo(
+                                                todoYear,
+                                                todoMonth,
+                                                todoDay,
+                                                todoTitle,
+                                                todoColor
                                             )
-                                            vm.setTodoTitle("")
-                                            isVisibility = !isVisibility
-                                        }
-                                    })
-                                )
-                            }
+                                        )
+                                        vm.setTodoTitle("")
+                                        isVisibility = !isVisibility
+                                    }
+                                })
+                            )
                         }
                     }
-                    if (todoList.isEmpty() && !isVisibility) {
-                        Row {
-                            BlankTodoItem()
-                        }
+                }
+                if (todoList.isEmpty() && !isVisibility) {
+                    Row {
+                        BlankTodoItem()
                     }
                 }
             }

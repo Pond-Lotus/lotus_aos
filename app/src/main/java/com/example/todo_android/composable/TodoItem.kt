@@ -143,6 +143,7 @@ fun BlankTodoItem() {
         modifier = Modifier
             .fillMaxWidth()
             .height(45.dp)
+            .padding(start = 21.dp, end = 21.dp)
     ) {
         Row(
             modifier = Modifier.padding(start = 12.dp, top = 13.dp, bottom = 13.dp),
