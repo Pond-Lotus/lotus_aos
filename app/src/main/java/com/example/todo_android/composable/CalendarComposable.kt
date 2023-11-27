@@ -45,7 +45,7 @@ fun CalendarTitle(yearMonth: YearMonth) {
             .background(Color.White)
             .padding(
                 vertical = 15.dp,
-                horizontal = 35.dp
+                horizontal = 30.dp
             ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
@@ -81,8 +81,8 @@ fun CalendarHeader(daysOfWeek: List<DayOfWeek>) {
             .fillMaxWidth()
             .background(Color.White)
             .padding(
-                start = 15.dp,
-                end = 15.dp,
+                start = 10.dp,
+                end = 10.dp,
             )
     ) {
         for (dayOfWeek in daysOfWeek) {
@@ -140,8 +140,8 @@ fun CalendarContent(
                         )
                     },
                     contentPadding = PaddingValues(
-                        start = 15.dp,
-                        end = 15.dp
+                        start = 10.dp,
+                        end = 10.dp
                     )
                 )
             } else {
@@ -164,8 +164,8 @@ fun CalendarContent(
                         )
                     },
                     contentPadding = PaddingValues(
-                        start = 15.dp,
-                        end = 15.dp
+                        start = 10.dp,
+                        end = 10.dp
                     )
                 )
             }
@@ -185,7 +185,6 @@ fun Day(
         modifier = Modifier
             .aspectRatio(1f)
             .size(36.dp)
-//            .padding(13.dp)
             .padding(10.dp)
             .clip(CircleShape)
             .background(

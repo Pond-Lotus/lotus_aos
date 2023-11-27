@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +52,8 @@ fun LazyListScope.TodoItem(
             key = { index: Int, todo -> todo.id!! }
         ) { index, todo ->
 
+            var isChecked by remember { mutableStateOf(todo.done) }
+
             val dismissState = rememberDismissState()
             if (dismissState.isDismissed(DismissDirection.EndToStart)) {
                 scope.launch {
@@ -90,10 +92,27 @@ fun LazyListScope.TodoItem(
                                     .size(20.dp)
                                     .clickable {
                                         // todo 체크박스 클릭
+                                        isChecked = !isChecked!!
+//                                        vm.updateTodo(
+//                                            token,
+//                                            todo.id!!,
+//                                            UpdateTodo(
+//                                                todo.year!!,
+//                                                todo.month!!,
+//                                                todo.day!!,
+//                                                todo.title!!,
+//                                                todo.done!!,
+//                                                todo.description!!,
+//                                                todo.color!!,
+//                                                todo.time!!
+//                                            )
+//                                        )
+//                                        vm.setTodoDone(!todo.done!!)
                                     },
                                 painter = painterResource(
-                                    id = getCheckboxImageResource(
-                                        checked = todo.done!!,
+                                    getCheckboxImageResource(
+//                                        done = todo.done!!,
+                                        done = isChecked!!,
                                         color = todo.color!!
                                     )
                                 ),
@@ -166,8 +185,11 @@ fun BlankTodoItem() {
 }
 
 @Composable
-fun getCheckboxImageResource(checked: Boolean, color: Int): Int {
-    return if (!checked) {
+fun getCheckboxImageResource(
+    done: Boolean,
+    color: Int
+): Int {
+    return if (done.equals(false)) {
         R.drawable.defaultcheckbox;
     } else {
         when (color) {

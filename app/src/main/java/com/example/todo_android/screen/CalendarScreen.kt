@@ -487,7 +487,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         Row(
                             modifier = Modifier
                                 .padding(
-                                    start = 12.dp,
+                                    start = 14.dp,
                                     top = 13.dp,
                                     bottom = 13.dp
                                 ),
@@ -495,7 +495,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.blankcheckbox),
+                                modifier = Modifier.size(20.dp),
+                                painter = painterResource(id = R.drawable.defaultcheckbox),
                                 contentDescription = null
                             )
 

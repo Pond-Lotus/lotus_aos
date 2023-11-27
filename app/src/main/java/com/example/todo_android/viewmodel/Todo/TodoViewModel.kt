@@ -1,5 +1,6 @@
 package com.example.todo_android.viewmodel.Todo
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todo_android.Data.Todo.CreateTodo
@@ -20,8 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TodoViewModel @Inject constructor(
-    private val repository1: TodoRepository,
-    private val repository2: CategoryRepository
+    private val TodoRepository: TodoRepository,
+    private val CategoryRepository: CategoryRepository
 ) : ViewModel() {
 
     //    State Flow 초기값 설정
@@ -45,7 +46,7 @@ class TodoViewModel @Inject constructor(
     val todoDay = _todoDay.asStateFlow()
     val todoTitle = _todoTitle.asStateFlow()
     val todoColor = _todoColor.asStateFlow()
-    val todoDone = _todoDone.asStateFlow()
+    var todoDone = _todoDone.asStateFlow()
     val todoTime = _todoTime.asStateFlow()
     val todoDescription = _todoDescription.asStateFlow()
 
@@ -60,7 +61,7 @@ class TodoViewModel @Inject constructor(
 
     fun createTodo(token: String, createTodo: CreateTodo) {
         viewModelScope.launch(Dispatchers.IO) {
-            val value = repository1.createTodo(token, createTodo)
+            val value = TodoRepository.createTodo(token, createTodo)
             when (value) {
                 is APIResponse.Success -> {
                     val todoState = _todoList.value
@@ -82,7 +83,7 @@ class TodoViewModel @Inject constructor(
 
     fun readTodo(token: String, todoYear: Int, todoMonth: Int, todoDay: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val value = repository1.readTodo(token, todoYear, todoMonth, todoDay)
+            val value = TodoRepository.readTodo(token, todoYear, todoMonth, todoDay)
             when (value) {
                 is APIResponse.Success -> {
                     _todoList.emit(value.data!!.data)
@@ -101,10 +102,17 @@ class TodoViewModel @Inject constructor(
 
     fun updateTodo(token: String, id: String, updateTodo: UpdateTodo) {
         viewModelScope.launch(Dispatchers.IO) {
-            val value = repository1.updateTodo(token, id, updateTodo)
+            val value = TodoRepository.updateTodo(token, id, updateTodo)
             when (value) {
                 is APIResponse.Success -> {
-                    _todoList.emit(value.data!!.data)
+                    Log.d("updateTodo", value.data.toString())
+//
+//                    val todoState = _todoList.value
+//                    val items = todoState.toMutableList().apply {
+//                        add(value.data!!.data)
+//                    }.toList()
+//                    _todoList.emit(items)
+//                    setTodoGroup()
                 }
                 is APIResponse.Error -> {
 
@@ -118,7 +126,7 @@ class TodoViewModel @Inject constructor(
 
     fun deleteTodo(token: String, todo: TodoData) {
         viewModelScope.launch(Dispatchers.IO) {
-            val value = repository1.deleteTodo(token, todo.id!!)
+            val value = TodoRepository.deleteTodo(token, todo.id!!)
             when (value) {
                 is APIResponse.Success -> {
                     val todoState = _todoList.value
@@ -140,7 +148,7 @@ class TodoViewModel @Inject constructor(
 
     fun readCategory(token: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val value = repository2.readTodoCategory(token)
+            val value = CategoryRepository.readTodoCategory(token)
             when (value) {
                 is APIResponse.Success -> {
                     val categoryState = _categoryList.value
@@ -161,7 +169,7 @@ class TodoViewModel @Inject constructor(
 
     fun updateCategory(token: String, data: CategoryData) {
         viewModelScope.launch(Dispatchers.IO) {
-//            val value = repository.updateTodoCategory(token, data)
+//            val value = CategoryRepository.updateTodoCategory(token, data)
 //            when(value){
 //                is APIResponse.Success -> {
 //                    val categoryState = _categoryList.value
