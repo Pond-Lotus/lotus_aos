@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.R
 import com.example.todo_android.response.CategoryResponse.CategoryData
 import com.example.todo_android.response.TodoResponse.TodoData
@@ -93,20 +94,20 @@ fun LazyListScope.TodoItem(
                                     .clickable {
                                         // todo 체크박스 클릭
                                         isChecked = !isChecked!!
-//                                        vm.updateTodo(
-//                                            token,
-//                                            todo.id!!,
-//                                            UpdateTodo(
-//                                                todo.year!!,
-//                                                todo.month!!,
-//                                                todo.day!!,
-//                                                todo.title!!,
-//                                                todo.done!!,
-//                                                todo.description!!,
-//                                                todo.color!!,
-//                                                todo.time!!
-//                                            )
-//                                        )
+                                        vm.updateTodo(
+                                            token,
+                                            todo.id!!,
+                                            UpdateTodo(
+                                                todo.year!!,
+                                                todo.month!!,
+                                                todo.day!!,
+                                                todo.title!!,
+                                                todo.done!!,
+                                                todo.description!!,
+                                                todo.color!!,
+                                                todo.time!!
+                                            )
+                                        )
 //                                        vm.setTodoDone(!todo.done!!)
                                     },
                                 painter = painterResource(

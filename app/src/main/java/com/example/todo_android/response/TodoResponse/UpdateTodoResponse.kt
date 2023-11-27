@@ -6,5 +6,5 @@ data class UpdateTodoResponse(
     @SerializedName("resultCode")
     val resultCode: Int,
     @SerializedName("data")
-    val data: List<TodoData>
+    val data: TodoData
 )

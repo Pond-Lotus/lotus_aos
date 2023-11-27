@@ -106,13 +106,12 @@ class TodoViewModel @Inject constructor(
             when (value) {
                 is APIResponse.Success -> {
                     Log.d("updateTodo", value.data.toString())
-//
-//                    val todoState = _todoList.value
-//                    val items = todoState.toMutableList().apply {
-//                        add(value.data!!.data)
-//                    }.toList()
-//                    _todoList.emit(items)
-//                    setTodoGroup()
+                    val todoState = _todoList.value
+                    val items = todoState.toMutableList().apply {
+                        add(value.data!!.data)
+                    }.toList()
+                    _todoList.emit(items)
+                    setTodoGroup()
                 }
                 is APIResponse.Error -> {
 
