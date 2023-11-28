@@ -15,4 +15,6 @@ data class CategoryData(
     val _5: String? = null,
     @SerializedName("6")
     val _6: String? = null,
+
+    val creating: Boolean? = null
 )
