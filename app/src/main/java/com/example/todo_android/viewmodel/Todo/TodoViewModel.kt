@@ -41,22 +41,18 @@ class TodoViewModel @Inject constructor(
     private val _categoryList = MutableStateFlow<List<CategoryData>>(emptyList())
     private val _categoryTodoList = MutableStateFlow<Map<Int?, List<TodoData>>>(emptyMap())
 
-    private val _createState = MutableStateFlow(false)
-
     val todoYear = _todoYear.asStateFlow()
     val todoMonth = _todoMonth.asStateFlow()
     val todoDay = _todoDay.asStateFlow()
     val todoTitle = _todoTitle.asStateFlow()
     val todoColor = _todoColor.asStateFlow()
-    var todoDone = _todoDone.asStateFlow()
+    val todoDone = _todoDone.asStateFlow()
     val todoTime = _todoTime.asStateFlow()
     val todoDescription = _todoDescription.asStateFlow()
 
     val todoList = _todoList.asStateFlow()
     val categoryList = _categoryList.asStateFlow()
     val categoryTodoList = _categoryTodoList.asStateFlow()
-
-    val createState = _createState.asStateFlow()
 
     init {
         readCategory(token)
@@ -110,12 +106,29 @@ class TodoViewModel @Inject constructor(
             when (value) {
                 is APIResponse.Success -> {
                     Log.d("updateTodo", value.data.toString())
+
                     val todoState = _todoList.value
-                    val items = todoState.toMutableList().apply {
-                        add(value.data!!.data)
-                    }.toList()
-                    _todoList.emit(items)
-                    setTodoGroup()
+                    val todoItem = todoState.filter { it.id == id }.last()
+                    val index = _todoList.value.toList().indexOf(todoItem)
+                    val updateTodoData = todoItem.copy(
+                        id = id,
+                        year = updateTodo.year,
+                        month = updateTodo.month,
+                        day = updateTodo.day,
+                        title = updateTodo.title,
+                        description = updateTodo.description,
+                        done = updateTodo.done,
+                        time = updateTodo.time,
+                        color = updateTodo.color
+                    )
+                    val updateTodoList = _todoList.value.toMutableList().apply {
+                        set(index, updateTodoData)
+                    }
+
+                    viewModelScope.launch {
+                        _todoList.emit(updateTodoList)
+                        setTodoGroup()
+                    }
                 }
                 is APIResponse.Error -> {
 
@@ -200,8 +213,22 @@ class TodoViewModel @Inject constructor(
         _todoTitle.value = text
     }
 
-    fun setTodoDone(done: Boolean) {
-        _todoDone.value = done
+    fun setTodoDone(todo: TodoData, done: Boolean) {
+
+        val todoState = _todoList.value
+        val todoItem = todoState.filter { it.id == todo.id }.last()
+        val index = _todoList.value.toList().indexOf(todoItem)
+        val updateTodoData = todoItem.copy(done = done)
+        val updateTodoList = _todoList.value.toMutableList().apply {
+            set(index, updateTodoData)
+        }
+
+        viewModelScope.launch {
+            // todo checkbox 클릭하는 부분
+//            _todoList.emit(todoList.value.sortedBy { it.done })
+            _todoList.emit(updateTodoList)
+            setTodoGroup()
+        }
     }
 
     fun setTodoGroup() {
@@ -209,9 +236,6 @@ class TodoViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _categoryTodoList.emit(categoryColor)
         }
-    }
-
-    fun beforeShowCreateTodo() {
     }
 }
 

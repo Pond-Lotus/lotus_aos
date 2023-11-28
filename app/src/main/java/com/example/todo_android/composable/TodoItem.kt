@@ -1,5 +1,6 @@
 package com.example.todo_android.composable
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -53,8 +54,6 @@ fun LazyListScope.TodoItem(
             key = { index: Int, todo -> todo.id!! }
         ) { index, todo ->
 
-            var isChecked by remember { mutableStateOf(todo.done) }
-
             val dismissState = rememberDismissState()
             if (dismissState.isDismissed(DismissDirection.EndToStart)) {
                 scope.launch {
@@ -92,28 +91,25 @@ fun LazyListScope.TodoItem(
                                 modifier = Modifier
                                     .size(20.dp)
                                     .clickable {
-                                        // todo 체크박스 클릭
-                                        isChecked = !isChecked!!
-//                                        vm.updateTodo(
-//                                            token,
-//                                            todo.id!!,
-//                                            UpdateTodo(
-//                                                todo.year!!,
-//                                                todo.month!!,
-//                                                todo.day!!,
-//                                                todo.title!!,
-//                                                todo.done!!,
-//                                                todo.description!!,
-//                                                todo.color!!,
-//                                                todo.time!!
-//                                            )
-//                                        )
-//                                        vm.setTodoDone(!todo.done!!)
+                                        vm.setTodoDone(todo, todo.done!!)
+                                        vm.updateTodo(
+                                            token,
+                                            todo.id!!,
+                                            UpdateTodo(
+                                                todo.year!!,
+                                                todo.month!!,
+                                                todo.day!!,
+                                                todo.title!!,
+                                                !todo.done!!,
+                                                todo.description!!,
+                                                todo.color!!,
+                                                todo.time!!
+                                            )
+                                        )
                                     },
                                 painter = painterResource(
                                     getCheckboxImageResource(
-//                                        done = todo.done!!,
-                                        done = isChecked!!,
+                                        done = todo.done!!,
                                         color = todo.color!!
                                     )
                                 ),
