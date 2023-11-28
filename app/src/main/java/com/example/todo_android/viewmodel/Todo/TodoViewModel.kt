@@ -41,6 +41,8 @@ class TodoViewModel @Inject constructor(
     private val _categoryList = MutableStateFlow<List<CategoryData>>(emptyList())
     private val _categoryTodoList = MutableStateFlow<Map<Int?, List<TodoData>>>(emptyMap())
 
+    private val _createState = MutableStateFlow(false)
+
     val todoYear = _todoYear.asStateFlow()
     val todoMonth = _todoMonth.asStateFlow()
     val todoDay = _todoDay.asStateFlow()
@@ -53,6 +55,8 @@ class TodoViewModel @Inject constructor(
     val todoList = _todoList.asStateFlow()
     val categoryList = _categoryList.asStateFlow()
     val categoryTodoList = _categoryTodoList.asStateFlow()
+
+    val createState = _createState.asStateFlow()
 
     init {
         readCategory(token)
@@ -205,6 +209,9 @@ class TodoViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _categoryTodoList.emit(categoryColor)
         }
+    }
+
+    fun beforeShowCreateTodo() {
     }
 }
 

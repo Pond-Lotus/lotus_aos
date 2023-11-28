@@ -94,20 +94,20 @@ fun LazyListScope.TodoItem(
                                     .clickable {
                                         // todo 체크박스 클릭
                                         isChecked = !isChecked!!
-                                        vm.updateTodo(
-                                            token,
-                                            todo.id!!,
-                                            UpdateTodo(
-                                                todo.year!!,
-                                                todo.month!!,
-                                                todo.day!!,
-                                                todo.title!!,
-                                                todo.done!!,
-                                                todo.description!!,
-                                                todo.color!!,
-                                                todo.time!!
-                                            )
-                                        )
+//                                        vm.updateTodo(
+//                                            token,
+//                                            todo.id!!,
+//                                            UpdateTodo(
+//                                                todo.year!!,
+//                                                todo.month!!,
+//                                                todo.day!!,
+//                                                todo.title!!,
+//                                                todo.done!!,
+//                                                todo.description!!,
+//                                                todo.color!!,
+//                                                todo.time!!
+//                                            )
+//                                        )
 //                                        vm.setTodoDone(!todo.done!!)
                                     },
                                 painter = painterResource(

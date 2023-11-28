@@ -14,7 +14,5 @@ data class CategoryData(
     @SerializedName("5")
     val _5: String? = null,
     @SerializedName("6")
-    val _6: String? = null,
-
-    val creating: Boolean? = null
+    val _6: String? = null
 )
