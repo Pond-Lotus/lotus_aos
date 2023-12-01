@@ -1,6 +1,5 @@
 package com.example.todo_android.composable
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,8 +8,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,14 +32,15 @@ import com.example.todo_android.viewmodel.Todo.TodoViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @ExperimentalMaterial3Api
 fun LazyListScope.TodoItem(
     vm: TodoViewModel,
     token: String,
     categoryList: List<CategoryData>,
     categoryTodoList: Map<Int?, List<TodoData>>,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    bottomScaffoldState: BottomSheetScaffoldState
 ) {
 
     categoryTodoList.forEach { _, items ->
@@ -78,6 +80,10 @@ fun LazyListScope.TodoItem(
                             .height(45.dp)
                             .clickable {
                                 // bottomsheet 열기
+                                scope.launch {
+                                    vm.setBottomSheetDataSet(todo = todo)
+                                    bottomScaffoldState.bottomSheetState.expand()
+                                }
                             },
                         colors = CardDefaults.cardColors(Color.White),
                         shape = RoundedCornerShape(8.dp)

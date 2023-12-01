@@ -35,12 +35,9 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.todo_android.Data.Todo.CreateTodo
-import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.R
 import com.example.todo_android.composable.*
 import com.example.todo_android.navigation.Action.RouteAction
-import com.example.todo_android.request.TodoRequest.UpdateTodoRequest
-import com.example.todo_android.response.TodoResponse.UpdateTodoResponse
 import com.example.todo_android.util.MyApplication
 import com.example.todo_android.util.rememberFirstVisibleMonthAfterScroll
 import com.example.todo_android.util.rememberFirstVisibleWeekAfterScroll
@@ -49,71 +46,8 @@ import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.*
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.time.DayOfWeek
 import java.time.LocalDate
-
-fun updateTodo(
-    token: String,
-    year: Int,
-    month: Int,
-    day: Int,
-    title: String,
-    done: Boolean,
-    description: String,
-    color: Int,
-    time: String,
-    id: String,
-    response: (UpdateTodoResponse?) -> Unit,
-) {
-
-    var updateTodoResponse: UpdateTodoResponse? = null
-
-    val okHttpClient: OkHttpClient by lazy {
-        val httpLoInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-        OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
-    }
-
-    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create()).build()
-
-    var updateTodoRequest: UpdateTodoRequest = retrofit.create(UpdateTodoRequest::class.java)
-
-    updateTodoRequest.requestUpdateTodo(
-        token, id, UpdateTodo(year, month, day, title, done, description, color, time)
-    ).enqueue(object : Callback<UpdateTodoResponse> {
-
-        // 실패 했을때
-        override fun onFailure(call: Call<UpdateTodoResponse>, t: Throwable) {
-            Log.e("updateTodo", t.message.toString())
-        }
-
-        // 성공 했을때
-        override fun onResponse(
-            call: Call<UpdateTodoResponse>,
-            response: Response<UpdateTodoResponse>,
-        ) {
-
-            if (response.isSuccessful) {
-                updateTodoResponse = response.body()
-
-                response(updateTodoResponse)
-
-                Log.d("updateTodo", "token : " + MyApplication.prefs.getData("token", ""))
-                Log.d("updateTodo", "resultCode : " + updateTodoResponse?.resultCode)
-            } else {
-                Log.e("updateTodo", "resultCode : " + response.body())
-                Log.e("updateTodo", "code : " + response.code())
-            }
-        }
-    })
-}
 
 @ExperimentalMotionApi
 @ExperimentalFoundationApi
@@ -153,7 +87,7 @@ fun CalendarScreen(routeAction: RouteAction) {
 
     var dayString by remember { mutableStateOf("") }
 
-//    val focusRequester = remember { FocusRequester() }
+    val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val scope = rememberCoroutineScope()
@@ -346,21 +280,28 @@ fun CalendarScreen(routeAction: RouteAction) {
             )
         },
         floatingActionButton = {
-            AddTodoFloatingButton(
-                multiFloatingState = multiFloatingState,
-                onMultiFloatingStateChange = { multiFloatingState = it },
-                backgroundColor = colorFAB,
-                onButtonClick = onButtonClick,
+            if(!isVisibility || bottomScaffoldState.bottomSheetState.isExpanded){
+                AddTodoFloatingButton(
+                    multiFloatingState = multiFloatingState,
+                    onMultiFloatingStateChange = { multiFloatingState = it },
+                    backgroundColor = colorFAB,
+                    onButtonClick = onButtonClick,
 //                focusRequester = focusRequester
-            )
+                )
+            }
         },
         floatingActionButtonPosition = androidx.compose.material.FabPosition.End,
-        sheetPeekHeight = 1.dp,
+        sheetPeekHeight = 0.dp,
         sheetShape = RoundedCornerShape(
             topStart = 20.dp, topEnd = 20.dp
         ),
         sheetContent = {
-            // bottomsheet 컴포저블
+            TodoUpdateBottomSheet(
+                vm = vm,
+                scope = scope,
+                bottomSheetScaffoldState = bottomScaffoldState,
+                focusRequester = focusRequester
+            )
         }
     ) {
 
@@ -463,7 +404,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 token = token,
                 categoryList = categoryList,
                 categoryTodoList = categoryTodoList,
-                scope = scope
+                scope = scope,
+                bottomScaffoldState = bottomScaffoldState
             )
 
             item {

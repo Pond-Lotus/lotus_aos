@@ -36,23 +36,29 @@ class TodoViewModel @Inject constructor(
     private val _todoColor = MutableStateFlow(0)
     private val _todoDone = MutableStateFlow(false)
     private val _todoTime = MutableStateFlow("9999")
+    private val _todoAmPm = MutableStateFlow("")
 
     private val _todoList = MutableStateFlow<List<TodoData>>(emptyList())
     private val _categoryList = MutableStateFlow<List<CategoryData>>(emptyList())
     private val _categoryTodoList = MutableStateFlow<Map<Int?, List<TodoData>>>(emptyMap())
 
+    private val _bottomsheetViewData = MutableStateFlow(TodoData())
+
     val todoYear = _todoYear.asStateFlow()
     val todoMonth = _todoMonth.asStateFlow()
     val todoDay = _todoDay.asStateFlow()
     val todoTitle = _todoTitle.asStateFlow()
+    val todoDescription = _todoDescription.asStateFlow()
     val todoColor = _todoColor.asStateFlow()
     val todoDone = _todoDone.asStateFlow()
     val todoTime = _todoTime.asStateFlow()
-    val todoDescription = _todoDescription.asStateFlow()
+    val todoAmPm = _todoAmPm.asStateFlow()
 
     val todoList = _todoList.asStateFlow()
     val categoryList = _categoryList.asStateFlow()
     val categoryTodoList = _categoryTodoList.asStateFlow()
+
+    val bottomsheetViewData = _bottomsheetViewData.asStateFlow()
 
     init {
         readCategory(token)
@@ -185,32 +191,29 @@ class TodoViewModel @Inject constructor(
 
     fun updateCategory(token: String, data: CategoryData) {
         viewModelScope.launch(Dispatchers.IO) {
-//            val value = CategoryRepository.updateTodoCategory(token, data)
-//            when(value){
-//                is APIResponse.Success -> {
-//                    val categoryState = _categoryList.value
-//                    val items = categoryState.toMutableList().toList()
-//                    _categoryList.value = items
-//                }
-//                is APIResponse.Error -> {
-//
-//                }
-//                is APIResponse.Loading -> {
-//
-//                }
-//            }
+
         }
     }
 
 
-    // todoColor 변경
     fun setTodoColor(color: Int) {
         _todoColor.value = color
     }
 
-    // todoTitle 변경
     fun setTodoTitle(text: String) {
         _todoTitle.value = text
+    }
+
+    fun setTodoDescription(text: String) {
+        _todoDescription.value = text
+    }
+
+    fun setBottomSheetDataSet(
+        todo: TodoData
+    ) {
+        viewModelScope.launch {
+            _bottomsheetViewData.emit(todo)
+        }
     }
 
     fun setTodoDone(todo: TodoData, done: Boolean) {
@@ -225,7 +228,6 @@ class TodoViewModel @Inject constructor(
 
         viewModelScope.launch {
             // todo checkbox 클릭하는 부분
-//            _todoList.emit(todoList.value.sortedBy { it.done })
             _todoList.emit(updateTodoList)
             setTodoGroup()
         }
@@ -234,8 +236,10 @@ class TodoViewModel @Inject constructor(
     fun setTodoGroup() {
         val categoryColor = todoList.value.groupBy { it.color }
         viewModelScope.launch(Dispatchers.IO) {
-            _categoryTodoList.emit(categoryColor)
+            val sortData = categoryColor.mapValues { todo ->
+                todo.value.sortedBy { it.done }
+            }
+            _categoryTodoList.emit(sortData)
         }
     }
 }
-

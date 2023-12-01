@@ -1,7 +1,436 @@
 package com.example.todo_android.composable
 
+import android.app.TimePickerDialog
+import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.todo_android.Data.Todo.UpdateTodo
+import com.example.todo_android.R
+import com.example.todo_android.util.MyApplication
+import com.example.todo_android.viewmodel.Todo.TodoViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import java.util.*
 
-private fun convertToLayoutTimeFormat(time: String): String {
+@OptIn(ExperimentalMaterial3Api::class)
+@ExperimentalMaterialApi
+@ExperimentalComposeUiApi
+@Composable
+fun TodoUpdateBottomSheet(
+    vm: TodoViewModel,
+    scope: CoroutineScope,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
+    focusRequester: FocusRequester
+) {
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
+    val Todo by vm.bottomsheetViewData.collectAsState()
+
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var color by remember { mutableStateOf(Todo.color) }
+
+    // TimePicker 관련 변수
+    var context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val hour = calendar[Calendar.HOUR_OF_DAY]
+    val minute = calendar[Calendar.MINUTE]
+    val amPm by vm.todoAmPm.collectAsState()
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val timePickerDialog = TimePickerDialog(
+        context, R.style.TimePickerDialog, { _, hour: Int, minute: Int ->
+//            amPm = if (hour < 12) "오전" else "오후"
+//            timeString = String.format("%02d%02d", hour, minute)
+//            time = String.format("%02d%02d", hour, minute)
+        }, hour, minute, false
+    )
+
+    val TodoColor : (Int) -> Color = {
+        when (color) {
+            1 -> {
+                Color(0xffFFB4B4)
+            }
+            2 -> {
+                Color(0xffFFDCA8)
+            }
+            3 -> {
+                Color(0xffB1E0CF)
+            }
+            4 -> {
+                Color(0xffB7D7F5)
+            }
+            5 -> {
+                Color(0xffFFB8EB)
+            }
+            6 -> {
+                Color(0xffB6B1EC)
+            }
+            else -> {
+                Color.Black
+            }
+        }
+    }
+
+    val onButtonClick: (String) -> Unit = { id ->
+        when (id) {
+            "1" -> {
+                color = 1
+            }
+            "2" -> {
+                color = 2
+            }
+            "3" -> {
+                color = 3
+            }
+            "4" -> {
+                color = 4
+            }
+            "5" -> {
+                color = 5
+            }
+            "6" -> {
+                color = 6
+            }
+        }
+    }
+
+    LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue) {
+        if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
+
+    LaunchedEffect(
+        key1 = Todo.title,
+        key2 = Todo.description,
+        key3 = Todo.color
+    ) {
+        if (title == "" && Todo.title?.isNotEmpty() == true) {
+            title = Todo.title!!
+        }
+
+        if (description == "" && Todo.description?.isNotEmpty() == true) {
+            description = Todo.description!!
+        }
+    }
+
+
+    Column(
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(start = 25.dp, end = 25.dp, top = 20.dp)
+            .imePadding()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Image(
+                modifier = Modifier.clickable {
+                    scope.launch {
+                        title = ""
+                        description = ""
+                        keyboardController?.hide()
+                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                    }
+                }, painter = painterResource(id = R.drawable.close), contentDescription = null
+            )
+
+            Box(
+                modifier = Modifier
+                    .width(60.dp)
+                    .height(30.dp)
+                    .clip(shape = RoundedCornerShape(20.dp))
+                    .background(Color(0xffFFBE3C7))
+                    .clickable {
+                        scope.launch {
+                            vm.updateTodo(
+                                token,
+                                Todo.id!!,
+                                UpdateTodo(
+                                    Todo.year!!,
+                                    Todo.month!!,
+                                    Todo.day!!,
+                                    title,
+                                    Todo.done!!,
+                                    description,
+                                    color!!,
+                                    Todo.time!!
+                                )
+                            )
+                            title = Todo.title!!
+                            description = Todo.description!!
+//                            color = Todo.color!!
+                            keyboardController?.hide()
+                            bottomSheetScaffoldState.bottomSheetState.collapse()
+                        }
+                    }
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "저장",
+                    color = Color.Black,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 15.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(9.dp)
+                    .height(51.dp)
+                    .clip(shape = CircleShape)
+                    .background(color = TodoColor(color ?: 0))
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = "${Todo.month}월 ${Todo.day}일 요일",
+                    fontSize = 15.sp,
+                    lineHeight = 19.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TodoColor(color ?: 0)
+                )
+                BasicTextField(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .wrapContentHeight()
+                        .focusRequester(focusRequester),
+                    value = title,
+                    onValueChange = {
+                        title = it
+                    },
+                    textStyle = TextStyle(
+                        color = Color.Black,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 31.sp
+                    ),
+                    singleLine = true,
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            if (Todo.title?.isEmpty() == true) {
+                                Text(
+                                    text = "토도리스트 입력",
+                                    fontSize = 24.sp,
+                                    lineHeight = 31.2.sp,
+                                    fontWeight = FontWeight(700),
+                                    color = Color(0xFFC8C8C8),
+                                )
+                            }
+                            innerTextField()
+                        }
+                    }
+                )
+            }
+        }
+
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            value = description,
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color(0xffF2F2F2),
+                disabledLabelColor = Color(0xffF2F2F2),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
+            ),
+            shape = RoundedCornerShape(10.dp),
+            onValueChange = {
+                if (it.count { it == '\n' } < 4) {
+                    description = it
+                }
+            },
+            maxLines = 4,
+            placeholder = {
+                Text(
+                    text = "+  메모하고 싶은 내용이 있나요?",
+                    fontSize = 14.sp,
+                    lineHeight = 19.6.sp,
+                    fontWeight = FontWeight(300),
+                    color = Color(0xFF9E9E9E)
+                )
+            },
+            textStyle = TextStyle(fontSize = 14.sp)
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 22.dp, bottom = 22.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.clock),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(end = 5.dp)
+            )
+            Text(
+                text = "시간",
+                modifier = Modifier.padding(end = 8.dp),
+                fontWeight = FontWeight.Bold,
+                lineHeight = 19.sp,
+                fontSize = 15.sp
+            )
+            Text(
+                modifier = Modifier.clickable {
+                    timePickerDialog.show()
+                },
+//                text = "$amPm ${convertToLayoutTimeFormat(timeString)}",
+                text = "시간 테스트 영역",
+                lineHeight = 19.sp,
+                fontSize = 15.sp,
+                color = Color(0xff9E9E9E)
+            )
+        }
+
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 19.dp),
+            color = Color(0xffe9e9e9)
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 20.dp,
+                    end = 20.dp,
+                    bottom = 19.dp
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable {
+                        onButtonClick("1")
+                    }, painter = if (color == 1) {
+                    painterResource(id = R.drawable.redselecbutton)
+                } else {
+                    painterResource(id = R.drawable.redbutton)
+                }, contentDescription = null
+            )
+
+            Image(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable {
+                        onButtonClick("2")
+                    }, painter = if (color == 2) {
+                    painterResource(id = R.drawable.yellowselecbutton)
+                } else {
+                    painterResource(id = R.drawable.yellowbutton)
+                }, contentDescription = null
+            )
+
+            Image(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable {
+                        onButtonClick("3")
+                    }, painter = if (color == 3) {
+                    painterResource(id = R.drawable.greenselecbutton)
+                } else {
+                    painterResource(id = R.drawable.greenbutton)
+                }, contentDescription = null
+            )
+
+            Image(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable {
+                        onButtonClick("4")
+                    }, painter = if (color == 4) {
+                    painterResource(id = R.drawable.blueselecbutton)
+                } else {
+                    painterResource(id = R.drawable.bluebutton)
+                }, contentDescription = null
+            )
+
+            Image(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable {
+                        onButtonClick("5")
+                    }, painter = if (color == 5) {
+                    painterResource(id = R.drawable.pinkselecbutton)
+                } else {
+                    painterResource(id = R.drawable.pinkbutton)
+                }, contentDescription = null
+            )
+
+            Image(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable {
+                        onButtonClick("6")
+                    }, painter = if (color == 6) {
+                    painterResource(id = R.drawable.purpleselecbutton)
+                } else {
+                    painterResource(id = R.drawable.purplebutton)
+                }, contentDescription = null
+            )
+        }
+    }
+}
+
+
+fun convertToLayoutTimeFormat(time: String): String {
     return if (time == "미지정") {
         "미지정"
     } else if (time.length == 4) {
