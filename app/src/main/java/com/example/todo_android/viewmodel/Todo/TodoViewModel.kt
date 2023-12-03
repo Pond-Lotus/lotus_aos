@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -43,6 +44,9 @@ class TodoViewModel @Inject constructor(
     private val _categoryTodoList = MutableStateFlow<Map<Int?, List<TodoData>>>(emptyMap())
 
     private val _bottomsheetViewData = MutableStateFlow(TodoData())
+    val setTextFieldState = MutableStateFlow(false)
+
+    private val _todoBottomSheetColor = MutableStateFlow(0)
 
     val todoYear = _todoYear.asStateFlow()
     val todoMonth = _todoMonth.asStateFlow()
@@ -59,6 +63,8 @@ class TodoViewModel @Inject constructor(
     val categoryTodoList = _categoryTodoList.asStateFlow()
 
     val bottomsheetViewData = _bottomsheetViewData.asStateFlow()
+
+    val todoBottomSheetColor = _todoBottomSheetColor.asStateFlow()
 
     init {
         readCategory(token)
@@ -211,9 +217,11 @@ class TodoViewModel @Inject constructor(
     fun setBottomSheetDataSet(
         todo: TodoData
     ) {
-        viewModelScope.launch {
-            _bottomsheetViewData.emit(todo)
-        }
+        _bottomsheetViewData.value = todo
+    }
+
+    fun setTodoBottomSheetColor(color: Int) {
+        _todoBottomSheetColor.value = color
     }
 
     fun setTodoDone(todo: TodoData, done: Boolean) {

@@ -1,7 +1,6 @@
 package com.example.todo_android.composable
 
 import android.app.TimePickerDialog
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,6 +35,7 @@ import com.example.todo_android.util.MyApplication
 import com.example.todo_android.viewmodel.Todo.TodoViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,11 +50,14 @@ fun TodoUpdateBottomSheet(
 ) {
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
-    val Todo by vm.bottomsheetViewData.collectAsState()
+    val Todo = vm.bottomsheetViewData.collectAsState()
+    val TextFieldState = vm.setTextFieldState.collectAsState()
 
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var color by remember { mutableStateOf(Todo.color) }
+    var dayString by remember { mutableStateOf("") }
+    var color = vm.todoBottomSheetColor.collectAsState()
+
 
     // TimePicker 관련 변수
     var context = LocalContext.current
@@ -64,6 +67,29 @@ fun TodoUpdateBottomSheet(
     val amPm by vm.todoAmPm.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
 
+//    // 요일 관련
+//    val selectedDate = LocalDate.of(
+////        Todo.value.year!!,
+////        Todo.value.month!!,
+////        Todo.value.day!!
+//            vm.todoYear.value,
+//            vm.todoMonth.value,
+//            vm.todoDay.value
+//    )
+//    val dayOfWeek = selectedDate.dayOfWeek
+//
+//    dayString = when (dayOfWeek.value) {
+//        1 -> "월요일"
+//        2 -> "화요일"
+//        3 -> "수요일"
+//        4 -> "목요일"
+//        5 -> "금요일"
+//        6 -> "토요일"
+//        7 -> "일요일"
+//        else -> ""
+//    }
+
+
     val timePickerDialog = TimePickerDialog(
         context, R.style.TimePickerDialog, { _, hour: Int, minute: Int ->
 //            amPm = if (hour < 12) "오전" else "오후"
@@ -72,8 +98,8 @@ fun TodoUpdateBottomSheet(
         }, hour, minute, false
     )
 
-    val TodoColor : (Int) -> Color = {
-        when (color) {
+    val TodoColor: (Int) -> Color = {
+        when (color.value) {
             1 -> {
                 Color(0xffFFB4B4)
             }
@@ -98,29 +124,6 @@ fun TodoUpdateBottomSheet(
         }
     }
 
-    val onButtonClick: (String) -> Unit = { id ->
-        when (id) {
-            "1" -> {
-                color = 1
-            }
-            "2" -> {
-                color = 2
-            }
-            "3" -> {
-                color = 3
-            }
-            "4" -> {
-                color = 4
-            }
-            "5" -> {
-                color = 5
-            }
-            "6" -> {
-                color = 6
-            }
-        }
-    }
-
     LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue) {
         if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
             focusRequester.requestFocus()
@@ -129,16 +132,19 @@ fun TodoUpdateBottomSheet(
     }
 
     LaunchedEffect(
-        key1 = Todo.title,
-        key2 = Todo.description,
-        key3 = Todo.color
+        key1 = Todo.value.title,
+        key2 = Todo.value.description,
+        key3 = TextFieldState.value
     ) {
-        if (title == "" && Todo.title?.isNotEmpty() == true) {
-            title = Todo.title!!
+
+        vm.setTextFieldState.value = false
+
+        if (title == "" && Todo.value?.title?.isNotEmpty() == true) {
+            title = Todo.value.title!!
         }
 
-        if (description == "" && Todo.description?.isNotEmpty() == true) {
-            description = Todo.description!!
+        if (description == "" && Todo.value?.description?.isNotEmpty() == true) {
+            description = Todo.value.description!!
         }
     }
 
@@ -159,8 +165,9 @@ fun TodoUpdateBottomSheet(
             Image(
                 modifier = Modifier.clickable {
                     scope.launch {
-                        title = ""
-                        description = ""
+//                        vm.setTextFieldState.value = true
+                        title = Todo.value.title!!
+                        description = Todo.value.description!!
                         keyboardController?.hide()
                         bottomSheetScaffoldState.bottomSheetState.collapse()
                     }
@@ -177,21 +184,20 @@ fun TodoUpdateBottomSheet(
                         scope.launch {
                             vm.updateTodo(
                                 token,
-                                Todo.id!!,
+                                Todo.value.id!!,
                                 UpdateTodo(
-                                    Todo.year!!,
-                                    Todo.month!!,
-                                    Todo.day!!,
+                                    Todo.value.year!!,
+                                    Todo.value.month!!,
+                                    Todo.value.day!!,
                                     title,
-                                    Todo.done!!,
+                                    Todo.value.done!!,
                                     description,
-                                    color!!,
-                                    Todo.time!!
+                                    color.value,
+                                    Todo.value.time!!
                                 )
                             )
-                            title = Todo.title!!
-                            description = Todo.description!!
-//                            color = Todo.color!!
+                            title = Todo.value.title!!
+                            description = Todo.value.description!!
                             keyboardController?.hide()
                             bottomSheetScaffoldState.bottomSheetState.collapse()
                         }
@@ -218,7 +224,7 @@ fun TodoUpdateBottomSheet(
                     .width(9.dp)
                     .height(51.dp)
                     .clip(shape = CircleShape)
-                    .background(color = TodoColor(color ?: 0))
+                    .background(color = TodoColor(color.value))
             )
 
             Column(
@@ -229,11 +235,11 @@ fun TodoUpdateBottomSheet(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "${Todo.month}월 ${Todo.day}일 요일",
+                    text = "${Todo.value.month}월 ${Todo.value.day}일 ${dayString}",
                     fontSize = 15.sp,
                     lineHeight = 19.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TodoColor(color ?: 0)
+                    color = TodoColor(color.value)
                 )
                 BasicTextField(
                     modifier = Modifier
@@ -255,7 +261,7 @@ fun TodoUpdateBottomSheet(
                         Box(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            if (Todo.title?.isEmpty() == true) {
+                            if (Todo.value?.title?.isEmpty() == true) {
                                 Text(
                                     text = "토도리스트 입력",
                                     fontSize = 24.sp,
@@ -358,8 +364,8 @@ fun TodoUpdateBottomSheet(
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
-                        onButtonClick("1")
-                    }, painter = if (color == 1) {
+                        vm.setTodoBottomSheetColor(1)
+                    }, painter = if (color.value == 1) {
                     painterResource(id = R.drawable.redselecbutton)
                 } else {
                     painterResource(id = R.drawable.redbutton)
@@ -370,8 +376,8 @@ fun TodoUpdateBottomSheet(
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
-                        onButtonClick("2")
-                    }, painter = if (color == 2) {
+                        vm.setTodoBottomSheetColor(2)
+                    }, painter = if (color.value == 2) {
                     painterResource(id = R.drawable.yellowselecbutton)
                 } else {
                     painterResource(id = R.drawable.yellowbutton)
@@ -382,8 +388,8 @@ fun TodoUpdateBottomSheet(
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
-                        onButtonClick("3")
-                    }, painter = if (color == 3) {
+                        vm.setTodoBottomSheetColor(3)
+                    }, painter = if (color.value == 3) {
                     painterResource(id = R.drawable.greenselecbutton)
                 } else {
                     painterResource(id = R.drawable.greenbutton)
@@ -394,8 +400,8 @@ fun TodoUpdateBottomSheet(
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
-                        onButtonClick("4")
-                    }, painter = if (color == 4) {
+                        vm.setTodoBottomSheetColor(4)
+                    }, painter = if (color.value == 4) {
                     painterResource(id = R.drawable.blueselecbutton)
                 } else {
                     painterResource(id = R.drawable.bluebutton)
@@ -406,8 +412,8 @@ fun TodoUpdateBottomSheet(
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
-                        onButtonClick("5")
-                    }, painter = if (color == 5) {
+                        vm.setTodoBottomSheetColor(5)
+                    }, painter = if (color.value == 5) {
                     painterResource(id = R.drawable.pinkselecbutton)
                 } else {
                     painterResource(id = R.drawable.pinkbutton)
@@ -418,8 +424,8 @@ fun TodoUpdateBottomSheet(
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
-                        onButtonClick("6")
-                    }, painter = if (color == 6) {
+                        vm.setTodoBottomSheetColor(6)
+                    }, painter = if (color.value == 6) {
                     painterResource(id = R.drawable.purpleselecbutton)
                 } else {
                     painterResource(id = R.drawable.purplebutton)
