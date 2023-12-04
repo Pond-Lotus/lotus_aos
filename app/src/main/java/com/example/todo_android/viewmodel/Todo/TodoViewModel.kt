@@ -1,6 +1,7 @@
 package com.example.todo_android.viewmodel.Todo
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todo_android.Data.Todo.CreateTodo
@@ -45,7 +46,7 @@ class TodoViewModel @Inject constructor(
     private val _categoryTodoList = MutableStateFlow<Map<Int?, List<TodoData>>>(emptyMap())
 
     private val _bottomsheetViewData = MutableStateFlow(TodoData())
-    val setTextFieldState = MutableStateFlow(false)
+//    val setTextFieldState = MutableStateFlow(false)
 
     private val _todoBottomSheetColor = MutableStateFlow(0)
 

@@ -51,7 +51,7 @@ fun TodoUpdateBottomSheet(
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
 
     val Todo = vm.bottomsheetViewData.collectAsState()
-    val TextFieldState = vm.setTextFieldState.collectAsState()
+//    val TextFieldState = vm.setTextFieldState.collectAsState()
 
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -68,26 +68,23 @@ fun TodoUpdateBottomSheet(
     val keyboardController = LocalSoftwareKeyboardController.current
 
 //    // 요일 관련
-//    val selectedDate = LocalDate.of(
-////        Todo.value.year!!,
-////        Todo.value.month!!,
-////        Todo.value.day!!
-//            vm.todoYear.value,
-//            vm.todoMonth.value,
-//            vm.todoDay.value
-//    )
-//    val dayOfWeek = selectedDate.dayOfWeek
-//
-//    dayString = when (dayOfWeek.value) {
-//        1 -> "월요일"
-//        2 -> "화요일"
-//        3 -> "수요일"
-//        4 -> "목요일"
-//        5 -> "금요일"
-//        6 -> "토요일"
-//        7 -> "일요일"
-//        else -> ""
-//    }
+    val selectedDate = LocalDate.of(
+        vm.todoYear.value,
+        vm.todoMonth.value,
+        vm.todoDay.value
+    )
+    val dayOfWeek = selectedDate.dayOfWeek
+
+    dayString = when (dayOfWeek.value) {
+        1 -> "월요일"
+        2 -> "화요일"
+        3 -> "수요일"
+        4 -> "목요일"
+        5 -> "금요일"
+        6 -> "토요일"
+        7 -> "일요일"
+        else -> ""
+    }
 
 
     val timePickerDialog = TimePickerDialog(
@@ -134,10 +131,10 @@ fun TodoUpdateBottomSheet(
     LaunchedEffect(
         key1 = Todo.value.title,
         key2 = Todo.value.description,
-        key3 = TextFieldState.value
+//        key3 = TextFieldState.value
     ) {
 
-        vm.setTextFieldState.value = false
+//        vm.setTextFieldState.value = false
 
         if (title == "" && Todo.value?.title?.isNotEmpty() == true) {
             title = Todo.value.title!!
@@ -166,8 +163,8 @@ fun TodoUpdateBottomSheet(
                 modifier = Modifier.clickable {
                     scope.launch {
 //                        vm.setTextFieldState.value = true
-                        title = Todo.value.title!!
-                        description = Todo.value.description!!
+                        title = ""
+                        description = ""
                         keyboardController?.hide()
                         bottomSheetScaffoldState.bottomSheetState.collapse()
                     }
@@ -196,8 +193,10 @@ fun TodoUpdateBottomSheet(
                                     Todo.value.time!!
                                 )
                             )
-                            title = Todo.value.title!!
-                            description = Todo.value.description!!
+//                            title = Todo.value.title!!
+//                            description = Todo.value.description!!
+                            title = ""
+                            description = ""
                             keyboardController?.hide()
                             bottomSheetScaffoldState.bottomSheetState.collapse()
                         }
@@ -235,7 +234,7 @@ fun TodoUpdateBottomSheet(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "${Todo.value.month}월 ${Todo.value.day}일 ${dayString}",
+                    text = "${Todo.value.month}월 ${Todo.value.day}일 $dayString",
                     fontSize = 15.sp,
                     lineHeight = 19.sp,
                     fontWeight = FontWeight.Bold,
@@ -261,7 +260,7 @@ fun TodoUpdateBottomSheet(
                         Box(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            if (Todo.value?.title?.isEmpty() == true) {
+                            if (Todo.value.title?.isEmpty() == true) {
                                 Text(
                                     text = "토도리스트 입력",
                                     fontSize = 24.sp,
