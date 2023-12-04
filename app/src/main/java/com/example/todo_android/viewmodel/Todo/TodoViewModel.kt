@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.Year
 import javax.inject.Inject
 
 @HiltViewModel
@@ -199,6 +200,18 @@ class TodoViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
 
         }
+    }
+
+    fun setTodoYear(year: Int){
+        _todoYear.value = year
+    }
+
+    fun setTodoMonth(month: Int){
+        _todoMonth.value = month
+    }
+
+    fun setTodoDay(day: Int){
+        _todoDay.value = day
     }
 
 

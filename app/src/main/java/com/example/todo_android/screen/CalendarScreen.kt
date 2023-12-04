@@ -333,6 +333,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                         CalendarHeader(daysOfWeek = daysOfWeek)
 
                         CalendarContent(
+                            vm = vm,
                             selectedDate = selectedDate,
                             weekState = weekState,
                             monthState = monthState,

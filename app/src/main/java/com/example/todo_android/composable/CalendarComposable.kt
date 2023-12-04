@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.R
+import com.example.todo_android.viewmodel.Todo.TodoViewModel
 import com.kizitonwose.calendar.compose.CalendarState
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.WeekCalendar
@@ -102,6 +103,7 @@ fun CalendarHeader(daysOfWeek: List<DayOfWeek>) {
 
 @Composable
 fun CalendarContent(
+    vm: TodoViewModel,
     selectedDate: LocalDate,
     weekState: WeekCalendarState,
     monthState: CalendarState,
@@ -136,6 +138,10 @@ fun CalendarContent(
                             isPastDay = day.date < start || day.date > end,
                             onClick = {
                                 onSelectedDate(day.date)
+
+                                vm.setTodoYear(day.date.year)
+                                vm.setTodoMonth(day.date.monthValue)
+                                vm.setTodoDay(day.date.dayOfMonth)
                             },
                         )
                     },
@@ -160,6 +166,10 @@ fun CalendarContent(
                             isPastDay = day.date < start || day.date > end,
                             onClick = {
                                 onSelectedDate(day.date)
+
+                                vm.setTodoYear(day.date.year)
+                                vm.setTodoMonth(day.date.monthValue)
+                                vm.setTodoDay(day.date.dayOfMonth)
                             }
                         )
                     },
