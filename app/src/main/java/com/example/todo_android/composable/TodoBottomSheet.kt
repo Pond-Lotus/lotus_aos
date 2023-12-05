@@ -136,11 +136,16 @@ fun TodoUpdateBottomSheet(
 
 //        vm.setTextFieldState.value = false
 
-        if (title == "" && Todo.value?.title?.isNotEmpty() == true) {
-            title = Todo.value.title!!
-        }
+//        if (title == "" && Todo.value?.title?.isNotEmpty() == true) {
+//            title = Todo.value.title!!
+//        }
+//
+//        if (description == "" && Todo.value?.description?.isNotEmpty() == true) {
+//            description = Todo.value.description!!
+//        }
 
-        if (description == "" && Todo.value?.description?.isNotEmpty() == true) {
+        if (Todo.value?.title?.isNotEmpty() == true && Todo.value?.description?.isNotEmpty() == true) {
+            title = Todo.value.title!!
             description = Todo.value.description!!
         }
     }
@@ -163,8 +168,11 @@ fun TodoUpdateBottomSheet(
                 modifier = Modifier.clickable {
                     scope.launch {
 //                        vm.setTextFieldState.value = true
-                        title = ""
-                        description = ""
+//                        title = ""
+//                        description = ""
+                        title = Todo.value.title!!
+                        description = Todo.value.description!!
+
                         keyboardController?.hide()
                         bottomSheetScaffoldState.bottomSheetState.collapse()
                     }
