@@ -49,25 +49,25 @@ fun TodoUpdateBottomSheet(
     focusRequester: FocusRequester
 ) {
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
+    var dayString by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val Todo = vm.bottomsheetViewData.collectAsState()
-//    val TextFieldState = vm.setTextFieldState.collectAsState()
-
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var dayString by remember { mutableStateOf("") }
+    var time by remember { mutableStateOf("") }
     var color = vm.todoBottomSheetColor.collectAsState()
+    val amPm by vm.todoAmPm.collectAsState()
 
+//    val TextFieldState = vm.setTextFieldState.collectAsState()
 
     // TimePicker 관련 변수
     var context = LocalContext.current
     val calendar = Calendar.getInstance()
     val hour = calendar[Calendar.HOUR_OF_DAY]
     val minute = calendar[Calendar.MINUTE]
-    val amPm by vm.todoAmPm.collectAsState()
-    val keyboardController = LocalSoftwareKeyboardController.current
 
-//    // 요일 관련
+    // 요일 관련
     val selectedDate = LocalDate.of(
         vm.todoYear.value,
         vm.todoMonth.value,
@@ -89,6 +89,15 @@ fun TodoUpdateBottomSheet(
 
     val timePickerDialog = TimePickerDialog(
         context, R.style.TimePickerDialog, { _, hour: Int, minute: Int ->
+            if (hour < 12) {
+                vm.setTodoTime("오전")
+            } else {
+                vm.setTodoTime("오후")
+            }
+
+            time = String.format("%02d%02d", hour, minute)
+//            vm.setTodoTimeAmPm(hour)
+//            vm.setTodoTime(String.format("%02d%02d", hour, minute))
 //            amPm = if (hour < 12) "오전" else "오후"
 //            timeString = String.format("%02d%02d", hour, minute)
 //            time = String.format("%02d%02d", hour, minute)
@@ -131,6 +140,7 @@ fun TodoUpdateBottomSheet(
     LaunchedEffect(
         key1 = Todo.value.title,
         key2 = Todo.value.description,
+        key3 = Todo.value.time
 //        key3 = TextFieldState.value
     ) {
 
@@ -144,9 +154,10 @@ fun TodoUpdateBottomSheet(
 //            description = Todo.value.description!!
 //        }
 
-        if (Todo.value?.title?.isNotEmpty() == true && Todo.value?.description?.isNotEmpty() == true) {
+        if (Todo.value?.title?.isNotEmpty() == true && Todo.value?.description?.isNotEmpty() == true && Todo.value?.time?.isNotEmpty() == true) {
             title = Todo.value.title!!
             description = Todo.value.description!!
+            time = Todo.value.time!!
         }
     }
 
@@ -172,6 +183,7 @@ fun TodoUpdateBottomSheet(
 //                        description = ""
                         title = Todo.value.title!!
                         description = Todo.value.description!!
+                        time = Todo.value.time!!
 
                         keyboardController?.hide()
                         bottomSheetScaffoldState.bottomSheetState.collapse()
@@ -198,7 +210,7 @@ fun TodoUpdateBottomSheet(
                                     Todo.value.done!!,
                                     description,
                                     color.value,
-                                    Todo.value.time!!
+                                    time
                                 )
                             )
                             keyboardController?.hide()
@@ -337,8 +349,11 @@ fun TodoUpdateBottomSheet(
                 modifier = Modifier.clickable {
                     timePickerDialog.show()
                 },
-//                text = "$amPm ${convertToLayoutTimeFormat(timeString)}",
-                text = "시간 테스트 영역",
+                text = if (time == "9999") {
+                    "미지정"
+                } else {
+                    time
+                },
                 lineHeight = 19.sp,
                 fontSize = 15.sp,
                 color = Color(0xff9E9E9E)
@@ -440,7 +455,7 @@ fun TodoUpdateBottomSheet(
 
 
 fun convertToLayoutTimeFormat(time: String): String {
-    return if (time == "미지정") {
+    return if (time == "9999") {
         "미지정"
     } else if (time.length == 4) {
         "${time.substring(0, 2)}:${time.substring(2)}"

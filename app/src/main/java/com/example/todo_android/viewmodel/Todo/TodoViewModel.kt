@@ -203,15 +203,15 @@ class TodoViewModel @Inject constructor(
         }
     }
 
-    fun setTodoYear(year: Int){
+    fun setTodoYear(year: Int) {
         _todoYear.value = year
     }
 
-    fun setTodoMonth(month: Int){
+    fun setTodoMonth(month: Int) {
         _todoMonth.value = month
     }
 
-    fun setTodoDay(day: Int){
+    fun setTodoDay(day: Int) {
         _todoDay.value = day
     }
 
@@ -227,6 +227,18 @@ class TodoViewModel @Inject constructor(
     fun setTodoDescription(text: String) {
         _todoDescription.value = text
     }
+
+    fun setTodoTime(time: String) {
+        _todoTime.value = time
+    }
+
+//    fun setTodoTimeAmPm(hour: Int) {
+//        if (hour < 12) {
+//            _todoAmPm.value = "오전"
+//        } else {
+//            _todoAmPm.value = "오후"
+//        }
+//    }
 
     fun setBottomSheetDataSet(
         todo: TodoData
