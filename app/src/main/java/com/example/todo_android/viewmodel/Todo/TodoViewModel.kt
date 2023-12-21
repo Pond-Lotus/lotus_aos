@@ -39,14 +39,12 @@ class TodoViewModel @Inject constructor(
     private val _todoColor = MutableStateFlow(0)
     private val _todoDone = MutableStateFlow(false)
     private val _todoTime = MutableStateFlow("9999")
-    private val _todoAmPm = MutableStateFlow("")
 
     private val _todoList = MutableStateFlow<List<TodoData>>(emptyList())
     private val _categoryList = MutableStateFlow<List<CategoryData>>(emptyList())
     private val _categoryTodoList = MutableStateFlow<Map<Int?, List<TodoData>>>(emptyMap())
 
     private val _bottomsheetViewData = MutableStateFlow(TodoData())
-//    val setTextFieldState = MutableStateFlow(false)
 
     private val _todoBottomSheetColor = MutableStateFlow(0)
 
@@ -58,7 +56,6 @@ class TodoViewModel @Inject constructor(
     val todoColor = _todoColor.asStateFlow()
     val todoDone = _todoDone.asStateFlow()
     val todoTime = _todoTime.asStateFlow()
-    val todoAmPm = _todoAmPm.asStateFlow()
 
     val todoList = _todoList.asStateFlow()
     val categoryList = _categoryList.asStateFlow()
@@ -67,6 +64,9 @@ class TodoViewModel @Inject constructor(
     val bottomsheetViewData = _bottomsheetViewData.asStateFlow()
 
     val todoBottomSheetColor = _todoBottomSheetColor.asStateFlow()
+    val todoBottomSheetTitle = MutableStateFlow("")
+    val todoBottomSheetDescription = MutableStateFlow("")
+    val todoBottomSheetTime = MutableStateFlow("9999")
 
     init {
         readCategory(token)
@@ -232,18 +232,14 @@ class TodoViewModel @Inject constructor(
         _todoTime.value = time
     }
 
-//    fun setTodoTimeAmPm(hour: Int) {
-//        if (hour < 12) {
-//            _todoAmPm.value = "오전"
-//        } else {
-//            _todoAmPm.value = "오후"
-//        }
-//    }
-
     fun setBottomSheetDataSet(
         todo: TodoData
     ) {
+        Log.d("todotest", "$todo")
         _bottomsheetViewData.value = todo
+        todoBottomSheetTitle.value = todo.title!!
+        todoBottomSheetDescription.value = todo.description!!
+        todoBottomSheetTime.value = todo.time!!
     }
 
     fun setTodoBottomSheetColor(color: Int) {
@@ -268,7 +264,7 @@ class TodoViewModel @Inject constructor(
     }
 
     fun setTodoGroup() {
-        val categoryColor = todoList.value.groupBy { it.color }
+        val categoryColor = todoList.value.sortedBy { it.color }.groupBy { it.color }
         viewModelScope.launch(Dispatchers.IO) {
             val sortData = categoryColor.mapValues { todo ->
                 todo.value.sortedBy { it.done }

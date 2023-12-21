@@ -36,6 +36,9 @@ import com.example.todo_android.viewmodel.Todo.TodoViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,13 +56,10 @@ fun TodoUpdateBottomSheet(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val Todo = vm.bottomsheetViewData.collectAsState()
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var time by remember { mutableStateOf("") }
+    val title = vm.todoBottomSheetTitle.collectAsState()
+    val description = vm.todoBottomSheetDescription.collectAsState()
+    val time = vm.todoBottomSheetTime.collectAsState()
     var color = vm.todoBottomSheetColor.collectAsState()
-    val amPm by vm.todoAmPm.collectAsState()
-
-//    val TextFieldState = vm.setTextFieldState.collectAsState()
 
     // TimePicker 관련 변수
     var context = LocalContext.current
@@ -89,18 +89,7 @@ fun TodoUpdateBottomSheet(
 
     val timePickerDialog = TimePickerDialog(
         context, R.style.TimePickerDialog, { _, hour: Int, minute: Int ->
-            if (hour < 12) {
-                vm.setTodoTime("오전")
-            } else {
-                vm.setTodoTime("오후")
-            }
-
-            time = String.format("%02d%02d", hour, minute)
-//            vm.setTodoTimeAmPm(hour)
-//            vm.setTodoTime(String.format("%02d%02d", hour, minute))
-//            amPm = if (hour < 12) "오전" else "오후"
-//            timeString = String.format("%02d%02d", hour, minute)
-//            time = String.format("%02d%02d", hour, minute)
+            vm.todoBottomSheetTime.value = String.format("%02d%02d", hour, minute)
         }, hour, minute, false
     )
 
@@ -137,30 +126,6 @@ fun TodoUpdateBottomSheet(
         }
     }
 
-    LaunchedEffect(
-        key1 = Todo.value.title,
-        key2 = Todo.value.description,
-        key3 = Todo.value.time
-//        key3 = TextFieldState.value
-    ) {
-
-//        vm.setTextFieldState.value = false
-
-//        if (title == "" && Todo.value?.title?.isNotEmpty() == true) {
-//            title = Todo.value.title!!
-//        }
-//
-//        if (description == "" && Todo.value?.description?.isNotEmpty() == true) {
-//            description = Todo.value.description!!
-//        }
-
-        if (Todo.value?.title?.isNotEmpty() == true && Todo.value?.description?.isNotEmpty() == true && Todo.value?.time?.isNotEmpty() == true) {
-            title = Todo.value.title!!
-            description = Todo.value.description!!
-            time = Todo.value.time!!
-        }
-    }
-
 
     Column(
         modifier = Modifier
@@ -178,13 +143,6 @@ fun TodoUpdateBottomSheet(
             Image(
                 modifier = Modifier.clickable {
                     scope.launch {
-//                        vm.setTextFieldState.value = true
-//                        title = ""
-//                        description = ""
-                        title = Todo.value.title!!
-                        description = Todo.value.description!!
-                        time = Todo.value.time!!
-
                         keyboardController?.hide()
                         bottomSheetScaffoldState.bottomSheetState.collapse()
                     }
@@ -206,11 +164,11 @@ fun TodoUpdateBottomSheet(
                                     Todo.value.year!!,
                                     Todo.value.month!!,
                                     Todo.value.day!!,
-                                    title,
+                                    title.value,
                                     Todo.value.done!!,
-                                    description,
+                                    description.value,
                                     color.value,
-                                    time
+                                    time.value
                                 )
                             )
                             keyboardController?.hide()
@@ -261,9 +219,9 @@ fun TodoUpdateBottomSheet(
                         .wrapContentWidth()
                         .wrapContentHeight()
                         .focusRequester(focusRequester),
-                    value = title,
+                    value = title.value,
                     onValueChange = {
-                        title = it
+                        vm.todoBottomSheetTitle.value = it
                     },
                     textStyle = TextStyle(
                         color = Color.Black,
@@ -296,7 +254,7 @@ fun TodoUpdateBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            value = description,
+            value = description.value,
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color(0xffF2F2F2),
                 disabledLabelColor = Color(0xffF2F2F2),
@@ -309,7 +267,7 @@ fun TodoUpdateBottomSheet(
             shape = RoundedCornerShape(10.dp),
             onValueChange = {
                 if (it.count { it == '\n' } < 4) {
-                    description = it
+                    vm.todoBottomSheetDescription.value = it
                 }
             },
             maxLines = 4,
@@ -349,10 +307,10 @@ fun TodoUpdateBottomSheet(
                 modifier = Modifier.clickable {
                     timePickerDialog.show()
                 },
-                text = if (time == "9999") {
+                text = if (time.value == "9999") {
                     "미지정"
                 } else {
-                    time
+                    TimeFormat(time.value)
                 },
                 lineHeight = 19.sp,
                 fontSize = 15.sp,
@@ -453,13 +411,17 @@ fun TodoUpdateBottomSheet(
     }
 }
 
+fun TimeFormat(time: String): String {
+    val hour = time.substring(0, 2).toInt()
+    val minute = time.substring(2).toInt()
 
-fun convertToLayoutTimeFormat(time: String): String {
-    return if (time == "9999") {
-        "미지정"
-    } else if (time.length == 4) {
-        "${time.substring(0, 2)}:${time.substring(2)}"
+    return if (hour >= 12) {
+        val formattedHour = if (hour > 12) hour else hour + 12
+        val formattedMinute = String.format("%02d", minute)
+        "오후 ${formattedHour}:$formattedMinute"
     } else {
-        "${time.substring(0, 1)}:${time.substring(1)}"
+        val formattedHour = if (hour == 0) 12 else hour
+        val formattedMinute = String.format("%02d", minute)
+        "오전 ${formattedHour}:$formattedMinute"
     }
 }

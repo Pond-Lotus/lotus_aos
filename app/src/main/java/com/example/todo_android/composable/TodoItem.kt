@@ -1,5 +1,6 @@
 package com.example.todo_android.composable
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -82,6 +83,7 @@ fun LazyListScope.TodoItem(
                             .clickable {
                                 // bottomsheet 열기
                                 scope.launch {
+                                    Log.d("todotest", "$todo")
                                     vm.setBottomSheetDataSet(todo = todo)
                                     vm.setTodoBottomSheetColor(color = todo.color!!)
                                     bottomScaffoldState.bottomSheetState.expand()
