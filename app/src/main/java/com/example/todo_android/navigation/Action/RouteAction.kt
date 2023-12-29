@@ -15,12 +15,17 @@ class RouteAction(navHostController: NavHostController) {
             }
         }
     }
+
     // 뒤로가기 이동
     val goBack: () -> Unit = {
         navHostController.popBackStack()
     }
 
-    val customNavto: (NAV_ROUTE, String, String, Int) -> Unit = { route, name, id, color ->
-        navHostController.navigate("${route.routeName}/$name/$id/$color")
+    val customNavto: (
+        NAV_ROUTE,
+        Int,
+        String
+    ) -> Unit = { route, color, name ->
+        navHostController.navigate("${route.routeName}/$name/$color")
     }
 }

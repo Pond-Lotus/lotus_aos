@@ -1,9 +1,9 @@
 package com.example.todo_android.viewmodel.Todo
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.todo_android.Data.Category.UpdateCategory
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.common.APIResponse
@@ -17,9 +17,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.Year
+import java.util.Locale.Category
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,8 +39,10 @@ class TodoViewModel @Inject constructor(
     private val _todoDone = MutableStateFlow(false)
     private val _todoTime = MutableStateFlow("9999")
 
+    private val _categoryText = MutableStateFlow("")
+
     private val _todoList = MutableStateFlow<List<TodoData>>(emptyList())
-    private val _categoryList = MutableStateFlow<List<CategoryData>>(emptyList())
+    private val _categoryList = MutableStateFlow(CategoryData())
     private val _categoryTodoList = MutableStateFlow<Map<Int?, List<TodoData>>>(emptyMap())
 
     private val _bottomsheetViewData = MutableStateFlow(TodoData())
@@ -57,6 +58,8 @@ class TodoViewModel @Inject constructor(
     val todoDone = _todoDone.asStateFlow()
     val todoTime = _todoTime.asStateFlow()
 
+    val categoryText = _categoryText.asStateFlow()
+
     val todoList = _todoList.asStateFlow()
     val categoryList = _categoryList.asStateFlow()
     val categoryTodoList = _categoryTodoList.asStateFlow()
@@ -70,6 +73,39 @@ class TodoViewModel @Inject constructor(
 
     init {
         readCategory(token)
+    }
+
+    fun setTodoYear(year: Int) {
+        _todoYear.value = year
+    }
+
+    fun setTodoMonth(month: Int) {
+        _todoMonth.value = month
+    }
+
+    fun setTodoDay(day: Int) {
+        _todoDay.value = day
+    }
+
+
+    fun setTodoColor(color: Int) {
+        _todoColor.value = color
+    }
+
+    fun setTodoTitle(text: String) {
+        _todoTitle.value = text
+    }
+
+    fun setTodoDescription(text: String) {
+        _todoDescription.value = text
+    }
+
+    fun setTodoTime(time: String) {
+        _todoTime.value = time
+    }
+
+    fun updateCategoryText(text: String){
+        _categoryText.value = text
     }
 
 
@@ -119,8 +155,6 @@ class TodoViewModel @Inject constructor(
             val value = TodoRepository.updateTodo(token, id, updateTodo)
             when (value) {
                 is APIResponse.Success -> {
-                    Log.d("updateTodo", value.data.toString())
-
                     val todoState = _todoList.value
                     val todoItem = todoState.filter { it.id == id }.last()
                     val index = _todoList.value.toList().indexOf(todoItem)
@@ -181,11 +215,8 @@ class TodoViewModel @Inject constructor(
             val value = CategoryRepository.readTodoCategory(token)
             when (value) {
                 is APIResponse.Success -> {
-                    val categoryState = _categoryList.value
-                    val items = categoryState.toMutableList().apply {
-                        add(value.data!!.data)
-                    }.toList()
-                    _categoryList.value = items
+                    val categoryState = value.data!!.data
+                    _categoryList.emit(categoryState)
                 }
                 is APIResponse.Error -> {
 
@@ -197,45 +228,32 @@ class TodoViewModel @Inject constructor(
         }
     }
 
-    fun updateCategory(token: String, data: CategoryData) {
+    fun updateCategory(token: String, data: UpdateCategory) {
         viewModelScope.launch(Dispatchers.IO) {
+            val value = CategoryRepository.updateTodoCategory(token, data)
+            when (value) {
+                is APIResponse.Success -> {
+                    val categoryState = _categoryList.value
+                    val categoryData = categoryState.copy(
+                        _1 = data.priority.values.toString(),
+                        _2 = data.priority.values.toString(),
+                        _3 = data.priority.values.toString(),
+                        _4 = data.priority.values.toString(),
+                        _5 = data.priority.values.toString(),
+                        _6 = data.priority.values.toString(),
+                    )
+                }
+                is APIResponse.Error -> {
 
+                }
+                is APIResponse.Loading -> {
+
+                }
+            }
         }
     }
 
-    fun setTodoYear(year: Int) {
-        _todoYear.value = year
-    }
-
-    fun setTodoMonth(month: Int) {
-        _todoMonth.value = month
-    }
-
-    fun setTodoDay(day: Int) {
-        _todoDay.value = day
-    }
-
-
-    fun setTodoColor(color: Int) {
-        _todoColor.value = color
-    }
-
-    fun setTodoTitle(text: String) {
-        _todoTitle.value = text
-    }
-
-    fun setTodoDescription(text: String) {
-        _todoDescription.value = text
-    }
-
-    fun setTodoTime(time: String) {
-        _todoTime.value = time
-    }
-
-    fun setBottomSheetDataSet(
-        todo: TodoData
-    ) {
-        Log.d("todotest", "$todo")
+    fun setBottomSheetDataSet(todo: TodoData) {
         _bottomsheetViewData.value = todo
         todoBottomSheetTitle.value = todo.title!!
         todoBottomSheetDescription.value = todo.description!!

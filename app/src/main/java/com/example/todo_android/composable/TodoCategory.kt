@@ -18,7 +18,7 @@ import com.example.todo_android.response.TodoResponse.TodoData
 
 @Composable
 fun TodoCategoryHeader(
-    categoryList: List<CategoryData>,
+    categoryList: CategoryData,
     items: List<TodoData>
 ) {
 
@@ -35,28 +35,28 @@ fun TodoCategoryHeader(
     ) {
         when (color) {
             1 -> {
-                val name = categoryList.map { it._1 }.last()
-                TodoCategoryDetailHeader(color = color, categoryName = name!!)
+                val name = categoryList._1 ?:""
+                TodoCategoryDetailHeader(color = color, categoryName = name)
             }
             2 -> {
-                val name = categoryList.map { it._2 }.last()
-                TodoCategoryDetailHeader(color = color, categoryName = name!!)
+                val name = categoryList._2 ?:""
+                TodoCategoryDetailHeader(color = color, categoryName = name)
             }
             3 -> {
-                val name = categoryList.map { it._3 }.last()
-                TodoCategoryDetailHeader(color = color, categoryName = name!!)
+                val name = categoryList._3 ?:""
+                TodoCategoryDetailHeader(color = color, categoryName = name)
             }
             4 -> {
-                val name = categoryList.map { it._4 }.last()
-                TodoCategoryDetailHeader(color = color, categoryName = name!!)
+                val name = categoryList._4 ?:""
+                TodoCategoryDetailHeader(color = color, categoryName = name)
             }
             5 -> {
-                val name = categoryList.map { it._5 }.last()
-                TodoCategoryDetailHeader(color = color, categoryName = name!!)
+                val name = categoryList._5 ?:""
+                TodoCategoryDetailHeader(color = color, categoryName = name)
             }
             6 -> {
-                val name = categoryList.map { it._6 }.last()
-                TodoCategoryDetailHeader(color = color, categoryName = name!!)
+                val name = categoryList._6 ?:""
+                TodoCategoryDetailHeader(color = color, categoryName = name)
             }
         }
     }

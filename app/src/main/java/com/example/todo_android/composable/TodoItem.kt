@@ -13,7 +13,6 @@ import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,7 +38,7 @@ import kotlinx.coroutines.launch
 fun LazyListScope.TodoItem(
     vm: TodoViewModel,
     token: String,
-    categoryList: List<CategoryData>,
+    categoryList: CategoryData,
     categoryTodoList: Map<Int?, List<TodoData>>,
     scope: CoroutineScope,
     bottomScaffoldState: BottomSheetScaffoldState

@@ -10,7 +10,5 @@ data class TodoData(
     val description: String? = null,
     val done: Boolean? = null,
     val time: String? = null,
-    val color: Int? = null,
-
-    val creating: Boolean? = null
+    val color: Int? = null
 )
