@@ -16,14 +16,16 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    private const val baseURL = "https://team-lotus.kr/"
+//    private const val baseURL = "https://plotustodo-ctzhc.run.goorm.io/"
+
+    private const val baseURL = "https://plotustodo-ctzhc.run.goorm.io/"
 
     // Retrofit
     @Singleton
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
         val httpLoggingInterceptor = HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY)
+            .setLevel(HttpLoggingInterceptor.Level.BASIC)
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
             .build()

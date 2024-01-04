@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.todo_android.R
 import com.example.todo_android.navigation.Action.RouteAction
 import com.example.todo_android.navigation.NAV_ROUTE
+import com.example.todo_android.util.MyApplication
 import com.example.todo_android.viewmodel.Todo.TodoViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -33,6 +34,11 @@ fun CategoryScreen(routeAction: RouteAction) {
 
     val vm: TodoViewModel = hiltViewModel()
     val categoryList by vm.categoryList.collectAsState()
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+
+    LaunchedEffect(key1 = categoryList, block = {
+        vm.readCategory(token)
+    })
 
     Scaffold(modifier = Modifier
         .fillMaxWidth()

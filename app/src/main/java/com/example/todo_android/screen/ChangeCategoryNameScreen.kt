@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -27,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.todo_android.navigation.Action.RouteAction
-import com.example.todo_android.navigation.NAV_ROUTE
+import com.example.todo_android.util.MyApplication
 import com.example.todo_android.viewmodel.Todo.TodoViewModel
 import kotlinx.coroutines.launch
 
@@ -39,18 +41,13 @@ import kotlinx.coroutines.launch
 fun ChangeCategoryNameScreen(
     routeAction: RouteAction,
     color: Int,
-    categoryText: String
+    name: String
 ) {
-
-
-//    var categoryName by remember { mutableStateOf(categoryName ?: "") }
-//    var categoryId by remember { mutableStateOf(categoryId ?: "") }
-//    var categoryData = remember { mutableStateListOf<ReadCategoryResponse>() }
-//    var testList = remember { mutableStateMapOf<String, String>() }
-//    var scope = rememberCoroutineScope()
     val vm: TodoViewModel = hiltViewModel()
-    val categoryList by vm.categoryList.collectAsState()
-    val categoryColor = when(color){
+    val token = "Token ${MyApplication.prefs.getData("token", "")}"
+    val categoryName = remember { mutableStateOf(name) }
+    val categoryDataSet = mapOf(color to categoryName.value)
+    val categoryColor = when (color) {
         1 -> Color(0xffFFB4B4)
         2 -> Color(0xffFFDCA8)
         3 -> Color(0xffB1E0CF)
@@ -59,68 +56,15 @@ fun ChangeCategoryNameScreen(
         6 -> Color(0xffB6B1EC)
         else -> Color.Black
     }
-    val categoryText by vm.categoryText.collectAsState()
 
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit, block = {
         focusRequester.requestFocus()
         keyboardController?.show()
     })
-
-
-//    val categorySet = when (categoryId) {
-//        "1" -> mapOf(
-//            categoryId to categoryName,
-//            "2" to testList["2"],
-//            "3" to testList["3"],
-//            "4" to testList["4"],
-//            "5" to testList["5"],
-//            "6" to testList["6"]
-//        )
-//        "2" -> mapOf(
-//            "1" to testList["1"],
-//            categoryId to categoryName,
-//            "3" to testList["3"],
-//            "4" to testList["4"],
-//            "5" to testList["5"],
-//            "6" to testList["6"]
-//        )
-//        "3" -> mapOf(
-//            "1" to testList["2"],
-//            "2" to testList["3"],
-//            categoryId to categoryName,
-//            "4" to testList["4"],
-//            "5" to testList["5"],
-//            "6" to testList["6"]
-//        )
-//        "4" -> mapOf(
-//            "1" to testList["2"],
-//            "2" to testList["3"],
-//            "3" to testList["4"],
-//            categoryId to categoryName,
-//            "5" to testList["5"],
-//            "6" to testList["6"]
-//        )
-//        "5" -> mapOf(
-//            "1" to testList["2"],
-//            "2" to testList["3"],
-//            "3" to testList["4"],
-//            "4" to testList["5"],
-//            categoryId to categoryName,
-//            "6" to testList["6"]
-//        )
-//        "6" -> mapOf(
-//            "1" to testList["2"],
-//            "2" to testList["3"],
-//            "3" to testList["4"],
-//            "4" to testList["5"],
-//            "5" to testList["6"],
-//            categoryId to categoryName
-//        )
-//        else -> return
-//    }
 
     Scaffold(modifier = Modifier
         .fillMaxWidth()
@@ -159,11 +103,10 @@ fun ChangeCategoryNameScreen(
                     modifier = Modifier
                         .padding(end = 15.dp)
                         .clickable {
-//                            scope.launch {
-//                                updateCategory(token, categorySet) {
-//                                    routeAction.navTo(NAV_ROUTE.SELECTCATEGORY)
-//                                }
-//                            }
+                            scope.launch {
+                                vm.updateCategory(token, categoryDataSet)
+                                routeAction.goBack()
+                            }
                         })
             })
         }
@@ -181,13 +124,12 @@ fun ChangeCategoryNameScreen(
 
                 Spacer(modifier = Modifier.padding(vertical = 86.dp))
 
-//                Button(modifier = Modifier.size(28.dp),
-//                    colors = ButtonDefaults.buttonColors(Color(categoryColor!!)),
-//                    onClick = {},
-//                    content = {})
-                Box(modifier = Modifier
-                    .size(28.dp)
-                    .background(color = categoryColor))
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(shape = CircleShape)
+                        .background(color = categoryColor)
+                )
 
                 Card(
                     modifier = Modifier
@@ -202,23 +144,23 @@ fun ChangeCategoryNameScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-//                        BasicTextField(
-//                            value = categoryName,
-//                            onValueChange = {
-//                                categoryName = it
-//                            },
-//                            textStyle = TextStyle(
-//                                fontWeight = FontWeight.Normal,
-//                                fontSize = 15.sp,
-//                                color = Color.Black,
-//                                platformStyle = PlatformTextStyle(
-//                                    includeFontPadding = false
-//                                )
-//                            ),
-//                            singleLine = true,
-//                            maxLines = 1,
-//                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-//                        )
+                        BasicTextField(
+                            value = categoryName.value,
+                            onValueChange = {
+                                categoryName.value = it
+                            },
+                            textStyle = TextStyle(
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 15.sp,
+                                color = Color.Black,
+                                platformStyle = PlatformTextStyle(
+                                    includeFontPadding = false
+                                )
+                            ),
+                            singleLine = true,
+                            maxLines = 1,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        )
                     }
                 }
             }

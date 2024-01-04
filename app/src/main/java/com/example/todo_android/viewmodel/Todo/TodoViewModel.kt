@@ -3,7 +3,6 @@ package com.example.todo_android.viewmodel.Todo
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todo_android.Data.Category.UpdateCategory
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.common.APIResponse
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.util.Locale.Category
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,8 +37,6 @@ class TodoViewModel @Inject constructor(
     private val _todoDone = MutableStateFlow(false)
     private val _todoTime = MutableStateFlow("9999")
 
-    private val _categoryText = MutableStateFlow("")
-
     private val _todoList = MutableStateFlow<List<TodoData>>(emptyList())
     private val _categoryList = MutableStateFlow(CategoryData())
     private val _categoryTodoList = MutableStateFlow<Map<Int?, List<TodoData>>>(emptyMap())
@@ -57,8 +53,6 @@ class TodoViewModel @Inject constructor(
     val todoColor = _todoColor.asStateFlow()
     val todoDone = _todoDone.asStateFlow()
     val todoTime = _todoTime.asStateFlow()
-
-    val categoryText = _categoryText.asStateFlow()
 
     val todoList = _todoList.asStateFlow()
     val categoryList = _categoryList.asStateFlow()
@@ -103,11 +97,6 @@ class TodoViewModel @Inject constructor(
     fun setTodoTime(time: String) {
         _todoTime.value = time
     }
-
-    fun updateCategoryText(text: String){
-        _categoryText.value = text
-    }
-
 
     fun createTodo(token: String, createTodo: CreateTodo) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -228,20 +217,45 @@ class TodoViewModel @Inject constructor(
         }
     }
 
-    fun updateCategory(token: String, data: UpdateCategory) {
+    fun updateCategory(token: String, data: Map<Int, String>) {
         viewModelScope.launch(Dispatchers.IO) {
             val value = CategoryRepository.updateTodoCategory(token, data)
             when (value) {
                 is APIResponse.Success -> {
-                    val categoryState = _categoryList.value
-                    val categoryData = categoryState.copy(
-                        _1 = data.priority.values.toString(),
-                        _2 = data.priority.values.toString(),
-                        _3 = data.priority.values.toString(),
-                        _4 = data.priority.values.toString(),
-                        _5 = data.priority.values.toString(),
-                        _6 = data.priority.values.toString(),
-                    )
+                    val categoryKeys = data.map { it.key }.first()
+                    val categoryData = data.map { it.value }.first()
+                    when (categoryKeys) {
+                        1 -> {
+                            val categoryItem = _categoryList.value.copy(_1 = categoryData)
+                            _categoryList.value = categoryItem
+                            Log.d("categoryTest", "${_categoryList.value}")
+                        }
+                        2 -> {
+                            val categoryItem = _categoryList.value.copy(_2 = categoryData)
+                            _categoryList.value = categoryItem
+                            Log.d("categoryTest", "${_categoryList.value}")
+                        }
+                        3 -> {
+                            val categoryItem = _categoryList.value.copy(_3 = categoryData)
+                            _categoryList.value = categoryItem
+                            Log.d("categoryTest", "${_categoryList.value}")
+                        }
+                        4 -> {
+                            val categoryItem = _categoryList.value.copy(_4 = categoryData)
+                            _categoryList.value = categoryItem
+                            Log.d("categoryTest", "${_categoryList.value}")
+                        }
+                        5 -> {
+                            val categoryItem = _categoryList.value.copy(_5 = categoryData)
+                            _categoryList.value = categoryItem
+                            Log.d("categoryTest", "${_categoryList.value}")
+                        }
+                        6 -> {
+                            val categoryItem = _categoryList.value.copy(_6 = categoryData)
+                            _categoryList.value = categoryItem
+                            Log.d("categoryTest", "${_categoryList.value}")
+                        }
+                    }
                 }
                 is APIResponse.Error -> {
 

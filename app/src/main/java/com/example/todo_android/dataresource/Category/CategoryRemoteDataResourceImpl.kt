@@ -1,6 +1,5 @@
 package com.example.todo_android.dataresource.Category
 
-import com.example.todo_android.Data.Category.UpdateCategory
 import com.example.todo_android.response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.response.CategoryResponse.UpdateCategoryResponse
 import com.example.todo_android.service.Category.CategoryService
@@ -18,7 +17,7 @@ class CategoryRemoteDataResourceImpl @Inject constructor(
 
     override suspend fun updateTodoCategory(
         token: String,
-        category: UpdateCategory
+        category: Map<Int, String>
     ): Call<UpdateCategoryResponse> {
         return categoryService.requestUpdateCategory(token, category)
     }

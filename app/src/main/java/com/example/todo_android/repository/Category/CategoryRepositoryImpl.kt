@@ -1,6 +1,5 @@
 package com.example.todo_android.repository.Category
 
-import com.example.todo_android.Data.Category.UpdateCategory
 import com.example.todo_android.common.APIResponse
 import com.example.todo_android.dataresource.Category.CategoryRemoteDataResource
 import com.example.todo_android.response.CategoryResponse.ReadCategoryResponse
@@ -26,7 +25,7 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun updateTodoCategory(
         token: String,
-        category: UpdateCategory
+        category: Map<Int, String>
     ): APIResponse<UpdateCategoryResponse> {
 
         // todo 생성 요청이 성공하면 Success에 데이터를 실어서 ,실패하면 Error에 message 리턴

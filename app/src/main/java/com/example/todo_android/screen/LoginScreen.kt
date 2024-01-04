@@ -47,6 +47,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 fun sendLogin(
     email: String,
     password: String,
+    fcm_token: String,
     routeAction: RouteAction,
     response: (LoginResponse?) -> Unit,
 ) {
@@ -59,12 +60,12 @@ fun sendLogin(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
+        Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var loginRequest: LoginRequest = retrofit.create(LoginRequest::class.java)
 
-    loginRequest.requestLogin(Login(email, password)).enqueue(object : Callback<LoginResponse> {
+    loginRequest.requestLogin(Login(email, password, fcm_token)).enqueue(object : Callback<LoginResponse> {
 
         //실패할 경우
         override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
@@ -106,6 +107,7 @@ fun LoginScreen(routeAction: RouteAction) {
     val vm: LoginViewModel = viewModel()
     val email by vm.email.collectAsState()
     val password by vm.password.collectAsState()
+    val fcm_token = MyApplication.prefs.getData("fcm_token", "")
 
     var checked by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -313,6 +315,7 @@ fun LoginScreen(routeAction: RouteAction) {
                         sendLogin(
                             email,
                             password,
+                            fcm_token,
                             routeAction
                         ) {
                             openDialog = true

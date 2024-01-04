@@ -26,6 +26,6 @@ class RouteAction(navHostController: NavHostController) {
         Int,
         String
     ) -> Unit = { route, color, name ->
-        navHostController.navigate("${route.routeName}/$name/$color")
+        navHostController.navigate("${route.routeName}/$color/$name")
     }
 }

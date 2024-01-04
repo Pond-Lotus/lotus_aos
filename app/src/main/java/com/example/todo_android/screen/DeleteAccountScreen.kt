@@ -44,7 +44,7 @@ fun deleteAccount(token: String, response: (DeleteAccountResponse?) -> Unit) {
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
+    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/ ").client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var deleteAccountRequest: DeleteAccountRequest =

@@ -1,6 +1,7 @@
 package com.example.todo_android.Data.Category
 
 data class UpdateCategory(
-    val priority: Map<String, String?>
+    val data: Map<Int, String>
+//    val data: String
 //    val priority: String
 )

@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -45,11 +47,15 @@ fun AddTodoFloatingButton(
     }
 
     Column(
-        modifier = Modifier.padding(
-            end = 20.dp,
-            bottom = 150.dp
-        ),
-        horizontalAlignment = Alignment.End
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(
+                end = 20.dp,
+                bottom = 150.dp
+            )
+            .background(Color.Red),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.End,
     ) {
 
         AnimatedVisibility(
@@ -140,30 +146,38 @@ fun FloatingActionButtonMenus(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xffFFB4B4)),
-                    onClick = {
-                        onButtonClick("1")
-                        onMultiFloatingStateChange(FloatingStateType.Collapsed)
-//                        focusRequester.requestFocus()
-                    },
-                    content = {})
-                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xffFFDCA8)),
-                    onClick = {
-                        onButtonClick("2")
-                        onMultiFloatingStateChange(FloatingStateType.Collapsed)
-//                        focusRequester.requestFocus()
-                    },
-                    content = {})
-                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xffB1E0CF)),
-                    onClick = {
-                        onButtonClick("3")
-                        onMultiFloatingStateChange(FloatingStateType.Collapsed)
-//                        focusRequester.requestFocus()
-                    },
-                    content = {})
+                Box(
+                    modifier = Modifier
+                        .size(25.dp)
+                        .clip(shape = CircleShape)
+                        .background(color = Color(0xffFFB4B4))
+                        .clickable {
+                            onButtonClick("1")
+                            onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                        }
+                )
+
+                Box(
+                    modifier = Modifier
+                        .size(25.dp)
+                        .clip(shape = CircleShape)
+                        .background(color = Color(0xffFFDCA8))
+                        .clickable {
+                            onButtonClick("2")
+                            onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                        }
+                )
+
+                Box(
+                    modifier = Modifier
+                        .size(25.dp)
+                        .clip(shape = CircleShape)
+                        .background(color = Color(0xffB1E0CF))
+                        .clickable {
+                            onButtonClick("3")
+                            onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                        }
+                )
             }
 
             Spacer(modifier = Modifier.padding(vertical = 7.dp))
@@ -173,30 +187,38 @@ fun FloatingActionButtonMenus(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xffB7D7F5)),
-                    onClick = {
-                        onButtonClick("4")
-                        onMultiFloatingStateChange(FloatingStateType.Collapsed)
-//                        focusRequester.requestFocus()
-                    },
-                    content = {})
-                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xffFFB8EB)),
-                    onClick = {
-                        onButtonClick("5")
-                        onMultiFloatingStateChange(FloatingStateType.Collapsed)
-//                        focusRequester.requestFocus()
-                    },
-                    content = {})
-                Button(modifier = Modifier.size(width = 25.dp, height = 25.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xffB6B1EC)),
-                    onClick = {
-                        onButtonClick("6")
-                        onMultiFloatingStateChange(FloatingStateType.Collapsed)
-//                        focusRequester.requestFocus()
-                    },
-                    content = {})
+                Box(
+                    modifier = Modifier
+                        .size(25.dp)
+                        .clip(shape = CircleShape)
+                        .background(color = Color(0xffB7D7F5))
+                        .clickable {
+                            onButtonClick("4")
+                            onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                        }
+                )
+
+                Box(
+                    modifier = Modifier
+                        .size(25.dp)
+                        .clip(shape = CircleShape)
+                        .background(color = Color(0xffFFB8EB))
+                        .clickable {
+                            onButtonClick("5")
+                            onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                        }
+                )
+
+                Box(
+                    modifier = Modifier
+                        .size(25.dp)
+                        .clip(shape = CircleShape)
+                        .background(color = Color(0xffB6B1EC))
+                        .clickable {
+                            onButtonClick("6")
+                            onMultiFloatingStateChange(FloatingStateType.Collapsed)
+                        }
+                )
             }
         }
     }

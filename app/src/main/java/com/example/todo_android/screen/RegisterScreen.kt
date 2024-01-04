@@ -72,7 +72,7 @@ fun Register(
             OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
         }
 
-        var retrofit = Retrofit.Builder().baseUrl("https://team-lotus.kr/ ").client(okHttpClient)
+        var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/ ").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
         var registerRequest: RegisterRequest = retrofit.create(RegisterRequest::class.java)

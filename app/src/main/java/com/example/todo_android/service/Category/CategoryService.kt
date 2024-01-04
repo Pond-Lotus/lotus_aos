@@ -1,6 +1,5 @@
 package com.example.todo_android.service.Category
 
-import com.example.todo_android.Data.Category.UpdateCategory
 import com.example.todo_android.response.CategoryResponse.ReadCategoryResponse
 import com.example.todo_android.response.CategoryResponse.UpdateCategoryResponse
 import retrofit2.Call
@@ -16,9 +15,9 @@ interface CategoryService {
         @Header("Authorization") token: String
     ): Call<ReadCategoryResponse>
 
-    @POST("/todo/name/priority/")
+    @POST("/todo/name/priority2/")
     fun requestUpdateCategory(
         @Header("Authorization") token: String,
-        @Body updateCategory: UpdateCategory
+        @Body updateCategory: Map<Int, String>
     ): Call<UpdateCategoryResponse>
 }
