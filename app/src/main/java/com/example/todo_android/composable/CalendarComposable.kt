@@ -146,8 +146,10 @@ fun CalendarContent(
                         )
                     },
                     contentPadding = PaddingValues(
+                        // 20 이상부터는 이전/다음 달이 겹쳐 나옴
                         start = 10.dp,
-                        end = 10.dp
+                        end = 10.dp,
+                        bottom = 25.dp
                     )
                 )
             } else {
