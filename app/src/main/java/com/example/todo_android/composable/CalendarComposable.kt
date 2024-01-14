@@ -46,7 +46,7 @@ fun CalendarTitle(yearMonth: YearMonth) {
             .background(Color.White)
             .padding(
                 vertical = 15.dp,
-                horizontal = 30.dp
+                horizontal = 32.dp
             ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
@@ -59,7 +59,7 @@ fun CalendarTitle(yearMonth: YearMonth) {
             contentDescription = null
         )
 
-        Spacer(modifier = Modifier.width(4.dp))
+        Spacer(modifier = Modifier.width(5.dp))
 
         Text(
             text = if (yearMonth.monthValue.toString().length == 2) {
@@ -82,8 +82,9 @@ fun CalendarHeader(daysOfWeek: List<DayOfWeek>) {
             .fillMaxWidth()
             .background(Color.White)
             .padding(
-                start = 10.dp,
-                end = 10.dp,
+                start = 15.dp,
+                end = 15.dp,
+                bottom = 7.dp
             )
     ) {
         for (dayOfWeek in daysOfWeek) {
@@ -95,7 +96,8 @@ fun CalendarHeader(daysOfWeek: List<DayOfWeek>) {
                     Locale.getDefault()
                 ),
                 lineHeight = 17.sp,
-                fontWeight = FontWeight(700)
+                fontWeight = FontWeight(700),
+                fontSize = 14.sp
             )
         }
     }
@@ -146,10 +148,9 @@ fun CalendarContent(
                         )
                     },
                     contentPadding = PaddingValues(
-                        // 20 이상부터는 이전/다음 달이 겹쳐 나옴
-                        start = 10.dp,
-                        end = 10.dp,
-                        bottom = 25.dp
+                        start = 15.dp,
+                        end = 15.dp,
+                        bottom = 23.dp
                     )
                 )
             } else {
@@ -176,8 +177,8 @@ fun CalendarContent(
                         )
                     },
                     contentPadding = PaddingValues(
-                        start = 10.dp,
-                        end = 10.dp
+                        start = 15.dp,
+                        end = 15.dp
                     )
                 )
             }

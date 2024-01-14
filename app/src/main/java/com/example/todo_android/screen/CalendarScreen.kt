@@ -264,7 +264,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }, navigationIcon = {
                     Image(
                         modifier = Modifier
-                            .size(50.dp)
+                            .size(47.dp)
                             .padding(start = 17.dp)
                             .clickable {
                                 scope.launch {
@@ -496,8 +496,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 Box(
                     modifier = Modifier
                         .padding(
-                            end = 20.dp,
-                            bottom = 50.dp
+                            end = 35.dp,
+                            bottom = 40.dp
                         )
                         .align(Alignment.BottomEnd)
                 ) {

@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,6 +60,8 @@ fun MonthWeekToggleSwitch(
         },
     )
 
+    val isSelected by rememberUpdatedState(newValue = animateState.value)
+
     MotionLayout(
         modifier = Modifier
             .wrapContentSize()
@@ -99,7 +102,7 @@ fun MonthWeekToggleSwitch(
                 text = "월간",
                 color = toggleSwitchMonthText,
                 fontSize = 13.sp,
-                fontWeight = FontWeight.Black
+                fontWeight = if (isSelected) FontWeight.Black else FontWeight.Normal
             )
         }
 
@@ -112,7 +115,7 @@ fun MonthWeekToggleSwitch(
                 text = "주간",
                 color = toggleSwitchWeekText,
                 fontSize = 13.sp,
-                fontWeight = FontWeight.Black
+                fontWeight = if (isSelected) FontWeight.Normal else FontWeight.Black
             )
         }
     }

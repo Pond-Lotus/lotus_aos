@@ -116,6 +116,10 @@ fun TodoUpdateBottomSheet(
         }
     }
 
+    val formattedMonth = if (Todo.value.month.toString().length == 1) "0${Todo.value.month}" else Todo.value.month
+    val formattedDay = if (Todo.value.day.toString().length == 1) "0${Todo.value.day}" else Todo.value.day
+
+
     LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue) {
         if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
             focusRequester.requestFocus()
@@ -205,7 +209,7 @@ fun TodoUpdateBottomSheet(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "${Todo.value.month}월 ${Todo.value.day}일 $dayString",
+                    text = "${formattedMonth}월 ${formattedDay}일 $dayString",
                     fontSize = 15.sp,
                     lineHeight = 19.sp,
                     fontWeight = FontWeight.Bold,
@@ -250,7 +254,7 @@ fun TodoUpdateBottomSheet(
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
+                .height(52.dp),
             value = description.value,
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color(0xffF2F2F2),

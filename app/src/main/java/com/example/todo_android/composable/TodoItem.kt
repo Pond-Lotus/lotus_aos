@@ -171,7 +171,7 @@ fun BlankTodoItem() {
             .padding(start = 21.dp, end = 21.dp)
     ) {
         Row(
-            modifier = Modifier.padding(start = 12.dp, top = 13.dp, bottom = 13.dp),
+            modifier = Modifier.padding(start = 18.dp, top = 12.dp, bottom = 13.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -182,7 +182,7 @@ fun BlankTodoItem() {
                         includeFontPadding = false
                     )
                 ),
-                fontSize = 15.sp,
+                fontSize = 14.sp,
                 fontStyle = FontStyle.Normal,
                 color = Color(0xff9e9e9e)
             )
