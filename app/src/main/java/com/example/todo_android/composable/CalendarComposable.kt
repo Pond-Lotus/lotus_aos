@@ -178,7 +178,8 @@ fun CalendarContent(
                     },
                     contentPadding = PaddingValues(
                         start = 15.dp,
-                        end = 15.dp
+                        end = 15.dp,
+                        bottom = 23.dp
                     )
                 )
             }
