@@ -45,6 +45,7 @@ import com.example.todo_android.viewmodel.Todo.TodoViewModel
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -74,7 +75,9 @@ fun CalendarScreen(routeAction: RouteAction) {
     val categoryList by vm.categoryList.collectAsState()
     val categoryTodoList by vm.categoryTodoList.collectAsState()
 
-    var isVisibility by remember { mutableStateOf(false) }
+    val categoryColor = remember{ mutableStateOf(0) }
+
+    var isVisibility = remember { mutableStateOf(false) }
 
     var animateState = remember { mutableStateOf(true) }
 
@@ -125,28 +128,34 @@ fun CalendarScreen(routeAction: RouteAction) {
     val onButtonClick: (String) -> Unit = { id ->
         when (id) {
             "1" -> {
-                isVisibility = !isVisibility
+                isVisibility.value = !isVisibility.value
                 vm.setTodoColor(1)
+                categoryColor.value = 1
             }
             "2" -> {
-                isVisibility = !isVisibility
+                isVisibility.value = !isVisibility.value
                 vm.setTodoColor(2)
+                categoryColor.value = 2
             }
             "3" -> {
-                isVisibility = !isVisibility
+                isVisibility.value = !isVisibility.value
                 vm.setTodoColor(3)
+                categoryColor.value = 3
             }
             "4" -> {
-                isVisibility = !isVisibility
+                isVisibility.value = !isVisibility.value
                 vm.setTodoColor(4)
+                categoryColor.value = 4
             }
             "5" -> {
-                isVisibility = !isVisibility
+                isVisibility.value = !isVisibility.value
                 vm.setTodoColor(5)
+                categoryColor.value = 5
             }
             "6" -> {
-                isVisibility = !isVisibility
+                isVisibility.value = !isVisibility.value
                 vm.setTodoColor(6)
+                categoryColor.value = 6
             }
         }
     }
@@ -404,19 +413,33 @@ fun CalendarScreen(routeAction: RouteAction) {
                     categoryList = categoryList,
                     categoryTodoList = categoryTodoList,
                     scope = scope,
-                    bottomScaffoldState = bottomScaffoldState
+                    bottomScaffoldState = bottomScaffoldState,
+                    categoryColor = categoryColor,
+                    todoYear = todoYear,
+                    todoMonth = todoMonth,
+                    todoDay = todoDay,
+                    todoTitle = todoTitle,
+                    todoColor = todoColor,
+                    isVisibility = isVisibility
                 )
 
                 item {
-                    val focusRequester = remember { FocusRequester() }
+                    if (categoryTodoList.isEmpty() && isVisibility.value) {
+                        val focusRequester = remember { FocusRequester() }
 
-                    LaunchedEffect(isVisibility) {
-                        if (isVisibility) {
-                            focusRequester.requestFocus()
+                        LaunchedEffect(isVisibility.value) {
+                            delay(500)
+                            if (isVisibility.value) {
+                                focusRequester.requestFocus()
+                            }
                         }
-                    }
 
-                    if (isVisibility) {
+
+                        TodoCategoryHeader(
+                            categoryColor = categoryColor.value
+                        )
+
+
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -477,14 +500,14 @@ fun CalendarScreen(routeAction: RouteAction) {
                                                 )
                                             )
                                             vm.setTodoTitle("")
-                                            isVisibility = !isVisibility
+                                            isVisibility.value = !isVisibility.value
                                         }
                                     })
                                 )
                             }
                         }
                     }
-                    if (todoList.isEmpty() && !isVisibility) {
+                    if (todoList.isEmpty() && !isVisibility.value) {
                         Row {
                             BlankTodoItem()
                         }
@@ -492,7 +515,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }
             }
 
-            if (!isVisibility || bottomScaffoldState.bottomSheetState.isExpanded) {
+            if (!isVisibility.value || bottomScaffoldState.bottomSheetState.isExpanded) {
                 Box(
                     modifier = Modifier
                         .padding(

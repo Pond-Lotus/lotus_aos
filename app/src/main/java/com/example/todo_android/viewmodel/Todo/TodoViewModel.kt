@@ -65,10 +65,6 @@ class TodoViewModel @Inject constructor(
     val todoBottomSheetDescription = MutableStateFlow("")
     val todoBottomSheetTime = MutableStateFlow("9999")
 
-    init {
-        readCategory(token)
-    }
-
     fun setTodoYear(year: Int) {
         _todoYear.value = year
     }
@@ -96,6 +92,10 @@ class TodoViewModel @Inject constructor(
 
     fun setTodoTime(time: String) {
         _todoTime.value = time
+    }
+
+    init {
+        readCategory(token)
     }
 
     fun createTodo(token: String, createTodo: CreateTodo) {

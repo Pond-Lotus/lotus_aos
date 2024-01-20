@@ -18,11 +18,12 @@ import com.example.todo_android.response.TodoResponse.TodoData
 
 @Composable
 fun TodoCategoryHeader(
-    categoryList: CategoryData,
-    items: List<TodoData>
+    categoryList: CategoryData? = null,
+    items: List<TodoData>? = null,
+    categoryColor: Int? = null
 ) {
 
-    val color = items.map { it.color }.last()
+    val color = items?.map { it.color }?.last()
 
     Surface(
         modifier = Modifier
@@ -33,29 +34,59 @@ fun TodoCategoryHeader(
             ),
         color = Color(0xfff0f0f0)
     ) {
+
+        if(categoryColor != null){
+            when (categoryColor) {
+                1 -> {
+                    val name = categoryList?._1 ?:""
+                    TodoCategoryDetailHeader(color = categoryColor, categoryName = "그룹 1")
+                }
+                2 -> {
+                    val name = categoryList?._2 ?:""
+                    TodoCategoryDetailHeader(color = categoryColor, categoryName = "그룹 2")
+                }
+                3 -> {
+                    val name = categoryList?._3 ?:""
+                    TodoCategoryDetailHeader(color = categoryColor, categoryName = "그룹 3")
+                }
+                4 -> {
+                    val name = categoryList?._4 ?:""
+                    TodoCategoryDetailHeader(color = categoryColor, categoryName = "그룹 4")
+                }
+                5 -> {
+                    val name = categoryList?._5 ?:""
+                    TodoCategoryDetailHeader(color = categoryColor, categoryName = "그룹 5")
+                }
+                6 -> {
+                    val name = categoryList?._6 ?:""
+                    TodoCategoryDetailHeader(color = categoryColor, categoryName = "그룹 6")
+                }
+            }
+        }
+
         when (color) {
             1 -> {
-                val name = categoryList._1 ?:""
+                val name = categoryList?._1 ?:""
                 TodoCategoryDetailHeader(color = color, categoryName = name)
             }
             2 -> {
-                val name = categoryList._2 ?:""
+                val name = categoryList?._2 ?:""
                 TodoCategoryDetailHeader(color = color, categoryName = name)
             }
             3 -> {
-                val name = categoryList._3 ?:""
+                val name = categoryList?._3 ?:""
                 TodoCategoryDetailHeader(color = color, categoryName = name)
             }
             4 -> {
-                val name = categoryList._4 ?:""
+                val name = categoryList?._4 ?:""
                 TodoCategoryDetailHeader(color = color, categoryName = name)
             }
             5 -> {
-                val name = categoryList._5 ?:""
+                val name = categoryList?._5 ?:""
                 TodoCategoryDetailHeader(color = color, categoryName = name)
             }
             6 -> {
-                val name = categoryList._6 ?:""
+                val name = categoryList?._6 ?:""
                 TodoCategoryDetailHeader(color = color, categoryName = name)
             }
         }

@@ -9,21 +9,29 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
 import com.example.todo_android.R
 import com.example.todo_android.response.CategoryResponse.CategoryData
@@ -31,6 +39,7 @@ import com.example.todo_android.response.TodoResponse.TodoData
 import com.example.todo_android.ui.theme.deleteBackground
 import com.example.todo_android.viewmodel.Todo.TodoViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
@@ -41,10 +50,17 @@ fun LazyListScope.TodoItem(
     categoryList: CategoryData,
     categoryTodoList: Map<Int?, List<TodoData>>,
     scope: CoroutineScope,
-    bottomScaffoldState: BottomSheetScaffoldState
+    bottomScaffoldState: BottomSheetScaffoldState,
+    categoryColor: MutableState<Int>,
+    todoYear: Int,
+    todoMonth: Int,
+    todoDay: Int,
+    todoTitle: String,
+    todoColor: Int,
+    isVisibility: MutableState<Boolean>,
 ) {
 
-    categoryTodoList.forEach { _, items ->
+    categoryTodoList.forEach { key, items ->
         stickyHeader {
             TodoCategoryHeader(
                 categoryList = categoryList,
@@ -139,8 +155,163 @@ fun LazyListScope.TodoItem(
                             )
                         }
                     }
+
+//                    if(isVisibility) {
+//                        Card(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .height(45.dp)
+//                                .padding(start = 21.dp, end = 21.dp),
+//                            colors = CardDefaults.cardColors(Color.White),
+//                            shape = RoundedCornerShape(8.dp),
+//                        ) {
+//                            Row(
+//                                modifier = Modifier
+//                                    .padding(
+//                                        start = 14.dp,
+//                                        top = 13.dp,
+//                                        bottom = 13.dp
+//                                    ),
+//                                verticalAlignment = Alignment.CenterVertically,
+//                                horizontalArrangement = Arrangement.Center
+//                            ) {
+//                                Image(
+//                                    modifier = Modifier.size(20.dp),
+//                                    painter = painterResource(id = R.drawable.defaultcheckbox),
+//                                    contentDescription = null
+//                                )
+//
+//                                BasicTextField(
+//                                    modifier = Modifier
+//                                        .wrapContentWidth()
+//                                        .wrapContentHeight()
+//                                        .padding(start = 16.dp)
+////                                    .focusRequester(focusRequester)
+//                                        .imePadding(),
+//                                    value = todoTitle,
+//                                    onValueChange = { text: String ->
+//                                        vm.setTodoTitle(text)
+//                                    },
+//                                    textStyle = LocalTextStyle.current.copy(
+//                                        fontSize = 13.sp,
+//                                        fontStyle = FontStyle.Normal,
+//                                        color = Color.Black,
+//                                        lineHeight = 31.sp
+//                                    ),
+//                                    singleLine = true,
+//                                    maxLines = 1,
+//                                    keyboardOptions = KeyboardOptions(
+//                                        keyboardType = KeyboardType.Text,
+//                                        imeAction = ImeAction.Done
+//                                    ),
+//                                    keyboardActions = KeyboardActions(onDone = {
+////                                    scope.launch {
+////                                        vm.createTodo(
+////                                            token,
+////                                            CreateTodo(
+////                                                todoYear,
+////                                                todoMonth,
+////                                                todoDay,
+////                                                todoTitle,
+////                                                todoColor
+////                                            )
+////                                        )
+////                                        vm.setTodoTitle("")
+////                                        isVisibility = !isVisibility
+////                                    }
+//                                    })
+//                                )
+//                            }
+//                        }
+//                    }
                 }
             )
+        }
+
+        if (isVisibility.value && categoryTodoList.isNotEmpty()) {
+
+            item {
+
+                val focusRequester = remember { FocusRequester() }
+
+                LaunchedEffect(isVisibility) {
+                    delay(500)
+                    if (isVisibility.value) {
+                        focusRequester.requestFocus()
+                    }
+                }
+
+                TodoCategoryHeader(
+                    categoryColor = categoryColor.value
+                )
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .padding(start = 21.dp, end = 21.dp),
+                    colors = CardDefaults.cardColors(Color.White),
+                    shape = RoundedCornerShape(8.dp),
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(
+                                start = 14.dp,
+                                top = 13.dp,
+                                bottom = 13.dp
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            modifier = Modifier.size(20.dp),
+                            painter = painterResource(id = R.drawable.defaultcheckbox),
+                            contentDescription = null
+                        )
+
+                        BasicTextField(
+                            modifier = Modifier
+                                .wrapContentWidth()
+                                .wrapContentHeight()
+                                .padding(start = 16.dp)
+                                .focusRequester(focusRequester)
+                                .imePadding(),
+                            value = todoTitle,
+                            onValueChange = { text: String ->
+                                vm.setTodoTitle(text)
+                            },
+                            textStyle = LocalTextStyle.current.copy(
+                                fontSize = 13.sp,
+                                fontStyle = FontStyle.Normal,
+                                color = Color.Black,
+                                lineHeight = 31.sp
+                            ),
+                            singleLine = true,
+                            maxLines = 1,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(onDone = {
+                                    scope.launch {
+                                        vm.createTodo(
+                                            token,
+                                            CreateTodo(
+                                                todoYear,
+                                                todoMonth,
+                                                todoDay,
+                                                todoTitle,
+                                                todoColor
+                                            )
+                                        )
+                                        vm.setTodoTitle("")
+                                        isVisibility.value = !isVisibility.value
+                                    }
+                            })
+                        )
+                    }
+                }
+            }
         }
     }
 }
