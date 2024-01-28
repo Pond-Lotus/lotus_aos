@@ -1,5 +1,6 @@
 package com.example.todo_android.composable
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -39,27 +40,33 @@ fun TodoCategoryHeader(
             when (categoryColor) {
                 1 -> {
                     val name = categoryList?._1 ?:""
-                    TodoCategoryDetailHeader(color = categoryColor, categoryName = "그룹 1")
+                    Log.d("nameTest", name)
+                    TodoCategoryDetailHeader(color = categoryColor, categoryName = name)
                 }
                 2 -> {
                     val name = categoryList?._2 ?:""
-                    TodoCategoryDetailHeader(color = categoryColor, categoryName = "그룹 2")
+                    Log.d("nameTest", name)
+                    TodoCategoryDetailHeader(color = categoryColor, categoryName = name)
                 }
                 3 -> {
                     val name = categoryList?._3 ?:""
-                    TodoCategoryDetailHeader(color = categoryColor, categoryName = "그룹 3")
+                    Log.d("nameTest", name)
+                    TodoCategoryDetailHeader(color = categoryColor, categoryName = name)
                 }
                 4 -> {
                     val name = categoryList?._4 ?:""
-                    TodoCategoryDetailHeader(color = categoryColor, categoryName = "그룹 4")
+                    Log.d("nameTest", name)
+                    TodoCategoryDetailHeader(color = categoryColor, categoryName = name)
                 }
                 5 -> {
                     val name = categoryList?._5 ?:""
-                    TodoCategoryDetailHeader(color = categoryColor, categoryName = "그룹 5")
+                    Log.d("nameTest", name)
+                    TodoCategoryDetailHeader(color = categoryColor, categoryName = name)
                 }
                 6 -> {
                     val name = categoryList?._6 ?:""
-                    TodoCategoryDetailHeader(color = categoryColor, categoryName = "그룹 6")
+                    Log.d("nameTest", name)
+                    TodoCategoryDetailHeader(color = categoryColor, categoryName = name)
                 }
             }
         }

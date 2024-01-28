@@ -75,9 +75,10 @@ fun CalendarScreen(routeAction: RouteAction) {
     val categoryList by vm.categoryList.collectAsState()
     val categoryTodoList by vm.categoryTodoList.collectAsState()
 
-    val categoryColor = remember{ mutableStateOf(0) }
+    val categoryColor = remember { mutableStateOf(0) }
 
     var isVisibility = remember { mutableStateOf(false) }
+    var isCategoryVisibility = remember { mutableStateOf(false) }
 
     var animateState = remember { mutableStateOf(true) }
 
@@ -96,8 +97,6 @@ fun CalendarScreen(routeAction: RouteAction) {
     val scope = rememberCoroutineScope()
     val bottomScaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
-
-//    var selectedTodoListItem by remember { mutableStateOf<RToDoResponse?>(null) }
 
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
@@ -128,34 +127,76 @@ fun CalendarScreen(routeAction: RouteAction) {
     val onButtonClick: (String) -> Unit = { id ->
         when (id) {
             "1" -> {
-                isVisibility.value = !isVisibility.value
-                vm.setTodoColor(1)
-                categoryColor.value = 1
+                val todoColor = todoList.find { it.color == 1 }?.color
+                if (todoColor !== 1) {
+                    isVisibility.value = !isVisibility.value
+                    vm.setTodoColor(1)
+                    categoryColor.value = 1
+                } else {
+                    isCategoryVisibility.value = !isCategoryVisibility.value
+                    vm.setTodoColor(1)
+                    categoryColor.value = 1
+                }
             }
             "2" -> {
-                isVisibility.value = !isVisibility.value
-                vm.setTodoColor(2)
-                categoryColor.value = 2
+                val todoColor = todoList.find { it.color == 2 }?.color
+                if (todoColor !== 2) {
+                    isVisibility.value = !isVisibility.value
+                    vm.setTodoColor(2)
+                    categoryColor.value = 2
+                } else {
+                    isCategoryVisibility.value = !isCategoryVisibility.value
+                    vm.setTodoColor(2)
+                    categoryColor.value = 2
+                }
             }
             "3" -> {
-                isVisibility.value = !isVisibility.value
-                vm.setTodoColor(3)
-                categoryColor.value = 3
+                val todoColor = todoList.find { it.color == 3 }?.color
+                if (todoColor !== 3) {
+                    isVisibility.value = !isVisibility.value
+                    vm.setTodoColor(3)
+                    categoryColor.value = 3
+                } else {
+                    isCategoryVisibility.value = !isCategoryVisibility.value
+                    vm.setTodoColor(3)
+                    categoryColor.value = 3
+                }
             }
             "4" -> {
-                isVisibility.value = !isVisibility.value
-                vm.setTodoColor(4)
-                categoryColor.value = 4
+                val todoColor = todoList.find { it.color == 4 }?.color
+                if (todoColor !== 4) {
+                    isVisibility.value = !isVisibility.value
+                    vm.setTodoColor(4)
+                    categoryColor.value = 4
+                } else {
+                    isCategoryVisibility.value = !isCategoryVisibility.value
+                    vm.setTodoColor(4)
+                    categoryColor.value = 4
+                }
             }
             "5" -> {
-                isVisibility.value = !isVisibility.value
-                vm.setTodoColor(5)
-                categoryColor.value = 5
+                val todoColor = todoList.find { it.color == 5 }?.color
+                if (todoColor !== 5) {
+                    isVisibility.value = !isVisibility.value
+                    vm.setTodoColor(5)
+                    categoryColor.value = 5
+                } else {
+                    isCategoryVisibility.value = !isCategoryVisibility.value
+                    vm.setTodoColor(5)
+                    categoryColor.value = 5
+                }
             }
             "6" -> {
-                isVisibility.value = !isVisibility.value
-                vm.setTodoColor(6)
-                categoryColor.value = 6
+                val todoColor = todoList.find { it.color == 6 }?.color
+                if (todoColor !== 6) {
+                    isVisibility.value = !isVisibility.value
+                    vm.setTodoColor(6)
+                    categoryColor.value = 6
+                } else {
+                    isCategoryVisibility.value = !isCategoryVisibility.value
+                    vm.setTodoColor(6)
+                    categoryColor.value = 6
+                }
             }
         }
     }
@@ -420,11 +461,14 @@ fun CalendarScreen(routeAction: RouteAction) {
                     todoDay = todoDay,
                     todoTitle = todoTitle,
                     todoColor = todoColor,
-                    isVisibility = isVisibility
+                    isCategoryVisibility = isCategoryVisibility,
                 )
 
                 item {
-                    if (categoryTodoList.isEmpty() && isVisibility.value) {
+                    // 스크린에 item이 1개도 없을 경우
+                    // = category가 보이지 않을 경우
+
+                    if (isVisibility.value) {
                         val focusRequester = remember { FocusRequester() }
 
                         LaunchedEffect(isVisibility.value) {
@@ -434,11 +478,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                             }
                         }
 
-
-                        TodoCategoryHeader(
-                            categoryColor = categoryColor.value
-                        )
-
+                        TodoCategoryHeader(categoryColor = categoryColor.value)
 
                         Card(
                             modifier = Modifier

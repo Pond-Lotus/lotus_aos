@@ -57,7 +57,7 @@ fun LazyListScope.TodoItem(
     todoDay: Int,
     todoTitle: String,
     todoColor: Int,
-    isVisibility: MutableState<Boolean>,
+    isCategoryVisibility: MutableState<Boolean>,
 ) {
 
     categoryTodoList.forEach { key, items ->
@@ -155,95 +155,21 @@ fun LazyListScope.TodoItem(
                             )
                         }
                     }
-
-//                    if(isVisibility) {
-//                        Card(
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .height(45.dp)
-//                                .padding(start = 21.dp, end = 21.dp),
-//                            colors = CardDefaults.cardColors(Color.White),
-//                            shape = RoundedCornerShape(8.dp),
-//                        ) {
-//                            Row(
-//                                modifier = Modifier
-//                                    .padding(
-//                                        start = 14.dp,
-//                                        top = 13.dp,
-//                                        bottom = 13.dp
-//                                    ),
-//                                verticalAlignment = Alignment.CenterVertically,
-//                                horizontalArrangement = Arrangement.Center
-//                            ) {
-//                                Image(
-//                                    modifier = Modifier.size(20.dp),
-//                                    painter = painterResource(id = R.drawable.defaultcheckbox),
-//                                    contentDescription = null
-//                                )
-//
-//                                BasicTextField(
-//                                    modifier = Modifier
-//                                        .wrapContentWidth()
-//                                        .wrapContentHeight()
-//                                        .padding(start = 16.dp)
-////                                    .focusRequester(focusRequester)
-//                                        .imePadding(),
-//                                    value = todoTitle,
-//                                    onValueChange = { text: String ->
-//                                        vm.setTodoTitle(text)
-//                                    },
-//                                    textStyle = LocalTextStyle.current.copy(
-//                                        fontSize = 13.sp,
-//                                        fontStyle = FontStyle.Normal,
-//                                        color = Color.Black,
-//                                        lineHeight = 31.sp
-//                                    ),
-//                                    singleLine = true,
-//                                    maxLines = 1,
-//                                    keyboardOptions = KeyboardOptions(
-//                                        keyboardType = KeyboardType.Text,
-//                                        imeAction = ImeAction.Done
-//                                    ),
-//                                    keyboardActions = KeyboardActions(onDone = {
-////                                    scope.launch {
-////                                        vm.createTodo(
-////                                            token,
-////                                            CreateTodo(
-////                                                todoYear,
-////                                                todoMonth,
-////                                                todoDay,
-////                                                todoTitle,
-////                                                todoColor
-////                                            )
-////                                        )
-////                                        vm.setTodoTitle("")
-////                                        isVisibility = !isVisibility
-////                                    }
-//                                    })
-//                                )
-//                            }
-//                        }
-//                    }
                 }
             )
         }
 
-        if (isVisibility.value && categoryTodoList.isNotEmpty()) {
+        item {
 
-            item {
-
+            if (isCategoryVisibility.value && categoryColor.value == key) {
                 val focusRequester = remember { FocusRequester() }
 
-                LaunchedEffect(isVisibility) {
+                LaunchedEffect(isCategoryVisibility) {
                     delay(500)
-                    if (isVisibility.value) {
+                    if (isCategoryVisibility.value) {
                         focusRequester.requestFocus()
                     }
                 }
-
-                TodoCategoryHeader(
-                    categoryColor = categoryColor.value
-                )
 
                 Card(
                     modifier = Modifier
@@ -293,20 +219,20 @@ fun LazyListScope.TodoItem(
                                 imeAction = ImeAction.Done
                             ),
                             keyboardActions = KeyboardActions(onDone = {
-                                    scope.launch {
-                                        vm.createTodo(
-                                            token,
-                                            CreateTodo(
-                                                todoYear,
-                                                todoMonth,
-                                                todoDay,
-                                                todoTitle,
-                                                todoColor
-                                            )
+                                scope.launch {
+                                    vm.createTodo(
+                                        token,
+                                        CreateTodo(
+                                            todoYear,
+                                            todoMonth,
+                                            todoDay,
+                                            todoTitle,
+                                            todoColor
                                         )
-                                        vm.setTodoTitle("")
-                                        isVisibility.value = !isVisibility.value
-                                    }
+                                    )
+                                    vm.setTodoTitle("")
+                                    isCategoryVisibility.value = !isCategoryVisibility.value
+                                }
                             })
                         )
                     }
