@@ -465,9 +465,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                 )
 
                 item {
-                    // 스크린에 item이 1개도 없을 경우
-                    // = category가 보이지 않을 경우
-
                     if (isVisibility.value) {
                         val focusRequester = remember { FocusRequester() }
 
@@ -478,7 +475,12 @@ fun CalendarScreen(routeAction: RouteAction) {
                             }
                         }
 
-                        TodoCategoryHeader(categoryColor = categoryColor.value)
+                        TodoCategoryHeader(
+                            categoryColor = categoryColor.value,
+                            categoryList = categoryList,
+                        )
+
+                        Spacer(modifier = Modifier.padding(vertical = 4.dp))
 
                         Card(
                             modifier = Modifier

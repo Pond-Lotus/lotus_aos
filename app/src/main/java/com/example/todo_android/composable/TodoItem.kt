@@ -60,7 +60,7 @@ fun LazyListScope.TodoItem(
     isCategoryVisibility: MutableState<Boolean>,
 ) {
 
-    categoryTodoList.forEach { key, items ->
+    categoryTodoList.forEach { (key, items) ->
         stickyHeader {
             TodoCategoryHeader(
                 categoryList = categoryList,
@@ -160,7 +160,6 @@ fun LazyListScope.TodoItem(
         }
 
         item {
-
             if (isCategoryVisibility.value && categoryColor.value == key) {
                 val focusRequester = remember { FocusRequester() }
 
