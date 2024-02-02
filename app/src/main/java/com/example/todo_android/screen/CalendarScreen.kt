@@ -281,6 +281,10 @@ fun CalendarScreen(routeAction: RouteAction) {
         }
     }
 
+    LaunchedEffect(key1 = categoryList, block = {
+        vm.readCategory(token)
+    })
+
     BottomSheetScaffold(
         modifier = Modifier
             .imePadding(),
