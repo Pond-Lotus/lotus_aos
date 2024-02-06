@@ -27,7 +27,7 @@ fun TodoMenu(
     Surface(
         modifier = Modifier
             .width(155.dp)
-            .height(110.dp)
+            .height(130.dp)
             .padding(bottom = 10.dp)
             .shadow(
                 color = Color(0x33000000).copy(alpha = 0.1f),
