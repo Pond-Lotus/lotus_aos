@@ -298,9 +298,7 @@ class TodoViewModel @Inject constructor(
     fun setTodoGroup() {
         val categoryColor =
             todoList.value
-                .sortedBy { it.done }
                 .sortedBy { it.color }
-                .sortedBy { it.done }
                 .groupBy { it.color }
         viewModelScope.launch(Dispatchers.IO) {
             val sortData = categoryColor.mapValues { todo ->

@@ -116,7 +116,7 @@ fun LazyListScope.TodoItem(
                                 modifier = Modifier
                                     .size(20.dp)
                                     .clickable {
-                                        vm.setTodoDone(todo, todo.done!!)
+//                                        vm.setTodoDone(todo, todo.done!!)
                                         vm.updateTodo(
                                             token,
                                             todo.id!!,
