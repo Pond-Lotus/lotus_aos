@@ -128,74 +128,92 @@ fun CalendarScreen(routeAction: RouteAction) {
         when (id) {
             "1" -> {
                 val setColor = todoList.find { it.color == 1 }?.color
+                Log.d("fucking", "setColor: ${setColor}")
                 if (setColor == null) {
                     isVisibility.value = !isVisibility.value
                     vm.setTodoColor(1)
                     categoryColor.value = 1
+                    Log.d("fucking", "categoryColor: ${categoryColor}")
                 } else {
                     isCategoryVisibility.value = !isCategoryVisibility.value
                     vm.setTodoColor(1)
                     categoryColor.value = 1
+                    Log.d("fucking", "categoryColor: ${categoryColor}")
                 }
             }
             "2" -> {
                 val setColor = todoList.find { it.color == 2 }?.color
+                Log.d("fucking", "setColor: ${setColor}")
                 if (setColor == null) {
                     isVisibility.value = !isVisibility.value
                     vm.setTodoColor(2)
                     categoryColor.value = 2
+                    Log.d("fucking", "categoryColor: ${categoryColor}")
                 } else {
                     isCategoryVisibility.value = !isCategoryVisibility.value
                     vm.setTodoColor(2)
                     categoryColor.value = 2
+                    Log.d("fucking", "categoryColor: ${categoryColor}")
                 }
             }
             "3" -> {
                 val setColor = todoList.find { it.color == 3 }?.color
+                Log.d("fucking", "setColor: ${setColor}")
                 if (setColor == null) {
                     isVisibility.value = !isVisibility.value
                     vm.setTodoColor(3)
                     categoryColor.value = 3
+                    Log.d("fucking", "categoryColor: ${categoryColor}")
                 } else {
                     isCategoryVisibility.value = !isCategoryVisibility.value
                     vm.setTodoColor(3)
                     categoryColor.value = 3
+                    Log.d("fucking", "categoryColor: ${categoryColor}")
                 }
             }
             "4" -> {
                 val setColor = todoList.find { it.color == 4 }?.color
+                Log.d("fucking", "setColor: ${setColor}")
                 if (setColor == null) {
                     isVisibility.value = !isVisibility.value
                     vm.setTodoColor(4)
                     categoryColor.value = 4
+                    Log.d("fucking", "categoryColor: ${categoryColor}")
                 } else {
                     isCategoryVisibility.value = !isCategoryVisibility.value
                     vm.setTodoColor(4)
                     categoryColor.value = 4
+                    Log.d("fucking", "categoryColor: ${categoryColor}")
                 }
             }
             "5" -> {
                 val setColor = todoList.find { it.color == 5 }?.color
+                Log.d("fucking", "setColor: ${setColor}")
                 if (setColor == null) {
                     isVisibility.value = !isVisibility.value
                     vm.setTodoColor(5)
                     categoryColor.value = 5
+                    Log.d("fucking", "categoryColor: ${categoryColor}")
                 } else {
                     isCategoryVisibility.value = !isCategoryVisibility.value
                     vm.setTodoColor(5)
                     categoryColor.value = 5
+                    Log.d("fucking", "categoryColor: ${categoryColor}")
                 }
             }
             "6" -> {
                 val setColor = todoList.find { it.color == 6 }?.color
+                Log.d("fucking", "setColor: ${setColor}")
                 if (setColor == null) {
                     isVisibility.value = !isVisibility.value
                     vm.setTodoColor(6)
                     categoryColor.value = 6
+                    Log.d("fucking", "categoryColor: ${categoryColor}")
                 } else {
                     isCategoryVisibility.value = !isCategoryVisibility.value
                     vm.setTodoColor(6)
                     categoryColor.value = 6
+                    Log.d("fucking", "categoryColor: ${categoryColor}")
                 }
             }
         }
@@ -459,6 +477,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                     todoDay = todoDay,
                     todoTitle = todoTitle,
                     todoColor = todoColor,
+                    isVisibility = isVisibility,
                     isCategoryVisibility = isCategoryVisibility,
                 )
 

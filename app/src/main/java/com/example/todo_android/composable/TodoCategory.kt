@@ -108,7 +108,7 @@ fun TodoCategoryDetailHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 15.dp),
+            .padding(top = 5.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
