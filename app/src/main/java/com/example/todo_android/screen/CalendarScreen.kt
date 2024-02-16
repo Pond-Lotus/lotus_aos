@@ -127,8 +127,8 @@ fun CalendarScreen(routeAction: RouteAction) {
     val onButtonClick: (String) -> Unit = { id ->
         when (id) {
             "1" -> {
-                val todoColor = todoList.find { it.color == 1 }?.color
-                if (todoColor == null) {
+                val setColor = todoList.find { it.color == 1 }?.color
+                if (setColor == null) {
                     isVisibility.value = !isVisibility.value
                     vm.setTodoColor(1)
                     categoryColor.value = 1
@@ -139,8 +139,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }
             }
             "2" -> {
-                val todoColor = todoList.find { it.color == 2 }?.color
-                if (todoColor == null) {
+                val setColor = todoList.find { it.color == 2 }?.color
+                if (setColor == null) {
                     isVisibility.value = !isVisibility.value
                     vm.setTodoColor(2)
                     categoryColor.value = 2
@@ -151,8 +151,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }
             }
             "3" -> {
-                val todoColor = todoList.find { it.color == 3 }?.color
-                if (todoColor == null) {
+                val setColor = todoList.find { it.color == 3 }?.color
+                if (setColor == null) {
                     isVisibility.value = !isVisibility.value
                     vm.setTodoColor(3)
                     categoryColor.value = 3
@@ -163,8 +163,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }
             }
             "4" -> {
-                val todoColor = todoList.find { it.color == 4 }?.color
-                if (todoColor == null) {
+                val setColor = todoList.find { it.color == 4 }?.color
+                if (setColor == null) {
                     isVisibility.value = !isVisibility.value
                     vm.setTodoColor(4)
                     categoryColor.value = 4
@@ -175,8 +175,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }
             }
             "5" -> {
-                val todoColor = todoList.find { it.color == 5 }?.color
-                if (todoColor == null) {
+                val setColor = todoList.find { it.color == 5 }?.color
+                if (setColor == null) {
                     isVisibility.value = !isVisibility.value
                     vm.setTodoColor(5)
                     categoryColor.value = 5
@@ -187,8 +187,8 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }
             }
             "6" -> {
-                val todoColor = todoList.find { it.color == 6 }?.color
-                if (todoColor == null) {
+                val setColor = todoList.find { it.color == 6 }?.color
+                if (setColor == null) {
                     isVisibility.value = !isVisibility.value
                     vm.setTodoColor(6)
                     categoryColor.value = 6
@@ -547,7 +547,10 @@ fun CalendarScreen(routeAction: RouteAction) {
                             }
                         }
                     }
-                    if (todoList.isEmpty() && !isVisibility.value) {
+                }
+
+                item {
+                    if (!isVisibility.value && todoList.isEmpty()) {
                         Row {
                             BlankTodoItem()
                         }
