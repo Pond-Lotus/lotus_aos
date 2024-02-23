@@ -577,7 +577,7 @@ fun CalendarScreen(routeAction: RouteAction) {
                 }
             }
 
-            if (!isVisibility.value || bottomScaffoldState.bottomSheetState.isExpanded) {
+            if ((!isVisibility.value || bottomScaffoldState.bottomSheetState.isExpanded) && (!isCategoryVisibility.value || bottomScaffoldState.bottomSheetState.isExpanded)) {
                 Box(
                     modifier = Modifier
                         .padding(
