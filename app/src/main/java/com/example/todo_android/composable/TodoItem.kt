@@ -199,7 +199,7 @@ fun LazyListScope.TodoItem(
                             modifier = Modifier
                                 .wrapContentWidth()
                                 .wrapContentHeight()
-                                .padding(start = 16.dp)
+                                .padding(start = 6.dp)
                                 .focusRequester(focusRequester)
                                 .imePadding(),
                             value = todoTitle,
