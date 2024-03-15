@@ -57,7 +57,6 @@ fun LazyListScope.TodoItem(
     todoDay: Int,
     todoTitle: String,
     todoColor: Int,
-    isVisibility: MutableState<Boolean>,
     isCategoryVisibility: MutableState<Boolean>,
 ) {
 

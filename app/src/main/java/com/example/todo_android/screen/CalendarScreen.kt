@@ -477,7 +477,6 @@ fun CalendarScreen(routeAction: RouteAction) {
                     todoDay = todoDay,
                     todoTitle = todoTitle,
                     todoColor = todoColor,
-                    isVisibility = isVisibility,
                     isCategoryVisibility = isCategoryVisibility,
                 )
 

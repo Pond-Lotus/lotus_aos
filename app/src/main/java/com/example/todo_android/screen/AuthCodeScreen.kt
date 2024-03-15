@@ -51,7 +51,7 @@ fun authCode(
         OkHttpClient.Builder().addInterceptor(httpLoInterceptor).build()
     }
 
-    var retrofit = Retrofit.Builder().baseUrl("https://plotustodo-ctzhc.run.goorm.io/ ").client(okHttpClient)
+    var retrofit = Retrofit.Builder().baseUrl("http:35.225.210.179:8000/ ").client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
     var authCodeRequest: AuthCodeRequest = retrofit.create(AuthCodeRequest::class.java)
