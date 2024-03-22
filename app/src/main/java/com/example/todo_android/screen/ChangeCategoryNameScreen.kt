@@ -182,7 +182,7 @@ fun ChangeCategoryNameScreen(
                                         text = name,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Light,
-                                        color = Color(0xffD3D3D3),
+                                        color = Color(0xff9E9E9E),
                                     )
                                 },
                                 value = categoryName.value,
