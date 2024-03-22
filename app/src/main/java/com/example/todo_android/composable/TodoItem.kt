@@ -28,8 +28,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.todo_android.Data.Todo.CreateTodo
 import com.example.todo_android.Data.Todo.UpdateTodo
@@ -108,13 +111,14 @@ fun LazyListScope.TodoItem(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Row(
-                            modifier = Modifier.padding(start = 14.dp, top = 13.dp, bottom = 13.dp),
+                            modifier = Modifier.padding(start = 14.dp, top = 11.dp, bottom = 13.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Image(
                                 modifier = Modifier
-                                    .size(20.dp)
+                                    .size(19.dp)
+                                    .padding(top = 2.dp)
                                     .clickable {
 //                                        vm.setTodoDone(todo, todo.done!!)
                                         vm.updateTodo(
@@ -147,7 +151,8 @@ fun LazyListScope.TodoItem(
                                 fontSize = 15.sp,
                                 fontStyle = FontStyle.Normal,
                                 overflow = TextOverflow.Ellipsis,
-                                style = TextStyle(
+                                textAlign = TextAlign.Center,
+                                style = LocalTextStyle.current.merge(
                                     platformStyle = PlatformTextStyle(
                                         includeFontPadding = false
                                     )

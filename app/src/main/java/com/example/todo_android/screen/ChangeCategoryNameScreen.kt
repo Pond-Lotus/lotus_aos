@@ -3,6 +3,7 @@ package com.example.todo_android.screen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
@@ -10,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.TextFieldDefaults.TextFieldDecorationBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -21,13 +23,16 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.todo_android.R
 import com.example.todo_android.navigation.Action.RouteAction
 import com.example.todo_android.util.MyApplication
 import com.example.todo_android.viewmodel.Todo.TodoViewModel
@@ -45,7 +50,7 @@ fun ChangeCategoryNameScreen(
 ) {
     val vm: TodoViewModel = hiltViewModel()
     val token = "Token ${MyApplication.prefs.getData("token", "")}"
-    val categoryName = remember { mutableStateOf(name) }
+    val categoryName = remember { mutableStateOf("") }
     val categoryDataSet = mapOf(color to categoryName.value)
     val categoryColor = when (color) {
         1 -> Color(0xffFFB4B4)
@@ -149,7 +154,7 @@ fun ChangeCategoryNameScreen(
                             onValueChange = {
                                 categoryName.value = it
                             },
-                            textStyle = TextStyle(
+                            textStyle = LocalTextStyle.current.copy(
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 15.sp,
                                 color = Color.Black,
@@ -160,7 +165,34 @@ fun ChangeCategoryNameScreen(
                             singleLine = true,
                             maxLines = 1,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                        )
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) { innerTextField ->
+                            TextFieldDefaults.TextFieldDecorationBox(
+                                colors = TextFieldDefaults.textFieldColors(
+                                    containerColor = Color.Transparent,
+                                    disabledLabelColor = Color.Transparent,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent
+                                ),
+                                contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
+                                    start = 0.dp, top = 0.dp, bottom = 0.dp
+                                ),
+                                placeholder = {
+                                    Text(
+                                        text = name,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Light,
+                                        color = Color(0xffD3D3D3),
+                                    )
+                                },
+                                value = categoryName.value,
+                                innerTextField = innerTextField,
+                                singleLine = true,
+                                enabled = true,
+                                interactionSource = remember { MutableInteractionSource() },
+                                visualTransformation = VisualTransformation.None
+                            )
+                        }
                     }
                 }
             }
