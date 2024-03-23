@@ -16,9 +16,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-//    private const val baseURL = "http:35.225.210.179:8000/"
+//    private const val baseURL = " https://team-lotus.kr/"
 
-    private const val baseURL = "http:35.225.210.179:8000/"
+    private const val baseURL = " https://team-lotus.kr/"
 
     // Retrofit
     @Singleton

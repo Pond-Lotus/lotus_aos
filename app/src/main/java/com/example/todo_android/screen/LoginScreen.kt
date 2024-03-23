@@ -60,7 +60,7 @@ fun sendLogin(
     }
 
     var retrofit =
-        Retrofit.Builder().baseUrl("http:35.225.210.179:8000/").client(okHttpClient)
+        Retrofit.Builder().baseUrl(" https://team-lotus.kr/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     var loginRequest: LoginRequest = retrofit.create(LoginRequest::class.java)
