@@ -1,31 +1,47 @@
-# Lotus(로투스)
+# 토도리(TODORI)
 심플하고 간편한 투두리스트
 매일 할 일을 쉽게 정리할 수 있는 투두리스트 앱\
-작은 도토리를 모으듯이, 오늘의 할일을 차곡차곡 완료해 보세요!<br/><br/>
+작은 도토리를 모으듯이, 오늘의 할일을 차곡차곡 완료해 보세요!
 
-![Aos 그래픽이미지](https://github.com/Pond-Lotus/lotus_aos/assets/51289286/dcb26e5b-9e62-4314-a012-41985ed2745f)
+![토도리(TODORI) 그래픽이미지](https://github.com/Pond-Lotus/lotus_aos/assets/51289286/dcb26e5b-9e62-4314-a012-41985ed2745f)
 
-# Download
-다운로드 링크: [링크](https://play.google.com/store/apps/details?id=com.lotus.todo_android&hl=kr)
+<br/>
 
-# 🛠️ 사용기술
+# 기술 스택
+- Android
 - Jetpack Compose
 - Retrofit
 - ViewModel
 - Repository
 - DataSource
 - Module
-- dagger & hilt<br/><br/>
+- Dagger & Hilt
+
+<br/>
 
 # 디자인 패턴
-- MVVM
+MVVM(Model + View + ViewModel)
 
-## 💡 깨달은 점
-- **Jetpack Compose**는 상태값(**State**)으로 동작하기 때문에 **MVVM** 디자인 패턴 사용하는게 적절함.
+<br/>
 
-## ✍🏻 기능 추가사항 & 개선사항
-- **Firebase Cloud Messaging(FCM)**을 이용하여 알림 설정
-- **친구 기능** 추가
-    
-    -> 친구 추가 및 삭제 기능, 친구 캘린더 조회 기능
-- **다크 모드** 적용
+# 문제 발생 및 해결 과정
+1. api 통신 속도 개선
+    - **문제**: 리스트 CRUD 요청 시 데이터 응답 속도 및 컴포저블 렌더링 속도 저하
+    - **원인**: api 함수를 컴포저블 함수 내에서 구현하여 데이터 상태 관리 및 api 통신 속도 저하
+    - **해결**: 데이터 상태 관리, 데이터 접근 로직 캡슐화, 위존성 주입 등 MVVM 디자인 패턴 도입으로 api 통신 속도 개선
+    - **결과**:  api 응답 속도 약 5초 → 1초 이내 감소(**80% 감소**)
+2. 빌드 속도 개선
+    - **문제**: 앱 빌드 시 약 15초 이상의 시간이 소모
+    - **원인**: MVVM 패턴에 맞게 의존성 규칙을 정했지만 많은 양의 코드와 복잡한 구조로 인한 빌드 시간 증가
+    - **해결**: 도메인 지식을 캡슐화하는 방향으로 결정하여, Module을 활용해 기능 단위를 분리하고, 기능 간에 공통으로 사용되는 모듈을 추가적으로 분리함.
+    - 결과: 빌드 시간 약 15초 → 약 10초 이내 감소(**33% 감소**)
+
+<br/><br/>
+
+# 성과
+Google Play Store 에 앱 출시 및 30명 유저 확보(현재는 서비스 중단)
+
+<br/>
+
+# 스토어
+스토어 링크: ~~[링크](https://play.google.com/store/apps/details?id=com.lotus.todo_android&hl=kr)~~(현재는 서비스 중단)
