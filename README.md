@@ -36,7 +36,25 @@ MVVM(Model + View + ViewModel)
     - **해결**: 도메인 지식을 캡슐화하는 방향으로 결정하여, Module을 활용해 기능 단위를 분리하고, 기능 간에 공통으로 사용되는 모듈을 추가적으로 분리함.
     - 결과: 빌드 시간 약 15초 → 약 10초 이내 감소(**33% 감소**)
 
-<br/><br/>
+<br/>
+
+# 스크린샷
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/470a9f5b-2a54-4521-ab13-0b307ad47fa5" width="200"/></td>
+    <td><img src="https://github.com/user-attachments/assets/b6790d20-147c-4573-9193-342afa2e66ba" width="200"/></td>
+    <td><img src="https://github.com/user-attachments/assets/58b2b016-f466-4b1c-96ef-c8d59ba9145f" width="200"/></td>
+    <td><img src="https://github.com/user-attachments/assets/3ceb2eab-9883-43d6-ba62-256642fce9fb" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center">로그인 스크린</td>
+    <td align="center">월간 리스트 스크린</td>
+    <td align="center">리스트 추가 및 수정 스크린</td>
+    <td align="center">프로필 스크린</td>
+  </tr>
+</table>
+
+<br/>
 
 # 성과
 Google Play Store 에 앱 출시 및 30명 유저 확보(현재는 서비스 중단)
